@@ -19,7 +19,7 @@ export function AIChatButton({
       variant="outline"
       size="sm"
       className={cn(
-        "h-8 gap-1.5 border-primary/30 text-xs text-primary hover:bg-primary/5",
+        "gdy-scope h-8 gap-1.5 border-primary/30 text-xs text-primary hover:bg-primary/5",
         className,
       )}
       {...props}
