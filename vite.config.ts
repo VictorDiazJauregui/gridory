@@ -58,6 +58,8 @@ export default defineConfig({
     rollupOptions: {
       external: isExternal,
     },
+    // public/ only holds demo assets (favicon); keep them out of the package.
+    copyPublicDir: false,
     sourcemap: true,
     emptyOutDir: true,
   },
