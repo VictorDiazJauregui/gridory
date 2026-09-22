@@ -1,0 +1,34 @@
+/* Themeable, Tailwind-version-independent styles for the shared Select.
+   Colors/radius resolve to the `theme` prop (inline --lui-select-* vars) first,
+   then to any CSS override, then to the default shadcn tokens (which already
+   switch with the light/dark theme). The dropdown width matches the trigger. */
+[data-slot="select-trigger"] {
+  background: var(--lui-select-bg, var(--background));
+  border-color: var(--lui-select-border, var(--border));
+  color: var(--lui-select-text, var(--foreground));
+  border-radius: var(--lui-select-radius, calc(var(--radius) - 2px));
+}
+
+[data-slot="select-trigger"]:hover {
+  background: var(--lui-select-trigger-hover-bg, var(--muted));
+}
+
+[data-slot="select-content"] {
+  width: var(--radix-select-trigger-width);
+  background: var(--lui-select-content-bg, var(--popover));
+  color: var(--lui-select-content-text, var(--popover-foreground));
+  border-radius: var(--lui-select-radius, calc(var(--radius) - 2px));
+}
+
+[data-slot="select-item"] {
+  color: var(--lui-select-item-text, inherit);
+}
+
+[data-slot="select-item"][data-highlighted] {
+  background: var(--lui-select-item-hover-bg, var(--accent));
+  color: var(--lui-select-item-hover-text, var(--accent-foreground));
+}
+
+[data-slot="select-item"][data-state="checked"] {
+  background: var(--lui-select-item-active-bg, transparent);
+}
