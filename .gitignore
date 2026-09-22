@@ -25,7 +25,6 @@ dist-ssr
 *.sw?
 
 assets
-public
 .playwright-mcp
 .playwright-mcp/*
 # Notas de release: se redactan en local y se suben con `gh release create --notes-file`

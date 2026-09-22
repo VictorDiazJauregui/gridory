@@ -8,7 +8,7 @@
     "types": ["vite/client"],
     "skipLibCheck": true,
 
-    /* 👇 AGREGAR ESTO */
+    /* Path alias (mirrors vite.config.ts and components.json) */
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
