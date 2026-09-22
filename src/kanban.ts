@@ -1,3 +1,4 @@
+import "./styles/index.css";
 export { ReusableKanban } from "./components/kanban";
 export type {
   ReusableColumn,
