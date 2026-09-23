@@ -417,8 +417,8 @@ export function DataTable<TData>({
     stickyHeader && (fillHeight || Boolean(tableMaxHeightClassName));
 
   const rootStyle = {
-    ...(scrollbarColor ? { ["--rdt-scrollbar-thumb"]: scrollbarColor } : {}),
-    ...(optionHoverColor ? { ["--rdt-option-hover-bg"]: optionHoverColor } : {}),
+    ...(scrollbarColor ? { ["--gdy-scrollbar-thumb"]: scrollbarColor } : {}),
+    ...(optionHoverColor ? { ["--gdy-option-hover-bg"]: optionHoverColor } : {}),
   } as CSSProperties;
   const emptyDateState: DateFilterState = dateFilterRequireOperator
     ? EMPTY_DATE_FILTER_STATE
