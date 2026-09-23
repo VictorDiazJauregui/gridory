@@ -5,38 +5,36 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { renderMenuNodes, resolveMenuNodes } from "../shared/menu-actions";
+import { stopPropagation } from "../shared/stop-propagation";
 import type { RowActions } from "./types";
-
-const stopClick = (event: { stopPropagation: () => void }) =>
-  event.stopPropagation();
 
 interface KanbanCardMenuProps<TData> {
   card: TData;
   rowActions?: RowActions<TData>;
 }
 
-export const KanbanCardMenu = <TData,>({
-  card,
-  rowActions,
-}: KanbanCardMenuProps<TData>) => {
-  if (!rowActions) return null;
-  const nodes = resolveMenuNodes(card, rowActions);
-  if (nodes.length === 0) return null;
+const renderCardMenuTrigger = () => (
+  <button
+    type="button"
+    className="gdy-icon-btn"
+    title="Opciones"
+    aria-label="Opciones"
+    onClick={stopPropagation}
+  >
+    <MoreHorizontal size={14} className="gdy-kanban-card-menu-icon" />
+  </button>
+);
 
+export const KanbanCardMenu = <TData,>(props: KanbanCardMenuProps<TData>) => {
+  if (!props.rowActions) return null;
+  const nodes = resolveMenuNodes(props.card, props.rowActions);
+  if (nodes.length === 0) return null;
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button
-          type="button"
-          className="gdy-icon-btn"
-          title="Opciones"
-          aria-label="Opciones"
-          onClick={stopClick}
-        >
-          <MoreHorizontal size={14} className="gdy-kanban-card-menu-icon" />
-        </button>
+        {renderCardMenuTrigger()}
       </DropdownMenuTrigger>
-      <DropdownMenuContent onClick={stopClick}>
+      <DropdownMenuContent onClick={stopPropagation}>
         {renderMenuNodes(nodes)}
       </DropdownMenuContent>
     </DropdownMenu>
