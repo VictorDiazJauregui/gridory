@@ -434,7 +434,7 @@ export function ReusableDataTable<TData>({
       )}
       style={rootStyle}
     >
-      <div className="rdt-card">
+      <div className="gdy-scope rdt-card">
         <TableToolbar
           showSearch={flags.search}
           search={search}

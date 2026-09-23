@@ -1,3 +1,4 @@
+import "./styles/index.css";
 export { ReusableDataTable } from "./components/table";
 export type {
   DateFilterState,

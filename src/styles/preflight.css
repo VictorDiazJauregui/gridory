@@ -1,0 +1,132 @@
+/*
+ * Minimal reset scoped to the library's root elements.
+ *
+ * Every component root (and every content rendered through a portal) carries
+ * the `gdy-scope` class, so these rules apply only inside Gridory and never
+ * touch the consuming app. The scope is wrapped in `:where()` so it adds no
+ * specificity: each rule weighs exactly what Tailwind's own preflight weighs
+ * (a bare element selector), and any component class overrides it.
+ *
+ * It mirrors the parts of Tailwind's preflight the components rely on:
+ * border-box sizing, solid zero-width borders, inherited form typography and
+ * unstyled buttons and lists.
+ */
+:where(.gdy-scope) {
+  line-height: 1.5;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:where(.gdy-scope),
+:where(.gdy-scope) *,
+:where(.gdy-scope) ::before,
+:where(.gdy-scope) ::after {
+  box-sizing: border-box;
+  border-width: 0;
+  border-style: solid;
+  border-color: var(--border);
+}
+
+:where(.gdy-scope) ::before,
+:where(.gdy-scope) ::after {
+  --tw-content: "";
+}
+
+:where(.gdy-scope) :is(h1, h2, h3, h4, h5, h6, p, figure, blockquote, pre, hr) {
+  margin: 0;
+}
+
+:where(.gdy-scope) :is(h1, h2, h3, h4, h5, h6) {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+:where(.gdy-scope) :is(ol, ul, menu) {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+:where(.gdy-scope) a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+:where(.gdy-scope) :is(b, strong) {
+  font-weight: bolder;
+}
+
+:where(.gdy-scope) :is(code, kbd, samp, pre) {
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+  font-size: 1em;
+}
+
+:where(.gdy-scope) small {
+  font-size: 80%;
+}
+
+:where(.gdy-scope) :is(button, input, optgroup, select, textarea) {
+  font-family: inherit;
+  font-feature-settings: inherit;
+  font-variation-settings: inherit;
+  font-size: 100%;
+  font-weight: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  margin: 0;
+  padding: 0;
+}
+
+:where(.gdy-scope) :is(button, select) {
+  text-transform: none;
+}
+
+:where(.gdy-scope) :is(button, input:where([type="button"], [type="reset"], [type="submit"])) {
+  -webkit-appearance: button;
+  appearance: button;
+  background-color: transparent;
+  background-image: none;
+}
+
+:where(.gdy-scope) :is(button, [role="button"]) {
+  cursor: pointer;
+}
+
+:where(.gdy-scope) :disabled {
+  cursor: default;
+}
+
+:where(.gdy-scope) :is(input, textarea)::placeholder {
+  opacity: 1;
+  color: var(--muted-foreground);
+}
+
+:where(.gdy-scope) textarea {
+  resize: vertical;
+}
+
+:where(.gdy-scope) :is(img, svg, video, canvas, audio, iframe, embed, object) {
+  display: block;
+  vertical-align: middle;
+}
+
+:where(.gdy-scope) :is(img, video) {
+  max-width: 100%;
+  height: auto;
+}
+
+:where(.gdy-scope) table {
+  text-indent: 0;
+  border-color: inherit;
+  border-collapse: collapse;
+}
+
+:where(.gdy-scope) summary {
+  display: list-item;
+}
+
+:where(.gdy-scope) [hidden]:where(:not([hidden="until-found"])) {
+  display: none;
+}

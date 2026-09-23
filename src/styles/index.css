@@ -1,0 +1,7 @@
+/*
+ * Library-wide stylesheet, imported by every entry point (table, kanban, ai).
+ * Vite merges it with the component stylesheets into dist/gridory.css.
+ */
+@import "./tokens.css";
+@import "./preflight.css";
+@import "./tailwind.css";

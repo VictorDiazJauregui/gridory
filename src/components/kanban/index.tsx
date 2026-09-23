@@ -278,7 +278,7 @@ export const ReusableKanban = <TData,>({
       className={cn("rkb", thinScrollbars && "rkb-thin-scroll")}
       style={rootStyle}
     >
-      <div className="rkb-card">
+      <div className="gdy-scope rkb-card">
         <KanbanToolbar
           showSearch={flags.search}
           search={search}

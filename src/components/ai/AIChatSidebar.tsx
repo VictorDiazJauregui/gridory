@@ -163,14 +163,14 @@ export function AIChatSidebar(props: AIChatSidebarProps) {
     <>
       {open ? (
         <div
-          className="fixed inset-0 z-40 bg-black/30 backdrop-blur-[2px] md:hidden"
+          className="gdy-scope fixed inset-0 z-40 bg-black/30 backdrop-blur-[2px] md:hidden"
           onClick={onClose}
         />
       ) : null}
 
       <aside
         className={cn(
-          "fixed inset-y-0 right-0 z-50 flex max-w-[90vw] flex-col border-l bg-background shadow-2xl transition-transform duration-300 ease-out",
+          "gdy-scope fixed inset-y-0 right-0 z-50 flex max-w-[90vw] flex-col border-l bg-background shadow-2xl transition-transform duration-300 ease-out",
           open ? "translate-x-0" : "translate-x-full",
           className,
           classNames?.root,
