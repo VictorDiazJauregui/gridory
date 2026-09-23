@@ -3,16 +3,15 @@
 import * as React from "react";
 import {
   DayPicker,
-  type DayButton,
+  type CustomComponents,
   type Locale,
-  type Modifiers,
 } from "react-day-picker";
 import { es } from "date-fns/locale";
-import {
-  ChevronDownIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-} from "lucide-react";
+
+import { CalendarChevron } from "./calendar-chevron";
+import { CalendarDay } from "./calendar-day";
+import { CalendarDayButton } from "./calendar-day-button";
+import { CalendarRoot } from "./calendar-root";
 
 const CALENDAR_CLASS_NAMES: React.ComponentProps<typeof DayPicker>["classNames"] = {
   root: "gdy-calendar-root",
@@ -51,103 +50,51 @@ const CALENDAR_CLASS_NAMES: React.ComponentProps<typeof DayPicker>["classNames"]
   range_end: "",
 };
 
-const rangeAttributes = (modifiers: Modifiers) => ({
-  "data-range-start": modifiers.range_start || undefined,
-  "data-range-middle": modifiers.range_middle || undefined,
-  "data-range-end": modifiers.range_end || undefined,
+type CalendarProps = React.ComponentProps<typeof DayPicker>;
+
+// Module-level components keep their identity across renders: an inline
+// component would remount the whole calendar subtree on every render.
+const CALENDAR_COMPONENTS: Partial<CustomComponents> = {
+  Root: CalendarRoot,
+  Day: CalendarDay,
+  Chevron: CalendarChevron,
+};
+
+const buildFormatters = (
+  locale: Partial<Locale>,
+  formatters: CalendarProps["formatters"],
+): CalendarProps["formatters"] => ({
+  formatMonthDropdown: (date) =>
+    date.toLocaleString(locale.code, { month: "short" }),
+  ...formatters,
+});
+
+// DayButton needs the active locale, so it stays a per-render closure.
+const buildComponents = (
+  locale: Partial<Locale>,
+  components: CalendarProps["components"],
+): CalendarProps["components"] => ({
+  ...CALENDAR_COMPONENTS,
+  DayButton: (props) => <CalendarDayButton locale={locale} {...props} />,
+  ...components,
 });
 
 const Calendar = ({
-  className,
-  classNames,
   showOutsideDays = true,
   captionLayout = "label",
   locale,
-  formatters,
-  components,
   ...props
-}: React.ComponentProps<typeof DayPicker>) => {
+}: CalendarProps) => {
   const activeLocale = locale ?? es;
-
   return (
     <DayPicker
+      {...props}
       showOutsideDays={showOutsideDays}
-      className={className}
       captionLayout={captionLayout}
       locale={activeLocale}
-      formatters={{
-        formatMonthDropdown: (date) =>
-          date.toLocaleString(activeLocale.code, { month: "short" }),
-        ...formatters,
-      }}
-      classNames={{ ...CALENDAR_CLASS_NAMES, ...classNames }}
-      components={{
-        Root: ({ className, rootRef, ...props }) => (
-          <div
-            data-slot="calendar"
-            ref={rootRef}
-            className={className}
-            {...props}
-          />
-        ),
-        Day: ({ day, modifiers, ...tdProps }) => {
-          void day; // only the modifiers are needed; `day` must not reach the DOM
-          return <td {...tdProps} {...rangeAttributes(modifiers)} />;
-        },
-        Chevron: ({ className, orientation, ...props }) => {
-          if (orientation === "left") {
-            return <ChevronLeftIcon className={className} {...props} />;
-          }
-          if (orientation === "right") {
-            return <ChevronRightIcon className={className} {...props} />;
-          }
-          return <ChevronDownIcon className={className} {...props} />;
-        },
-        DayButton: (props) => (
-          <CalendarDayButton locale={activeLocale} {...props} />
-        ),
-        ...components,
-      }}
-      {...props}
-    />
-  );
-}
-
-type CalendarDayButtonProps = React.ComponentProps<typeof DayButton> & {
-  locale?: Partial<Locale>;
-};
-
-/**
- * Own day button: the hook comes from `classNames.day_button`. Like the default
- * DayButton of react-day-picker, it takes the DOM focus when the picker marks
- * the day as focused (arrow keys, Home/End, PageUp/PageDown).
- */
-const CalendarDayButton = ({
-  className,
-  day,
-  modifiers,
-  locale,
-  ...props
-}: CalendarDayButtonProps) => {
-  const ref = React.useRef<HTMLButtonElement>(null);
-  React.useEffect(() => {
-    if (modifiers.focused) ref.current?.focus();
-  }, [modifiers.focused]);
-
-  return (
-    <button
-      ref={ref}
-      className={className}
-      data-day={day.date.toLocaleDateString(locale?.code)}
-      data-selected-single={
-        (modifiers.selected &&
-          !modifiers.range_start &&
-          !modifiers.range_end &&
-          !modifiers.range_middle) ||
-        undefined
-      }
-      {...rangeAttributes(modifiers)}
-      {...props}
+      formatters={buildFormatters(activeLocale, props.formatters)}
+      classNames={{ ...CALENDAR_CLASS_NAMES, ...props.classNames }}
+      components={buildComponents(activeLocale, props.components)}
     />
   );
 }
