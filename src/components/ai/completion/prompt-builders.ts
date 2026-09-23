@@ -1,5 +1,5 @@
-import { buildToolDefinitions } from "./ai-client";
-import type { AIChatMode, AIDataSchema, AIFieldDescriptor } from "./types";
+import { buildToolDefinitions } from "./tool-definitions";
+import type { AIChatMode, AIDataSchema, AIFieldDescriptor } from "../types";
 
 const CHATBOT_BASE_PROMPT =
   "Eres un asistente AI útil, preciso y conciso. Responde siempre en español con Markdown breve y claro cuando aporte valor. Si no tienes información suficiente, pide aclaraciones en lugar de inventar.";
@@ -21,27 +21,23 @@ const stringifyValue = (value: unknown): string => {
   return String(value);
 }
 
-const summarizeRows = (rows: Record<string, unknown>[]): string => {
-  if (rows.length === 0) return "No hay registros disponibles.";
-  const sample = rows.slice(0, 50);
-  const numericStats: string[] = [];
-  const keys = Object.keys(sample[0] ?? {});
+const describeNumericColumn = (
+  sample: Record<string, unknown>[],
+  key: string,
+): string | null => {
+  const numbers = sample
+    .map((row) => row[key])
+    .filter((value): value is number => typeof value === "number");
+  if (numbers.length === 0) return null;
+  const sum = numbers.reduce((acc, value) => acc + value, 0);
+  const min = Math.min(...numbers);
+  const max = Math.max(...numbers);
+  const avg = sum / numbers.length;
+  return `- ${key}: min=${min.toFixed(2)}, max=${max.toFixed(2)}, avg=${avg.toFixed(2)}, count=${numbers.length}`;
+};
 
-  keys.forEach((key) => {
-    const numbers = sample
-      .map((row) => row[key])
-      .filter((value): value is number => typeof value === "number");
-    if (numbers.length === 0) return;
-    const sum = numbers.reduce((acc, value) => acc + value, 0);
-    const min = Math.min(...numbers);
-    const max = Math.max(...numbers);
-    const avg = sum / numbers.length;
-    numericStats.push(
-      `- ${key}: min=${min.toFixed(2)}, max=${max.toFixed(2)}, avg=${avg.toFixed(2)}, count=${numbers.length}`,
-    );
-  });
-
-  const sampleRows = sample
+const formatSampleRows = (sample: Record<string, unknown>[]): string =>
+  sample
     .slice(0, 8)
     .map((row, index) => {
       const line = Object.entries(row)
@@ -52,16 +48,22 @@ const summarizeRows = (rows: Record<string, unknown>[]): string => {
     })
     .join("\n");
 
+const summarizeRows = (rows: Record<string, unknown>[]): string => {
+  if (rows.length === 0) return "No hay registros disponibles.";
+  const sample = rows.slice(0, 50);
+  const numericStats = Object.keys(sample[0] ?? {})
+    .map((key) => describeNumericColumn(sample, key))
+    .filter((line): line is string => line !== null);
   return [
     `Total de filas: ${rows.length}.`,
     "Muestra de filas:",
-    sampleRows,
+    formatSampleRows(sample),
     numericStats.length > 0 ? "Estadísticas numéricas:" : "",
     numericStats.join("\n"),
   ]
     .filter(Boolean)
     .join("\n");
-}
+};
 
 const describeField = (field: AIFieldDescriptor): string => {
   const requiredLabel = field.required ? " (requerido)" : "";
@@ -84,6 +86,19 @@ const describeField = (field: AIFieldDescriptor): string => {
   return `- ${field.label} [${field.id}] tipo ${field.type}${requiredLabel}.${descriptionLabel}${optionsLabel}${fixedLabel}${defaultLabel}`;
 }
 
+const RESPONSE_RULES = [
+  "Reglas de respuesta:",
+  "- Responde siempre en español.",
+  "- Usa Markdown legible y directo.",
+  "- Sé claro cuando no haya datos suficientes para responder.",
+  "- Respeta siempre los valores obligatorios y fijos declarados en los campos.",
+];
+
+const extraInstructionsSection = (schema: AIDataSchema): string =>
+  schema.extraInstructions
+    ? `\nInstrucciones adicionales del negocio:\n${schema.extraInstructions.trim()}`
+    : "";
+
 const buildCommonPrompt = (schema: AIDataSchema): string => {
   const rows = schema.rows ?? [];
   return [
@@ -96,18 +111,12 @@ const buildCommonPrompt = (schema: AIDataSchema): string => {
     "Resumen de datos:",
     schema.summary ?? summarizeRows(rows),
     "",
-    "Reglas de respuesta:",
-    "- Responde siempre en español.",
-    "- Usa Markdown legible y directo.",
-    "- Sé claro cuando no haya datos suficientes para responder.",
-    "- Respeta siempre los valores obligatorios y fijos declarados en los campos.",
-    schema.extraInstructions
-      ? `\nInstrucciones adicionales del negocio:\n${schema.extraInstructions.trim()}`
-      : "",
+    ...RESPONSE_RULES,
+    extraInstructionsSection(schema),
   ]
     .filter(Boolean)
     .join("\n");
-}
+};
 
 export const buildChatbotSystemPrompt = (customPrompt?: string): string => {
   if (customPrompt?.trim()) {
