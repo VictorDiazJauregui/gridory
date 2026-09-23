@@ -266,8 +266,8 @@ export const KanbanBoard = <TData,>({
   };
 
   const rootStyle = {
-    ...(scrollbarColor ? { ["--rkb-scrollbar-thumb"]: scrollbarColor } : {}),
-    ...(optionHoverColor ? { ["--rkb-option-hover-bg"]: optionHoverColor } : {}),
+    ...(scrollbarColor ? { ["--gdy-scrollbar-thumb"]: scrollbarColor } : {}),
+    ...(optionHoverColor ? { ["--gdy-option-hover-bg"]: optionHoverColor } : {}),
   } as CSSProperties;
   const emptyDateState: DateFilterState = dateFilterRequireOperator
     ? EMPTY_DATE_FILTER_STATE
