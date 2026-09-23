@@ -37,7 +37,7 @@ function Calendar({
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
-      className={cn("group/calendar bg-background p-2", className)}
+      className={cn("group/calendar p-2", className)}
       captionLayout={captionLayout}
       locale={activeLocale}
       formatters={{

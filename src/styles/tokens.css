@@ -1,51 +1,78 @@
 /*
- * Default design tokens for the library.
+ * Gridory design tokens.
  *
- * Declared with `:where()` so they have zero specificity: any `:root { ... }`
- * or `.dark { ... }` rule in the consuming app overrides them regardless of
- * stylesheet order. Apps built on shadcn/ui already define the same names.
+ * Base tokens (`--gdy-*`) carry the whole palette. Each one bridges to the
+ * shadcn/ui variable of the same name when the consuming app defines it
+ * (`var(--background, <default>)`), so an app built on shadcn tokens themes
+ * Gridory automatically in light and dark mode, while any app can pin a value
+ * by declaring the `--gdy-*` token itself.
+ *
+ * Declared with `:where()` (zero specificity): a plain `:root { … }` or
+ * `.dark { … }` rule in the app always wins, whatever the stylesheet order.
+ *
+ * Light is the default. Dark applies under `.dark` or `[data-theme="dark"]`;
+ * put it on <html> so portaled content (menus, selects, popovers) sees it.
+ *
+ * Component tokens (`--gdy-table-*`, `--gdy-kanban-*`, `--gdy-select-*`, …)
+ * are never declared here. Components read them with a fallback to a base
+ * token (`var(--gdy-table-head-bg, var(--gdy-muted))`), so an override on any
+ * ancestor works and the theme resolves where it is used.
  */
 :where(:root) {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --radius: 0.625rem;
+  --gdy-background: var(--background, oklch(1 0 0));
+  --gdy-foreground: var(--foreground, oklch(0.145 0 0));
+  --gdy-card: var(--card, oklch(1 0 0));
+  --gdy-card-foreground: var(--card-foreground, oklch(0.145 0 0));
+  --gdy-popover: var(--popover, oklch(1 0 0));
+  --gdy-popover-foreground: var(--popover-foreground, oklch(0.145 0 0));
+  --gdy-primary: var(--primary, oklch(0.205 0 0));
+  --gdy-primary-foreground: var(--primary-foreground, oklch(0.985 0 0));
+  --gdy-secondary: var(--secondary, oklch(0.97 0 0));
+  --gdy-secondary-foreground: var(--secondary-foreground, oklch(0.205 0 0));
+  --gdy-muted: var(--muted, oklch(0.97 0 0));
+  --gdy-muted-foreground: var(--muted-foreground, oklch(0.556 0 0));
+  --gdy-accent: var(--accent, oklch(0.97 0 0));
+  --gdy-accent-foreground: var(--accent-foreground, oklch(0.205 0 0));
+  --gdy-destructive: var(--destructive, oklch(0.577 0.245 27.325));
+  --gdy-destructive-foreground: var(--destructive-foreground, oklch(0.985 0 0));
+  --gdy-border: var(--border, oklch(0.922 0 0));
+  --gdy-input: var(--input, oklch(0.922 0 0));
+  --gdy-ring: var(--ring, oklch(0.708 0 0));
+  --gdy-radius: var(--radius, 0.625rem);
+
+  /* Library-only tokens (no shadcn counterpart). */
+  --gdy-link: oklch(0.546 0.245 262.881);
+  --gdy-overlay: rgb(0 0 0 / 0.3);
+  --gdy-shadow-sm: 0 1px 2px rgb(0 0 0 / 0.12);
+  --gdy-shadow-md: 0 8px 24px rgb(0 0 0 / 0.12);
+  --gdy-font-mono:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
 }
 
-:where(.dark) {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+:where(.dark, [data-theme="dark"]) {
+  --gdy-background: var(--background, oklch(0.145 0 0));
+  --gdy-foreground: var(--foreground, oklch(0.985 0 0));
+  --gdy-card: var(--card, oklch(0.205 0 0));
+  --gdy-card-foreground: var(--card-foreground, oklch(0.985 0 0));
+  --gdy-popover: var(--popover, oklch(0.205 0 0));
+  --gdy-popover-foreground: var(--popover-foreground, oklch(0.985 0 0));
+  --gdy-primary: var(--primary, oklch(0.922 0 0));
+  --gdy-primary-foreground: var(--primary-foreground, oklch(0.205 0 0));
+  --gdy-secondary: var(--secondary, oklch(0.269 0 0));
+  --gdy-secondary-foreground: var(--secondary-foreground, oklch(0.985 0 0));
+  --gdy-muted: var(--muted, oklch(0.269 0 0));
+  --gdy-muted-foreground: var(--muted-foreground, oklch(0.708 0 0));
+  --gdy-accent: var(--accent, oklch(0.269 0 0));
+  --gdy-accent-foreground: var(--accent-foreground, oklch(0.985 0 0));
+  --gdy-destructive: var(--destructive, oklch(0.704 0.191 22.216));
+  --gdy-destructive-foreground: var(--destructive-foreground, oklch(0.985 0 0));
+  --gdy-border: var(--border, oklch(1 0 0 / 10%));
+  --gdy-input: var(--input, oklch(1 0 0 / 15%));
+  --gdy-ring: var(--ring, oklch(0.556 0 0));
+
+  --gdy-link: oklch(0.707 0.165 254.624);
+  --gdy-overlay: rgb(0 0 0 / 0.6);
+  --gdy-shadow-sm: 0 1px 2px rgb(0 0 0 / 0.5);
+  --gdy-shadow-md: 0 8px 24px rgb(0 0 0 / 0.6);
 }

@@ -163,7 +163,7 @@ export function AIChatSidebar(props: AIChatSidebarProps) {
     <>
       {open ? (
         <div
-          className="gdy-scope fixed inset-0 z-40 bg-black/30 backdrop-blur-[2px] md:hidden"
+          className="gdy-scope fixed inset-0 z-40 bg-[var(--gdy-overlay)] backdrop-blur-[2px] md:hidden"
           onClick={onClose}
         />
       ) : null}

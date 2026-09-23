@@ -330,19 +330,19 @@ export const AIAssistantIntegratedMock = () => {
 
   return (
     <div className="space-y-4">
-      <div className="rounded-lg border bg-white p-4">
+      <div className="rounded-lg border bg-card p-4">
         <div className="flex flex-wrap items-center gap-2">
           <h2 className="text-lg font-semibold">
             Mock AI Assistant (Tabla + Kanban)
           </h2>
           <div className="ml-auto flex items-center gap-2">
-            <div className="inline-flex rounded-md border bg-slate-100 p-1">
+            <div className="inline-flex rounded-md border bg-muted p-1">
               <button
                 type="button"
                 className={`rounded px-3 py-1 text-xs font-medium ${
                   view === "table"
-                    ? "bg-slate-900 text-white"
-                    : "text-slate-600 hover:text-slate-900"
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
                 onClick={() => setView("table")}
               >
@@ -352,8 +352,8 @@ export const AIAssistantIntegratedMock = () => {
                 type="button"
                 className={`rounded px-3 py-1 text-xs font-medium ${
                   view === "kanban"
-                    ? "bg-slate-900 text-white"
-                    : "text-slate-600 hover:text-slate-900"
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
                 onClick={() => setView("kanban")}
               >
@@ -367,7 +367,7 @@ export const AIAssistantIntegratedMock = () => {
           </div>
         </div>
 
-        <p className="mt-2 text-sm text-slate-600">
+        <p className="mt-2 text-sm text-muted-foreground">
           Prueba mensajes como:{" "}
           <span className="font-medium">
             “Crea una empresa llamada Boreal en Chile con estado Pendiente”
@@ -376,20 +376,20 @@ export const AIAssistantIntegratedMock = () => {
         </p>
 
         {!hasApiKey && (
-          <div className="mt-3 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+          <div className="mt-3 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-200">
             Sin <code>VITE_AI_API_KEY</code> el mock funciona visualmente, pero
             no puede consultar el proveedor AI real.
           </div>
         )}
         {hasApiKey && (
-          <div className="mt-3 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-800">
+          <div className="mt-3 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-200">
             Base URL activa: <code>{providerConfig.baseURL}</code>
           </div>
         )}
       </div>
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_320px]">
-        <div className="rounded-lg border bg-white p-3">
+        <div className="rounded-lg border bg-card p-3">
           {view === "table" ? (
             <DataTable
               columns={tableColumns}
@@ -491,9 +491,9 @@ export const AIAssistantIntegratedMock = () => {
         </div>
 
         <aside className="space-y-3">
-          <div className="rounded-lg border bg-white p-3">
+          <div className="rounded-lg border bg-card p-3">
             <h3 className="text-sm font-semibold">Cómo probar el flujo</h3>
-            <ol className="mt-2 list-decimal space-y-1 pl-4 text-xs text-slate-600">
+            <ol className="mt-2 list-decimal space-y-1 pl-4 text-xs text-muted-foreground">
               <li>Abre el Asistente AI.</li>
               <li>Pide crear una empresa desde chat.</li>
               <li>Confirma la acción en la tarjeta.</li>
@@ -501,21 +501,21 @@ export const AIAssistantIntegratedMock = () => {
             </ol>
           </div>
 
-          <div className="rounded-lg border bg-white p-3">
+          <div className="rounded-lg border bg-card p-3">
             <h3 className="text-sm font-semibold">Últimos eventos</h3>
             <div className="mt-2 space-y-2">
               {eventLog.length === 0 ? (
-                <p className="text-xs text-slate-500">Aún no hay eventos.</p>
+                <p className="text-xs text-muted-foreground">Aún no hay eventos.</p>
               ) : (
                 eventLog.map((event, index) => (
                   <div
                     key={`${event.type}-${index}`}
-                    className="rounded border bg-slate-50 p-2"
+                    className="rounded border bg-muted p-2"
                   >
-                    <p className="text-[11px] font-medium text-slate-700">
+                    <p className="text-[11px] font-medium text-foreground">
                       {event.type}
                     </p>
-                    <pre className="mt-1 overflow-x-auto text-[10px] text-slate-600">
+                    <pre className="mt-1 overflow-x-auto text-[10px] text-muted-foreground">
                       {JSON.stringify(event.payload, null, 2)}
                     </pre>
                   </div>

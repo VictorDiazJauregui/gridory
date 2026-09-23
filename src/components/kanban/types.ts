@@ -132,12 +132,14 @@ export interface KanbanBoardProps<TData> {
   thinScrollbars?: boolean;
   /**
    * Thumb color for the thin scrollbars, injected as the
-   * `--rkb-scrollbar-thumb` CSS variable. Any CSS color. Defaults to `#cbd5e1`.
+   * `--gdy-scrollbar-thumb` CSS variable. Any CSS color. Defaults to the
+   * `--gdy-input` token.
    */
   scrollbarColor?: string;
   /**
    * Hover background for checklist option rows in the value filter menu,
-   * injected as the `--rkb-option-hover-bg` CSS variable. Defaults to `#f1f5f9`.
+   * injected as the `--gdy-option-hover-bg` CSS variable. Defaults to a
+   * subtle tint of the `--gdy-muted` token.
    */
   optionHoverColor?: string;
   /**

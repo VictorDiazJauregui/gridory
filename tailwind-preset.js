@@ -1,62 +1,83 @@
 /**
  * Gridory Tailwind preset.
  *
- * Maps the shadcn-style design tokens (CSS custom properties) to Tailwind
- * theme keys. The library's own stylesheet ships default values for every
- * token under `:where(:root)` / `:where(.dark)`, so a consumer only needs
- * this preset when it wants to reuse the same token names in its own UI.
+ * Maps the library's design tokens (`--gdy-*` CSS custom properties, shipped
+ * with defaults for light and dark mode in `gridory/styles.css`) to the usual
+ * shadcn-style Tailwind theme keys (`bg-background`, `text-primary`, …). A
+ * consumer only needs this preset when it wants those utilities in its own
+ * UI (for example inside a custom `renderCard`) using the same colors the
+ * library renders with.
  *
  * @type {import('tailwindcss').Config}
  */
+
+/**
+ * Builds a Tailwind color from a `--gdy-*` token. Plain utilities
+ * (`bg-primary`) emit the variable as-is; opacity modifiers (`bg-primary/10`,
+ * `ring-ring/50`) blend the token with `color-mix`, because a variable that
+ * holds a full color cannot take Tailwind's `<alpha-value>` slot. Without
+ * this, Tailwind 3 silently drops the modifier and falls back to its default
+ * (blue) ring color.
+ *
+ * @param {string} name token name without the `--gdy-` prefix
+ */
+const token = (name) => ({ opacityValue }) => {
+  const variable = `var(--gdy-${name})`;
+  if (opacityValue === undefined || String(opacityValue).startsWith("var(")) {
+    return variable;
+  }
+  return `color-mix(in oklab, ${variable} calc(${opacityValue} * 100%), transparent)`;
+};
+
 export default {
   content: [],
   theme: {
     extend: {
       borderColor: {
-        border: "var(--border)",
+        border: token("border"),
       },
       outlineColor: {
-        ring: "var(--ring)",
+        ring: token("ring"),
       },
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        background: token("background"),
+        foreground: token("foreground"),
         card: {
-          DEFAULT: "var(--card)",
-          foreground: "var(--card-foreground)",
+          DEFAULT: token("card"),
+          foreground: token("card-foreground"),
         },
         popover: {
-          DEFAULT: "var(--popover)",
-          foreground: "var(--popover-foreground)",
+          DEFAULT: token("popover"),
+          foreground: token("popover-foreground"),
         },
         primary: {
-          DEFAULT: "var(--primary)",
-          foreground: "var(--primary-foreground)",
+          DEFAULT: token("primary"),
+          foreground: token("primary-foreground"),
         },
         secondary: {
-          DEFAULT: "var(--secondary)",
-          foreground: "var(--secondary-foreground)",
+          DEFAULT: token("secondary"),
+          foreground: token("secondary-foreground"),
         },
         muted: {
-          DEFAULT: "var(--muted)",
-          foreground: "var(--muted-foreground)",
+          DEFAULT: token("muted"),
+          foreground: token("muted-foreground"),
         },
         accent: {
-          DEFAULT: "var(--accent)",
-          foreground: "var(--accent-foreground)",
+          DEFAULT: token("accent"),
+          foreground: token("accent-foreground"),
         },
         destructive: {
-          DEFAULT: "var(--destructive)",
-          foreground: "var(--destructive-foreground)",
+          DEFAULT: token("destructive"),
+          foreground: token("destructive-foreground"),
         },
-        border: "var(--border)",
-        input: "var(--input)",
-        ring: "var(--ring)",
+        border: token("border"),
+        input: token("input"),
+        ring: token("ring"),
       },
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        lg: "var(--gdy-radius)",
+        md: "calc(var(--gdy-radius) - 2px)",
+        sm: "calc(var(--gdy-radius) - 4px)",
       },
     },
   },
