@@ -382,3 +382,85 @@
     transform: rotate(360deg);
   }
 }
+
+/* ----------------------------------------------------------- Action card */
+.gdy-ai-action-card {
+  padding: 12px;
+  border: 1px solid color-mix(in oklab, var(--gdy-ai-accent, var(--gdy-primary)) 20%, transparent);
+  border-radius: 12px;
+  background-color: color-mix(in oklab, var(--gdy-ai-accent, var(--gdy-primary)) 5%, transparent);
+}
+
+.gdy-ai-action-header {
+  margin-bottom: 8px;
+}
+
+.gdy-ai-action-kicker {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+  color: var(--gdy-ai-accent, var(--gdy-primary));
+}
+
+.gdy-ai-action-title {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  color: var(--gdy-foreground);
+}
+
+.gdy-ai-action-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  border: 1px solid color-mix(in oklab, var(--gdy-border) 60%, transparent);
+  border-radius: var(--gdy-radius);
+  background-color: color-mix(in oklab, var(--gdy-background) 80%, transparent);
+}
+
+.gdy-ai-action-empty {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: var(--gdy-muted-foreground);
+}
+
+.gdy-ai-action-field {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 8px;
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.gdy-ai-action-field-label {
+  font-weight: 500;
+  color: var(--gdy-muted-foreground);
+}
+
+.gdy-ai-action-required {
+  margin-left: 2px;
+  color: var(--gdy-ai-accent, var(--gdy-primary));
+}
+
+.gdy-ai-action-field-value {
+  overflow-wrap: break-word;
+  color: var(--gdy-foreground);
+}
+
+.gdy-ai-action-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+/* The outline/sm and default/sm primitives with the small type of the card. */
+.gdy-button.gdy-ai-action-cancel,
+.gdy-button.gdy-ai-action-confirm {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
