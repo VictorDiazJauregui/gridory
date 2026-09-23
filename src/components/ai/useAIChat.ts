@@ -5,13 +5,15 @@ import {
   createAIClient,
   isContextLengthError,
   streamChatCompletion,
-  type AIParsedToolCall,
 } from "./ai-client";
 import { buildToolDefinitions } from "./tool-definitions";
+import { createId } from "./create-id";
+import { normalizeAIError, toError } from "./chat-errors";
+import { mapToolCallToAction, toActionEvent } from "./pending-actions";
+import { resolveFallbackActions } from "./fallback-action";
 import { DEFAULT_MEMORY_CONFIG, DEFAULT_TEXTS } from "./constants";
 import type {
   AIActionEvent,
-  AIActionType,
   AIChatMessage,
   AIChatMode,
   AIDataSchema,
@@ -46,10 +48,6 @@ interface UseAIChatReturn {
   clearMessages: () => void;
 }
 
-const createId = () => {
-  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
-}
-
 const resolveMemoryConfig = (
   memory: AIMemoryConfig | undefined,
 ): Required<AIMemoryConfig> => {
@@ -59,180 +57,6 @@ const resolveMemoryConfig = (
     strategy: memory.strategy ?? DEFAULT_MEMORY_CONFIG.strategy,
     maxMessages: memory.maxMessages ?? DEFAULT_MEMORY_CONFIG.maxMessages,
   };
-}
-
-const normalizeAIError = (error: Error, baseURL: string): Error => {
-  const message = error.message?.toLowerCase() ?? "";
-  const isConnectionError =
-    message.includes("connection error") ||
-    message.includes("failed to fetch") ||
-    message.includes("network");
-  const looksLikeDirectGoogleEndpoint = baseURL.includes(
-    "generativelanguage.googleapis.com",
-  );
-
-  if (isConnectionError && looksLikeDirectGoogleEndpoint) {
-    return new Error(
-      "Connection error. Posible CORS al llamar Gemini directo desde navegador. En desarrollo usa un proxy (ej. /api/google-openai en Vite) o realiza la llamada desde backend.",
-    );
-  }
-  return error;
-}
-
-const extractJsonBlock = (content: string): string | null => {
-  const fencedMatch = content.match(/```json\s*([\s\S]*?)\s*```/i);
-  if (fencedMatch?.[1]) return fencedMatch[1].trim();
-
-  const objectMatch = content.match(/\{[\s\S]*\}/);
-  return objectMatch?.[0] ? objectMatch[0].trim() : null;
-}
-
-const CREATE_ALIASES = new Set(["create-row", "create_record", "create"]);
-const ACTION_TYPE_BY_ALIAS: Record<string, AIActionType> = {
-  "create-card": "create-card",
-  "update-row": "update-row",
-  update_record: "update-row",
-  "move-card": "move-card",
-  move_card: "move-card",
-};
-
-const createActionTypeFor = (mode: AIChatMode): AIActionType =>
-  mode === "kanban" ? "create-card" : "create-row";
-
-const resolveActionTypeFromAlias = (
-  rawType: string,
-  mode: AIChatMode,
-): AIActionType => {
-  if (CREATE_ALIASES.has(rawType)) return createActionTypeFor(mode);
-  return ACTION_TYPE_BY_ALIAS[rawType] ?? "custom";
-};
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null;
-
-const inferActionTypeFromShape = (
-  parsed: Record<string, unknown>,
-  mode: AIChatMode,
-): AIActionType => {
-  if (isRecord(parsed.record)) return createActionTypeFor(mode);
-  if (isRecord(parsed.updates)) return "update-row";
-  const hasTargetColumn =
-    typeof parsed.targetColumn === "string" ||
-    typeof parsed.target_column === "string";
-  if (hasTargetColumn && typeof parsed.id === "string") return "move-card";
-  return "custom";
-};
-
-const parseJsonRecord = (raw: string): Record<string, unknown> | null => {
-  try {
-    return JSON.parse(raw) as Record<string, unknown>;
-  } catch {
-    return null;
-  }
-};
-
-const parseFallbackAction = (
-  content: string,
-  mode: AIChatMode,
-): AIPendingAction | null => {
-  const jsonRaw = extractJsonBlock(content);
-  const parsed = jsonRaw ? parseJsonRecord(jsonRaw) : null;
-  if (!parsed) return null;
-
-  const rawType = String(parsed.type ?? parsed.action ?? "").toLowerCase();
-  const type = rawType
-    ? resolveActionTypeFromAlias(rawType, mode)
-    : inferActionTypeFromShape(parsed, mode);
-  const payload =
-    (parsed.payload as Record<string, unknown> | undefined) ??
-    (parsed.record as Record<string, unknown> | undefined) ??
-    parsed;
-
-  return { id: `fallback-${createId()}`, type, mode, payload, rawResponse: content };
-}
-
-const applyFixedValues = (
-  payload: Record<string, unknown>,
-  schema?: AIDataSchema,
-): Record<string, unknown> => {
-  if (!schema) return payload;
-  const result: Record<string, unknown> = { ...payload };
-  schema.fields.forEach((field) => {
-    if (field.fixedValue !== undefined) {
-      result[field.id] = field.fixedValue;
-    } else if (
-      field.defaultValue !== undefined &&
-      (result[field.id] === undefined || result[field.id] === null)
-    ) {
-      result[field.id] = field.defaultValue;
-    }
-  });
-  return result;
-}
-
-interface ToolCallActionInput {
-  toolCall: AIParsedToolCall;
-  rawResponse: string;
-  mode: AIChatMode;
-  schema?: AIDataSchema;
-}
-
-const mapToolCallToAction = ({
-  toolCall,
-  rawResponse,
-  mode,
-  schema,
-}: ToolCallActionInput): AIPendingAction | null => {
-  const args = toolCall.parsedArguments ?? {};
-
-  if (toolCall.name === "create_record") {
-    const record =
-      (args.record as Record<string, unknown> | undefined) ?? args ?? {};
-    return {
-      id: toolCall.id || `action-${createId()}`,
-      type: mode === "kanban" ? "create-card" : "create-row",
-      mode,
-      payload: applyFixedValues(record, schema),
-      rawResponse,
-    };
-  }
-
-  if (toolCall.name === "update_record") {
-    const updates = (args.updates as Record<string, unknown> | undefined) ?? {};
-    const payload: Record<string, unknown> = {
-      id: args.id,
-      ...applyFixedValues(updates, schema),
-    };
-    return {
-      id: toolCall.id || `action-${createId()}`,
-      type: "update-row",
-      mode,
-      payload,
-      rawResponse,
-    };
-  }
-
-  if (toolCall.name === "move_card") {
-    return {
-      id: toolCall.id || `action-${createId()}`,
-      type: "move-card",
-      mode,
-      payload: args,
-      rawResponse,
-    };
-  }
-
-  if (Object.keys(args).length > 0) {
-    return {
-      id: toolCall.id || `action-${createId()}`,
-      type: "custom",
-      mode,
-      payload: args,
-      rawResponse,
-    };
-  }
-
-  return null;
 }
 
 interface RetryContext {
@@ -254,22 +78,6 @@ const resolveRetryPayload = (
     );
   }
   return applyHistoryStrategy(fullMessages, "minimal", maxMessages);
-};
-
-interface FallbackContext {
-  enableActions: boolean;
-  mode: AIChatMode;
-  schema?: AIDataSchema;
-}
-
-const resolveFallbackActions = (
-  content: string,
-  { enableActions, mode, schema }: FallbackContext,
-): AIPendingAction[] => {
-  if (!enableActions) return [];
-  const action = parseFallbackAction(content, mode);
-  if (!action) return [];
-  return [{ ...action, payload: applyFixedValues(action.payload, schema) }];
 };
 
 const toOpenAIMessages = (
@@ -447,11 +255,10 @@ export const useAIChat = (config: UseAIChatConfig): UseAIChatReturn => {
           },
         ]);
       } catch (unknownError) {
-        const rawError =
-          unknownError instanceof Error
-            ? unknownError
-            : new Error(resolvedTexts.genericError);
-        const error = normalizeAIError(rawError, providerConfig.baseURL);
+        const error = normalizeAIError(
+          toError(unknownError, resolvedTexts.genericError),
+          providerConfig.baseURL,
+        );
         onError?.(error);
         setMessages((previous) => [
           ...previous,
@@ -492,12 +299,7 @@ export const useAIChat = (config: UseAIChatConfig): UseAIChatReturn => {
       );
 
       try {
-        onAction?.({
-          type: actionToConfirm.type,
-          mode: actionToConfirm.mode,
-          payload: actionToConfirm.payload,
-          rawResponse: actionToConfirm.rawResponse,
-        });
+        onAction?.(toActionEvent(actionToConfirm));
         setMessages((previous) => [
           ...previous,
           {
@@ -508,10 +310,10 @@ export const useAIChat = (config: UseAIChatConfig): UseAIChatReturn => {
           },
         ]);
       } catch (unknownError) {
-        const error =
-          unknownError instanceof Error
-            ? unknownError
-            : new Error("No se pudo confirmar la acción.");
+        const error = toError(
+          unknownError,
+          "No se pudo confirmar la acción.",
+        );
         onError?.(error);
         setMessages((previous) => [
           ...previous,
