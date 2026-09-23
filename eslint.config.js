@@ -27,7 +27,12 @@ export default defineConfig([
       ecmaVersion: 2020,
       globals: globals.browser,
     },
-    rules: codeStyleRules,
+    rules: {
+      ...codeStyleRules,
+      // The package is not compiled with the React Compiler, and TanStack
+      // Table's instance can never be memoized: the note is noise here.
+      'react-hooks/incompatible-library': 'off',
+    },
   },
   {
     files: ['scripts/**/*.mjs'],
