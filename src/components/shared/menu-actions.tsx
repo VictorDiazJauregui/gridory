@@ -286,7 +286,7 @@ export function renderMenuNodes(nodes: ResolvedMenuNode[]): ReactNode {
         onClick={stopEvent}
       >
         {node.icon}
-        <span>{node.label}</span>
+        <span className="gdy-menu-item-label">{node.label}</span>
       </DropdownMenuItem>
     );
   });

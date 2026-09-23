@@ -187,3 +187,81 @@
   outline-offset: 2px;
   transform-origin: var(--radix-popover-content-transform-origin);
 }
+
+/* --------------------------------------------------------- Dropdown menu */
+.gdy-menu-content {
+  z-index: 50;
+  min-width: 9rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 4px;
+  border-radius: var(--gdy-radius);
+  background-color: var(--gdy-menu-bg, var(--gdy-popover));
+  color: var(--gdy-menu-fg, var(--gdy-popover-foreground));
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--gdy-foreground) 10%, transparent),
+    var(--gdy-shadow-md);
+  transform-origin: var(--radix-dropdown-menu-content-transform-origin);
+}
+
+.gdy-menu-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: calc(var(--gdy-radius) - 2px);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  cursor: pointer;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  user-select: none;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-duration: 0.15s;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Radix moves focus to the highlighted item (keyboard and pointer). */
+.gdy-menu-item:focus {
+  background-color: var(--gdy-menu-item-hover-bg, var(--gdy-accent));
+  color: var(--gdy-accent-foreground);
+}
+
+.gdy-menu-item[data-disabled] {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.gdy-menu-item:where([data-variant="destructive"]) {
+  color: var(--gdy-destructive);
+}
+
+.gdy-menu-item:where([data-variant="destructive"]):focus {
+  background-color: color-mix(in oklab, var(--gdy-destructive) 10%, transparent);
+  color: var(--gdy-destructive);
+}
+
+/* Icons arrive from the consumer (RowAction.icon) without a class. */
+.gdy-menu-item svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+.gdy-menu-label {
+  padding: 6px 8px;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 500;
+  color: var(--gdy-muted-foreground);
+}
+
+.gdy-menu-separator {
+  height: 1px;
+  margin: 4px -4px;
+  background-color: var(--gdy-border);
+}
