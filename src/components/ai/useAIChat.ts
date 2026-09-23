@@ -2,12 +2,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 import {
   applyHistoryStrategy,
-  buildToolDefinitions,
   createAIClient,
   isContextLengthError,
   streamChatCompletion,
   type AIParsedToolCall,
 } from "./ai-client";
+import { buildToolDefinitions } from "./tool-definitions";
 import { DEFAULT_MEMORY_CONFIG, DEFAULT_TEXTS } from "./constants";
 import type {
   AIActionEvent,

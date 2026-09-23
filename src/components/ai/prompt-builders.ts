@@ -1,4 +1,4 @@
-import { buildToolDefinitions } from "./ai-client";
+import { buildToolDefinitions } from "./tool-definitions";
 import type { AIChatMode, AIDataSchema, AIFieldDescriptor } from "./types";
 
 const CHATBOT_BASE_PROMPT =

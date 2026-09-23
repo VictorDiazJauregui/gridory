@@ -4,12 +4,7 @@ import type {
   ChatCompletionMessageParam,
   ChatCompletionTool,
 } from "openai/resources/chat/completions";
-import type {
-  AIChatMode,
-  AIFieldDescriptor,
-  AIHistoryStrategy,
-  AIProviderConfig,
-} from "./types";
+import type { AIHistoryStrategy, AIProviderConfig } from "./types";
 
 export interface AIParsedToolCall {
   id: string;
@@ -28,11 +23,13 @@ interface StreamChatCompletionParams {
   onContent?: (fullContent: string, delta: string) => void;
 }
 
-interface StreamChatCompletionResult {
+export interface StreamChatCompletionResult {
   content: string;
   toolCalls: AIParsedToolCall[];
   rawResponse: string;
 }
+
+type ToolCallDelta = ChatCompletionChunk.Choice.Delta.ToolCall;
 
 const fallbackConfig: Pick<AIProviderConfig, "temperature" | "maxTokens"> = {
   temperature: 0.7,
@@ -52,7 +49,7 @@ export const isContextLengthError = (error: unknown): boolean => {
   if (!(error instanceof Error)) return false;
   const message = error.message?.toLowerCase() ?? "";
   return CONTEXT_LENGTH_ERROR_HINTS.some((hint) => message.includes(hint));
-}
+};
 
 const parseToolCallArguments = (value: string): Record<string, unknown> | null => {
   if (!value.trim()) return null;
@@ -61,50 +58,7 @@ const parseToolCallArguments = (value: string): Record<string, unknown> | null =
   } catch {
     return null;
   }
-}
-
-const JSON_SCHEMA_TYPE_BY_VALUE_TYPE: Record<string, string> = {
-  number: "number",
-  boolean: "boolean",
 };
-
-const fieldToSchema = (field: AIFieldDescriptor): Record<string, unknown> => {
-  const description = field.description ?? field.label;
-
-  if (field.fixedValue !== undefined) {
-    return {
-      type: JSON_SCHEMA_TYPE_BY_VALUE_TYPE[typeof field.fixedValue] ?? "string",
-      const: field.fixedValue,
-      description: `${description}. Valor fijo obligatorio.`,
-    };
-  }
-
-  if (field.type === "number") {
-    return { type: "number", description };
-  }
-  if (field.type === "boolean") {
-    return { type: "boolean", description };
-  }
-  if (field.type === "date") {
-    return {
-      type: "string",
-      format: "date-time",
-      description: `${description}. Usa formato ISO 8601 cuando aplique.`,
-    };
-  }
-  if (field.type === "select") {
-    const options = field.options?.map((option) => option.value) ?? [];
-    return {
-      type: "string",
-      enum: options.length > 0 ? options : undefined,
-      description:
-        options.length > 0
-          ? `${description}. Opciones permitidas: ${options.join(", ")}.`
-          : description,
-    };
-  }
-  return { type: "string", description };
-}
 
 const resolveBaseURL = (baseURL: string): string => {
   const trimmed = baseURL.trim();
@@ -117,7 +71,7 @@ const resolveBaseURL = (baseURL: string): string => {
     return new URL(trimmed, window.location.origin).toString();
   }
   return trimmed;
-}
+};
 
 export const createAIClient = (config: AIProviderConfig): OpenAI => {
   return new OpenAI({
@@ -125,85 +79,36 @@ export const createAIClient = (config: AIProviderConfig): OpenAI => {
     baseURL: resolveBaseURL(config.baseURL),
     dangerouslyAllowBrowser: true,
   });
-}
+};
 
-export const buildToolDefinitions = (
-  fields: AIFieldDescriptor[],
-  mode: AIChatMode,
-): ChatCompletionTool[] => {
-  if (mode === "chatbot" || fields.length === 0) return [];
+const withSystemMessage = (
+  systemMessage: ChatCompletionMessageParam | undefined,
+  rest: ChatCompletionMessageParam[],
+): ChatCompletionMessageParam[] =>
+  systemMessage ? [systemMessage, ...rest] : rest;
 
-  const properties = Object.fromEntries(
-    fields.map((field) => [field.id, fieldToSchema(field)]),
-  );
-  const required = fields
-    .filter((field) => field.required || field.fixedValue !== undefined)
-    .map((field) => field.id);
+const keepLastByRole = (
+  conversation: ChatCompletionMessageParam[],
+  roles: Array<ChatCompletionMessageParam["role"]>,
+): ChatCompletionMessageParam[] => {
+  const reversed = [...conversation].reverse();
+  return roles.flatMap((role) => {
+    const last = reversed.find((message) => message.role === role);
+    return last ? [last] : [];
+  });
+};
 
-  const tools: ChatCompletionTool[] = [
-    {
-      type: "function",
-      function: {
-        name: "create_record",
-        description:
-          "Proponer la creación de un nuevo registro o card con los campos detectados.",
-        parameters: {
-          type: "object",
-          properties: {
-            record: {
-              type: "object",
-              properties,
-              required,
-            },
-          },
-          required: ["record"],
-        },
-      },
-    },
-    {
-      type: "function",
-      function: {
-        name: "update_record",
-        description:
-          "Proponer actualización de un registro existente usando un id y cambios parciales.",
-        parameters: {
-          type: "object",
-          properties: {
-            id: { type: "string", description: "Identificador del registro." },
-            updates: {
-              type: "object",
-              properties,
-            },
-          },
-          required: ["id", "updates"],
-        },
-      },
-    },
-  ];
-
-  if (mode === "kanban") {
-    tools.push({
-      type: "function",
-      function: {
-        name: "move_card",
-        description: "Mover una card a otra columna del tablero kanban.",
-        parameters: {
-          type: "object",
-          properties: {
-            id: { type: "string", description: "Identificador de la card." },
-            targetColumn: {
-              type: "string",
-              description: "Columna destino en el tablero kanban.",
-            },
-          },
-          required: ["id", "targetColumn"],
-        },
-      },
-    });
+const selectConversation = (
+  conversation: ChatCompletionMessageParam[],
+  strategy: AIHistoryStrategy,
+  maxMessages: number,
+): ChatCompletionMessageParam[] => {
+  if (strategy === "none") return keepLastByRole(conversation, ["user"]);
+  if (strategy === "minimal") {
+    return keepLastByRole(conversation, ["assistant", "user"]);
   }
-
-  return tools;
-}
+  return conversation.slice(-Math.max(2, maxMessages));
+};
 
 export const applyHistoryStrategy = (
   messages: ChatCompletionMessageParam[],
@@ -212,38 +117,33 @@ export const applyHistoryStrategy = (
 ): ChatCompletionMessageParam[] => {
   const systemMessage = messages.find((message) => message.role === "system");
   const conversation = messages.filter((message) => message.role !== "system");
+  if (conversation.length === 0) return withSystemMessage(systemMessage, []);
+  return withSystemMessage(
+    systemMessage,
+    selectConversation(conversation, strategy, maxMessages),
+  );
+};
 
-  if (conversation.length === 0) {
-    return systemMessage ? [systemMessage] : [];
+const mergeToolCallDelta = (
+  partials: Record<number, AIParsedToolCall>,
+  toolCall: ToolCallDelta,
+  fallbackIndex: number,
+) => {
+  const key = toolCall.index ?? fallbackIndex;
+  const existing = partials[key] ?? {
+    id: toolCall.id ?? `tool-${key}`,
+    name: "",
+    arguments: "",
+    parsedArguments: null,
+  };
+  const functionName = toolCall.function?.name;
+  if (functionName) existing.name = functionName;
+  if (toolCall.id) existing.id = toolCall.id;
+  if (toolCall.function?.arguments) {
+    existing.arguments += toolCall.function.arguments;
   }
-
-  if (strategy === "none") {
-    const lastUser = [...conversation]
-      .reverse()
-      .find((message) => message.role === "user");
-    return [
-      ...(systemMessage ? [systemMessage] : []),
-      ...(lastUser ? [lastUser] : []),
-    ];
-  }
-
-  if (strategy === "minimal") {
-    const lastUser = [...conversation]
-      .reverse()
-      .find((message) => message.role === "user");
-    const lastAssistant = [...conversation]
-      .reverse()
-      .find((message) => message.role === "assistant");
-    const keep: ChatCompletionMessageParam[] = [];
-    if (lastAssistant) keep.push(lastAssistant);
-    if (lastUser) keep.push(lastUser);
-    return [...(systemMessage ? [systemMessage] : []), ...keep];
-  }
-
-  const safeMax = Math.max(2, maxMessages);
-  const windowed = conversation.slice(-safeMax);
-  return [...(systemMessage ? [systemMessage] : []), ...windowed];
-}
+  partials[key] = existing;
+};
 
 const mergeToolCallChunks = (
   chunk: ChatCompletionChunk,
@@ -251,30 +151,12 @@ const mergeToolCallChunks = (
 ) => {
   const toolCalls = chunk.choices[0]?.delta?.tool_calls;
   if (!toolCalls || toolCalls.length === 0) return;
+  toolCalls.forEach((toolCall, index) =>
+    mergeToolCallDelta(partials, toolCall, index),
+  );
+};
 
-  toolCalls.forEach((toolCall, index) => {
-    const key = toolCall.index ?? index;
-    const existing = partials[key] ?? {
-      id: toolCall.id ?? `tool-${key}`,
-      name: "",
-      arguments: "",
-      parsedArguments: null,
-    };
-
-    const functionName = toolCall.function?.name;
-    if (functionName) existing.name = functionName;
-    if (toolCall.id) existing.id = toolCall.id;
-    if (toolCall.function?.arguments) {
-      existing.arguments += toolCall.function.arguments;
-    }
-
-    partials[key] = existing;
-  });
-}
-
-export const streamChatCompletion = async (
-  params: StreamChatCompletionParams,
-): Promise<StreamChatCompletionResult> => {
+const createCompletionStream = (params: StreamChatCompletionParams) => {
   const {
     client,
     messages,
@@ -282,10 +164,8 @@ export const streamChatCompletion = async (
     temperature = fallbackConfig.temperature,
     maxTokens = fallbackConfig.maxTokens,
     tools,
-    onContent,
   } = params;
-
-  const stream = await client.chat.completions.create({
+  return client.chat.completions.create({
     model,
     stream: true,
     messages,
@@ -293,10 +173,14 @@ export const streamChatCompletion = async (
     max_completion_tokens: maxTokens,
     tools,
   });
+};
 
+const consumeStream = async (
+  stream: AsyncIterable<ChatCompletionChunk>,
+  onContent: StreamChatCompletionParams["onContent"],
+) => {
   let content = "";
   const partialToolCalls: Record<number, AIParsedToolCall> = {};
-
   for await (const chunk of stream) {
     const token = chunk.choices[0]?.delta?.content ?? "";
     if (token) {
@@ -305,15 +189,28 @@ export const streamChatCompletion = async (
     }
     mergeToolCallChunks(chunk, partialToolCalls);
   }
+  return { content, partialToolCalls };
+};
 
-  const toolCalls = Object.values(partialToolCalls).map((toolCall) => ({
+const finalizeToolCalls = (
+  partials: Record<number, AIParsedToolCall>,
+): AIParsedToolCall[] =>
+  Object.values(partials).map((toolCall) => ({
     ...toolCall,
     parsedArguments: parseToolCallArguments(toolCall.arguments),
   }));
 
+export const streamChatCompletion = async (
+  params: StreamChatCompletionParams,
+): Promise<StreamChatCompletionResult> => {
+  const stream = await createCompletionStream(params);
+  const { content, partialToolCalls } = await consumeStream(
+    stream,
+    params.onContent,
+  );
   return {
     content: content.trim(),
-    toolCalls,
+    toolCalls: finalizeToolCalls(partialToolCalls),
     rawResponse: content,
   };
-}
+};
