@@ -12,12 +12,12 @@ interface AIChatButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
  * Rendered in the host's own toolbar, outside any Gridory root, so it carries
  * `gdy-scope` itself.
  */
-export function AIChatButton({
+export const AIChatButton = ({
   label = "AI",
   className,
   type,
   ...props
-}: AIChatButtonProps) {
+}: AIChatButtonProps) => {
   return (
     <Button
       type={type ?? "button"}

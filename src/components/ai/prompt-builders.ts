@@ -4,7 +4,7 @@ import type { AIChatMode, AIDataSchema, AIFieldDescriptor } from "./types";
 const CHATBOT_BASE_PROMPT =
   "Eres un asistente AI útil, preciso y conciso. Responde siempre en español con Markdown breve y claro cuando aporte valor. Si no tienes información suficiente, pide aclaraciones en lugar de inventar.";
 
-function stringifyValue(value: unknown): string {
+const stringifyValue = (value: unknown): string => {
   if (value === null || value === undefined) return "—";
   if (typeof value === "string") return value;
   if (typeof value === "number" || typeof value === "boolean")
@@ -21,7 +21,7 @@ function stringifyValue(value: unknown): string {
   return String(value);
 }
 
-function summarizeRows(rows: Record<string, unknown>[]): string {
+const summarizeRows = (rows: Record<string, unknown>[]): string => {
   if (rows.length === 0) return "No hay registros disponibles.";
   const sample = rows.slice(0, 50);
   const numericStats: string[] = [];
@@ -63,7 +63,7 @@ function summarizeRows(rows: Record<string, unknown>[]): string {
     .join("\n");
 }
 
-function describeField(field: AIFieldDescriptor): string {
+const describeField = (field: AIFieldDescriptor): string => {
   const requiredLabel = field.required ? " (requerido)" : "";
   const optionsLabel =
     field.type === "select" && field.options && field.options.length > 0
@@ -84,7 +84,7 @@ function describeField(field: AIFieldDescriptor): string {
   return `- ${field.label} [${field.id}] tipo ${field.type}${requiredLabel}.${descriptionLabel}${optionsLabel}${fixedLabel}${defaultLabel}`;
 }
 
-function buildCommonPrompt(schema: AIDataSchema): string {
+const buildCommonPrompt = (schema: AIDataSchema): string => {
   const rows = schema.rows ?? [];
   return [
     `Entidad principal: ${schema.entityName}.`,
@@ -109,17 +109,17 @@ function buildCommonPrompt(schema: AIDataSchema): string {
     .join("\n");
 }
 
-export function buildChatbotSystemPrompt(customPrompt?: string): string {
+export const buildChatbotSystemPrompt = (customPrompt?: string): string => {
   if (customPrompt?.trim()) {
     return [CHATBOT_BASE_PROMPT, customPrompt.trim()].join("\n\n");
   }
   return CHATBOT_BASE_PROMPT;
 }
 
-export function buildTableSystemPrompt(
+export const buildTableSystemPrompt = (
   schema: AIDataSchema,
   customPrompt?: string,
-): string {
+): string => {
   const sections = [
     "Eres un asistente experto analizando tablas de datos de negocio.",
     buildCommonPrompt(schema),
@@ -133,10 +133,10 @@ export function buildTableSystemPrompt(
   return sections.join("\n\n");
 }
 
-export function buildKanbanSystemPrompt(
+export const buildKanbanSystemPrompt = (
   schema: AIDataSchema,
   customPrompt?: string,
-): string {
+): string => {
   const groupField = schema.kanbanGroupField ?? "columna";
   const sections = [
     "Eres un asistente experto analizando tableros kanban de negocio.",
@@ -158,7 +158,7 @@ interface ResolveSystemPromptParams {
   chatbotPrompt?: string;
 }
 
-export function resolveSystemPrompt(params: ResolveSystemPromptParams): string {
+export const resolveSystemPrompt = (params: ResolveSystemPromptParams): string => {
   const { mode, dataSchema, systemPrompt, chatbotPrompt } = params;
 
   if (systemPrompt?.trim()) return systemPrompt.trim();

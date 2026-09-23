@@ -46,13 +46,13 @@ interface UseAIChatReturn {
   clearMessages: () => void;
 }
 
-function createId() {
+const createId = () => {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
-function resolveMemoryConfig(
+const resolveMemoryConfig = (
   memory: AIMemoryConfig | undefined,
-): Required<AIMemoryConfig> {
+): Required<AIMemoryConfig> => {
   if (!memory) return DEFAULT_MEMORY_CONFIG;
   return {
     enabled: memory.enabled,
@@ -61,7 +61,7 @@ function resolveMemoryConfig(
   };
 }
 
-function normalizeAIError(error: Error, baseURL: string): Error {
+const normalizeAIError = (error: Error, baseURL: string): Error => {
   const message = error.message?.toLowerCase() ?? "";
   const isConnectionError =
     message.includes("connection error") ||
@@ -79,7 +79,7 @@ function normalizeAIError(error: Error, baseURL: string): Error {
   return error;
 }
 
-function extractJsonBlock(content: string): string | null {
+const extractJsonBlock = (content: string): string | null => {
   const fencedMatch = content.match(/```json\s*([\s\S]*?)\s*```/i);
   if (fencedMatch?.[1]) return fencedMatch[1].trim();
 
@@ -131,10 +131,10 @@ const parseJsonRecord = (raw: string): Record<string, unknown> | null => {
   }
 };
 
-function parseFallbackAction(
+const parseFallbackAction = (
   content: string,
   mode: AIChatMode,
-): AIPendingAction | null {
+): AIPendingAction | null => {
   const jsonRaw = extractJsonBlock(content);
   const parsed = jsonRaw ? parseJsonRecord(jsonRaw) : null;
   if (!parsed) return null;
@@ -151,10 +151,10 @@ function parseFallbackAction(
   return { id: `fallback-${createId()}`, type, mode, payload, rawResponse: content };
 }
 
-function applyFixedValues(
+const applyFixedValues = (
   payload: Record<string, unknown>,
   schema?: AIDataSchema,
-): Record<string, unknown> {
+): Record<string, unknown> => {
   if (!schema) return payload;
   const result: Record<string, unknown> = { ...payload };
   schema.fields.forEach((field) => {
@@ -177,12 +177,12 @@ interface ToolCallActionInput {
   schema?: AIDataSchema;
 }
 
-function mapToolCallToAction({
+const mapToolCallToAction = ({
   toolCall,
   rawResponse,
   mode,
   schema,
-}: ToolCallActionInput): AIPendingAction | null {
+}: ToolCallActionInput): AIPendingAction | null => {
   const args = toolCall.parsedArguments ?? {};
 
   if (toolCall.name === "create_record") {
@@ -272,10 +272,10 @@ const resolveFallbackActions = (
   return [{ ...action, payload: applyFixedValues(action.payload, schema) }];
 };
 
-function toOpenAIMessages(
+const toOpenAIMessages = (
   messages: AIChatMessage[],
   systemPrompt: string,
-): ChatCompletionMessageParam[] {
+): ChatCompletionMessageParam[] => {
   const conversation = messages
     .filter((message) => message.role !== "system")
     .map(
@@ -287,7 +287,7 @@ function toOpenAIMessages(
   return [{ role: "system", content: systemPrompt }, ...conversation];
 }
 
-export function useAIChat(config: UseAIChatConfig): UseAIChatReturn {
+export const useAIChat = (config: UseAIChatConfig): UseAIChatReturn => {
   const {
     providerConfig,
     systemPrompt,

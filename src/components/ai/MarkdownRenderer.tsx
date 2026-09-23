@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-function renderInline(text: string): ReactNode[] {
+const renderInline = (text: string): ReactNode[] => {
   const parts = text.split(/(\*\*[^*]+\*\*)/g);
   return parts.map((part, index) => {
     if (part.startsWith("**") && part.endsWith("**")) {
@@ -18,7 +18,7 @@ function renderInline(text: string): ReactNode[] {
   });
 }
 
-export function MarkdownRenderer({ text }: { text: string }) {
+export const MarkdownRenderer = ({ text }: { text: string }) => {
   const lines = text.split("\n");
 
   return (

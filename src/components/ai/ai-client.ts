@@ -48,13 +48,13 @@ const CONTEXT_LENGTH_ERROR_HINTS = [
   "reduce the length",
 ];
 
-export function isContextLengthError(error: unknown): boolean {
+export const isContextLengthError = (error: unknown): boolean => {
   if (!(error instanceof Error)) return false;
   const message = error.message?.toLowerCase() ?? "";
   return CONTEXT_LENGTH_ERROR_HINTS.some((hint) => message.includes(hint));
 }
 
-function parseToolCallArguments(value: string): Record<string, unknown> | null {
+const parseToolCallArguments = (value: string): Record<string, unknown> | null => {
   if (!value.trim()) return null;
   try {
     return JSON.parse(value) as Record<string, unknown>;
@@ -68,7 +68,7 @@ const JSON_SCHEMA_TYPE_BY_VALUE_TYPE: Record<string, string> = {
   boolean: "boolean",
 };
 
-function fieldToSchema(field: AIFieldDescriptor): Record<string, unknown> {
+const fieldToSchema = (field: AIFieldDescriptor): Record<string, unknown> => {
   const description = field.description ?? field.label;
 
   if (field.fixedValue !== undefined) {
@@ -106,7 +106,7 @@ function fieldToSchema(field: AIFieldDescriptor): Record<string, unknown> {
   return { type: "string", description };
 }
 
-function resolveBaseURL(baseURL: string): string {
+const resolveBaseURL = (baseURL: string): string => {
   const trimmed = baseURL.trim();
   if (!trimmed) return trimmed;
 
@@ -119,7 +119,7 @@ function resolveBaseURL(baseURL: string): string {
   return trimmed;
 }
 
-export function createAIClient(config: AIProviderConfig): OpenAI {
+export const createAIClient = (config: AIProviderConfig): OpenAI => {
   return new OpenAI({
     apiKey: config.apiKey,
     baseURL: resolveBaseURL(config.baseURL),
@@ -127,10 +127,10 @@ export function createAIClient(config: AIProviderConfig): OpenAI {
   });
 }
 
-export function buildToolDefinitions(
+export const buildToolDefinitions = (
   fields: AIFieldDescriptor[],
   mode: AIChatMode,
-): ChatCompletionTool[] {
+): ChatCompletionTool[] => {
   if (mode === "chatbot" || fields.length === 0) return [];
 
   const properties = Object.fromEntries(
@@ -205,11 +205,11 @@ export function buildToolDefinitions(
   return tools;
 }
 
-export function applyHistoryStrategy(
+export const applyHistoryStrategy = (
   messages: ChatCompletionMessageParam[],
   strategy: AIHistoryStrategy,
   maxMessages: number,
-): ChatCompletionMessageParam[] {
+): ChatCompletionMessageParam[] => {
   const systemMessage = messages.find((message) => message.role === "system");
   const conversation = messages.filter((message) => message.role !== "system");
 
@@ -245,10 +245,10 @@ export function applyHistoryStrategy(
   return [...(systemMessage ? [systemMessage] : []), ...windowed];
 }
 
-function mergeToolCallChunks(
+const mergeToolCallChunks = (
   chunk: ChatCompletionChunk,
   partials: Record<number, AIParsedToolCall>,
-) {
+) => {
   const toolCalls = chunk.choices[0]?.delta?.tool_calls;
   if (!toolCalls || toolCalls.length === 0) return;
 
@@ -272,9 +272,9 @@ function mergeToolCallChunks(
   });
 }
 
-export async function streamChatCompletion(
+export const streamChatCompletion = async (
   params: StreamChatCompletionParams,
-): Promise<StreamChatCompletionResult> {
+): Promise<StreamChatCompletionResult> => {
   const {
     client,
     messages,

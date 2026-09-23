@@ -22,12 +22,12 @@ import { useAIChat } from "./useAIChat";
 import type { AIChatMode, AIChatSidebarProps, AIEmptyState } from "./types";
 import "./styles.css";
 
-function resolveMode(props: AIChatSidebarProps): AIChatMode {
+const resolveMode = (props: AIChatSidebarProps): AIChatMode => {
   if (props.mode) return props.mode;
   return props.dataSchema ? "table" : "chatbot";
 }
 
-function resolveEmptyState(
+const resolveEmptyState = (
   mode: AIChatMode,
   explicit: AIEmptyState | undefined,
   textOverrides: AIChatSidebarProps["texts"],
@@ -35,7 +35,7 @@ function resolveEmptyState(
   title: string;
   description: string;
   icon?: AIEmptyState["icon"];
-} {
+} => {
   const fallback =
     mode === "chatbot" ? DEFAULT_EMPTY_STATE_CHATBOT : DEFAULT_EMPTY_STATE_DATA;
   const textBase =
@@ -48,7 +48,7 @@ function resolveEmptyState(
   };
 }
 
-export function AIChatSidebar(props: AIChatSidebarProps) {
+export const AIChatSidebar = (props: AIChatSidebarProps) => {
   const {
     open,
     onClose,
