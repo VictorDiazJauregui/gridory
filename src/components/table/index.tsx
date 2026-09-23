@@ -3,14 +3,14 @@ import "./styles.css";
 import { cn } from "../../lib/cn";
 import { resolveRootStyle } from "../shared/root-style";
 import { Toolbar } from "../shared/toolbar";
-import { buildPaginationProps } from "./pagination-props";
+import { buildPaginationProps } from "./pagination/pagination-props";
 import type { TableSettings } from "./settings";
-import { TableScrollArea } from "./TableScrollArea";
-import { TablePagination } from "./TablePagination";
+import { TableScrollArea } from "./body/TableScrollArea";
+import { TablePagination } from "./pagination/TablePagination";
 import { buildToolbarProps } from "./toolbar-props";
 import type { DataTableProps } from "./types";
-import { useTableCore, type TableModel } from "./use-table-core";
-import { useTableOptions } from "./use-table-options";
+import { useTableCore, type TableModel } from "./model/use-table-core";
+import { useTableOptions } from "./model/use-table-options";
 
 const resolveRootClassName = <TData,>(settings: TableSettings<TData>) => {
   const showStickyHeader =

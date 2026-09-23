@@ -5,8 +5,8 @@ import {
   pickToolbarPassThrough,
 } from "../shared/toolbar/toolbar-props";
 import { GROUP_NONE_VALUE } from "./constants";
-import { buildGroupSelectOptions } from "./row-grouping";
-import type { TableModel } from "./use-table-core";
+import { buildGroupSelectOptions } from "./model/row-grouping";
+import type { TableModel } from "./model/use-table-core";
 
 const buildSearchChangeHandler =
   <TData>({ settings, state, paging }: TableModel<TData>) =>

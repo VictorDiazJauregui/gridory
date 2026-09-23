@@ -32,25 +32,28 @@ No contiene lógica de negocio específica; solo emite eventos para que cada pro
 
 ## 2) Arquitectura interna
 
-Directorio: `src/components/table/`
+Directorio: `src/components/table/`. Los archivos se agrupan por área de responsabilidad: cada carpeta reúne
+los hooks, la lógica pura y los componentes de una misma parte de la tabla.
 
-- `index.tsx`: `DataTable`, que compone el modelo y los tres bloques (toolbar, área de scroll, paginación).
-- `types.ts`: contratos públicos e internos. `constants.ts`: defaults y constantes.
-- `settings.ts`: props con defaults aplicados y flags de features (`TableSettings`).
-- Modelo (`use-table-core.ts`): `useTableCore` compone `use-table-state.ts` (búsqueda, orden, filtros, agrupado
-  y archivados), `use-table-rows.ts` (normalización, `use-searched-table-rows.ts`, `use-filtered-table-rows.ts`,
-  `use-grouped-rows.ts`) y `use-table-paging.ts` (`use-table-pagination.ts`, `use-paged-rows.ts`, `page-range.ts`,
-  `use-view-snapshot.ts`, `use-reset-page-on-change.ts`, `use-scroll-reset-on-page-change.ts`);
-  `use-table-options.ts` y `use-table-columns.tsx` preparan la instancia de TanStack.
-- Agrupado: `row-grouping.ts`, `use-row-grouping-state.ts`, `use-collapsed-groups.ts`.
-- Props derivadas: `toolbar-props.ts`, `pagination-props.ts`, `sort-menu-props.ts`, `header-action.ts`.
-- Cabecera: `TableHead.tsx`, `TableHeaderCell.tsx`, `TableHeaderTrigger.tsx`, `TableHeaderIcons.tsx`,
-  `SortIcon.tsx`, `TableColumnFilterMenu.tsx`, `TableDateFilterMenu.tsx`, `TableValueFilterMenu.tsx`.
-- Cuerpo: `TableScrollArea.tsx`, `TableBody.tsx`, `body-rows.tsx`, `TableGroupRow.tsx`,
-  `GroupToggleButton.tsx`, `TableDataRow.tsx`, `TableCellContent.tsx`, `InlineSelectCell.tsx`.
-- Acciones y paginación: `RowActionsMenu.tsx`, `RowActionsTrigger.tsx`, `TablePagination.tsx`,
-  `PaginationSummary.tsx`, `PaginationControls.tsx`, `PageStepButton.tsx`.
-- `styles.css`: estilos propios del módulo (`.gdy-table-*`).
+- Raíz: `index.tsx` (`DataTable`, que compone el modelo y los tres bloques: toolbar, área de scroll y
+  paginación), `types.ts` (contratos públicos e internos), `constants.ts` (defaults y constantes),
+  `settings.ts` (props con defaults aplicados y flags de features, `TableSettings`), `toolbar-props.ts`
+  (props del `Toolbar` derivadas del modelo) y `styles.css` (estilos propios del módulo, `.gdy-table-*`).
+- `model/`: `use-table-core.ts` (`useTableCore` compone el estado, las filas y la paginación),
+  `use-table-state.ts` (búsqueda, orden, filtros, agrupado y archivados), `use-table-rows.ts` (normalización,
+  `use-searched-table-rows.ts`, `use-filtered-table-rows.ts`, `use-grouped-rows.ts`), el agrupado
+  (`row-grouping.ts`, `use-row-grouping-state.ts`, `use-collapsed-groups.ts`) y la instancia de TanStack
+  (`use-table-options.ts`, `use-table-columns.tsx`).
+- `header/`: `TableHead.tsx`, `TableHeaderCell.tsx`, `TableHeaderTrigger.tsx`, `TableHeaderIcons.tsx`,
+  `SortIcon.tsx`, los menús de filtro por valores y por fecha (`TableColumnFilterMenu.tsx`,
+  `TableValueFilterMenu.tsx`, `TableDateFilterMenu.tsx`), `header-action.ts` y `sort-menu-props.ts`.
+- `body/`: `TableScrollArea.tsx`, `TableBody.tsx`, `body-rows.tsx`, `TableGroupRow.tsx`,
+  `GroupToggleButton.tsx`, `TableDataRow.tsx`, `TableCellContent.tsx`, `InlineSelectCell.tsx`,
+  `RowActionsMenu.tsx`, `RowActionsTrigger.tsx`.
+- `pagination/`: `TablePagination.tsx`, `PaginationSummary.tsx`, `PaginationControls.tsx`, `PageStepButton.tsx`,
+  `pagination-props.ts` y el modelo de página (`use-table-paging.ts`, `use-table-pagination.ts`,
+  `use-paged-rows.ts`, `page-range.ts`, `use-view-snapshot.ts`, `use-reset-page-on-change.ts`,
+  `use-scroll-reset-on-page-change.ts`).
 
 Compartido con el kanban, en `src/components/shared/`:
 
