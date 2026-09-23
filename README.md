@@ -90,8 +90,9 @@ los alcanza.
 Sobre esos tokens base cada componente lee **tokens de componente** opcionales, con el mismo
 mecanismo de sobrescritura: `--gdy-table-*` (cabecera, bordes, hover de fila, filas de grupo),
 `--gdy-kanban-*` (columnas, tarjetas, zona de soltado), `--gdy-select-*` (equivalentes a la prop
-`selectTheme`), `--gdy-btn-*`, `--gdy-input-*`, `--gdy-panel-*`, `--gdy-option-hover-bg` y
-`--gdy-scrollbar-thumb`. La lista de cada módulo está en su README.
+`selectTheme`), `--gdy-btn-*`, `--gdy-input-*`, `--gdy-panel-*`, `--gdy-option-hover-bg`,
+`--gdy-scrollbar-thumb` y, en los primitivos, `--gdy-menu-*`, `--gdy-popover-*`, `--gdy-toggle-*` y
+`--gdy-calendar-*`. La lista de cada módulo está en su README.
 
 ### Clases
 
@@ -102,11 +103,21 @@ extensión estable:
   `gdy-table-pagination`, `gdy-kanban-column`, `gdy-kanban-card`.
 - `gdy-<parte>` para lo que comparten tabla y kanban: `gdy-card`, `gdy-toolbar`, `gdy-btn`,
   `gdy-input`, `gdy-panel`, `gdy-option-item`, `gdy-date-input`, `gdy-view-switch`.
+- `gdy-<primitivo>-<parte>` para los primitivos sobre Radix y react-day-picker
+  (`src/components/ui`, hoja `src/components/ui/styles.css`): `gdy-button` (con `data-variant` y
+  `data-size`), `gdy-select-trigger|content|item`, `gdy-menu-content|item|label|separator`,
+  `gdy-popover-content`, `gdy-toggle-group|item` y `gdy-calendar-*` (raíz, meses, navegación,
+  cabecera con desplegables, celda `gdy-calendar-day` y botón `gdy-calendar-day-button`). Los
+  `data-slot` de shadcn se conservan como segundo gancho.
 - Estados por atributo, nunca por clase: booleanos presentes o ausentes (`data-filtered`,
   `data-selected`, `data-checked`, `data-dragging`, `data-drop-target`, `data-clickable`) y ARIA
   cuando ya existe (`aria-pressed="true"` en el switch de vista y en los botones de orden y operador
-  del panel, `aria-expanded="false"` en el toggle de un grupo colapsado). Se estilizan como
-  `.gdy-kanban-card[data-dragging]` o `.gdy-view-switch-btn[aria-pressed="true"]`.
+  del panel, `aria-expanded="false"` en el toggle de un grupo colapsado). En los primitivos valen
+  los atributos que ponen Radix y react-day-picker (`data-state`, `data-highlighted`,
+  `data-disabled`, `data-placeholder`, `data-today`, `data-outside`, `data-selected`) más los de
+  rango del calendario (`data-range-start|middle|end`, `data-selected-single`). Se estilizan como
+  `.gdy-kanban-card[data-dragging]`, `.gdy-view-switch-btn[aria-pressed="true"]` o
+  `.gdy-menu-item[data-disabled]`.
 - Ganchos estructurales sin estilos por defecto (`gdy-table-head`, `gdy-table-body`,
   `gdy-table-empty-row`, los iconos `gdy-*-icon`…): existen para que los apuntes desde tu CSS. La
   lista completa es `hookOnly` en `scripts/audit-allowlist.json`.
@@ -116,10 +127,14 @@ extensión estable:
 Las reglas de la librería usan una sola clase, o un flag de raíz más una clase
 (`.gdy-thin-scroll .gdy-scroll`, `.gdy-table-sticky .gdy-table-head-cell`, el hover de fila
 `.gdy-table-row[data-clickable]:hover .gdy-table-cell`), así que una regla con el mismo selector en
-tu CSS, cargado después de `gridory/styles.css`, la sobrescribe. `npm run audit:styles` comprueba
-que cada clase emitida tenga su regla o esté declarada como gancho, que ninguna regla quede
-huérfana, que no sobreviva ningún nombre heredado ni clase de estado, y que cada selector de
-atributo se emita de verdad.
+tu CSS, cargado después de `gridory/styles.css`, la sobrescribe. Las variantes de los primitivos
+(`data-variant`, `data-size`) van dentro de `:where()` y pesan como la base, así que una clase que
+pases por `className` o `triggerClassName` también las sobrescribe; los estados van planos y ganan
+a la base. Las únicas reglas por etiqueta son `.gdy-menu-item svg` y `.gdy-toggle-item svg`, para
+los iconos que trae tu app. `npm run audit:styles` comprueba que cada clase emitida tenga su regla
+o esté declarada como gancho, que ninguna regla quede huérfana, que no sobreviva ningún nombre
+heredado ni clase de estado, que cada selector de atributo se emita de verdad y que en `ui`,
+`table`, `kanban` y `shared` ningún literal de clase sea otra cosa que un gancho `gdy-`.
 
 ## Inicio rápido
 

@@ -175,7 +175,9 @@ Dependencias funcionales del módulo:
 - `date-fns`
 - `react-day-picker`
 - `lucide-react`
-- componentes UI usados (`button`, `calendar`, `popover`) compatibles con shadcn/radix
+- primitivos propios de `src/components/ui/` (`select`, `dropdown-menu`, `popover`, `calendar`,
+  `toggle-group`) sobre `radix-ui` y `react-day-picker`, con sus clases `gdy-*` en
+  `src/components/ui/styles.css`
 
 En este proyecto ya están instaladas en `package.json`.
 
@@ -198,6 +200,10 @@ En este proyecto ya están instaladas en `package.json`.
 - Estilos compartidos con el kanban: `src/styles/shared.css`, con clases `gdy-*` sin módulo
   (`gdy-card`, `gdy-toolbar`, `gdy-btn`, `gdy-input`, `gdy-panel`, `gdy-option-item`,
   `gdy-date-input`, `gdy-view-switch`).
+- Primitivos (selects de la toolbar, de paginación e inline, menú de fila, popover y calendario
+  del filtro de fecha, toggles): clases `gdy-select-*`, `gdy-menu-*`, `gdy-popover-content`,
+  `gdy-calendar-*` y `gdy-toggle-*` en `src/components/ui/styles.css`. El select inline de la
+  celda añade `gdy-table-inline-select` (regla `.gdy-select-trigger.gdy-table-inline-select`).
 - Estados por atributo, no por clase: `data-filtered` en `gdy-table-head-trigger`,
   `data-clickable` en `gdy-table-row` (cuando hay `onRowClick`), `aria-expanded` en
   `gdy-table-group-toggle` (el chevron gira con `[aria-expanded="false"]`), y en el panel
@@ -239,10 +245,9 @@ En este proyecto ya están instaladas en `package.json`.
 Copiar:
 
 1. `src/components/table/` completo.
-2. `src/components/ui/button.tsx`
-3. `src/components/ui/calendar.tsx`
-4. `src/components/ui/popover.tsx`
-5. Archivo puente opcional `src/components/DataTable.tsx` si quieres compatibilidad de import legado.
+2. `src/components/ui/` (`select.tsx`, `dropdown-menu.tsx`, `popover.tsx`, `calendar.tsx`,
+   `toggle-group.tsx` y `styles.css`).
+3. Archivo puente opcional `src/components/DataTable.tsx` si quieres compatibilidad de import legado.
 
 Configurar:
 
@@ -269,11 +274,11 @@ Configurar:
   defecto a la **derecha** y con `position` configurable—, **composición explícita
   del toolbar** (`toolbarLayout`), y **selectores estilizados** (no nativos) en
   "Mostrar", "Agrupar por", tamaño de página y edición inline en celda con **theming
-  global** (`selectTheme` + variables CSS `--gdy-select-*`), **desplegable a la
-  anchura del trigger** y **menos redondeo**. Todo opcional y retrocompatible con
+  global** (`selectTheme` + variables CSS `--gdy-select-*`), **desplegable nunca más
+  estrecho que el trigger** y **menos redondeo**. Todo opcional y retrocompatible con
   v1.11.0; las únicas diferencias por defecto son intencionales de UX (3.er clic de
   orden limpia el orden, el menú se reposiciona y ya no dibuja separadores
-  automáticos, y el desplegable de los selects iguala el ancho del trigger con menos
+  automáticos, y el desplegable de los selects no baja del ancho del trigger y lleva menos
   redondeo). Ver secciones 20–26.
 - v1.11.0: tooltip nativo (`title`) en textos truncados de los filtros (cabecera
   de columna y valores del checklist), ancho del panel de filtro acotado
@@ -948,16 +953,15 @@ retrocompatibles con v1.10.0. No hay props nuevas: aplican por defecto.
   ancho completo.
 - **Calendario de rango lado a lado**: al elegir "Entre (rango)", los dos meses
   se muestran en fila a partir de `768px` vía
-  `@media (min-width: 768px) { .gdy-calendar-popover .rdp-months { flex-direction: row } }`.
+  `@media (min-width: 768px) { .gdy-calendar-months { flex-direction: row } }`.
 
 ### Por qué CSS plano para el rango
 
-El wrapper del calendario compone los meses con la utilidad `md:flex-row`, pero
-el Tailwind del proyecto consumidor no escanea este paquete, así que esa utilidad
-no se genera en runtime y los meses caían apilados. El fix se envía como CSS en
-`src/styles/shared.css` (compilado en `dist/gridory.css`), acotado al popover del
-rango, para no depender del Tailwind del consumidor. No se toca
-`ui/calendar.tsx`.
+El calendario no usa utilidades: `src/components/ui/styles.css` declara
+`.gdy-calendar-months` en columna y, desde 768px, en fila, así que el rango se ve
+igual en cualquier app sin depender de su Tailwind. `ui/calendar.tsx` solo asigna
+los ganchos `gdy-calendar-*` y deja los estados del día en atributos
+(`data-today`, `data-selected`, `data-range-start|middle|end`).
 
 ---
 
@@ -1289,9 +1293,9 @@ abajo).
 
 ### Ajustes visuales (v1.12.0)
 
-- **Ancho del desplegable = ancho del trigger**: el panel de opciones ahora iguala
-  el ancho del recuadro (antes era más ancho por un `min-width` fijo). Para etiquetas
-  largas conviene fijar un ancho al trigger (por ejemplo con `triggerClassName`).
+- **Ancho del desplegable ≥ ancho del trigger**: el panel de opciones nunca es más
+  estrecho que el recuadro y crece hasta que cada opción quepa en una línea (antes
+  igualaba el ancho exacto y las etiquetas largas se partían en dos líneas).
 - **Menos redondeo**: las esquinas del trigger y del panel se redujeron para un look
   más sobrio.
 
@@ -1357,7 +1361,7 @@ También podés tematizar solo por CSS declarando las variables (sin tocar props
 
 - `selectTheme` es opcional; sin ella, los selectores usan los tokens por defecto del
   tema (claro/oscuro). Las únicas diferencias visuales por defecto son intencionales:
-  el desplegable iguala el ancho del trigger y el redondeo es menor.
+  el desplegable nunca es más estrecho que el trigger y el redondeo es menor.
 
 ---
 
