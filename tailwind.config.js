@@ -8,6 +8,8 @@ import preset from "./tailwind-preset.js";
  */
 export default {
   presets: [preset],
+  // The demo toggles `.dark` on <html>, the same switch the library reads.
+  darkMode: "class",
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   plugins: [],
 };
