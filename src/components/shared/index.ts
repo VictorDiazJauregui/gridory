@@ -18,6 +18,7 @@ export type {
 } from "./menu-actions";
 export { selectThemeToVars } from "./select-theme";
 export type { SelectTheme } from "./select-theme";
+export type { DataViewProps } from "./data-view-props";
 export { resolveToolbarClusters } from "./toolbar-layout";
 export type { ToolbarLayout, ToolbarSide } from "./toolbar-layout";
 export type {

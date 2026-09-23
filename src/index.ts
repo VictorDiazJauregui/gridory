@@ -45,6 +45,7 @@ export {
 export type {
   BuiltInActionId,
   BuiltInMenuRef,
+  DataViewProps,
   HeaderSelectConfig,
   MenuItem,
   MenuLabel,
