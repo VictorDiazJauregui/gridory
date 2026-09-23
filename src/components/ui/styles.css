@@ -265,3 +265,137 @@
   margin: 4px -4px;
   background-color: var(--gdy-border);
 }
+
+/* ---------------------------------------------------------------- Select */
+/* Colors and radius resolve to the --gdy-select-* tokens (written inline by
+   the `selectTheme` prop, or declared by the app), then to the base tokens. */
+.gdy-select-trigger {
+  display: flex;
+  height: 32px;
+  width: fit-content;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 0 10px;
+  border: 1px solid var(--gdy-select-border, var(--gdy-border));
+  border-radius: var(--gdy-select-radius, calc(var(--gdy-radius) - 2px));
+  background-color: var(--gdy-select-bg, var(--gdy-background));
+  color: var(--gdy-select-text, var(--gdy-foreground));
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  white-space: nowrap;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-duration: 0.15s;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gdy-select-trigger:hover {
+  background-color: var(--gdy-select-trigger-hover-bg, var(--gdy-muted));
+}
+
+.gdy-select-trigger:focus-visible {
+  border-color: var(--gdy-ring);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--gdy-ring) 50%, transparent);
+}
+
+.gdy-select-trigger:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.gdy-select-trigger[data-placeholder] {
+  color: var(--gdy-muted-foreground);
+}
+
+.gdy-select-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  pointer-events: none;
+  color: var(--gdy-muted-foreground);
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gdy-select-trigger[data-state="open"] .gdy-select-icon {
+  transform: rotate(180deg);
+}
+
+.gdy-select-content {
+  position: relative;
+  z-index: 50;
+  width: var(--radix-select-trigger-width);
+  max-height: var(--radix-select-content-available-height);
+  overflow: hidden;
+  border-radius: var(--gdy-select-radius, calc(var(--gdy-radius) - 2px));
+  background-color: var(--gdy-select-content-bg, var(--gdy-popover));
+  color: var(--gdy-select-content-text, var(--gdy-popover-foreground));
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--gdy-foreground) 10%, transparent),
+    var(--gdy-shadow-md);
+  transform-origin: var(--radix-select-content-transform-origin);
+}
+
+.gdy-select-viewport {
+  width: 100%;
+  min-width: var(--radix-select-trigger-width);
+  padding: 4px;
+  scroll-margin: 4px 0;
+}
+
+.gdy-select-item {
+  position: relative;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 24px 6px 8px;
+  border-radius: calc(var(--gdy-radius) - 2px);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: var(--gdy-select-item-text, inherit);
+  cursor: pointer;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  user-select: none;
+}
+
+.gdy-select-item[data-highlighted] {
+  background-color: var(--gdy-select-item-hover-bg, var(--gdy-accent));
+  color: var(--gdy-select-item-hover-text, var(--gdy-accent-foreground));
+}
+
+.gdy-select-item[data-state="checked"] {
+  font-weight: 500;
+  background-color: var(--gdy-select-item-active-bg, transparent);
+}
+
+.gdy-select-item[data-disabled] {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.gdy-select-item-indicator {
+  position: absolute;
+  right: 8px;
+  display: flex;
+  width: 14px;
+  height: 14px;
+  align-items: center;
+  justify-content: center;
+}
+
+.gdy-select-item-check,
+.gdy-select-scroll-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.gdy-select-scroll-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 0;
+  cursor: default;
+}

@@ -32,7 +32,9 @@
     "gdy-btn-ai-icon",
     "gdy-option-check-icon",
     "gdy-date-picker-icon",
-    "gdy-menu-item-label"
+    "gdy-menu-item-label",
+    "gdy-select-value",
+    "gdy-select-item-text"
   ],
   "variantAttributes": [
     "data-variant",
