@@ -75,6 +75,7 @@
     "build:lib": "vite build",
     "build:types": "tsc -p tsconfig.build.json",
     "build": "npm run typecheck && npm run build:lib && npm run build:types",
+    "audit:styles": "node scripts/audit-legacy.mjs && node scripts/audit-classes.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
     "prepublishOnly": "npm run build"

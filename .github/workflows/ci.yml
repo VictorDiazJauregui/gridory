@@ -35,5 +35,8 @@ jobs:
       - name: Build library
         run: npm run build
 
+      - name: Audit styles
+        run: npm run audit:styles
+
       - name: Check package contents
         run: npm pack --dry-run
