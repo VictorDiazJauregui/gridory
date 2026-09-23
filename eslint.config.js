@@ -37,6 +37,7 @@ export default defineConfig([
   {
     files: [
       'src/components/table/**/*.{ts,tsx}',
+      'src/components/kanban/**/*.{ts,tsx}',
       'src/components/shared/*.ts',
       'src/components/shared/toolbar/toolbar-props.ts',
     ],
