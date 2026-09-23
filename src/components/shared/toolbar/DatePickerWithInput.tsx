@@ -1,20 +1,15 @@
 import { useMemo, useState } from "react";
 import { CalendarIcon } from "lucide-react";
 
-import { Calendar } from "../ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "../ui/popover";
-
+import { Calendar } from "../../ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
+import type { DateInputFormat } from "../data-model";
 import {
   formatDateToInput,
   formatDateToString,
   parseInputToDate,
   parseStringToDate,
-} from "./utils";
-import type { DateInputFormat } from "./types";
+} from "../date-utils";
 
 interface DatePickerWithInputProps {
   value: string;
@@ -65,7 +60,9 @@ export const DatePickerWithInput = ({
   };
 
   const handleInputFocus = () => {
-    setLocalInput(selectedDate ? formatDateToInput(selectedDate, dateInputFormat) : "");
+    setLocalInput(
+      selectedDate ? formatDateToInput(selectedDate, dateInputFormat) : "",
+    );
     setIsEditing(true);
   };
 
@@ -79,10 +76,10 @@ export const DatePickerWithInput = ({
   };
 
   return (
-    <div className="rdt-date-picker-input">
+    <div className="gdy-date-picker-input">
       <input
         type="text"
-        className="rdt-date-input rdt-date-input-with-icon"
+        className="gdy-date-input gdy-date-input-with-icon"
         placeholder={placeholder}
         value={displayValue}
         onChange={handleInputChange}
@@ -99,14 +96,14 @@ export const DatePickerWithInput = ({
         <PopoverTrigger asChild>
           <button
             type="button"
-            className="rdt-date-picker-trigger"
+            className="gdy-date-picker-trigger"
             aria-label="Seleccionar fecha"
           >
             <CalendarIcon size={14} />
           </button>
         </PopoverTrigger>
         <PopoverContent
-          className="w-auto p-0 rdt-popover-top"
+          className="w-auto p-0 gdy-calendar-popover"
           align="end"
           sideOffset={4}
           onInteractOutside={(event) => event.preventDefault()}

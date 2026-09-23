@@ -1,6 +1,6 @@
 import { LayoutGrid, Table2 } from "lucide-react";
-import type { ViewMode, ViewSwitchConfig } from "./types";
-import { cn } from "./utils";
+import { cn } from "../../../lib/cn";
+import type { ViewMode, ViewSwitchConfig } from "../data-model";
 
 interface ToolbarViewSwitchProps {
   config: ViewSwitchConfig;
@@ -16,12 +16,12 @@ export const ToolbarViewSwitch = ({ config }: ToolbarViewSwitchProps) => {
   const isKanbanActive = config.active === "kanban";
 
   return (
-    <div className="rdt-view-switch">
+    <div className="gdy-view-switch">
       <button
         type="button"
         className={cn(
-          "rdt-view-switch-btn",
-          isTableActive && "rdt-view-switch-btn-active",
+          "gdy-view-switch-btn",
+          isTableActive && "gdy-view-switch-btn-active",
         )}
         aria-pressed={isTableActive}
         onClick={() => selectView("table")}
@@ -32,8 +32,8 @@ export const ToolbarViewSwitch = ({ config }: ToolbarViewSwitchProps) => {
       <button
         type="button"
         className={cn(
-          "rdt-view-switch-btn",
-          isKanbanActive && "rdt-view-switch-btn-active",
+          "gdy-view-switch-btn",
+          isKanbanActive && "gdy-view-switch-btn-active",
         )}
         aria-pressed={isKanbanActive}
         onClick={() => selectView("kanban")}

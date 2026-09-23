@@ -17,15 +17,14 @@ import {
 } from "../shared/toolbar-layout";
 import { SimpleSelect } from "../ui/select";
 import { SegmentedControl } from "../ui/toggle-group";
-import { ToolbarAiButton } from "./ToolbarAiButton";
-import { ToolbarViewSwitch } from "./ToolbarViewSwitch";
+import { ToolbarAiButton, ToolbarViewSwitch } from "../shared/toolbar";
 
 interface GroupOption {
   id: string;
   label: string;
 }
 
-const GROUP_NONE_VALUE = "__rdt_group_none__";
+const GROUP_NONE_VALUE = "__gdy_group_none__";
 
 const DEFAULT_ARCHIVED_OPTION_LABELS: Record<ArchivedViewMode, string> = {
   active: "Activos",
@@ -102,11 +101,11 @@ const SearchSlot = ({
   placeholder: string;
   onChange: (value: string) => void;
 }) => (
-  <div className="rdt-search">
-    <Search size={14} className="rdt-search-icon" />
+  <div className="gdy-search">
+    <Search size={14} className="gdy-search-icon" />
     <input
       type="search"
-      name="rdt-search"
+      name="gdy-search"
       autoComplete="off"
       data-1p-ignore="true"
       data-lpignore="true"
@@ -115,13 +114,13 @@ const SearchSlot = ({
       value={search}
       onChange={(event) => onChange(event.target.value)}
       placeholder={placeholder}
-      className="rdt-input"
+      className="gdy-input"
     />
   </div>
 );
 
 const ClearFiltersSlot = ({ onClear }: { onClear: () => void }) => (
-  <button type="button" className="rdt-btn rdt-btn-ghost" onClick={onClear}>
+  <button type="button" className="gdy-btn gdy-btn-ghost" onClick={onClear}>
     <div>Limpiar filtros</div>
     <FilterX size={12} />
   </button>
@@ -134,7 +133,7 @@ const CreateSlot = ({
   label: string;
   onCreate: () => void;
 }) => (
-  <button type="button" className="rdt-btn rdt-btn-primary" onClick={onCreate}>
+  <button type="button" className="gdy-btn gdy-btn-primary" onClick={onCreate}>
     <Plus size={14} />
     {label}
   </button>
@@ -236,13 +235,13 @@ export const TableToolbar = (props: TableToolbarProps) => {
   });
 
   return (
-    <div className="rdt-toolbar">
-      <div className="rdt-toolbar-left">
+    <div className="gdy-toolbar">
+      <div className="gdy-toolbar-left">
         {clusters.left.map((id) => (
           <Fragment key={id}>{slots[id]}</Fragment>
         ))}
       </div>
-      <div className="rdt-toolbar-right">
+      <div className="gdy-toolbar-right">
         {clusters.right.map((id) => (
           <Fragment key={id}>{slots[id]}</Fragment>
         ))}
