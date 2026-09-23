@@ -49,6 +49,8 @@ export const mergeColumnValues = (
 };
 
 export const resolveColumnLabel = (columns: FilterOption[], value: string) => {
-  const configuredLabel = columns.find((column) => column.value === value)?.label;
+  const configuredLabel = columns.find(
+    (column) => column.value === value,
+  )?.label;
   return (configuredLabel ?? value) || "Sin valor";
 };

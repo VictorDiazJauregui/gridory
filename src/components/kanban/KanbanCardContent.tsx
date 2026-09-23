@@ -4,7 +4,9 @@ import { KanbanCustomCard } from "./KanbanCustomCard";
 
 export const KanbanCardContent = <TData,>(props: KanbanCardProps<TData>) => {
   const { renderCard, rowActionsEnabled, rowActions } = props;
-  if (renderCard) return <KanbanCustomCard {...props} renderCard={renderCard} />;
+  if (renderCard) {
+    return <KanbanCustomCard {...props} renderCard={renderCard} />;
+  }
   return (
     <DefaultKanbanCard
       card={props.card}

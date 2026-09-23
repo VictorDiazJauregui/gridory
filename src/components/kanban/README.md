@@ -4,6 +4,17 @@ Componente Kanban reutilizable y migrable del sistema UI.
 
 - Ruta: `src/components/kanban`
 - Export principal: `KanbanBoard`
+- Archivos: `index.tsx` (`KanbanBoard`), `board-view.ts` (defaults y validación de `groups`),
+  `use-kanban-board-state.ts` con `use-board-controls.ts`, `use-kanban-cards.ts`,
+  `use-selected-group.ts`, `use-visible-cards.ts`, `use-group-columns.ts` y `use-card-drag.ts`
+  (estado); `group-columns.ts`, `card-move.ts`, `card-summary.ts`, `column-settings.ts`,
+  `drag-handlers.ts`, `filter-item.ts`, `group-select-options.ts` y `constants.ts` (módulos
+  puros); `KanbanToolbar.tsx`, `KanbanFilterRow.tsx`, `KanbanFilterItem.tsx`,
+  `KanbanFilterTrigger.tsx`, `KanbanDateFilterMenu.tsx`, `KanbanValueFilterMenu.tsx`,
+  `KanbanBoardBody.tsx`, `KanbanColumns.tsx`, `KanbanColumn.tsx`, `KanbanColumnBody.tsx`,
+  `KanbanCard.tsx`, `KanbanCardContent.tsx`, `KanbanCustomCard.tsx`, `DefaultKanbanCard.tsx`,
+  `DefaultKanbanCardHead.tsx`, `DefaultKanbanCardFields.tsx` y `KanbanCardMenu.tsx`
+  (componentes); `types.ts` y `styles.css`
 - Estilos propios: `styles.css` (clases `gdy-kanban-*`); toolbar, filtros, fechas y botones
   vienen de `src/styles/shared.css` y `src/components/shared/toolbar/`, compartidos con la tabla;
   los primitivos (select, menú, popover, calendario, toggle) llevan clases `gdy-*` desde
