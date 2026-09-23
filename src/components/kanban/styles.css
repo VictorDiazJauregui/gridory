@@ -1,163 +1,21 @@
-.rkb {
+/*
+ * KanbanBoard: module-specific rules (gdy-kanban-*). The toolbar, buttons,
+ * inputs, filter panels, date pickers and scroll regions come from
+ * src/styles/shared.css. Colors come from the tokens in src/styles/tokens.css.
+ */
+
+.gdy-kanban {
   width: 100%;
   color: var(--gdy-foreground);
   font-size: 14px;
 }
 
-.rkb * {
+.gdy-kanban * {
   box-sizing: border-box;
 }
 
-.rkb-card {
-  border: 1px solid var(--gdy-border);
-  border-radius: 10px;
-  background: var(--gdy-card);
-}
-
-.rkb-toolbar {
-  min-height: 40px;
-  padding: 6px 12px;
-  border-bottom: 1px solid var(--gdy-toolbar-border, var(--gdy-border));
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.rkb-toolbar-left {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.rkb-toolbar-right {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.rkb-toolbar-left:empty {
-  display: none;
-}
-
-.rkb-search {
-  position: relative;
-}
-
-.rkb-search-icon {
-  position: absolute;
-  left: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--gdy-muted-foreground);
-}
-
-.rkb-input {
-  width: 200px;
-  height: 32px;
-  border-radius: 8px;
-  border: 1px solid var(--gdy-input-border, var(--gdy-input));
-  background: var(--gdy-input-bg, var(--gdy-muted));
-  padding: 0 10px 0 28px;
-  font-size: 12px;
-}
-
-.rkb-input:focus {
-  outline: 2px solid var(--gdy-ring);
-}
-
-.rkb-input-sm {
-  width: 100%;
-  padding-left: 8px;
-  padding-right: 28px;
-}
-
-.rkb-btn {
-  height: 32px;
-  border-radius: 8px;
-  border: 1px solid transparent;
-  background: var(--gdy-btn-bg, var(--gdy-muted));
-  color: var(--gdy-btn-fg, var(--gdy-foreground));
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0 10px;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.rkb-btn-primary {
-  background: var(--gdy-btn-primary-bg, var(--gdy-primary));
-  color: var(--gdy-btn-primary-fg, var(--gdy-primary-foreground));
-}
-
-.rkb-btn-primary:hover {
-  background: transparent;
-  color: var(--gdy-btn-primary-bg, var(--gdy-primary));
-  border: 1px solid var(--gdy-btn-primary-bg, var(--gdy-primary));
-}
-
-.rkb-btn-ghost {
-  color: var(--gdy-muted-foreground);
-  background: transparent;
-}
-
-.rkb-btn-ghost:hover {
-  color: var(--gdy-foreground);
-  background: transparent;
-  text-decoration: underline;
-}
-
-.rkb-btn-xs {
-  height: 28px;
-}
-
-.rkb-view-switch {
-  display: inline-flex;
-  align-items: center;
-  height: 32px;
-  padding: 2px;
-  border: 1px solid var(--gdy-input-border, var(--gdy-input));
-  border-radius: 8px;
-  background: var(--gdy-accent);
-}
-
-.rkb-view-switch-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  height: 26px;
-  padding: 0 10px;
-  border: none;
-  border-radius: 6px;
-  background: transparent;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--gdy-muted-foreground);
-  cursor: pointer;
-}
-
-.rkb-view-switch-btn-active {
-  background: var(--gdy-background);
-  color: var(--gdy-foreground);
-  box-shadow: var(--gdy-shadow-sm);
-}
-
-.rkb-btn-ai {
-  border: 1px solid transparent;
-  background: var(--gdy-btn-bg, var(--gdy-muted));
-  color: var(--gdy-btn-fg, var(--gdy-foreground));
-}
-
-.rkb-btn-ai:hover {
-  background: var(
-    --gdy-btn-hover-bg,
-    color-mix(in oklab, var(--gdy-foreground) 8%, var(--gdy-muted))
-  );
-}
-
-.rkb-filter-row {
+/* Field filter row under the toolbar */
+.gdy-kanban-filter-row {
   padding: 10px 12px;
   border-bottom: 1px solid var(--gdy-toolbar-border, var(--gdy-border));
   display: flex;
@@ -166,11 +24,11 @@
   gap: 8px;
 }
 
-.rkb-filter-item {
+.gdy-kanban-filter-item {
   position: relative;
 }
 
-.rkb-filter-trigger {
+.gdy-kanban-filter-trigger {
   height: 30px;
   border-radius: 8px;
   border: 1px solid var(--gdy-input-border, var(--gdy-input));
@@ -185,13 +43,13 @@
   font-weight: 500;
 }
 
-.rkb-filter-trigger.is-filtered {
+.gdy-kanban-filter-trigger.is-filtered {
   border-color: var(--gdy-ring);
   color: var(--gdy-foreground);
   background: var(--gdy-muted);
 }
 
-.rkb-filter-trigger-label {
+.gdy-kanban-filter-trigger-label {
   display: block;
   max-width: 140px;
   overflow: hidden;
@@ -199,188 +57,41 @@
   white-space: nowrap;
 }
 
-.rkb-filter-menu-holder {
+.gdy-kanban-filter-menu-holder {
   position: absolute;
   z-index: 200;
   top: 34px;
   left: 0;
 }
 
-.rkb-filter-menu-holder [data-slot="popover-content"] {
-  z-index: 220;
-}
-
-.rkb-panel {
-  width: fit-content;
-  max-width: 280px;
-  border: 1px solid var(--gdy-panel-border, var(--gdy-border));
-  background: var(--gdy-panel-bg, var(--gdy-popover));
-  border-radius: 8px;
-  box-shadow: var(--gdy-panel-shadow, var(--gdy-shadow-md));
-  overflow: hidden;
-}
-
-.rkb-panel-date {
-  width: 240px;
-}
-
-.rkb-panel-section {
-  border-bottom: 1px solid var(--gdy-panel-border, var(--gdy-border));
-  padding: 10px 12px;
-  width: fit-content;
-}
-
-.rkb-panel-section-stack {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 6px;
-}
-
-.rkb-panel-section-stack .rkb-panel-title {
-  margin-bottom: 2px;
-}
-
-.rkb-panel-section-stack .rkb-link-btn {
-  display: block;
-  width: 100%;
-  text-align: left;
-}
-
-.rkb-panel-title {
-  margin: 0 0 8px;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  color: var(--gdy-muted-foreground);
-  font-weight: 600;
-}
-
-.rkb-panel-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 12px;
-}
-
-.rkb-inline-links {
-  display: flex;
-  gap: 12px;
-}
-
-.rkb-link-btn {
-  border: none;
-  background: transparent;
-  color: var(--gdy-link);
-  font-size: 12px;
-  padding: 0;
-  cursor: pointer;
-  width: fit-content;
-}
-
-.rkb-link-btn-nowrap {
-  white-space: nowrap;
-}
-
-.rkb-link-btn:hover {
-  text-decoration: underline;
-}
-
-.rkb-link-btn.is-active {
-  color: var(--gdy-foreground);
-  text-decoration: none;
-}
-
-.rkb-search-sm {
-  position: relative;
-}
-
-.rkb-search-sm-icon {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--gdy-muted-foreground);
-}
-
-.rkb-option-list {
-  max-height: 220px;
-  overflow-y: auto;
-  margin-top: 8px;
-}
-
-.rkb-option-item {
-  width: 100%;
-  border: none;
-  background: transparent;
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  padding: 6px 8px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 12px;
-}
-
-.rkb-option-item.is-selected {
-  background: var(--gdy-muted);
-}
-
-.rkb-option-check {
-  width: 16px;
-  height: 16px;
-  border: 1px solid var(--gdy-input-border, var(--gdy-input));
-  border-radius: 4px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.rkb-option-check.is-checked {
-  border-color: var(--gdy-muted-foreground);
-  background: color-mix(in oklab, var(--gdy-foreground) 8%, var(--gdy-muted));
-}
-
-.rkb-option-label {
-  max-width: 210px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.rkb-empty-sm {
-  color: var(--gdy-muted-foreground);
-  text-align: center;
-  font-size: 11px;
-  margin: 6px 0;
-}
-
-.rkb-board-wrap {
+/* Board viewport */
+.gdy-kanban-board-wrap {
   overflow-x: auto;
   padding: 12px;
 }
 
-.rkb-min-h-sm {
+/* Public utilities for boardMinHeightClassName */
+.gdy-kanban-min-h-sm {
   min-height: 240px;
 }
 
-.rkb-min-h-md {
+.gdy-kanban-min-h-md {
   min-height: 360px;
 }
 
-.rkb-min-h-lg {
+.gdy-kanban-min-h-lg {
   min-height: 520px;
 }
 
-.rkb-board {
+.gdy-kanban-board {
   display: flex;
   gap: 12px;
   align-items: flex-start;
   min-height: 100%;
 }
 
-.rkb-column {
+/* Columns */
+.gdy-kanban-column {
   width: 320px;
   min-width: 320px;
   border: 1px solid var(--gdy-kanban-column-border, var(--gdy-border));
@@ -390,7 +101,7 @@
   flex-direction: column;
 }
 
-.rkb-column-head {
+.gdy-kanban-column-head {
   padding: 10px 12px;
   border-bottom: 1px solid var(--gdy-kanban-column-border, var(--gdy-border));
   display: flex;
@@ -399,7 +110,7 @@
   gap: 8px;
 }
 
-.rkb-column-title {
+.gdy-kanban-column-title {
   font-size: 12px;
   font-weight: 600;
   color: var(--gdy-secondary-foreground);
@@ -408,7 +119,7 @@
   text-overflow: ellipsis;
 }
 
-.rkb-column-count {
+.gdy-kanban-column-count {
   min-width: 20px;
   height: 20px;
   border-radius: 999px;
@@ -422,7 +133,7 @@
   padding: 0 7px;
 }
 
-.rkb-column-body {
+.gdy-kanban-column-body {
   padding: 10px;
   display: flex;
   flex-direction: column;
@@ -430,7 +141,7 @@
   overflow-y: auto;
 }
 
-.rkb-column-drop-target {
+.gdy-kanban-column-drop-target {
   outline: 2px dashed var(--gdy-kanban-drop-outline, var(--gdy-muted-foreground));
   outline-offset: -4px;
   background: var(
@@ -439,7 +150,7 @@
   );
 }
 
-.rkb-empty-col {
+.gdy-kanban-empty-col {
   border: 1px dashed var(--gdy-input-border, var(--gdy-input));
   border-radius: 8px;
   background: var(--gdy-kanban-card-bg, var(--gdy-card));
@@ -449,7 +160,8 @@
   font-size: 12px;
 }
 
-.rkb-card-item {
+/* Cards */
+.gdy-kanban-card {
   border: 1px solid var(--gdy-kanban-card-border, var(--gdy-border));
   border-radius: 10px;
   background: var(--gdy-kanban-card-bg, var(--gdy-card));
@@ -460,45 +172,29 @@
   cursor: grab;
 }
 
-.rkb-card-item.is-dragging {
+.gdy-kanban-card.is-dragging {
   opacity: 0.5;
   cursor: grabbing;
 }
 
-.rkb-card-custom-actions {
+/* Menu slot appended under a custom renderCard */
+.gdy-kanban-card-actions {
   display: flex;
   justify-content: flex-end;
 }
 
-.rkb-icon-btn {
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
-  border: 1px solid transparent;
-  background: transparent;
-  color: var(--gdy-foreground);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-
-.rkb-icon-btn:hover {
-  background: var(--gdy-muted);
-}
-
-.rkb-card-head {
+.gdy-kanban-card-head {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 8px;
 }
 
-.rkb-card-main {
+.gdy-kanban-card-main {
   min-width: 0;
 }
 
-.rkb-card-title {
+.gdy-kanban-card-title {
   margin: 0;
   font-size: 13px;
   font-weight: 600;
@@ -508,7 +204,7 @@
   text-overflow: ellipsis;
 }
 
-.rkb-card-subtitle {
+.gdy-kanban-card-subtitle {
   margin: 4px 0 0;
   font-size: 12px;
   color: var(--gdy-muted-foreground);
@@ -517,13 +213,13 @@
   text-overflow: ellipsis;
 }
 
-.rkb-meta {
+.gdy-kanban-card-meta {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
 }
 
-.rkb-tag {
+.gdy-kanban-tag {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -536,130 +232,8 @@
   padding: 0 8px;
 }
 
-.rkb-card-value {
+.gdy-kanban-card-value {
   margin: 0;
   font-size: 12px;
   color: var(--gdy-secondary-foreground);
 }
-
-.rkb-empty {
-  text-align: center;
-  padding: 34px 14px;
-  color: var(--gdy-muted-foreground);
-}
-
-/* Calendar popover: clip the (rectangular) calendar to the rounded corners. */
-.rkb-popover-top {
-  z-index: 220;
-  overflow: hidden;
-}
-
-/* Range filter: keep the two calendar months side by side (like the base
-   calendar's md:flex-row). Shipped as plain CSS because the consumer's Tailwind
-   does not scan this package, so the md:flex-row utility never gets generated. */
-@media (min-width: 768px) {
-  .rkb-popover-top .rdp-months {
-    flex-direction: row;
-    gap: 1rem;
-  }
-}
-
-.rkb-date-picker-input {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.rkb-date-input {
-  height: 32px;
-  width: 100%;
-  border: 1px solid var(--gdy-input-border, var(--gdy-input));
-  border-radius: 8px;
-  background: var(--gdy-input-bg, var(--gdy-muted));
-  color: var(--gdy-foreground);
-  padding: 0 8px;
-  font-size: 12px;
-}
-
-.rkb-date-input-with-icon {
-  padding-right: 32px;
-}
-
-.rkb-date-picker-trigger {
-  position: absolute;
-  right: 4px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 24px;
-  height: 24px;
-  border: none;
-  background: transparent;
-  color: var(--gdy-muted-foreground);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  border-radius: 4px;
-  transition:
-    background-color 0.15s,
-    color 0.15s;
-}
-
-.rkb-date-picker-trigger:hover {
-  background: var(--gdy-accent);
-  color: var(--gdy-foreground);
-}
-
-/* Thin scrollbars (thinScrollbars, default ON). Thumb via --gdy-scrollbar-thumb. */
-.rkb-thin-scroll .rkb-board-wrap,
-.rkb-thin-scroll .rkb-column-body,
-.rkb-thin-scroll .rkb-option-list {
-  scrollbar-width: thin;
-  scrollbar-color: var(--gdy-scrollbar-thumb, var(--gdy-input)) transparent;
-}
-.rkb-thin-scroll .rkb-board-wrap::-webkit-scrollbar,
-.rkb-thin-scroll .rkb-column-body::-webkit-scrollbar,
-.rkb-thin-scroll .rkb-option-list::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-.rkb-thin-scroll .rkb-board-wrap::-webkit-scrollbar-thumb,
-.rkb-thin-scroll .rkb-column-body::-webkit-scrollbar-thumb,
-.rkb-thin-scroll .rkb-option-list::-webkit-scrollbar-thumb {
-  background-color: var(--gdy-scrollbar-thumb, var(--gdy-input));
-  border-radius: 8px;
-}
-.rkb-thin-scroll .rkb-board-wrap::-webkit-scrollbar-track,
-.rkb-thin-scroll .rkb-column-body::-webkit-scrollbar-track,
-.rkb-thin-scroll .rkb-option-list::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.rkb-panel-date .rkb-panel-section {
-  width: 100%;
-}
-
-.rkb-date-range-inputs {
-  display: grid;
-  gap: 8px;
-}
-
-.rkb-option-item:hover {
-  background: var(
-    --gdy-option-hover-bg,
-    color-mix(in oklab, var(--gdy-foreground) 6%, var(--gdy-muted))
-  );
-}
-
-/* Thin scrollbar for the react-day-picker month/year dropdown selects
-   (portaled outside the component root, so this rule is global). */
-.rdp-dropdown {
-  scrollbar-width: thin;
-  scrollbar-color: var(--gdy-scrollbar-thumb, var(--gdy-input)) transparent;
-}
-.rdp-dropdown::-webkit-scrollbar { width: 8px; }
-.rdp-dropdown::-webkit-scrollbar-thumb {
-  background-color: var(--gdy-scrollbar-thumb, var(--gdy-input));
-  border-radius: 8px;
-}
-.rdp-dropdown::-webkit-scrollbar-track { background: transparent; }

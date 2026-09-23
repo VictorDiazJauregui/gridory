@@ -2,19 +2,20 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { ChevronDown, Filter } from "lucide-react";
 import "./styles.css";
-import { DateFilterMenu } from "./DateFilterMenu";
-import { FilterMenu } from "./FilterMenu";
-import { EMPTY_DATE_FILTER_STATE } from "./date-utils";
-import { useActiveFilters, useClickOutside } from "./hooks";
+import { cn } from "../../lib/cn";
+import {
+  EMPTY_DATE_FILTER_STATE,
+  hasDateFilterValue,
+} from "../shared/date-utils";
+import { useActiveFilters, useClickOutside } from "../shared/hooks";
+import { DateFilterMenu, FilterMenu } from "../shared/toolbar";
 import type { DateFilterState, ColumnDefinition } from "./types";
 import {
   applyArchivedView,
   applyColumnFilters,
   applyColumnSorting,
   applyGlobalSearch,
-  cn,
   computeColumnFilterOptions,
-  hasDateFilterValue,
   normalizeInputRows,
   normalizeToArray,
 } from "./utils";
@@ -61,7 +62,7 @@ export const KanbanBoard = <TData,>({
   onCreate,
   emptyMessage = "No se encontraron resultados",
   boardWrapClassName,
-  boardMinHeightClassName = "rkb-min-h-md",
+  boardMinHeightClassName = "gdy-kanban-min-h-md",
   columnBodyMaxHeight = 480,
   archivedView,
   viewSwitch,
@@ -275,10 +276,10 @@ export const KanbanBoard = <TData,>({
 
   return (
     <div
-      className={cn("rkb", thinScrollbars && "rkb-thin-scroll")}
+      className={cn("gdy-kanban", thinScrollbars && "gdy-thin-scroll")}
       style={rootStyle}
     >
-      <div className="gdy-scope rkb-card">
+      <div className="gdy-scope gdy-card">
         <KanbanToolbar
           showSearch={flags.search}
           search={search}
@@ -315,7 +316,7 @@ export const KanbanBoard = <TData,>({
         />
 
         {flags.filtering && fieldFilters.length > 0 && (
-          <div className="rkb-filter-row">
+          <div className="gdy-kanban-filter-row">
             {fieldFilters.map((field) => {
               const sortDirection = resolveSortDirection(sorting, field.id);
               const hasFieldFilter =
@@ -323,11 +324,11 @@ export const KanbanBoard = <TData,>({
                 hasDateFilterValue(dateFilters[field.id]);
 
               return (
-                <div key={field.id} className="rkb-filter-item">
+                <div key={field.id} className="gdy-kanban-filter-item">
                   <button
                     type="button"
                     className={cn(
-                      "rkb-filter-trigger",
+                      "gdy-kanban-filter-trigger",
                       hasFieldFilter && "is-filtered",
                     )}
                     onClick={() =>
@@ -336,7 +337,7 @@ export const KanbanBoard = <TData,>({
                       )
                     }
                   >
-                    <span className="rkb-filter-trigger-label" title={field.header}>
+                    <span className="gdy-kanban-filter-trigger-label" title={field.header}>
                       {field.header}
                     </span>
                     {hasFieldFilter ? <Filter size={12} /> : null}
@@ -344,7 +345,7 @@ export const KanbanBoard = <TData,>({
                   </button>
 
                   {openFilterFieldId === field.id && (
-                    <div className="rkb-filter-menu-holder" ref={filterMenuRef}>
+                    <div className="gdy-kanban-filter-menu-holder" ref={filterMenuRef}>
                       {field.type === "date" ? (
                         <DateFilterMenu
                           key={`${field.id}-${dateFilters[field.id]?.op ?? "gt"}-${dateFilters[field.id]?.date ?? ""}-${dateFilters[field.id]?.dateFrom ?? ""}-${dateFilters[field.id]?.dateTo ?? ""}`}
@@ -421,15 +422,15 @@ export const KanbanBoard = <TData,>({
 
         <div
           className={cn(
-            "rkb-board-wrap",
+            "gdy-kanban-board-wrap gdy-scroll",
             boardMinHeightClassName,
             boardWrapClassName,
           )}
         >
           {visibleCards.length === 0 ? (
-            <div className="rkb-empty">{emptyMessage}</div>
+            <div className="gdy-empty">{emptyMessage}</div>
           ) : (
-            <div className="rkb-board">
+            <div className="gdy-kanban-board">
               {visibleColumnValues.map((value) => {
                 const cardsInColumn = cardsByGroup[value] ?? [];
                 const configuredLabel = groupColumns.find(
@@ -442,8 +443,8 @@ export const KanbanBoard = <TData,>({
                   <section
                     key={value || "__empty_value__"}
                     className={cn(
-                      "rkb-column",
-                      isDropTarget && "rkb-column-drop-target",
+                      "gdy-kanban-column",
+                      isDropTarget && "gdy-kanban-column-drop-target",
                     )}
                     onDragOver={(event) => {
                       if (!flags.dragAndDrop) return;
@@ -463,21 +464,21 @@ export const KanbanBoard = <TData,>({
                       setDraggingCardId(null);
                     }}
                   >
-                    <header className="rkb-column-head">
-                      <span className="rkb-column-title" title={columnLabel}>
+                    <header className="gdy-kanban-column-head">
+                      <span className="gdy-kanban-column-title" title={columnLabel}>
                         {columnLabel}
                       </span>
-                      <span className="rkb-column-count">
+                      <span className="gdy-kanban-column-count">
                         {cardsInColumn.length}
                       </span>
                     </header>
 
                     <div
-                      className="rkb-column-body"
+                      className="gdy-kanban-column-body gdy-scroll"
                       style={{ maxHeight: `${columnBodyMaxHeight}px` }}
                     >
                       {cardsInColumn.length === 0 ? (
-                        <div className="rkb-empty-col">Sin cards</div>
+                        <div className="gdy-kanban-empty-col">Sin cards</div>
                       ) : (
                         cardsInColumn.map((card) => {
                           const cardId = resolveCardId(card);
@@ -487,7 +488,7 @@ export const KanbanBoard = <TData,>({
                             <article
                               key={cardId}
                               className={cn(
-                                "rkb-card-item",
+                                "gdy-kanban-card",
                                 isDragging && "is-dragging",
                               )}
                               draggable={flags.dragAndDrop}
@@ -530,7 +531,7 @@ export const KanbanBoard = <TData,>({
                                     groupValue: value,
                                   })}
                                   {flags.rowActions ? (
-                                    <div className="rkb-card-custom-actions">
+                                    <div className="gdy-kanban-card-actions">
                                       <KanbanCardMenu
                                         card={card}
                                         rowActions={rowActions}
