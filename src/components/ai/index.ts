@@ -7,13 +7,13 @@ export {
   buildKanbanSystemPrompt,
   buildToolDefinitions,
   resolveSystemPrompt,
-} from "./prompt-builders";
+} from "./completion/prompt-builders";
 export {
   applyHistoryStrategy,
   createAIClient,
   isContextLengthError,
   streamChatCompletion,
-} from "./ai-client";
+} from "./completion/ai-client";
 export {
   AI_PROVIDER_PRESETS,
   DEFAULT_EMPTY_STATE_CHATBOT,

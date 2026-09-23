@@ -1,11 +1,11 @@
 import { useCallback } from "react";
-import { clearConversation } from "./conversation-updates";
-import { useConfirmAction } from "./use-confirm-action";
-import { useConversationState } from "./use-conversation-state";
-import { useRejectAction } from "./use-reject-action";
-import { useResolvedChatConfig } from "./use-resolved-chat-config";
-import { useSendMessage } from "./use-send-message";
-import type { UseAIChatConfig } from "./chat-config";
+import { clearConversation } from "./chat/conversation-updates";
+import { useConfirmAction } from "./chat/use-confirm-action";
+import { useConversationState } from "./chat/use-conversation-state";
+import { useRejectAction } from "./chat/use-reject-action";
+import { useResolvedChatConfig } from "./chat/use-resolved-chat-config";
+import { useSendMessage } from "./chat/use-send-message";
+import type { UseAIChatConfig } from "./chat/chat-config";
 import type { AIChatMessage, AIPendingAction } from "./types";
 
 interface UseAIChatReturn {

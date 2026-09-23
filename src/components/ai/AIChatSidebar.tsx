@@ -1,9 +1,9 @@
 import { cn } from "../../lib/cn";
-import { AIChatBody } from "./AIChatBody";
-import { AIChatFooter } from "./AIChatFooter";
-import { AIChatHeader } from "./AIChatHeader";
-import { AIChatOverlay } from "./AIChatOverlay";
-import { useSidebarView } from "./use-sidebar-view";
+import { AIChatBody } from "./transcript/AIChatBody";
+import { AIChatFooter } from "./sidebar/AIChatFooter";
+import { AIChatHeader } from "./sidebar/AIChatHeader";
+import { AIChatOverlay } from "./sidebar/AIChatOverlay";
+import { useSidebarView } from "./sidebar/use-sidebar-view";
 import type { AIChatSidebarProps } from "./types";
 import "./styles.css";
 
