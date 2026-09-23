@@ -21,14 +21,14 @@ export interface SelectTheme {
 }
 
 const SELECT_VAR_BY_KEY: Record<string, string> = {
-  background: "--lui-select-bg",
-  hoverBackground: "--lui-select-trigger-hover-bg",
-  border: "--lui-select-border",
-  text: "--lui-select-text",
-  contentBackground: "--lui-select-content-bg",
-  optionText: "--lui-select-item-text",
-  optionHoverBackground: "--lui-select-item-hover-bg",
-  optionActiveBackground: "--lui-select-item-active-bg",
+  background: "--gdy-select-bg",
+  hoverBackground: "--gdy-select-trigger-hover-bg",
+  border: "--gdy-select-border",
+  text: "--gdy-select-text",
+  contentBackground: "--gdy-select-content-bg",
+  optionText: "--gdy-select-item-text",
+  optionHoverBackground: "--gdy-select-item-hover-bg",
+  optionActiveBackground: "--gdy-select-item-active-bg",
 };
 
 export function selectThemeToVars(theme?: SelectTheme): CSSProperties {
@@ -39,7 +39,7 @@ export function selectThemeToVars(theme?: SelectTheme): CSSProperties {
     if (typeof value === "string") vars[cssVar] = value;
   }
   if (theme.radius != null) {
-    vars["--lui-select-radius"] =
+    vars["--gdy-select-radius"] =
       typeof theme.radius === "number" ? `${theme.radius}px` : theme.radius;
   }
   return vars as CSSProperties;
