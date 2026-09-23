@@ -1,42 +1,28 @@
-import { MoreHorizontal } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
 import { renderMenuNodes, resolveMenuNodes } from "../shared/menu-actions";
+import { stopPropagation } from "../shared/stop-propagation";
+import { DropdownMenu, DropdownMenuContent } from "../ui/dropdown-menu";
+import { RowActionsTrigger } from "./RowActionsTrigger";
 import type { RowActions } from "./types";
 
-const stopClick = (event: { stopPropagation: () => void }) =>
-  event.stopPropagation();
+interface RowActionsMenuProps<TData> {
+  row: TData;
+  actions: RowActions<TData>;
+}
 
 export const RowActionsMenu = <TData,>({
   row,
   actions,
-}: {
-  row: TData;
-  actions: RowActions<TData>;
-}) => {
+}: RowActionsMenuProps<TData>) => {
   const nodes = resolveMenuNodes(row, actions);
   if (nodes.length === 0) return null;
-
   return (
-    <div className="gdy-table-actions-cell" onClick={stopClick}>
+    <div className="gdy-table-actions-cell" onClick={stopPropagation}>
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <button
-            type="button"
-            className="gdy-icon-btn"
-            title="Opciones"
-            onClick={stopClick}
-          >
-            <MoreHorizontal size={14} className="gdy-table-actions-icon" />
-          </button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent onClick={stopClick}>
+        <RowActionsTrigger />
+        <DropdownMenuContent onClick={stopPropagation}>
           {renderMenuNodes(nodes)}
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
   );
-}
+};

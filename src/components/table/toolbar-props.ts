@@ -1,8 +1,14 @@
+import type { ComponentProps } from "react";
+import { Toolbar } from "../shared/toolbar";
+import {
+  buildArchivedToolbarProps,
+  pickToolbarPassThrough,
+} from "../shared/toolbar/toolbar-props";
 import { GROUP_NONE_VALUE } from "./constants";
 import { buildGroupSelectOptions } from "./row-grouping";
 import type { TableModel } from "./use-table-core";
 
-export const buildSearchChangeHandler =
+const buildSearchChangeHandler =
   <TData>({ settings, state, paging }: TableModel<TData>) =>
   (value: string) => {
     state.setSearch(value);
@@ -20,7 +26,7 @@ const selectGroupBy = <TData>(
   settings.onGroupChange?.(next);
 };
 
-export const buildGroupSelector = <TData>(model: TableModel<TData>) => {
+const buildGroupSelector = <TData>(model: TableModel<TData>) => {
   const { settings, state } = model;
   const { groupSelectorLabel, groupNoneLabel } = settings;
   if (!settings.flags.grouping || state.groupOptions.length === 0) {
@@ -38,3 +44,28 @@ export const buildGroupSelector = <TData>(model: TableModel<TData>) => {
     ariaLabel: groupSelectorLabel,
   };
 };
+
+const buildSearchToolbarProps = <TData>(model: TableModel<TData>) => {
+  const { settings, state } = model;
+  const { flags } = settings;
+  return {
+    showSearch: flags.search,
+    search: state.search,
+    searchPlaceholder: settings.searchPlaceholder,
+    onSearchChange: buildSearchChangeHandler(model),
+    showClearFilters: flags.filtering && state.hasActiveFilters,
+    onClearFilters: state.clearFilters,
+    showCreateButton: flags.createButton,
+    createLabel: settings.createLabel,
+    onCreate: settings.onCreate,
+  };
+};
+
+export const buildToolbarProps = <TData>(
+  model: TableModel<TData>,
+): ComponentProps<typeof Toolbar> => ({
+  ...buildSearchToolbarProps(model),
+  groupSelector: buildGroupSelector(model),
+  ...buildArchivedToolbarProps(model.settings, model.state),
+  ...pickToolbarPassThrough(model.settings),
+});

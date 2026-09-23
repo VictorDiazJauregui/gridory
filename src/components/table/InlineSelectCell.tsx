@@ -1,5 +1,6 @@
-import type { CSSProperties, MouseEvent } from "react";
+import type { CSSProperties } from "react";
 import type { SelectTheme } from "../shared/select-theme";
+import { stopPropagation } from "../shared/stop-propagation";
 import { SimpleSelect } from "../ui/select";
 import type { CellHighlight, ColumnDefinition } from "./types";
 
@@ -10,8 +11,6 @@ interface InlineSelectCellProps<TData> {
   highlight?: CellHighlight;
   selectTheme?: SelectTheme;
 }
-
-const stopPropagation = (event: MouseEvent) => event.stopPropagation();
 
 export const InlineSelectCell = <TData,>(
   props: InlineSelectCellProps<TData>,
