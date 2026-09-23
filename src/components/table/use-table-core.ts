@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import type { Table } from "@tanstack/react-table";
 import { computeColumnFilterOptions } from "../shared/row-pipeline";
 import { resolveTableSettings } from "./settings";
-import type { DataTableProps } from "./types";
+import type { ColumnDefinition, DataTableProps } from "./types";
 import { useTablePaging } from "./use-table-paging";
 import { useTableRows } from "./use-table-rows";
 import { useTableState } from "./use-table-state";
@@ -23,3 +23,11 @@ export const useTableCore = <TData>(props: DataTableProps<TData>) => {
 export type TableCore<TData> = ReturnType<typeof useTableCore<TData>>;
 
 export type TableModel<TData> = TableCore<TData> & { table: Table<TData> };
+
+export interface TableModelProps<TData> {
+  model: TableModel<TData>;
+}
+
+export interface TableColumnProps<TData> extends TableModelProps<TData> {
+  column: ColumnDefinition<TData>;
+}
