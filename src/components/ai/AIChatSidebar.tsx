@@ -363,7 +363,7 @@ export function AIChatSidebar(props: AIChatSidebarProps) {
               onKeyDown={handleKeyDown}
               placeholder={resolvedTexts.placeholder}
               className={cn(
-                "flex-1 resize-none overflow-y-auto bg-transparent p-1 text-sm leading-snug outline-none placeholder:text-muted-foreground/60 border focus-within:border-primary/40 focus-within:ring-2 focus-within:ring-primary/30 rounded-xl [scrollbar-width:thin]",
+                "flex-1 resize-none overflow-y-auto rounded-xl border bg-transparent p-1 text-sm leading-snug outline-none placeholder:text-muted-foreground/60 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-1 focus-visible:outline-ring [scrollbar-width:thin]",
                 classNames?.textarea,
               )}
               disabled={isLoading}
