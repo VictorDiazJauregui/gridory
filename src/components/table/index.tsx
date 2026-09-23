@@ -22,14 +22,14 @@ import {
   Filter,
 } from "lucide-react";
 import "./styles.css";
+import { cn } from "../../lib/cn";
 import {
-  DEFAULT_FEATURES,
-  DEFAULT_PAGE_SIZES,
   EMPTY_DATE_FILTER_STATE,
-} from "./constants";
-import { useActiveFilters, useClickOutside } from "./hooks";
-import { DateFilterMenu } from "./DateFilterMenu";
-import { FilterMenu } from "./FilterMenu";
+  hasDateFilterValue,
+} from "../shared/date-utils";
+import { useActiveFilters, useClickOutside } from "../shared/hooks";
+import { DateFilterMenu, FilterMenu } from "../shared/toolbar";
+import { DEFAULT_FEATURES, DEFAULT_PAGE_SIZES } from "./constants";
 import { RowActionsMenu } from "./RowActionsMenu";
 import { TablePagination } from "./TablePagination";
 import { TableToolbar } from "./TableToolbar";
@@ -48,10 +48,8 @@ import {
   applyColumnSorting,
   applyGlobalSearch,
   applyRowGrouping,
-  cn,
   computeColumnFilterOptions,
   findGroupForIndex,
-  hasDateFilterValue,
   normalizeInputRows,
   normalizeToArray,
 } from "./utils";
@@ -104,7 +102,7 @@ export function DataTable<TData>({
   onPaginationChange,
   onSearchChange,
   tableWrapClassName,
-  tableMinHeightClassName = "rdt-min-h-md",
+  tableMinHeightClassName = "gdy-table-min-h-md",
   tableMaxHeightClassName,
   scrollResetOnPageChange = true,
   stickyHeader = true,
@@ -334,10 +332,10 @@ export function DataTable<TData>({
         );
 
         return (
-          <div className={cn("rdt-cell-content", valueHighlight?.className)}>
+          <div className={cn("gdy-table-cell-content", valueHighlight?.className)}>
             {canInlineEdit ? (
               <div
-                className="rdt-inline-select-wrap"
+                className="gdy-table-inline-select-wrap"
                 onClick={(event) => event.stopPropagation()}
               >
                 <SimpleSelect
@@ -427,14 +425,14 @@ export function DataTable<TData>({
   return (
     <div
       className={cn(
-        "rdt",
-        fillHeight && "rdt-fill",
-        showStickyHeader && "rdt-sticky",
-        thinScrollbars && "rdt-thin-scroll",
+        "gdy-table",
+        fillHeight && "gdy-table-fill",
+        showStickyHeader && "gdy-table-sticky",
+        thinScrollbars && "gdy-thin-scroll",
       )}
       style={rootStyle}
     >
-      <div className="gdy-scope rdt-card">
+      <div className="gdy-scope gdy-card">
         <TableToolbar
           showSearch={flags.search}
           search={search}
@@ -472,13 +470,13 @@ export function DataTable<TData>({
         <div
           ref={wrapRef}
           className={cn(
-            "rdt-table-wrap",
+            "gdy-table-wrap gdy-scroll",
             tableMinHeightClassName,
             tableMaxHeightClassName,
             tableWrapClassName,
           )}
         >
-          <table className="rdt-table">
+          <table className="gdy-table-grid">
             <thead>
               {table.getHeaderGroups().map((group) => (
                 <tr key={group.id}>
@@ -525,28 +523,28 @@ export function DataTable<TData>({
 
                     return (
                       <th key={header.id} style={{ width: column.width }}>
-                        <div className="rdt-head-cell">
+                        <div className="gdy-table-head-cell">
                           <button
                             type="button"
                             className={cn(
-                              "rdt-head-trigger",
+                              "gdy-table-head-trigger",
                               hasColumnFilter && "is-filtered",
                             )}
                             onClick={handleHeaderAction}
                           >
-                            <span className="rdt-head-label" title={column.header}>
+                            <span className="gdy-table-head-label" title={column.header}>
                               {column.header}
                             </span>
                             {hasColumnFilter && (
                               <Filter
                                 size={12}
-                                className="rdt-head-filter-icon"
+                                className="gdy-table-head-filter-icon"
                               />
                             )}
                             {flags.filtering && column.filterable && (
                               <ChevronDown
                                 size={13}
-                                className="rdt-head-arrow"
+                                className="gdy-table-head-arrow"
                               />
                             )}
                             {flags.sorting &&
@@ -565,7 +563,7 @@ export function DataTable<TData>({
                             flags.filtering &&
                             column.filterable && (
                               <div
-                                className="rdt-menu-holder"
+                                className="gdy-table-menu-holder"
                                 ref={filterMenuRef}
                               >
                                 {column.type === "date" ? (
@@ -641,7 +639,7 @@ export function DataTable<TData>({
             <tbody>
               {table.getRowModel().rows.length === 0 ? (
                 <tr>
-                  <td className="rdt-empty" colSpan={tableColumns.length}>
+                  <td className="gdy-empty" colSpan={tableColumns.length}>
                     {emptyMessage}
                   </td>
                 </tr>
@@ -666,30 +664,30 @@ export function DataTable<TData>({
                     );
                     elements.push(
                       <tr
-                        className="rdt-group-row"
+                        className="gdy-table-group-row"
                         key={`__group__:${groupHeader.value}`}
                       >
                         <td
-                          className="rdt-group-cell"
+                          className="gdy-table-group-cell"
                           colSpan={tableColumns.length}
                         >
                           <button
                             type="button"
-                            className="rdt-group-toggle"
+                            className="gdy-table-group-toggle"
                             onClick={() => toggleGroup(groupHeader.value)}
                             aria-expanded={!isHeaderCollapsed}
                           >
                             <ChevronDown
                               size={14}
                               className={cn(
-                                "rdt-group-chevron",
+                                "gdy-table-group-chevron",
                                 isHeaderCollapsed && "is-collapsed",
                               )}
                             />
-                            <span className="rdt-group-label">
+                            <span className="gdy-table-group-label">
                               {groupHeader.label}
                             </span>
-                            <span className="rdt-group-count">
+                            <span className="gdy-table-group-count">
                               {groupHeader.count}
                             </span>
                           </button>
@@ -702,7 +700,7 @@ export function DataTable<TData>({
                     elements.push(
                       <tr
                         key={row.id}
-                        className={cn(onRowClick && "rdt-row-clickable")}
+                        className={cn(onRowClick && "gdy-table-row-clickable")}
                         onClick={
                           onRowClick
                             ? () => onRowClick(row.original)

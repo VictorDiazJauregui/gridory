@@ -1,10 +1,7 @@
 import { useMemo, useState } from "react";
 import { Check, Search } from "lucide-react";
-import type {
-  FilterOption,
-  SortDirection,
-} from "./types";
-import { cn } from "./utils";
+import { cn } from "../../../lib/cn";
+import type { FilterOption, SortDirection } from "../data-model";
 
 interface FilterMenuProps {
   options: FilterOption[];
@@ -47,14 +44,14 @@ export const FilterMenu = ({
   };
 
   return (
-    <div className="rkb-panel">
+    <div className="gdy-panel">
       {sortable && (
-        <div className="rkb-panel-section rkb-panel-section-stack">
-          <p className="rkb-panel-title">Ordenar</p>
+        <div className="gdy-panel-section gdy-panel-section-stack">
+          <p className="gdy-panel-title">Ordenar</p>
           <button
             type="button"
             className={cn(
-              "rkb-link-btn",
+              "gdy-link-btn",
               sortDirection === "asc" && "is-active",
             )}
             onClick={onSortAsc}
@@ -64,7 +61,7 @@ export const FilterMenu = ({
           <button
             type="button"
             className={cn(
-              "rkb-link-btn",
+              "gdy-link-btn",
               sortDirection === "desc" && "is-active",
             )}
             onClick={onSortDesc}
@@ -74,12 +71,12 @@ export const FilterMenu = ({
         </div>
       )}
 
-      <div className="rkb-panel-section">
-        <p className="rkb-panel-title">Filtrar</p>
-        <div className="rkb-inline-links">
+      <div className="gdy-panel-section">
+        <p className="gdy-panel-title">Filtrar</p>
+        <div className="gdy-inline-links">
           <button
             type="button"
-            className="rkb-link-btn rkb-link-btn-nowrap"
+            className="gdy-link-btn gdy-link-btn-nowrap"
             onClick={() =>
               onSelectedChange(
                 Array.from(
@@ -96,7 +93,7 @@ export const FilterMenu = ({
           </button>
           <button
             type="button"
-            className="rkb-link-btn"
+            className="gdy-link-btn"
             onClick={() => onSelectedChange([])}
           >
             Limpiar
@@ -104,21 +101,21 @@ export const FilterMenu = ({
         </div>
       </div>
 
-      <div className="rkb-panel-section">
-        <p className="rkb-panel-title">Valores</p>
-        <div className="rkb-search-sm">
-          <Search className="rkb-search-sm-icon" size={14} />
+      <div className="gdy-panel-section">
+        <p className="gdy-panel-title">Valores</p>
+        <div className="gdy-search-sm">
+          <Search className="gdy-search-sm-icon" size={14} />
           <input
             type="text"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Buscar..."
-            className="rkb-input rkb-input-sm"
+            className="gdy-input gdy-input-sm"
           />
         </div>
-        <div className="rkb-option-list">
+        <div className="gdy-option-list gdy-scroll">
           {filteredOptions.length === 0 ? (
-            <p className="rkb-empty-sm">Sin resultados</p>
+            <p className="gdy-empty-sm">Sin resultados</p>
           ) : (
             filteredOptions.map((option) => {
               const isChecked = selectedSet.has(option.value);
@@ -126,18 +123,18 @@ export const FilterMenu = ({
                 <button
                   key={option.value}
                   type="button"
-                  className={cn("rkb-option-item", isChecked && "is-selected")}
+                  className={cn("gdy-option-item", isChecked && "is-selected")}
                   onClick={() => toggleSelection(option.value)}
                 >
                   <span
                     className={cn(
-                      "rkb-option-check",
+                      "gdy-option-check",
                       isChecked && "is-checked",
                     )}
                   >
                     {isChecked ? <Check size={11} /> : null}
                   </span>
-                  <span className="rkb-option-label" title={option.label}>
+                  <span className="gdy-option-label" title={option.label}>
                     {option.label}
                   </span>
                 </button>

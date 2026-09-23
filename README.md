@@ -93,6 +93,25 @@ mecanismo de sobrescritura: `--gdy-table-*` (cabecera, bordes, hover de fila, fi
 `selectTheme`), `--gdy-btn-*`, `--gdy-input-*`, `--gdy-panel-*`, `--gdy-option-hover-bg` y
 `--gdy-scrollbar-thumb`. La lista de cada módulo está en su README.
 
+### Clases
+
+Todo lo que pinta la librería lleva una clase con prefijo `gdy-`, pensada como punto de
+extensión estable:
+
+- `gdy-<módulo>-<parte>` para lo propio de cada módulo: `gdy-table-head-trigger`,
+  `gdy-table-pagination`, `gdy-kanban-column`, `gdy-kanban-card`.
+- `gdy-<parte>` para lo que comparten tabla y kanban: `gdy-card`, `gdy-toolbar`, `gdy-btn`,
+  `gdy-input`, `gdy-panel`, `gdy-option-item`, `gdy-date-input`, `gdy-view-switch`.
+- Estados temporales con `is-*` sobre esas clases: `is-active`, `is-selected`, `is-checked`,
+  `is-filtered`, `is-collapsed`, `is-dragging`.
+- Utilidades que se pasan por props: `gdy-table-min-h-sm|md|lg`, `gdy-table-max-h-sm|md|lg` y
+  `gdy-kanban-min-h-sm|md|lg`.
+
+Las reglas de la librería usan una sola clase, así que una regla con la misma clase en tu CSS,
+cargado después de `gridory/styles.css`, la sobrescribe. `npm run audit:styles` comprueba que cada
+clase emitida tenga su regla, que ninguna regla quede huérfana y que no sobreviva ningún nombre
+heredado.
+
 ## Inicio rápido
 
 ### Tabla
@@ -169,6 +188,7 @@ Sin `VITE_AI_API_KEY` el mock se muestra igual, pero no hace llamadas reales al 
 | `npm run build` | Chequeo de tipos, bundle ESM en `dist/` y declaraciones en `dist/types/`. |
 | `npm run lint` | ESLint sobre todo el proyecto. |
 | `npm run typecheck` | `tsc -b` sin emitir archivos. |
+| `npm run audit:styles` | Tras `npm run build`: sin nombres heredados ni colores literales fuera de `tokens.css`, tokens de componente con fallback, y cada clase `gdy-*` con su regla (y viceversa). |
 
 ## Documentación
 

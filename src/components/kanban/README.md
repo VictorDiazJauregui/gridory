@@ -4,7 +4,8 @@ Componente Kanban reutilizable y migrable del sistema UI.
 
 - Ruta: `src/components/kanban`
 - Export principal: `KanbanBoard`
-- Estilos base: `styles.css` (patrón visual alineado a la tabla reusable / shadcn-like)
+- Estilos propios: `styles.css` (clases `gdy-kanban-*`); toolbar, filtros, fechas y botones
+  vienen de `src/styles/shared.css` y `src/components/shared/toolbar/`, compartidos con la tabla
 
 ---
 
@@ -439,17 +440,17 @@ Por defecto el botón IA comparte el estilo neutro de los botones del toolbar
 controles exponen clases CSS estables con especificidad de una sola clase,
 pensadas como puntos de extensión:
 
-- `rkb-btn-ai` — botón IA.
-- `rkb-view-switch` — contenedor del switch.
-- `rkb-view-switch-btn` — cada segmento del switch.
-- `rkb-view-switch-btn-active` — segmento activo.
+- `gdy-btn-ai` — botón IA.
+- `gdy-view-switch` — contenedor del switch.
+- `gdy-view-switch-btn` — cada segmento del switch.
+- `gdy-view-switch-btn-active` — segmento activo.
 
 El consumidor puede sobreescribir los valores por defecto declarando las
 mismas clases en su propio CSS, cargado después del CSS del paquete:
 
 ```css
 /* Ejemplo: botón IA con acento de marca */
-.rkb-btn-ai {
+.gdy-btn-ai {
   border-color: #c7d2fe;
   color: #4f46e5;
   background: #ffffff;
@@ -597,25 +598,30 @@ interface KanbanCardRenderContext<TData> {
 
 ## Estilos y clases útiles
 
-Archivo: `src/components/kanban/styles.css`
+Archivos: `src/components/kanban/styles.css` (propios, `gdy-kanban-*`) y
+`src/styles/shared.css` (compartidos con la tabla: `gdy-card`, `gdy-toolbar`, `gdy-btn`,
+`gdy-input`, `gdy-panel`, `gdy-option-item`, `gdy-date-input`, `gdy-view-switch`). Los estados
+temporales usan `is-*` (`is-filtered`, `is-dragging`, `is-selected`, `is-checked`, `is-active`).
+Cada regla es de una sola clase, así que una regla con la misma clase en tu CSS, cargado después
+de `gridory/styles.css`, gana.
 
 Clases principales:
 
-- `.rkb`, `.rkb-card`
-- `.rkb-filter-row`, `.rkb-filter-menu-holder`
-- `.rkb-board`, `.rkb-column`, `.rkb-column-head`, `.rkb-column-body`
-- `.rkb-card-item`, `.rkb-card-title`, `.rkb-card-value`
-- `.rkb-column-drop-target`
+- `.gdy-kanban`, `.gdy-card`
+- `.gdy-kanban-filter-row`, `.gdy-kanban-filter-menu-holder`
+- `.gdy-kanban-board`, `.gdy-kanban-column`, `.gdy-kanban-column-head`, `.gdy-kanban-column-body`
+- `.gdy-kanban-card`, `.gdy-kanban-card-title`, `.gdy-kanban-card-value`
+- `.gdy-kanban-column-drop-target`
 
 Tamaños de alto sugeridos:
 
-- `rkb-min-h-sm`
-- `rkb-min-h-md`
-- `rkb-min-h-lg`
+- `gdy-kanban-min-h-sm`
+- `gdy-kanban-min-h-md`
+- `gdy-kanban-min-h-lg`
 
 Popover de fecha sobre capas:
 
-- `.rkb-filter-menu-holder` usa z-index alto.
+- `.gdy-kanban-filter-menu-holder` usa z-index alto.
 - popovers internos de fecha quedan por encima para evitar bloqueo visual.
 
 ---
@@ -632,7 +638,7 @@ Popover de fecha sobre capas:
   createLabel="Nueva empresa"
   searchPlaceholder="Buscar empresa..."
   emptyMessage="Sin resultados"
-  boardMinHeightClassName="rkb-min-h-lg"
+  boardMinHeightClassName="gdy-kanban-min-h-lg"
   columnBodyMaxHeight={520}
   features={{
     search: true,
@@ -680,7 +686,7 @@ Popover de fecha sobre capas:
 ## Filtros de fecha, scrollbars finos y hover de checklist (opcional, v1.10.0)
 
 Seis mejoras de UX **opcionales y retrocompatibles**, equivalentes a las de
-`DataTable` (los filtros del kanban son código duplicado con prefijo `rkb-`).
+`DataTable` (los filtros del kanban comparten componentes y clases `gdy-*` con la tabla).
 Sin estas props, el filtrado/orden es idéntico a v1.9.0; el único diff por defecto es
 cosmético/intencional.
 
@@ -700,17 +706,17 @@ cosmético/intencional.
 ### Comportamiento
 
 - **Scrollbars (1)**: `scrollbar-width: thin` + `scrollbar-color` + `::-webkit-scrollbar`
-  bajo la clase-gate `.rkb-thin-scroll`, parametrizados por CSS variables.
+  bajo la clase-gate `.gdy-thin-scroll`, parametrizados por CSS variables.
 - **Submenú de fecha (2)**: `op` admite `""`; sin operador no se muestra el input y no
   se filtra. "Limpiar" resetea al estado sin operador.
-- **Separadores/rango (3)**: `.rkb-panel-date .rkb-panel-section { width: 100% }`
+- **Separadores/rango (3)**: `.gdy-panel-date .gdy-panel-section { width: 100% }`
   (scopeado; el checklist de valores no se ve afectado). El rango se ingresa por dos
   campos "Desde/Hasta" o por el calendario de rango.
 - **Formato/entrada manual (4)**: helpers `parseInputToDate`/`formatDateToInput`
   (date-fns); el valor almacenado sigue siendo ISO `yyyy-MM-dd`.
 - **Mes/año (5)**: `captionLayout="dropdown"` con `startMonth`/`endMonth`, pasado desde
   los pickers (no se toca el wrapper `Calendar` compartido).
-- **Hover (6)**: `.rkb-option-item:hover` con fondo configurable.
+- **Hover (6)**: `.gdy-option-item:hover` con fondo configurable.
 
 ### Retrocompatibilidad
 
@@ -724,33 +730,33 @@ cosmético/intencional.
 
 Correcciones visuales de los submenús de filtro y del tablero, **sin cambios de
 API** y retrocompatibles con v1.10.0. No hay props nuevas: aplican por defecto
-(equivalentes a las de `DataTable`; los filtros del kanban son código
-duplicado con prefijo `rkb-`).
+(equivalentes a las de `DataTable`; los filtros del kanban comparten componentes
+y clases `gdy-*` con la tabla).
 
 ### Comportamiento
 
 - **Tooltip nativo en textos truncados**: el título de columna del tablero
-  (`rkb-column-title`), el disparador del filtro por campo
-  (`rkb-filter-trigger-label`) y los valores del checklist (`rkb-option-label`)
+  (`gdy-kanban-column-title`), el disparador del filtro por campo
+  (`gdy-kanban-filter-trigger-label`) y los valores del checklist (`gdy-option-label`)
   exponen el atributo `title` con su texto completo, que el navegador muestra al
   pasar el cursor. No se usa un tooltip a medida.
-- **Ancho del panel acotado**: `.rkb-panel` recibe `max-width: 280px` y
-  `.rkb-option-label` `max-width: 210px`; los valores largos truncan con ellipsis
+- **Ancho del panel acotado**: `.gdy-panel` recibe `max-width: 280px` y
+  `.gdy-option-label` `max-width: 210px`; los valores largos truncan con ellipsis
   en vez de ensanchar el submenú. El disparador del filtro usa
-  `.rkb-filter-trigger-label` (`max-width: 140px` + ellipsis).
+  `.gdy-kanban-filter-trigger-label` (`max-width: 140px` + ellipsis).
 - **Opciones de "Ordenar" apiladas**: la sección "Ordenar" usa
-  `rkb-panel-section-stack`, que apila "Ascendente"/"Descendente" en columna a
+  `gdy-panel-section-stack`, que apila "Ascendente"/"Descendente" en columna a
   ancho completo.
 - **Calendario de rango lado a lado**: al elegir "Entre (rango)", los dos meses
   se muestran en fila a partir de `768px` vía
-  `@media (min-width: 768px) { .rkb-popover-top .rdp-months { flex-direction: row } }`.
+  `@media (min-width: 768px) { .gdy-calendar-popover .rdp-months { flex-direction: row } }`.
 
 ### Por qué CSS plano para el rango
 
 El wrapper del calendario compone los meses con la utilidad `md:flex-row`, pero
 el Tailwind del proyecto consumidor no escanea este paquete, así que esa utilidad
 no se genera en runtime y los meses caían apilados. El fix se envía como CSS en
-`styles.css` (compilado en `dist/gridory.css`), acotado al popover del
+`src/styles/shared.css` (compilado en `dist/gridory.css`), acotado al popover del
 rango, para no depender del Tailwind del consumidor. No se toca
 `ui/calendar.tsx`.
 

@@ -2,19 +2,15 @@ import { useMemo, useState } from "react";
 import type { DateRange } from "react-day-picker";
 import { CalendarIcon } from "lucide-react";
 
-import { Calendar } from "../ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "../ui/popover";
+import { Calendar } from "../../ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
+import type { DateInputFormat } from "../data-model";
 import {
   formatDateToInput,
   formatDateToString,
   parseInputToDate,
   parseStringToDate,
-} from "./utils";
-import type { DateInputFormat } from "./types";
+} from "../date-utils";
 
 interface DateRangePickerProps {
   dateFrom: string;
@@ -82,11 +78,11 @@ export const DateRangePicker = ({
   };
 
   return (
-    <div className="rkb-date-range-inputs">
-      <div className="rkb-date-picker-input">
+    <div className="gdy-date-range-inputs">
+      <div className="gdy-date-picker-input">
         <input
           type="text"
-          className="rkb-date-input"
+          className="gdy-date-input"
           placeholder={dateInputFormat}
           value={displayFrom}
           onChange={(e) => handleFromInput(e.target.value)}
@@ -100,10 +96,10 @@ export const DateRangePicker = ({
           }}
         />
       </div>
-      <div className="rkb-date-picker-input">
+      <div className="gdy-date-picker-input">
         <input
           type="text"
-          className="rkb-date-input rkb-date-input-with-icon"
+          className="gdy-date-input gdy-date-input-with-icon"
           placeholder={dateInputFormat}
           value={displayTo}
           onChange={(e) => handleToInput(e.target.value)}
@@ -126,14 +122,14 @@ export const DateRangePicker = ({
           <PopoverTrigger asChild>
             <button
               type="button"
-              className="rkb-date-picker-trigger"
+              className="gdy-date-picker-trigger"
               aria-label="Seleccionar rango"
             >
               <CalendarIcon size={14} />
             </button>
           </PopoverTrigger>
           <PopoverContent
-            className="w-auto p-0 rkb-popover-top"
+            className="w-auto p-0 gdy-calendar-popover"
             align="end"
             sideOffset={4}
             onInteractOutside={(e) => e.preventDefault()}

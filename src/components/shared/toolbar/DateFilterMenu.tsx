@@ -1,7 +1,11 @@
 import { useState } from "react";
-import { EMPTY_DATE_FILTER_STATE } from "./date-utils";
-import type { DateFilterState, DateInputFormat, SortDirection } from "./types";
-import { cn } from "./utils";
+import { cn } from "../../../lib/cn";
+import type {
+  DateFilterState,
+  DateInputFormat,
+  SortDirection,
+} from "../data-model";
+import { EMPTY_DATE_FILTER_STATE } from "../date-utils";
 import { DatePickerWithInput } from "./DatePickerWithInput";
 import { DateRangePicker } from "./DateRangePicker";
 
@@ -50,14 +54,14 @@ export const DateFilterMenu = ({
   };
 
   return (
-    <div className="rkb-panel rkb-panel-date">
+    <div className="gdy-panel gdy-panel-date">
       {sortable && (
-        <div className="rkb-panel-section rkb-panel-section-stack">
-          <p className="rkb-panel-title">Ordenar</p>
+        <div className="gdy-panel-section gdy-panel-section-stack">
+          <p className="gdy-panel-title">Ordenar</p>
           <button
             type="button"
             className={cn(
-              "rkb-link-btn rkb-link-btn-nowrap",
+              "gdy-link-btn gdy-link-btn-nowrap",
               sortDirection === "asc" && "is-active",
             )}
             onClick={onSortAsc}
@@ -67,7 +71,7 @@ export const DateFilterMenu = ({
           <button
             type="button"
             className={cn(
-              "rkb-link-btn rkb-link-btn-nowrap",
+              "gdy-link-btn gdy-link-btn-nowrap",
               sortDirection === "desc" && "is-active",
             )}
             onClick={onSortDesc}
@@ -77,12 +81,12 @@ export const DateFilterMenu = ({
         </div>
       )}
 
-      <div className="rkb-panel-section rkb-panel-section-stack">
-        <p className="rkb-panel-title">Operador</p>
+      <div className="gdy-panel-section gdy-panel-section-stack">
+        <p className="gdy-panel-title">Operador</p>
         <button
           type="button"
           className={cn(
-            "rkb-link-btn rkb-link-btn-nowrap",
+            "gdy-link-btn gdy-link-btn-nowrap",
             tempState.op === "gt" && "is-active",
           )}
           onClick={() => setTempState({ ...tempState, op: "gt" })}
@@ -92,7 +96,7 @@ export const DateFilterMenu = ({
         <button
           type="button"
           className={cn(
-            "rkb-link-btn rkb-link-btn-nowrap",
+            "gdy-link-btn gdy-link-btn-nowrap",
             tempState.op === "lt" && "is-active",
           )}
           onClick={() => setTempState({ ...tempState, op: "lt" })}
@@ -102,7 +106,7 @@ export const DateFilterMenu = ({
         <button
           type="button"
           className={cn(
-            "rkb-link-btn rkb-link-btn-nowrap",
+            "gdy-link-btn gdy-link-btn-nowrap",
             tempState.op === "bt" && "is-active",
           )}
           onClick={() => setTempState({ ...tempState, op: "bt" })}
@@ -112,8 +116,8 @@ export const DateFilterMenu = ({
       </div>
 
       {tempState.op !== "" && (
-        <div className="rkb-panel-section">
-          <p className="rkb-panel-title">Fechas</p>
+        <div className="gdy-panel-section">
+          <p className="gdy-panel-title">Fechas</p>
           {(tempState.op === "gt" || tempState.op === "lt") && (
             <DatePickerWithInput
               value={tempState.date}
@@ -140,13 +144,13 @@ export const DateFilterMenu = ({
         </div>
       )}
 
-      <div className="rkb-panel-actions">
-        <button type="button" className="rkb-link-btn" onClick={handleClear}>
+      <div className="gdy-panel-actions">
+        <button type="button" className="gdy-link-btn" onClick={handleClear}>
           Limpiar
         </button>
         <button
           type="button"
-          className="rkb-btn rkb-btn-primary rkb-btn-xs"
+          className="gdy-btn gdy-btn-primary gdy-btn-xs"
           onClick={handleApply}
         >
           Aplicar

@@ -1,0 +1,476 @@
+/*
+ * Shared layer: rules used by more than one module (card container, toolbar,
+ * buttons, inputs, filter panels, date pickers, view switch, scroll regions).
+ * Module-specific rules live next to each component (gdy-table-*, gdy-kanban-*).
+ *
+ * Every color comes from src/styles/tokens.css. Component tokens
+ * (--gdy-btn-*, --gdy-input-*, --gdy-panel-*, ...) are only consumed here, with
+ * a fallback, and never declared, so an app can define them at any scope.
+ */
+
+/* Card container of every module (wraps toolbar + content) */
+.gdy-card {
+  border: 1px solid var(--gdy-border);
+  border-radius: 10px;
+  background: var(--gdy-card);
+}
+
+/* Toolbar */
+.gdy-toolbar {
+  min-height: 40px;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--gdy-toolbar-border, var(--gdy-border));
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.gdy-toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.gdy-toolbar-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.gdy-toolbar-left:empty {
+  display: none;
+}
+
+/* View switch (table / kanban) */
+.gdy-view-switch {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  padding: 2px;
+  border: 1px solid var(--gdy-input-border, var(--gdy-input));
+  border-radius: 8px;
+  background: var(--gdy-accent);
+}
+
+.gdy-view-switch-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 26px;
+  padding: 0 10px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--gdy-muted-foreground);
+  cursor: pointer;
+}
+
+.gdy-view-switch-btn-active {
+  background: var(--gdy-background);
+  color: var(--gdy-foreground);
+  box-shadow: var(--gdy-shadow-sm);
+}
+
+/* Search box and text inputs */
+.gdy-search {
+  position: relative;
+}
+
+.gdy-search-icon {
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--gdy-muted-foreground);
+}
+
+.gdy-input {
+  width: 200px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--gdy-input-border, var(--gdy-input));
+  background: var(--gdy-input-bg, var(--gdy-muted));
+  padding: 0 10px 0 28px;
+  font-size: 12px;
+}
+
+/* Focus: one 2px line drawn over the 1px border (negative offset), so the
+   border and the outline never read as a double border. Shared by every text
+   input of the library (search, checklist search, date inputs). */
+.gdy-input:focus,
+.gdy-date-input:focus {
+  outline: 2px solid var(--gdy-ring);
+  outline-offset: -1px;
+}
+
+.gdy-input::-webkit-search-decoration,
+.gdy-input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.gdy-input-sm {
+  width: 100%;
+  padding-left: 8px;
+  padding-right: 28px;
+}
+
+/* Buttons */
+.gdy-btn {
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: var(--gdy-btn-bg, var(--gdy-muted));
+  color: var(--gdy-btn-fg, var(--gdy-foreground));
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.gdy-btn-primary {
+  background: var(--gdy-btn-primary-bg, var(--gdy-primary));
+  color: var(--gdy-btn-primary-fg, var(--gdy-primary-foreground));
+}
+
+.gdy-btn-primary:hover {
+  background: transparent;
+  color: var(--gdy-btn-primary-bg, var(--gdy-primary));
+  border: 1px solid var(--gdy-btn-primary-bg, var(--gdy-primary));
+}
+
+.gdy-btn-ghost {
+  color: var(--gdy-muted-foreground);
+  background: transparent;
+}
+
+.gdy-btn-ghost:hover {
+  color: var(--gdy-foreground);
+  background: transparent;
+  text-decoration: underline;
+}
+
+.gdy-btn-ai {
+  border: 1px solid transparent;
+  background: var(--gdy-btn-bg, var(--gdy-muted));
+  color: var(--gdy-btn-fg, var(--gdy-foreground));
+}
+
+.gdy-btn-ai:hover {
+  background: var(
+    --gdy-btn-hover-bg,
+    color-mix(in oklab, var(--gdy-foreground) 8%, var(--gdy-muted))
+  );
+}
+
+.gdy-btn-xs {
+  height: 28px;
+}
+
+/* Square icon-only button (row menu, card menu, pagination arrows) */
+.gdy-icon-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--gdy-foreground);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.gdy-icon-btn:hover {
+  background: var(--gdy-muted);
+}
+
+.gdy-icon-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Filter panel (values and dates) */
+.gdy-panel {
+  width: fit-content;
+  max-width: 280px;
+  border: 1px solid var(--gdy-panel-border, var(--gdy-border));
+  background: var(--gdy-panel-bg, var(--gdy-popover));
+  border-radius: 8px;
+  box-shadow: var(--gdy-panel-shadow, var(--gdy-shadow-md));
+  overflow: hidden;
+}
+
+.gdy-panel-date {
+  width: 240px;
+}
+
+.gdy-panel-section {
+  border-bottom: 1px solid var(--gdy-panel-border, var(--gdy-border));
+  padding: 10px 12px;
+  width: fit-content;
+}
+
+.gdy-panel-section-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.gdy-panel-section-stack .gdy-panel-title {
+  margin-bottom: 2px;
+}
+
+.gdy-panel-section-stack .gdy-link-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+}
+
+.gdy-panel-date .gdy-panel-section {
+  width: 100%;
+}
+
+.gdy-panel-title {
+  margin: 0 0 8px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--gdy-muted-foreground);
+  font-weight: 600;
+}
+
+.gdy-panel-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+}
+
+.gdy-inline-links {
+  display: flex;
+  gap: 12px;
+}
+
+.gdy-link-btn {
+  border: none;
+  background: transparent;
+  color: var(--gdy-link);
+  font-size: 12px;
+  padding: 0;
+  cursor: pointer;
+  width: fit-content;
+}
+
+.gdy-link-btn-nowrap {
+  white-space: nowrap;
+}
+
+.gdy-link-btn:hover {
+  text-decoration: underline;
+}
+
+.gdy-link-btn.is-active {
+  color: var(--gdy-foreground);
+  text-decoration: none;
+}
+
+/* Value checklist inside the filter panel */
+.gdy-search-sm {
+  position: relative;
+}
+
+.gdy-search-sm-icon {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--gdy-muted-foreground);
+}
+
+.gdy-option-list {
+  max-height: 220px;
+  overflow-y: auto;
+  margin-top: 8px;
+}
+
+.gdy-option-item {
+  width: 100%;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.gdy-option-item.is-selected {
+  background: var(--gdy-muted);
+}
+
+.gdy-option-item:hover {
+  background: var(
+    --gdy-option-hover-bg,
+    color-mix(in oklab, var(--gdy-foreground) 6%, var(--gdy-muted))
+  );
+}
+
+.gdy-option-check {
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--gdy-input-border, var(--gdy-input));
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gdy-option-check.is-checked {
+  border-color: var(--gdy-muted-foreground);
+  background: color-mix(in oklab, var(--gdy-foreground) 8%, var(--gdy-muted));
+}
+
+.gdy-option-label {
+  max-width: 210px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gdy-empty-sm {
+  color: var(--gdy-muted-foreground);
+  text-align: center;
+  font-size: 11px;
+  margin: 6px 0;
+}
+
+/* Empty state of a module (no rows / no cards) */
+.gdy-empty {
+  text-align: center;
+  padding: 34px 14px;
+  color: var(--gdy-muted-foreground);
+}
+
+/* Date inputs and pickers */
+.gdy-date-range-inputs {
+  display: grid;
+  gap: 8px;
+}
+
+.gdy-date-picker-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.gdy-date-input {
+  height: 32px;
+  width: 100%;
+  border: 1px solid var(--gdy-input-border, var(--gdy-input));
+  border-radius: 8px;
+  background: var(--gdy-input-bg, var(--gdy-muted));
+  color: var(--gdy-foreground);
+  padding: 0 8px;
+  font-size: 12px;
+}
+
+.gdy-date-input-with-icon {
+  padding-right: 32px;
+}
+
+.gdy-date-picker-trigger {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: var(--gdy-muted-foreground);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 4px;
+  transition:
+    background-color 0.15s,
+    color 0.15s;
+}
+
+.gdy-date-picker-trigger:hover {
+  background: var(--gdy-accent);
+  color: var(--gdy-foreground);
+}
+
+/* Calendar popover: sits above the filter panels (table holder z 50, kanban
+   holder z 200) and clips the (rectangular) calendar to the rounded corners.
+   The data-slot part gives the rule two-selector specificity so it beats the
+   popover's own z-50 utility whatever the stylesheet order in the app. */
+[data-slot="popover-content"].gdy-calendar-popover {
+  z-index: 220;
+  overflow: hidden;
+}
+
+/* Range filter: keep the two calendar months side by side (like the base
+   calendar's md:flex-row). Shipped as plain CSS because the consumer's Tailwind
+   does not scan this package, so the md:flex-row utility never gets generated. */
+@media (min-width: 768px) {
+  .gdy-calendar-popover .rdp-months {
+    flex-direction: row;
+    gap: 1rem;
+  }
+}
+
+/* Thin scrollbars (thinScrollbars prop, default ON): the module root carries
+   gdy-thin-scroll and every internal scroller carries gdy-scroll. Thumb color
+   via --gdy-scrollbar-thumb (scrollbarColor prop). */
+.gdy-thin-scroll .gdy-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--gdy-scrollbar-thumb, var(--gdy-input)) transparent;
+}
+
+.gdy-thin-scroll .gdy-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.gdy-thin-scroll .gdy-scroll::-webkit-scrollbar-thumb {
+  background-color: var(--gdy-scrollbar-thumb, var(--gdy-input));
+  border-radius: 8px;
+}
+
+.gdy-thin-scroll .gdy-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Thin scrollbar for the react-day-picker month/year dropdown selects
+   (portaled outside the component root, so this rule is global). */
+.rdp-dropdown {
+  scrollbar-width: thin;
+  scrollbar-color: var(--gdy-scrollbar-thumb, var(--gdy-input)) transparent;
+}
+
+.rdp-dropdown::-webkit-scrollbar {
+  width: 8px;
+}
+
+.rdp-dropdown::-webkit-scrollbar-thumb {
+  background-color: var(--gdy-scrollbar-thumb, var(--gdy-input));
+  border-radius: 8px;
+}
+
+.rdp-dropdown::-webkit-scrollbar-track {
+  background: transparent;
+}

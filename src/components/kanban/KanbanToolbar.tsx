@@ -1,7 +1,6 @@
 import { Fragment, type ReactNode } from "react";
 import { FilterX, Plus, Search } from "lucide-react";
-import { ToolbarAiButton } from "./ToolbarAiButton";
-import { ToolbarViewSwitch } from "./ToolbarViewSwitch";
+import { ToolbarAiButton, ToolbarViewSwitch } from "../shared/toolbar";
 import { SimpleSelect } from "../ui/select";
 import { SegmentedControl } from "../ui/toggle-group";
 import type {
@@ -92,20 +91,20 @@ const SearchSlot = ({
   placeholder: string;
   onChange: (value: string) => void;
 }) => (
-  <div className="rkb-search">
-    <Search size={14} className="rkb-search-icon" />
+  <div className="gdy-search">
+    <Search size={14} className="gdy-search-icon" />
     <input
       type="text"
       value={search}
       onChange={(event) => onChange(event.target.value)}
       placeholder={placeholder}
-      className="rkb-input"
+      className="gdy-input"
     />
   </div>
 );
 
 const ClearFiltersSlot = ({ onClear }: { onClear: () => void }) => (
-  <button type="button" className="rkb-btn rkb-btn-ghost" onClick={onClear}>
+  <button type="button" className="gdy-btn gdy-btn-ghost" onClick={onClear}>
     <span>Limpiar filtros</span>
     <FilterX size={12} />
   </button>
@@ -118,7 +117,7 @@ const CreateSlot = ({
   label: string;
   onCreate: () => void;
 }) => (
-  <button type="button" className="rkb-btn rkb-btn-primary" onClick={onCreate}>
+  <button type="button" className="gdy-btn gdy-btn-primary" onClick={onCreate}>
     <Plus size={14} />
     {label}
   </button>
@@ -218,13 +217,13 @@ export const KanbanToolbar = <TData,>(props: KanbanToolbarProps<TData>) => {
   });
 
   return (
-    <div className="rkb-toolbar">
-      <div className="rkb-toolbar-left">
+    <div className="gdy-toolbar">
+      <div className="gdy-toolbar-left">
         {clusters.left.map((id) => (
           <Fragment key={id}>{slots[id]}</Fragment>
         ))}
       </div>
-      <div className="rkb-toolbar-right">
+      <div className="gdy-toolbar-right">
         {clusters.right.map((id) => (
           <Fragment key={id}>{slots[id]}</Fragment>
         ))}

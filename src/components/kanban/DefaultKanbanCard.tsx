@@ -41,16 +41,16 @@ export const DefaultKanbanCard = <TData,>({
 
   return (
     <>
-      <div className="rkb-card-head">
-        <div className="rkb-card-main">
-          <p className="rkb-card-title">{title}</p>
-          {subtitle ? <p className="rkb-card-subtitle">{subtitle}</p> : null}
+      <div className="gdy-kanban-card-head">
+        <div className="gdy-kanban-card-main">
+          <p className="gdy-kanban-card-title">{title}</p>
+          {subtitle ? <p className="gdy-kanban-card-subtitle">{subtitle}</p> : null}
         </div>
         <KanbanCardMenu card={card} rowActions={rowActions} />
       </div>
 
-      <div className="rkb-meta">
-        <span className="rkb-tag">
+      <div className="gdy-kanban-card-meta">
+        <span className="gdy-kanban-tag">
           {group.label}: {groupValue || "Sin valor"}
         </span>
       </div>
@@ -59,14 +59,14 @@ export const DefaultKanbanCard = <TData,>({
         const value = normalizeToArray(field.accessor(card)).join(", ");
         if (!value) return null;
         return (
-          <p key={field.id} className="rkb-card-value">
+          <p key={field.id} className="gdy-kanban-card-value">
             <strong>{field.header}:</strong> {value}
           </p>
         );
       })}
 
       {dateField ? (
-        <p className="rkb-card-value">
+        <p className="gdy-kanban-card-value">
           <strong>{dateField.header}:</strong>{" "}
           {formatDateValue(normalizeToArray(dateField.accessor(card))[0] ?? "")}
         </p>

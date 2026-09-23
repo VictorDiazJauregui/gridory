@@ -21,12 +21,12 @@ export function RowActionsMenu<TData>({
   if (nodes.length === 0) return null;
 
   return (
-    <div className="rdt-actions-cell" onClick={stopClick}>
+    <div className="gdy-table-actions-cell" onClick={stopClick}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button
             type="button"
-            className="rdt-icon-btn"
+            className="gdy-icon-btn"
             title="Opciones"
             onClick={stopClick}
           >

@@ -1,5 +1,5 @@
 import { Sparkles } from "lucide-react";
-import type { AiButtonConfig } from "./types";
+import type { AiButtonConfig } from "../data-model";
 
 interface ToolbarAiButtonProps {
   config: AiButtonConfig;
@@ -11,9 +11,9 @@ export const ToolbarAiButton = ({ config }: ToolbarAiButtonProps) => {
   return (
     <button
       type="button"
-      className="rkb-btn rkb-btn-ai"
-      onClick={config.onClick}
+      className="gdy-btn gdy-btn-ai"
       aria-label={label}
+      onClick={config.onClick}
     >
       <Sparkles size={14} />
       {label}

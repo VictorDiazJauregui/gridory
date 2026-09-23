@@ -1,0 +1,25 @@
+{
+  "$comment": "publicUtilities: classes shipped for consumers to pass through props (tableMinHeightClassName, tableMaxHeightClassName, boardMinHeightClassName). runtimeAttributes: data attributes set by Radix at runtime, never written in a component. hostAttributes: data attributes the host app sets to configure the library (theme activation).",
+  "publicUtilities": [
+    "gdy-table-min-h-sm",
+    "gdy-table-min-h-md",
+    "gdy-table-min-h-lg",
+    "gdy-table-max-h-sm",
+    "gdy-table-max-h-md",
+    "gdy-table-max-h-lg",
+    "gdy-kanban-min-h-sm",
+    "gdy-kanban-min-h-md",
+    "gdy-kanban-min-h-lg"
+  ],
+  "runtimeAttributes": [
+    "data-state",
+    "data-highlighted",
+    "data-disabled",
+    "data-placeholder",
+    "data-side",
+    "data-align",
+    "data-orientation",
+    "data-radix-popper-content-wrapper"
+  ],
+  "hostAttributes": ["data-theme"]
+}

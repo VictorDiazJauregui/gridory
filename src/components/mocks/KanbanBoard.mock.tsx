@@ -146,7 +146,7 @@ export const KanbanBoardMock = () => {
       defaultGroupId="status"
       getCardId={(card) => card.id}
       createLabel="Nueva empresa"
-      boardMinHeightClassName="rkb-min-h-lg"
+      boardMinHeightClassName="gdy-kanban-min-h-lg"
       viewSwitch={{ active: view, onChange: setView }}
       toggleGroups={[
         {

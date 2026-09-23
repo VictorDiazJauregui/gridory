@@ -1,7 +1,12 @@
 import { useEffect, useMemo, type RefObject } from "react";
-import type { DateFilterState } from "./types";
-import { hasDateFilterValue } from "./utils";
+import type { DateFilterState } from "./data-model";
+import { hasDateFilterValue } from "./date-utils";
 
+/**
+ * Calls `onOutside` on any mousedown outside `ref`. Clicks inside the portaled
+ * primitives (popover, calendar, Radix popper) count as inside so a filter
+ * panel stays open while its date picker is in use.
+ */
 export const useClickOutside = (
   ref: RefObject<HTMLElement | null>,
   onOutside: () => void,

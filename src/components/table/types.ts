@@ -99,7 +99,7 @@ export interface DataTableProps<TData> {
   tableMinHeightClassName?: string;
   /**
    * Extra class(es) applied to the rows scroll container to cap its height
-   * (e.g. the built-in `rdt-max-h-sm|md|lg`), yielding a self-contained internal
+   * (e.g. the built-in `gdy-table-max-h-sm|md|lg`), yielding a self-contained internal
    * scroll region without a height-constrained parent. Appended after
    * `tableMinHeightClassName` and before `tableWrapClassName`, so consumer
    * overrides still win. Optional; when omitted the layout is unchanged.
@@ -120,8 +120,8 @@ export interface DataTableProps<TData> {
    */
   stickyHeader?: boolean;
   /**
-   * Makes the table fill its parent's height: `.rdt`/`.rdt-card` become a flex
-   * column and `.rdt-table-wrap` becomes the internal vertical scroller
+   * Makes the table fill its parent's height: `.gdy-table`/`.gdy-card` become a flex
+   * column and `.gdy-table-wrap` becomes the internal vertical scroller
    * (`flex:1; min-height:0; overflow-y:auto`). Requires a height-constrained
    * parent. Defaults to `false`.
    */

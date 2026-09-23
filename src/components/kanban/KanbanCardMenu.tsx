@@ -28,7 +28,7 @@ export const KanbanCardMenu = <TData,>({
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          className="rkb-icon-btn"
+          className="gdy-icon-btn"
           title="Opciones"
           aria-label="Opciones"
           onClick={stopClick}

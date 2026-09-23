@@ -36,20 +36,21 @@ Directorio: `src/components/table/`
 
 - `index.tsx`: ensamblado principal y orquestación de estado.
 - `types.ts`: contratos públicos e internos.
-- `utils.ts`: funciones puras de normalización, filtros, orden y fechas.
-- `hooks.ts`: hooks reutilizables (`useClickOutside`, `useActiveFilters`).
+- `utils.ts`: funciones puras de normalización, filtros, orden y agrupado.
 - `constants.ts`: defaults y constantes.
-- `DatePickerWithInput.tsx`: date picker simple.
-- `DateRangePicker.tsx`: date range picker.
-- `DateFilterMenu.tsx`: menú de filtros de fecha.
-- `FilterMenu.tsx`: menú de filtros por valores.
 - `TableToolbar.tsx`: barra superior.
 - `TablePagination.tsx`: footer de paginación.
-- `styles.css`: estilos `.rdt-*`.
+- `RowActionsMenu.tsx`: menú de acciones por fila.
+- `styles.css`: estilos propios del módulo (`.gdy-table-*`).
 
-Compatibilidad legado:
+Compartido con el kanban, en `src/components/shared/`:
 
-- `src/components/DataTable.tsx` re-exporta desde el módulo nuevo.
+- `toolbar/`: `FilterMenu`, `DateFilterMenu`, `DatePickerWithInput`, `DateRangePicker`,
+  `ToolbarAiButton`, `ToolbarViewSwitch`.
+- `date-utils.ts`: helpers de fecha y `EMPTY_DATE_FILTER_STATE`.
+- `hooks.ts`: `useClickOutside`, `useActiveFilters`.
+- `src/styles/shared.css`: estilos compartidos (`.gdy-toolbar`, `.gdy-btn`, `.gdy-input`,
+  `.gdy-panel`, `.gdy-date-*`, `.gdy-view-switch`, scroll fino).
 
 ---
 
@@ -182,8 +183,15 @@ En este proyecto ya están instaladas en `package.json`.
 
 ## 7) Estilos
 
-- Estilos del componente: `src/components/table/styles.css`.
-- El componente usa clases prefijadas con `.rdt-`.
+- Estilos propios del módulo: `src/components/table/styles.css`, con clases `gdy-table-*`
+  (`gdy-table-grid`, `gdy-table-head-trigger`, `gdy-table-pagination`, `gdy-table-group-row`…).
+- Estilos compartidos con el kanban: `src/styles/shared.css`, con clases `gdy-*` sin módulo
+  (`gdy-card`, `gdy-toolbar`, `gdy-btn`, `gdy-input`, `gdy-panel`, `gdy-option-item`,
+  `gdy-date-input`, `gdy-view-switch`). Los estados temporales usan `is-*` (`is-filtered`,
+  `is-selected`, `is-checked`, `is-active`, `is-collapsed`). Cada regla es de una sola clase, así
+  que una regla con la misma clase en tu CSS, cargado después de `gridory/styles.css`, gana.
+- Utilidades públicas para props: `gdy-table-min-h-sm|md|lg` (`tableMinHeightClassName`) y
+  `gdy-table-max-h-sm|md|lg` (`tableMaxHeightClassName`).
 - Los colores salen de los tokens base `--gdy-*` (ver "Tema y tokens" en el README raíz), que
   traen tema claro y oscuro. Además la tabla lee estos tokens de componente opcionales, que se
   declaran en `:root` o `.dark` de la app:
@@ -640,17 +648,17 @@ Por defecto el botón IA comparte el estilo neutro de los botones del toolbar
 controles exponen clases CSS estables con especificidad de una sola clase,
 pensadas como puntos de extensión:
 
-- `rdt-btn-ai` — botón IA.
-- `rdt-view-switch` — contenedor del switch.
-- `rdt-view-switch-btn` — cada segmento del switch.
-- `rdt-view-switch-btn-active` — segmento activo.
+- `gdy-btn-ai` — botón IA.
+- `gdy-view-switch` — contenedor del switch.
+- `gdy-view-switch-btn` — cada segmento del switch.
+- `gdy-view-switch-btn-active` — segmento activo.
 
 El consumidor puede sobreescribir los valores por defecto declarando las
 mismas clases en su propio CSS, cargado después del CSS del paquete:
 
 ```css
 /* Ejemplo: botón IA con acento de marca */
-.rdt-btn-ai {
+.gdy-btn-ai {
   border-color: #c7d2fe;
   color: #4f46e5;
   background: #ffffff;
@@ -772,7 +780,7 @@ retrocompatible**: sin estas props, la tabla se comporta igual que en v1.8.0.
 
 ```tsx
 // Scroll interno autosuficiente (no depende del alto del padre) + header fijo:
-<DataTable columns={columns} data={rows} tableMaxHeightClassName="rdt-max-h-md" />
+<DataTable columns={columns} data={rows} tableMaxHeightClassName="gdy-table-max-h-md" />
 
 // Llenar el alto del contenedor padre (padre con alto acotado) + header fijo:
 <div style={{ height: "calc(100vh - 120px)" }}>
@@ -786,8 +794,8 @@ retrocompatible**: sin estas props, la tabla se comporta igual que en v1.8.0.
 | ---- | ---- | ------- | ----------- |
 | `scrollResetOnPageChange` | `boolean` | `true` | Lleva el contenedor de filas a `top` al cambiar de página, tamaño de página, o al volver a la página 1 por búsqueda/filtro/orden/agrupación/archivados. No-op si las filas no scrollean internamente. |
 | `stickyHeader` | `boolean` | `true` | Fija el `<thead>` con `position: sticky`. Con **gating**: solo se activa junto a `fillHeight` o `tableMaxHeightClassName`, para no alterar a quien scrollea la página. |
-| `fillHeight` | `boolean` | `false` | `.rdt`/`.rdt-card` pasan a columna flex y `.rdt-table-wrap` es el scroller interno (`flex:1; min-height:0; overflow-y:auto`). Requiere un padre con alto acotado. |
-| `tableMaxHeightClassName` | `string` | — | Clase de tope de alto sobre el contenedor de filas (utilidades `rdt-max-h-sm\|md\|lg`); scroll interno autosuficiente. Se aplica antes de `tableWrapClassName`. |
+| `fillHeight` | `boolean` | `false` | `.gdy-table`/`.gdy-card` pasan a columna flex y `.gdy-table-wrap` es el scroller interno (`flex:1; min-height:0; overflow-y:auto`). Requiere un padre con alto acotado. |
+| `tableMaxHeightClassName` | `string` | — | Clase de tope de alto sobre el contenedor de filas (utilidades `gdy-table-max-h-sm\|md\|lg`); scroll interno autosuficiente. Se aplica antes de `tableWrapClassName`. |
 
 ### Comportamiento
 
@@ -870,18 +878,18 @@ defecto es cosmético/intencional.
 
 - **Scrollbars (1)**: `scrollbar-width: thin` + `scrollbar-color` + pseudo-elementos
   `::-webkit-scrollbar`, parametrizados por CSS variables bajo la clase-gate
-  `.rdt-thin-scroll`.
+  `.gdy-thin-scroll`.
 - **Submenú de fecha (2)**: `op` admite `""` (sin operador). La condición de la
   sección "Fechas" no renderiza picker con `op===""`; `applyColumnFilters` no filtra
   sin operador/valor.
-- **Separadores/rango (3)**: `.rdt-panel-date .rdt-panel-section { width: 100% }`
+- **Separadores/rango (3)**: `.gdy-panel-date .gdy-panel-section { width: 100% }`
   (scopeado; el checklist de valores no se ve afectado).
 - **Formato/entrada manual (4)**: helpers `parseInputToDate`/`formatDateToInput`
   (date-fns). El valor almacenado sigue siendo ISO `yyyy-MM-dd`. El rango se ingresa
   por dos campos "Desde/Hasta" o por el calendario.
 - **Mes/año (5)**: `captionLayout="dropdown"` con `startMonth`/`endMonth` en el
   calendario, pasado desde los pickers (no se toca el wrapper `Calendar`).
-- **Hover (6)**: `.rdt-option-item:hover` con fondo configurable.
+- **Hover (6)**: `.gdy-option-item:hover` con fondo configurable.
 
 ### Casos borde
 
@@ -909,25 +917,25 @@ retrocompatibles con v1.10.0. No hay props nuevas: aplican por defecto.
 ### Comportamiento
 
 - **Tooltip nativo en textos truncados**: la cabecera de columna
-  (`rdt-head-label`) y los valores del checklist del filtro (`rdt-option-label`)
+  (`gdy-table-head-label`) y los valores del checklist del filtro (`gdy-option-label`)
   exponen el atributo `title` con su texto completo, que el navegador muestra al
   pasar el cursor. No se usa un tooltip a medida.
-- **Ancho del panel acotado**: `.rdt-panel` recibe `max-width: 280px` y
-  `.rdt-option-label` `max-width: 210px`. Los valores largos truncan con ellipsis
+- **Ancho del panel acotado**: `.gdy-panel` recibe `max-width: 280px` y
+  `.gdy-option-label` `max-width: 210px`. Los valores largos truncan con ellipsis
   en lugar de ensanchar el submenú.
 - **Opciones de "Ordenar" apiladas**: la sección "Ordenar" usa
-  `rdt-panel-section-stack`, que apila "Ascendente"/"Descendente" en columna a
+  `gdy-panel-section-stack`, que apila "Ascendente"/"Descendente" en columna a
   ancho completo.
 - **Calendario de rango lado a lado**: al elegir "Entre (rango)", los dos meses
   se muestran en fila a partir de `768px` vía
-  `@media (min-width: 768px) { .rdt-popover-top .rdp-months { flex-direction: row } }`.
+  `@media (min-width: 768px) { .gdy-calendar-popover .rdp-months { flex-direction: row } }`.
 
 ### Por qué CSS plano para el rango
 
 El wrapper del calendario compone los meses con la utilidad `md:flex-row`, pero
 el Tailwind del proyecto consumidor no escanea este paquete, así que esa utilidad
 no se genera en runtime y los meses caían apilados. El fix se envía como CSS en
-`styles.css` (compilado en `dist/gridory.css`), acotado al popover del
+`src/styles/shared.css` (compilado en `dist/gridory.css`), acotado al popover del
 rango, para no depender del Tailwind del consumidor. No se toca
 `ui/calendar.tsx`.
 
