@@ -5,14 +5,14 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { renderMenuNodes, resolveMenuNodes } from "../shared/menu-actions";
-import type { ReusableRowActions } from "./types";
+import type { RowActions } from "./types";
 
 const stopClick = (event: { stopPropagation: () => void }) =>
   event.stopPropagation();
 
 interface KanbanCardMenuProps<TData> {
   card: TData;
-  rowActions?: ReusableRowActions<TData>;
+  rowActions?: RowActions<TData>;
 }
 
 export const KanbanCardMenu = <TData,>({

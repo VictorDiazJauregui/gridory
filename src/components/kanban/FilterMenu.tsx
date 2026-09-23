@@ -1,13 +1,13 @@
 import { useMemo, useState } from "react";
 import { Check, Search } from "lucide-react";
 import type {
-  ReusableFilterOption,
+  FilterOption,
   SortDirection,
 } from "./types";
 import { cn } from "./utils";
 
 interface FilterMenuProps {
-  options: ReusableFilterOption[];
+  options: FilterOption[];
   selected: string[];
   onSelectedChange: (next: string[]) => void;
   sortable: boolean;

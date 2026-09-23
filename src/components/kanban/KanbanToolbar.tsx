@@ -5,20 +5,20 @@ import { ToolbarViewSwitch } from "./ToolbarViewSwitch";
 import { SimpleSelect } from "../ui/select";
 import { SegmentedControl } from "../ui/toggle-group";
 import type {
-  ReusableHeaderSelectConfig,
-  ReusableSelectOption,
-  ReusableToggleGroupConfig,
+  HeaderSelectConfig,
+  SelectOption,
+  ToggleGroupConfig,
 } from "../shared/toolbar-controls";
-import type { ReusableSelectTheme } from "../shared/select-theme";
+import type { SelectTheme } from "../shared/select-theme";
 import {
   resolveToolbarClusters,
-  type ReusableToolbarLayout,
+  type ToolbarLayout,
 } from "../shared/toolbar-layout";
 import type {
   ArchivedViewMode,
-  ReusableAiButtonConfig,
-  ReusableKanbanGroupOption,
-  ReusableViewSwitchConfig,
+  AiButtonConfig,
+  KanbanGroupOption,
+  ViewSwitchConfig,
 } from "./types";
 
 const DEFAULT_ARCHIVED_OPTION_LABELS: Record<ArchivedViewMode, string> = {
@@ -37,7 +37,7 @@ interface KanbanToolbarProps<TData> {
   showClearFilters: boolean;
   onClearFilters: () => void;
   showGroupSelector: boolean;
-  groups: ReusableKanbanGroupOption<TData>[];
+  groups: KanbanGroupOption<TData>[];
   selectedGroupId: string;
   onGroupChange: (groupId: string) => void;
   showCreateButton: boolean;
@@ -48,17 +48,17 @@ interface KanbanToolbarProps<TData> {
   onArchivedModeChange: (mode: ArchivedViewMode) => void;
   archivedViewLabel?: string;
   archivedViewOptionLabels?: Partial<Record<ArchivedViewMode, string>>;
-  viewSwitch?: ReusableViewSwitchConfig;
-  aiButton?: ReusableAiButtonConfig;
-  toggleGroups?: ReusableToggleGroupConfig[];
-  headerSelectors?: ReusableHeaderSelectConfig[];
-  toolbarLayout?: ReusableToolbarLayout;
-  selectTheme?: ReusableSelectTheme;
+  viewSwitch?: ViewSwitchConfig;
+  aiButton?: AiButtonConfig;
+  toggleGroups?: ToggleGroupConfig[];
+  headerSelectors?: HeaderSelectConfig[];
+  toolbarLayout?: ToolbarLayout;
+  selectTheme?: SelectTheme;
 }
 
 const buildArchivedOptions = <TData,>(
   props: KanbanToolbarProps<TData>,
-): ReusableSelectOption[] => {
+): SelectOption[] => {
   const label = props.archivedViewLabel ?? "Mostrar";
   const optionLabel = (mode: ArchivedViewMode) =>
     props.archivedViewOptionLabels?.[mode] ?? DEFAULT_ARCHIVED_OPTION_LABELS[mode];
@@ -69,13 +69,13 @@ const buildArchivedOptions = <TData,>(
 };
 
 const buildGroupOptions = <TData,>(
-  groups: ReusableKanbanGroupOption<TData>[],
-): ReusableSelectOption[] =>
+  groups: KanbanGroupOption<TData>[],
+): SelectOption[] =>
   groups.map((group) => ({ value: group.id, label: `Agrupar por: ${group.label}` }));
 
 const buildHeaderSelectOptions = (
-  config: ReusableHeaderSelectConfig,
-): ReusableSelectOption[] =>
+  config: HeaderSelectConfig,
+): SelectOption[] =>
   config.label
     ? config.options.map((option) => ({
         value: option.value,
