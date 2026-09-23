@@ -1,7 +1,8 @@
 /**
- * Joins the truthy class names with a space. Used by the table, the kanban and
- * the shared toolbar, which only compose plain `gdy-*` classes and never need
- * Tailwind conflict resolution.
+ * Joins the truthy class names with a space. Every module composes plain
+ * `gdy-*` hooks plus the classes the consumer passes through `className` or
+ * a `classNames` slot, so there is no utility conflict to resolve: the inputs
+ * are concatenated as they come.
  */
 export const cn = (
   ...values: Array<string | false | null | undefined>

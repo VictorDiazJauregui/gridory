@@ -1,7 +1,7 @@
 import type { ButtonHTMLAttributes } from "react";
 import { Sparkles } from "lucide-react";
 import { Button } from "../ui/button";
-import { cn } from "../../lib/utils";
+import { cn } from "../../lib/cn";
 import "./styles.css";
 
 interface AIChatButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
