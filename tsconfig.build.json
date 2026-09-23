@@ -18,6 +18,7 @@
     "src/components/ai/**/*",
     "src/components/shared/**/*",
     "src/components/ui/**/*",
+    "src/lib/cn.ts",
     "src/lib/utils.ts"
   ]
 }
