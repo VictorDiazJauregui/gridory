@@ -1,15 +1,15 @@
 import type { ReactNode } from "react";
 
-export type ReusableRowActionPlacement = "top" | "bottom";
-export type ReusableRowActionVariant = "default" | "destructive";
+export type RowActionPlacement = "top" | "bottom";
+export type RowActionVariant = "default" | "destructive";
 
-export interface ReusableRowAction<TData> {
+export interface RowAction<TData> {
   id: string;
   label: string;
   icon?: ReactNode;
   onClick: (row: TData) => void;
-  placement?: ReusableRowActionPlacement;
-  variant?: ReusableRowActionVariant;
+  placement?: RowActionPlacement;
+  variant?: RowActionVariant;
   disabled?: (row: TData) => boolean;
   hidden?: (row: TData) => boolean;
 }
@@ -32,8 +32,8 @@ export class DuplicateRowActionError extends Error {
 }
 
 export function validateCustomRowActions<TData>(
-  actions: ReusableRowAction<TData>[] | undefined,
-): ReusableRowAction<TData>[] {
+  actions: RowAction<TData>[] | undefined,
+): RowAction<TData>[] {
   if (!actions?.length) return [];
   const seenIds = new Set<string>(BUILT_IN_ROW_ACTION_IDS);
   for (const action of actions) {

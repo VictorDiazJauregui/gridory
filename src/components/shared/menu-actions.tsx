@@ -13,35 +13,35 @@ import {
   BUILT_IN_ROW_ACTION_IDS,
   DuplicateRowActionError,
   validateCustomRowActions,
-  type ReusableRowAction,
+  type RowAction,
 } from "./row-action";
 
-export type ReusableBuiltInActionId = (typeof BUILT_IN_ROW_ACTION_IDS)[number];
+export type BuiltInActionId = (typeof BUILT_IN_ROW_ACTION_IDS)[number];
 
-export interface ReusableBuiltInMenuRef {
+export interface BuiltInMenuRef {
   kind: "builtin";
-  id: ReusableBuiltInActionId;
+  id: BuiltInActionId;
 }
 
-export interface ReusableMenuSeparator {
+export interface MenuSeparator {
   kind: "separator";
   id: string;
 }
 
-export interface ReusableMenuLabel {
+export interface MenuLabel {
   kind: "label";
   id: string;
   label: string;
   className?: string;
 }
 
-export type ReusableMenuItem<TData> =
-  | (ReusableRowAction<TData> & { kind?: "action" })
-  | ReusableBuiltInMenuRef
-  | ReusableMenuSeparator
-  | ReusableMenuLabel;
+export type MenuItem<TData> =
+  | (RowAction<TData> & { kind?: "action" })
+  | BuiltInMenuRef
+  | MenuSeparator
+  | MenuLabel;
 
-/** Subset of `ReusableRowActions` the menu resolver relies on (both components). */
+/** Subset of `RowActions` the menu resolver relies on (both components). */
 export interface MenuActionsInput<TData> {
   edit?: boolean;
   archive?: boolean;
@@ -58,8 +58,8 @@ export interface MenuActionsInput<TData> {
   deleteLabel?: string;
   editLabel?: string;
   historyLabel?: string;
-  customActions?: ReusableRowAction<TData>[];
-  menuActions?: ReusableMenuItem<TData>[];
+  customActions?: RowAction<TData>[];
+  menuActions?: MenuItem<TData>[];
 }
 
 interface ResolvedActionNode {
@@ -89,7 +89,7 @@ export type ResolvedMenuNode =
   | ResolvedSeparatorNode
   | ResolvedLabelNode;
 
-type BuiltInRegistry = Record<ReusableBuiltInActionId, ResolvedActionNode | null>;
+type BuiltInRegistry = Record<BuiltInActionId, ResolvedActionNode | null>;
 
 const RESERVED_IDS = BUILT_IN_ROW_ACTION_IDS as readonly string[];
 
@@ -171,7 +171,7 @@ function buildBuiltInRegistry<TData>(
 
 function toActionNode<TData>(
   row: TData,
-  action: ReusableRowAction<TData>,
+  action: RowAction<TData>,
 ): ResolvedActionNode {
   return {
     type: "action",
@@ -186,7 +186,7 @@ function toActionNode<TData>(
 
 function customToNodes<TData>(
   row: TData,
-  actions: ReusableRowAction<TData>[],
+  actions: RowAction<TData>[],
   placement: "top" | "bottom",
 ): ResolvedActionNode[] {
   return actions
@@ -198,7 +198,7 @@ function customToNodes<TData>(
 function resolveByPlacement<TData>(
   row: TData,
   builtIns: BuiltInRegistry,
-  custom: ReusableRowAction<TData>[],
+  custom: RowAction<TData>[],
 ): ResolvedMenuNode[] {
   const middle = BUILT_IN_ROW_ACTION_IDS.map((id) => builtIns[id]).filter(
     (node): node is ResolvedActionNode => node !== null,
@@ -211,13 +211,13 @@ function resolveByPlacement<TData>(
 }
 
 function isCustomAction<TData>(
-  item: ReusableMenuItem<TData>,
-): item is ReusableRowAction<TData> & { kind?: "action" } {
+  item: MenuItem<TData>,
+): item is RowAction<TData> & { kind?: "action" } {
   return item.kind === undefined || item.kind === "action";
 }
 
 export function validateMenuActions<TData>(
-  items: ReusableMenuItem<TData>[],
+  items: MenuItem<TData>[],
 ): void {
   const seenIds = new Set<string>();
   for (const item of items) {
@@ -231,7 +231,7 @@ export function validateMenuActions<TData>(
 function itemToNode<TData>(
   row: TData,
   builtIns: BuiltInRegistry,
-  item: ReusableMenuItem<TData>,
+  item: MenuItem<TData>,
 ): ResolvedMenuNode | null {
   if (item.kind === "separator") return { type: "separator", key: item.id };
   if (item.kind === "label")

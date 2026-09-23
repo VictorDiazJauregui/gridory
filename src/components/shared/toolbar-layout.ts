@@ -1,4 +1,4 @@
-export type ReusableToolbarSide = "left" | "right";
+export type ToolbarSide = "left" | "right";
 
 /**
  * Full, explicit toolbar composition. When provided it is authoritative:
@@ -7,7 +7,7 @@ export type ReusableToolbarSide = "left" | "right";
  * keep the default layout (search left; custom controls then fixed controls
  * on the right).
  */
-export interface ReusableToolbarLayout {
+export interface ToolbarLayout {
   left?: string[];
   right?: string[];
 }
@@ -22,7 +22,7 @@ export const DEFAULT_RIGHT_SLOT_IDS = [
 ] as const;
 
 export interface ToolbarClusterInput {
-  layout?: ReusableToolbarLayout;
+  layout?: ToolbarLayout;
   isVisible: (id: string) => boolean;
   customLeftIds: string[];
   customRightIds: string[];

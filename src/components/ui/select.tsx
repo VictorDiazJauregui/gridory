@@ -5,7 +5,7 @@ import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 import { cn } from "../../lib/utils";
 import {
   selectThemeToVars,
-  type ReusableSelectTheme,
+  type SelectTheme,
 } from "../shared/select-theme";
 import "./select.css";
 
@@ -177,7 +177,7 @@ export interface SimpleSelectProps {
   triggerClassName?: string;
   triggerStyle?: React.CSSProperties;
   disabled?: boolean;
-  theme?: ReusableSelectTheme;
+  theme?: SelectTheme;
 }
 
 function SimpleSelect({

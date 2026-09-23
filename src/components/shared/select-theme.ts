@@ -5,7 +5,7 @@ import type { CSSProperties } from "react";
  * precedence over CSS variables and, in turn, over the default theme tokens.
  * Colors accept any CSS color; `radius` accepts a number (px) or a CSS length.
  */
-export interface ReusableSelectTheme {
+export interface SelectTheme {
   background?: string;
   hoverBackground?: string;
   border?: string;
@@ -31,11 +31,11 @@ const SELECT_VAR_BY_KEY: Record<string, string> = {
   optionActiveBackground: "--lui-select-item-active-bg",
 };
 
-export function selectThemeToVars(theme?: ReusableSelectTheme): CSSProperties {
+export function selectThemeToVars(theme?: SelectTheme): CSSProperties {
   if (!theme) return {};
   const vars: Record<string, string> = {};
   for (const [key, cssVar] of Object.entries(SELECT_VAR_BY_KEY)) {
-    const value = theme[key as keyof ReusableSelectTheme];
+    const value = theme[key as keyof SelectTheme];
     if (typeof value === "string") vars[cssVar] = value;
   }
   if (theme.radius != null) {
