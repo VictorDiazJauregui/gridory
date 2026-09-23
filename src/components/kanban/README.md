@@ -562,7 +562,7 @@ encabezado del mes aparece capitalizado (`Junio 2026`) y la semana inicia en
 **lunes**. Antes de `v1.8.0` el calendario caía al locale `en-US` de
 react-day-picker (`June 2026`, `Su Mo Tu...`, semana iniciando en domingo).
 
-La localización vive en el wrapper compartido `src/components/ui/calendar.tsx`,
+La localización vive en el wrapper compartido `src/components/ui/calendar/calendar.tsx`,
 el mismo que usa la tabla reusable, por lo que el comportamiento es idéntico en
 ambos componentes.
 
@@ -759,7 +759,7 @@ cosmético/intencional.
 
 - Las 8 props son opcionales; sin ellas, el comportamiento efectivo es el de v1.9.0.
 - `DateFilterState.op` se amplía a `DateFilterOp | ""` (aditivo). El calendario
-  compartido `ui/calendar.tsx` no se modifica.
+  compartido `ui/calendar/calendar.tsx` no se modifica.
 
 ---
 
@@ -792,7 +792,7 @@ y clases `gdy-*` con la tabla).
 
 El calendario no usa utilidades: `src/components/ui/styles.css` declara
 `.gdy-calendar-months` en columna y, desde 768px, en fila, así que el rango se ve
-igual en cualquier app sin depender de su Tailwind. `ui/calendar.tsx` solo asigna
+igual en cualquier app sin depender de su Tailwind. `ui/calendar/calendar.tsx` solo asigna
 los ganchos `gdy-calendar-*` y deja los estados del día en atributos
 (`data-today`, `data-selected`, `data-range-start|middle|end`).
 

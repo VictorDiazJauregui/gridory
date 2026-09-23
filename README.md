@@ -213,6 +213,28 @@ OpenRouter, Groq, Together, DeepSeek y Ollama. Pinta con clases `gdy-ai-*` y tok
 `--gdy-ai-*` propios, sin Tailwind. Configuración de proveedor, prompts, memoria, eventos y
 estilos en la [guía del asistente](src/components/ai/docs/ai-assistant.md).
 
+## Estructura del código
+
+Cada módulo vive en `src/components/<módulo>/` y sigue el mismo esquema: la raíz guarda la superficie
+pública y los contratos (`index.tsx`, `types.ts`, `constants.ts`, `styles.css`, `README.md`) y el resto
+se reparte en **carpetas por área de responsabilidad**, cada una con los hooks, la lógica pura y los
+componentes de esa parte. Las carpetas nunca se organizan por tipo de archivo (`hooks/`, `components/`),
+no tienen barrels `index.ts` (se importa el archivo concreto) y se mantienen entre tres y doce archivos;
+si una crece, se subdivide. Los módulos nuevos nacen con esta estructura y con su entrada `src/<módulo>.ts`.
+
+| Carpeta | Contenido |
+|---|---|
+| `table/` | `model/` (estado, filas y agrupado), `header/`, `body/` y `pagination/`. |
+| `kanban/` | `model/`, `toolbar/`, `board/` y `card/`. |
+| `ai/` | `chat/`, `completion/`, `sidebar/`, `transcript/` y `actions/`. |
+| `shared/` | Raíz con los contratos comunes (`data-model.ts`, `data-view-props.ts`, `toolbar-controls.ts`, `select-theme.ts`); `controls/` (orden, filtros y archivados), `rows/` (pipeline de filas), `toolbar/`, `filter-menu/`, `date-filter-menu/`, `date-pickers/` y `menu/` (acciones de fila). |
+| `ui/` | Primitivos sobre Radix y react-day-picker: `button.tsx`, `popover.tsx` y `dropdown-menu.tsx` en la raíz, una carpeta por primitivo con partes (`select/`, `toggle-group/`, `calendar/`) y la hoja `styles.css`. |
+| `mocks/` | Datos y configuración de la demo: `company/` (dataset y controles compartidos), `table/`, `kanban/` y `ai/` (con `workspace/`). |
+
+La demo (`src/demo/`: shell, navegación y tema) y los mocks quedan fuera del paquete y de la auditoría
+de estilos. Todas las funciones, marcado incluido, tienen como máximo veinte líneas y tres parámetros;
+`npm run lint` lo comprueba.
+
 ## Demo local
 
 El repositorio incluye una aplicación de demo con mocks de cada módulo:
@@ -244,7 +266,7 @@ Sin `VITE_AI_API_KEY` el mock se muestra igual, pero no hace llamadas reales al 
 |---|---|
 | `npm run dev` | Servidor de desarrollo con la demo. |
 | `npm run build` | Chequeo de tipos, bundle ESM en `dist/` y declaraciones en `dist/types/`. |
-| `npm run lint` | ESLint sobre el código y los scripts, con las reglas de estilo del proyecto: funciones como `const`, sin `else` tras un `return`, sin ternarios anidados, anidación máxima de 2 y hasta 3 parámetros. |
+| `npm run lint` | ESLint sobre el código y los scripts, con las reglas de estilo del proyecto: funciones como `const`, sin `else` tras un `return`, sin ternarios anidados, anidación máxima de 2, hasta 3 parámetros y un máximo de 20 líneas por función (marcado incluido). |
 | `npm run typecheck` | `tsc -b` sin emitir archivos. |
 | `npm run audit:styles` | Tras `npm run build`: sin nombres heredados, colores literales fuera de `tokens.css` ni restos de Tailwind (`--tw-`, paquetes), tokens de componente con fallback, cada clase `gdy-*` con su regla (y viceversa) y solo ganchos `gdy-` en los módulos. |
 
