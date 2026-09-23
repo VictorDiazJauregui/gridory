@@ -27,7 +27,25 @@ export default defineConfig([
       ecmaVersion: 2020,
       globals: globals.browser,
     },
-    rules: codeStyleRules,
+    rules: {
+      ...codeStyleRules,
+      // The package is not compiled with the React Compiler, and TanStack
+      // Table's instance can never be memoized: the note is noise here.
+      'react-hooks/incompatible-library': 'off',
+    },
+  },
+  {
+    files: [
+      'src/components/table/**/*.{ts,tsx}',
+      'src/components/shared/*.ts',
+      'src/components/shared/toolbar/toolbar-props.ts',
+    ],
+    rules: {
+      'max-lines-per-function': [
+        'error',
+        { max: 20, skipBlankLines: true, skipComments: true },
+      ],
+    },
   },
   {
     files: ['scripts/**/*.mjs'],

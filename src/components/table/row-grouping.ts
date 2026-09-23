@@ -20,6 +20,35 @@ export const buildGroupSelectOptions = (
   })),
 ];
 
+export const resolveGroupOptions = <TData>(
+  columns: ColumnDefinition<TData>[],
+  groupableColumnIds?: string[],
+) =>
+  (groupableColumnIds ?? [])
+    .map((id) => columns.find((column) => column.id === id))
+    .filter((column): column is ColumnDefinition<TData> => Boolean(column))
+    .map((column) => ({ id: column.id, label: column.header }));
+
+interface InitialGroupByInput {
+  defaultGroupBy: string | null;
+  groupableColumnIds?: string[];
+}
+
+export const resolveInitialGroupBy = ({
+  defaultGroupBy,
+  groupableColumnIds,
+}: InitialGroupByInput) =>
+  defaultGroupBy && (groupableColumnIds ?? []).includes(defaultGroupBy)
+    ? defaultGroupBy
+    : null;
+
+export const toggleSetMember = (set: Set<string>, value: string) => {
+  const next = new Set(set);
+  if (next.has(value)) next.delete(value);
+  else next.add(value);
+  return next;
+};
+
 interface GroupOptionPosition {
   label: string;
   rank: number;
@@ -58,22 +87,10 @@ const resolveGroupLabel = (
   return optionPositions.get(key)?.label ?? key;
 };
 
-export const applyRowGrouping = <TData>({
-  rows,
-  columns,
-  activeGroupBy,
-  emptyLabel,
-}: {
-  rows: TData[];
-  columns: ColumnDefinition<TData>[];
-  activeGroupBy: string | null;
-  emptyLabel: string;
-}): RowGroupingResult<TData> => {
-  if (!activeGroupBy) return { flatRows: rows, headers: new Map() };
-
-  const groupColumn = columns.find((column) => column.id === activeGroupBy);
-  if (!groupColumn) return { flatRows: rows, headers: new Map() };
-
+const groupRowsByKey = <TData>(
+  rows: TData[],
+  groupColumn: ColumnDefinition<TData>,
+) => {
   const groups = new Map<string, TData[]>();
   rows.forEach((row) => {
     const key = normalizeToArray(groupColumn.accessor(row))[0] ?? "";
@@ -81,29 +98,56 @@ export const applyRowGrouping = <TData>({
     if (bucket) bucket.push(row);
     else groups.set(key, [row]);
   });
+  return groups;
+};
 
-  const optionPositions = indexGroupOptions(groupColumn.filterOptions);
-  const sortedKeys = Array.from(groups.keys()).sort(
-    createGroupKeyComparator(optionPositions),
-  );
-
+const flattenGroups = <TData>(
+  groups: Map<string, TData[]>,
+  sortedKeys: string[],
+  resolveLabel: (key: string) => string,
+): RowGroupingResult<TData> => {
   const flatRows: TData[] = [];
   const headers = new Map<number, GroupHeader>();
-
   sortedKeys.forEach((key) => {
     const bucket = groups.get(key) ?? [];
     headers.set(flatRows.length, {
       value: key,
-      label: resolveGroupLabel(key, optionPositions, emptyLabel),
+      label: resolveLabel(key),
       count: bucket.length,
     });
     bucket.forEach((row) => flatRows.push(row));
   });
-
   return { flatRows, headers };
 };
 
-export const findGroupForIndex = (
+interface RowGroupingInput<TData> {
+  rows: TData[];
+  columns: ColumnDefinition<TData>[];
+  activeGroupBy: string | null;
+  emptyLabel: string;
+}
+
+export const applyRowGrouping = <TData>({
+  rows,
+  columns,
+  activeGroupBy,
+  emptyLabel,
+}: RowGroupingInput<TData>): RowGroupingResult<TData> => {
+  const groupColumn = activeGroupBy
+    ? columns.find((column) => column.id === activeGroupBy)
+    : undefined;
+  if (!groupColumn) return { flatRows: rows, headers: new Map() };
+  const groups = groupRowsByKey(rows, groupColumn);
+  const optionPositions = indexGroupOptions(groupColumn.filterOptions);
+  const sortedKeys = Array.from(groups.keys()).sort(
+    createGroupKeyComparator(optionPositions),
+  );
+  return flattenGroups(groups, sortedKeys, (key) =>
+    resolveGroupLabel(key, optionPositions, emptyLabel),
+  );
+};
+
+const findGroupForIndex = (
   headers: Map<number, GroupHeader>,
   index: number,
 ): string | null => {
@@ -113,4 +157,23 @@ export const findGroupForIndex = (
     else break;
   }
   return current;
+};
+
+interface RowGroupSelection {
+  activeGroupBy: string | null;
+  collapsedGroups: Set<string>;
+}
+
+export const resolveRowGroupState = (
+  headers: Map<number, GroupHeader>,
+  { activeGroupBy, collapsedGroups }: RowGroupSelection,
+  absoluteIndex: number,
+) => {
+  const groupHeader = activeGroupBy ? headers.get(absoluteIndex) : undefined;
+  const currentGroupValue = activeGroupBy
+    ? findGroupForIndex(headers, absoluteIndex)
+    : null;
+  const isCollapsed =
+    currentGroupValue !== null && collapsedGroups.has(currentGroupValue);
+  return { groupHeader, isCollapsed };
 };
