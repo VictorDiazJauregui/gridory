@@ -63,6 +63,13 @@ function toDisplayValue(value: unknown): string {
   }
 }
 
+/**
+ * Pending action proposed by the model. Hooks: `gdy-ai-action-card` (with
+ * `data-action-type`), `-header`, `-kicker`, `-title`, `-fields`, `-field`,
+ * `-field-label`, `-required`, `-field-value`, `-empty`, `-actions`, and the
+ * two buttons `gdy-ai-action-cancel` / `gdy-ai-action-confirm` on the button
+ * primitive. Styles in ./styles.css.
+ */
 export function ActionConfirmCard({
   action,
   schema,
@@ -78,34 +85,27 @@ export function ActionConfirmCard({
   const cancelCtaText = texts?.cancelCta ?? DEFAULT_TEXTS.cancelCta;
 
   return (
-    <div className="rounded-xl border border-primary/20 bg-primary/5 p-3">
-      <div className="mb-2">
-        <p className="text-xs font-semibold uppercase tracking-wide text-primary">
-          {confirmRequiredText}
-        </p>
-        <h4 className="text-sm font-semibold text-foreground">{title}</h4>
+    <div className="gdy-ai-action-card" data-action-type={action.type}>
+      <div className="gdy-ai-action-header">
+        <p className="gdy-ai-action-kicker">{confirmRequiredText}</p>
+        <h4 className="gdy-ai-action-title">{title}</h4>
       </div>
 
-      <div className="space-y-1 rounded-lg border border-border/60 bg-background/80 p-2">
+      <div className="gdy-ai-action-fields">
         {payloadEntries.length === 0 ? (
-          <p className="text-xs text-muted-foreground">
-            Sin datos para mostrar.
-          </p>
+          <p className="gdy-ai-action-empty">Sin datos para mostrar.</p>
         ) : (
           payloadEntries.map(([key, value]) => {
             const { label, required } = resolveFieldLabel(key, schema?.fields);
             return (
-              <div
-                key={key}
-                className="grid grid-cols-[120px,1fr] gap-2 text-xs"
-              >
-                <span className="font-medium text-muted-foreground">
+              <div key={key} className="gdy-ai-action-field">
+                <span className="gdy-ai-action-field-label">
                   {label}
                   {required ? (
-                    <span className="ml-0.5 text-primary">*</span>
+                    <span className="gdy-ai-action-required">*</span>
                   ) : null}
                 </span>
-                <span className="break-words text-foreground">
+                <span className="gdy-ai-action-field-value">
                   {toDisplayValue(value)}
                 </span>
               </div>
@@ -114,12 +114,12 @@ export function ActionConfirmCard({
         )}
       </div>
 
-      <div className="mt-3 flex items-center justify-end gap-2">
+      <div className="gdy-ai-action-actions">
         <Button
           type="button"
           variant="outline"
           size="sm"
-          className="h-7 text-xs"
+          className="gdy-ai-action-cancel"
           onClick={() => onCancel(action.id)}
         >
           {cancelCtaText}
@@ -127,7 +127,7 @@ export function ActionConfirmCard({
         <Button
           type="button"
           size="sm"
-          className="h-7 text-xs"
+          className="gdy-ai-action-confirm"
           onClick={() => onConfirm(action.id)}
         >
           {confirmCtaText}

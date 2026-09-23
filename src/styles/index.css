@@ -2,10 +2,10 @@
  * Library-wide stylesheet, imported by every entry point (table, kanban, ai).
  * Vite merges it with the component stylesheets into dist/gridory.css.
  * Order matters: tokens, reset, the primitives (src/components/ui), the
- * Tailwind utilities the assistant still uses, then the shared gdy-* layer
- * that the module stylesheets (gdy-table-*, gdy-kanban-*) build on. The
- * primitives load before the utilities so a class passed through `className`
- * keeps winning over a primitive's base rule (both weigh one class).
+ * Tailwind base layer (no module renders a utility class any more; it leaves
+ * with the Tailwind build), then the shared gdy-* layer that the module
+ * stylesheets (gdy-table-*, gdy-kanban-*, gdy-ai-*) build on. Each module
+ * imports its own stylesheet from its components.
  */
 @import "./tokens.css";
 @import "./preflight.css";

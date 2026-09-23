@@ -1,5 +1,5 @@
 {
-  "$comment": "publicUtilities: classes shipped for consumers to pass through props (tableMinHeightClassName, tableMaxHeightClassName, boardMinHeightClassName). hookOnly: structural hooks (thead, tbody, icons, wrappers) the library writes on purpose without any default declaration, so consumers can target them; the audit checks they are emitted and never gain a rule silently. variantAttributes: attributes whose value comes from a prop (data-variant={variant}); a selector on them is checked by attribute name plus the value as a string literal in the sources. runtimeAttributes: attributes set by Radix or react-day-picker at runtime, never written in a component. hostAttributes: data attributes the host app sets to configure the library (theme activation). strictModules: component directories where every class literal must be a gdy-* hook (no utility classes) and no rdp-* name may appear; the assistant joins the list when it gets its own stylesheet.",
+  "$comment": "publicUtilities: classes shipped for consumers to pass through props (tableMinHeightClassName, tableMaxHeightClassName, boardMinHeightClassName). hookOnly: structural hooks (thead, tbody, icons, wrappers) the library writes on purpose without any default declaration, so consumers can target them; the audit checks they are emitted and never gain a rule silently. variantAttributes: attributes whose value comes from a prop (data-variant={variant}); a selector on them is checked by attribute name plus the value as a string literal in the sources. runtimeAttributes: attributes set by Radix or react-day-picker at runtime, never written in a component. hostAttributes: data attributes the host app sets to configure the library (theme activation). strictModules: component directories where every class literal must be a gdy-* hook (no utility classes) and no rdp-* name may appear.",
   "publicUtilities": [
     "gdy-table-min-h-sm",
     "gdy-table-min-h-md",
@@ -41,17 +41,26 @@
     "gdy-calendar-week-number-header",
     "gdy-calendar-footer",
     "gdy-calendar-months-dropdown",
-    "gdy-calendar-years-dropdown"
+    "gdy-calendar-years-dropdown",
+    "gdy-ai-reset",
+    "gdy-ai-close",
+    "gdy-ai-empty-text",
+    "gdy-ai-end",
+    "gdy-ai-md-item-text",
+    "gdy-ai-md-paragraph",
+    "gdy-ai-md-text"
   ],
   "variantAttributes": [
     "data-variant",
-    "data-size"
+    "data-size",
+    "data-role"
   ],
   "strictModules": [
     "ui",
     "table",
     "kanban",
-    "shared"
+    "shared",
+    "ai"
   ],
   "runtimeAttributes": [
     "data-state",

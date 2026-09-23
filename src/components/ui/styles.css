@@ -21,18 +21,32 @@
  */
 
 /* ---------------------------------------------------------------- Button */
+/* Self-contained: it also declares what the scoped reset would give a button
+   (box sizing, zero margin and padding, inherited font, pointer cursor), because
+   the assistant launcher renders in the host's toolbar, outside any gdy-scope
+   ancestor. Inside a scope these values are the ones the reset already set. */
 .gdy-button {
+  box-sizing: border-box;
   display: inline-flex;
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
+  margin: 0;
+  padding: 0;
   border: 1px solid transparent;
   border-radius: var(--gdy-radius);
+  background-color: transparent;
   background-clip: padding-box;
+  font-family: inherit;
+  font-feature-settings: inherit;
+  font-variation-settings: inherit;
   font-size: 0.875rem;
   line-height: 1.25rem;
   font-weight: 500;
+  letter-spacing: inherit;
+  text-transform: none;
   white-space: nowrap;
+  cursor: pointer;
   user-select: none;
   outline: 2px solid transparent;
   outline-offset: 2px;
