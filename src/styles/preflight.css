@@ -7,9 +7,9 @@
  * specificity: each rule weighs exactly what Tailwind's own preflight weighs
  * (a bare element selector), and any component class overrides it.
  *
- * It mirrors the parts of Tailwind's preflight the components rely on:
+ * It mirrors the parts of a modern preflight the components rely on:
  * border-box sizing, solid zero-width borders, inherited form typography and
- * unstyled buttons and lists.
+ * unstyled buttons and lists. Nothing here depends on Tailwind.
  */
 :where(.gdy-scope) {
   line-height: 1.5;
@@ -24,11 +24,6 @@
   border-width: 0;
   border-style: solid;
   border-color: var(--gdy-border);
-}
-
-:where(.gdy-scope) ::before,
-:where(.gdy-scope) ::after {
-  --tw-content: "";
 }
 
 :where(.gdy-scope) :is(h1, h2, h3, h4, h5, h6, p, figure, blockquote, pre, hr) {
