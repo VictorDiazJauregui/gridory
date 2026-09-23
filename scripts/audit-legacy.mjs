@@ -4,7 +4,11 @@
  *  - a legacy prefix (rdt-, rkb-, lui-) or the former product name shows up in
  *    the sources, the built package or the guides;
  *  - a literal color is written outside src/styles/tokens.css;
- *  - a component token (--gdy-<component>-*) is consumed without a fallback.
+ *  - a component token (--gdy-<component>-*) is consumed without a fallback;
+ *  - a Tailwind leftover survives: `--tw-`, `@tailwind`, `@config` or `@apply`
+ *    in a library stylesheet, `--tw-` in dist/gridory.css, or tailwind-merge,
+ *    clsx, class-variance-authority or tailwindcss in the built JS or in
+ *    the runtime dependencies (the library ships plain gdy-* CSS).
  *
  * Run through `npm run audit:styles` after `npm run build`.
  */
@@ -91,11 +95,37 @@ for (const file of consumers) {
     });
 }
 
+// 4. No Tailwind leftovers ---------------------------------------------------------
+const TAILWIND_CSS = /--tw-|@tailwind\b|@config\b|@apply\b/;
+for (const file of libraryCss) {
+  readFileSync(file, "utf8")
+    .split("\n")
+    .forEach((line, index) => {
+      const match = line.match(TAILWIND_CSS);
+      if (match) failures.push(`${rel(file)}:${index + 1}: Tailwind leftover "${match[0]}"`);
+    });
+}
+const distCss = path.join(root, "dist/gridory.css");
+if (existsSync(distCss)) {
+  const count = (readFileSync(distCss, "utf8").match(/--tw-/g) ?? []).length;
+  if (count > 0) failures.push(`dist/gridory.css: ${count} occurrence(s) of --tw- (Tailwind base layer leaked into the build)`);
+}
+const TAILWIND_PACKAGES = ["tailwind-merge", "clsx", "class-variance-authority", "tailwindcss"];
+const TAILWIND_IMPORT = new RegExp(`["'](?:${TAILWIND_PACKAGES.join("|")})(?:/[^"']*)?["']`);
+for (const file of walk(path.join(root, "dist"), hasExt(".js"))) {
+  const match = readFileSync(file, "utf8").match(TAILWIND_IMPORT);
+  if (match) failures.push(`${rel(file)}: imports ${match[0]}`);
+}
+const manifest = JSON.parse(readFileSync(path.join(root, "package.json"), "utf8"));
+for (const name of TAILWIND_PACKAGES) {
+  if (manifest.dependencies?.[name]) failures.push(`package.json: "${name}" is still a runtime dependency`);
+}
+
 // Report -----------------------------------------------------------------------
 if (failures.length > 0) {
   console.error(`audit-legacy: ${failures.length} problem(s)\n` + failures.map((f) => `  - ${f}`).join("\n"));
   process.exit(1);
 }
 console.log(
-  `audit-legacy: OK (${legacyFiles.length} files free of legacy names, ${libraryCss.length} stylesheets without literal colors, ${baseTokens.size} base tokens)`,
+  `audit-legacy: OK (${legacyFiles.length} files free of legacy names, ${libraryCss.length} stylesheets without literal colors or Tailwind leftovers, ${baseTokens.size} base tokens, dist free of --tw- and Tailwind packages)`,
 );
