@@ -526,10 +526,8 @@ export function DataTable<TData>({
                         <div className="gdy-table-head-cell">
                           <button
                             type="button"
-                            className={cn(
-                              "gdy-table-head-trigger",
-                              hasColumnFilter && "is-filtered",
-                            )}
+                            className="gdy-table-head-trigger"
+                            data-filtered={hasColumnFilter || undefined}
                             onClick={handleHeaderAction}
                           >
                             <span className="gdy-table-head-label" title={column.header}>
@@ -679,10 +677,7 @@ export function DataTable<TData>({
                           >
                             <ChevronDown
                               size={14}
-                              className={cn(
-                                "gdy-table-group-chevron",
-                                isHeaderCollapsed && "is-collapsed",
-                              )}
+                              className="gdy-table-group-chevron"
                             />
                             <span className="gdy-table-group-label">
                               {groupHeader.label}
@@ -700,7 +695,8 @@ export function DataTable<TData>({
                     elements.push(
                       <tr
                         key={row.id}
-                        className={cn(onRowClick && "gdy-table-row-clickable")}
+                        className="gdy-table-row"
+                        data-clickable={onRowClick ? true : undefined}
                         onClick={
                           onRowClick
                             ? () => onRowClick(row.original)

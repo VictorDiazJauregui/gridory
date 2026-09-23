@@ -327,10 +327,8 @@ export const KanbanBoard = <TData,>({
                 <div key={field.id} className="gdy-kanban-filter-item">
                   <button
                     type="button"
-                    className={cn(
-                      "gdy-kanban-filter-trigger",
-                      hasFieldFilter && "is-filtered",
-                    )}
+                    className="gdy-kanban-filter-trigger"
+                    data-filtered={hasFieldFilter || undefined}
                     onClick={() =>
                       setOpenFilterFieldId((previous) =>
                         previous === field.id ? null : field.id,
@@ -442,10 +440,8 @@ export const KanbanBoard = <TData,>({
                 return (
                   <section
                     key={value || "__empty_value__"}
-                    className={cn(
-                      "gdy-kanban-column",
-                      isDropTarget && "gdy-kanban-column-drop-target",
-                    )}
+                    className="gdy-kanban-column"
+                    data-drop-target={isDropTarget || undefined}
                     onDragOver={(event) => {
                       if (!flags.dragAndDrop) return;
                       event.preventDefault();
@@ -487,10 +483,8 @@ export const KanbanBoard = <TData,>({
                           return (
                             <article
                               key={cardId}
-                              className={cn(
-                                "gdy-kanban-card",
-                                isDragging && "is-dragging",
-                              )}
+                              className="gdy-kanban-card"
+                              data-dragging={isDragging || undefined}
                               draggable={flags.dragAndDrop}
                               onDragStart={(event) => {
                                 if (!flags.dragAndDrop || !selectedGroup)

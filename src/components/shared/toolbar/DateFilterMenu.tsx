@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { cn } from "../../../lib/cn";
 import type {
   DateFilterState,
   DateInputFormat,
@@ -60,20 +59,16 @@ export const DateFilterMenu = ({
           <p className="gdy-panel-title">Ordenar</p>
           <button
             type="button"
-            className={cn(
-              "gdy-link-btn gdy-link-btn-nowrap",
-              sortDirection === "asc" && "is-active",
-            )}
+            className="gdy-link-btn gdy-link-btn-nowrap"
+            aria-pressed={sortDirection === "asc"}
             onClick={onSortAsc}
           >
             Ascendente (antigua → reciente)
           </button>
           <button
             type="button"
-            className={cn(
-              "gdy-link-btn gdy-link-btn-nowrap",
-              sortDirection === "desc" && "is-active",
-            )}
+            className="gdy-link-btn gdy-link-btn-nowrap"
+            aria-pressed={sortDirection === "desc"}
             onClick={onSortDesc}
           >
             Descendente (reciente → antigua)
@@ -85,30 +80,24 @@ export const DateFilterMenu = ({
         <p className="gdy-panel-title">Operador</p>
         <button
           type="button"
-          className={cn(
-            "gdy-link-btn gdy-link-btn-nowrap",
-            tempState.op === "gt" && "is-active",
-          )}
+          className="gdy-link-btn gdy-link-btn-nowrap"
+          aria-pressed={tempState.op === "gt"}
           onClick={() => setTempState({ ...tempState, op: "gt" })}
         >
           Mayor que (fecha posterior)
         </button>
         <button
           type="button"
-          className={cn(
-            "gdy-link-btn gdy-link-btn-nowrap",
-            tempState.op === "lt" && "is-active",
-          )}
+          className="gdy-link-btn gdy-link-btn-nowrap"
+          aria-pressed={tempState.op === "lt"}
           onClick={() => setTempState({ ...tempState, op: "lt" })}
         >
           Menor que (fecha anterior)
         </button>
         <button
           type="button"
-          className={cn(
-            "gdy-link-btn gdy-link-btn-nowrap",
-            tempState.op === "bt" && "is-active",
-          )}
+          className="gdy-link-btn gdy-link-btn-nowrap"
+          aria-pressed={tempState.op === "bt"}
           onClick={() => setTempState({ ...tempState, op: "bt" })}
         >
           Entre (rango)

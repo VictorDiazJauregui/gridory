@@ -63,11 +63,12 @@
   padding: 34px 14px;
 }
 
-.gdy-table-row-clickable {
+/* Rows: data-clickable is set when onRowClick is provided */
+.gdy-table-row[data-clickable] {
   cursor: pointer;
 }
 
-.gdy-table-row-clickable:hover td {
+.gdy-table-row[data-clickable]:hover td {
   background: var(--gdy-table-row-hover-bg, var(--gdy-muted));
 }
 
@@ -90,7 +91,9 @@
   font-weight: 500;
 }
 
-.gdy-table-head-trigger.is-filtered .gdy-table-head-filter-icon {
+/* Filter icon (only rendered while the column has an active filter; the
+   trigger also carries data-filtered as a hook) */
+.gdy-table-head-filter-icon {
   background: transparent;
   color: var(--gdy-foreground);
   padding: 1px;
@@ -190,7 +193,7 @@
   transition: transform 0.15s ease;
 }
 
-.gdy-table-group-chevron.is-collapsed {
+.gdy-table-group-toggle[aria-expanded="false"] .gdy-table-group-chevron {
   transform: rotate(-90deg);
 }
 

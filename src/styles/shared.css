@@ -68,7 +68,7 @@
   cursor: pointer;
 }
 
-.gdy-view-switch-btn-active {
+.gdy-view-switch-btn[aria-pressed="true"] {
   background: var(--gdy-background);
   color: var(--gdy-foreground);
   box-shadow: var(--gdy-shadow-sm);
@@ -278,7 +278,7 @@
   text-decoration: underline;
 }
 
-.gdy-link-btn.is-active {
+.gdy-link-btn[aria-pressed="true"] {
   color: var(--gdy-foreground);
   text-decoration: none;
 }
@@ -315,7 +315,7 @@
   font-size: 12px;
 }
 
-.gdy-option-item.is-selected {
+.gdy-option-item[data-selected] {
   background: var(--gdy-muted);
 }
 
@@ -336,7 +336,7 @@
   justify-content: center;
 }
 
-.gdy-option-check.is-checked {
+.gdy-option-check[data-checked] {
   border-color: var(--gdy-muted-foreground);
   background: color-mix(in oklab, var(--gdy-foreground) 8%, var(--gdy-muted));
 }
