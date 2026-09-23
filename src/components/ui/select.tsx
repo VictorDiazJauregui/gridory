@@ -24,11 +24,6 @@ function SelectValue({
   );
 }
 
-/**
- * Trigger: `gdy-select-trigger` plus any class passed through `className`
- * (SimpleSelect appends `theme.triggerClassName` and `triggerClassName`).
- * Colors and radius read the `--gdy-select-*` tokens written by `selectTheme`.
- */
 function SelectTrigger({
   className,
   children,
@@ -48,10 +43,6 @@ function SelectTrigger({
   );
 }
 
-/**
- * Portaled content: `gdy-scope` brings the library reset into the portal and
- * `gdy-select-content` carries the styles (src/components/ui/styles.css).
- */
 function SelectContent({
   className,
   children,

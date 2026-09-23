@@ -17,10 +17,6 @@ function DropdownMenuTrigger({
   );
 }
 
-/**
- * Portaled content: `gdy-scope` brings the library reset into the portal and
- * `gdy-menu-content` carries the styles (src/components/ui/styles.css).
- */
 function DropdownMenuContent({
   className,
   sideOffset = 6,
@@ -42,7 +38,6 @@ function DropdownMenuContent({
   );
 }
 
-/** `data-variant="destructive"` tints the item; `data-disabled` comes from Radix. */
 function DropdownMenuItem({
   className,
   variant = "default",

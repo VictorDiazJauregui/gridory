@@ -48,17 +48,6 @@ function resolveEmptyState(
   };
 }
 
-/**
- * Chat sidebar. Every element carries a `gdy-ai-*` hook (styles in
- * ./styles.css); the `classNames` slots are appended after the hook of the
- * element they name (`root` → `gdy-ai-sidebar`, `header` → `gdy-ai-header`,
- * `body` → `gdy-ai-body`, `footer` → `gdy-ai-footer`, `inputWrapper` →
- * `gdy-ai-input-wrapper`, `textarea` → `gdy-ai-textarea`, `chip` →
- * `gdy-ai-chip`, `userBubble` / `assistantBubble` → `gdy-ai-bubble`).
- * States: `data-state="open|closed"` on the sidebar, `data-empty` on the body,
- * `data-role="user|assistant"` on messages and bubbles, `data-streaming` and
- * `data-thinking` on the transient rows.
- */
 export function AIChatSidebar(props: AIChatSidebarProps) {
   const {
     open,

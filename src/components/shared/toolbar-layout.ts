@@ -1,12 +1,5 @@
 export type ToolbarSide = "left" | "right";
 
-/**
- * Full, explicit toolbar composition. When provided it is authoritative:
- * only the listed slot ids render, in the given side and order (exclusive).
- * Slots hidden by their feature flags never render even if listed. Omit it to
- * keep the default layout (search left; custom controls then fixed controls
- * on the right).
- */
 export interface ToolbarLayout {
   left?: string[];
   right?: string[];

@@ -34,7 +34,6 @@ export const normalizeInputRows = <TData>(
     : (array as TData[]);
 };
 
-/** Options of the toolbar group selector: "none" first, then one per groupable column. */
 export const buildGroupSelectOptions = (
   groupOptions: Array<{ id: string; label: string }>,
   selectorLabel: string,

@@ -1,23 +1,14 @@
 /*
- * Primitives (src/components/ui): button, popover, dropdown menu, select,
- * toggle group and calendar. Radix and react-day-picker keep the behaviour;
- * this sheet owns every visual rule under a gdy-* class.
- *
- * Loaded before the utility layer on purpose (see src/styles/index.css):
- * each base rule and each variant weighs one class, so a class the host
- * passes through `className` (or `triggerClassName`) and loads later wins.
- *
  * Specificity contract:
- *  - base rule: one class (0-1-0);
+ *  - base rule: one class (0-1-0), so a class the host passes through
+ *    `className` (or `triggerClassName`) and loads later wins;
  *  - variants (data-variant, data-size): wrapped in :where(), still 0-1-0;
  *  - states (data-state, data-highlighted, data-disabled, aria-*, the calendar
  *    day flags): plain attribute selectors, 0-2-0, so a state beats the base;
  *  - the only descendant rules target the icons a consumer renders inside a
  *    menu item or a toggle item (they arrive as ReactNode, without a class).
- *
- * Colors come from the base tokens; the component tokens read here
- * (--gdy-menu-*, --gdy-popover-*, --gdy-toggle-*, --gdy-calendar-*,
- * --gdy-select-*) are only consumed, always with a fallback.
+ * Portaled content (popover, menu, select) carries `gdy-scope` so the library
+ * reset reaches the portal.
  */
 
 /* ---------------------------------------------------------------- Button */
@@ -130,7 +121,6 @@
   text-decoration-line: underline;
 }
 
-/* Sizes carry the height, gap and padding; the icon sizes are square and unpadded. */
 .gdy-button:where([data-size="default"]) {
   height: 32px;
   gap: 6px;
@@ -281,8 +271,6 @@
 }
 
 /* ---------------------------------------------------------------- Select */
-/* Colors and radius resolve to the --gdy-select-* tokens (written inline by
-   the `selectTheme` prop, or declared by the app), then to the base tokens. */
 .gdy-select-trigger {
   display: flex;
   height: 32px;
@@ -336,7 +324,6 @@
   transform: rotate(180deg);
 }
 
-/* Never narrower than the trigger, but wide enough for every option. */
 .gdy-select-content {
   position: relative;
   z-index: 50;
@@ -479,9 +466,6 @@
 }
 
 /* -------------------------------------------------------------- Calendar */
-/* Hooks come from the classNames map of ui/calendar.tsx; day states are the
-   attributes react-day-picker writes on the cell plus data-range-* (cell and
-   button) and data-selected-single (button) added by the overrides. */
 .gdy-calendar-root {
   width: fit-content;
   padding: 8px;

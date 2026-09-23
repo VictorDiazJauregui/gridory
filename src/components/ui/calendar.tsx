@@ -14,14 +14,6 @@ import {
   ChevronRightIcon,
 } from "lucide-react";
 
-/**
- * Every react-day-picker element gets a `gdy-calendar-*` hook (no `rdp-*`
- * default is merged in). Day states are not classes: react-day-picker already
- * writes `data-today`, `data-selected`, `data-outside`, `data-disabled` and
- * `data-hidden` on the cell, and the `Day` / `DayButton` overrides below add
- * `data-range-start|middle|end` and `data-selected-single`.
- * Styles: src/components/ui/styles.css.
- */
 const CALENDAR_CLASS_NAMES: React.ComponentProps<typeof DayPicker>["classNames"] = {
   root: "gdy-calendar-root",
   months: "gdy-calendar-months",

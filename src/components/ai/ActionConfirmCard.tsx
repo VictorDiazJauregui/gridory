@@ -63,13 +63,6 @@ function toDisplayValue(value: unknown): string {
   }
 }
 
-/**
- * Pending action proposed by the model. Hooks: `gdy-ai-action-card` (with
- * `data-action-type`), `-header`, `-kicker`, `-title`, `-fields`, `-field`,
- * `-field-label`, `-required`, `-field-value`, `-empty`, `-actions`, and the
- * two buttons `gdy-ai-action-cancel` / `gdy-ai-action-confirm` on the button
- * primitive. Styles in ./styles.css.
- */
 export function ActionConfirmCard({
   action,
   schema,

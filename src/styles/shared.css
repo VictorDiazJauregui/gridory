@@ -1,13 +1,3 @@
-/*
- * Shared layer: rules used by more than one module (card container, toolbar,
- * buttons, inputs, filter panels, date pickers, view switch, scroll regions).
- * Module-specific rules live next to each component (gdy-table-*, gdy-kanban-*).
- *
- * Every color comes from src/styles/tokens.css. Component tokens
- * (--gdy-btn-*, --gdy-input-*, --gdy-panel-*, ...) are only consumed here, with
- * a fallback, and never declared, so an app can define them at any scope.
- */
-
 /* Card container of every module (wraps toolbar + content) */
 .gdy-card {
   border: 1px solid var(--gdy-border);
@@ -429,9 +419,6 @@
   padding: 0;
 }
 
-/* Thin scrollbars (thinScrollbars prop, default ON): the module root carries
-   gdy-thin-scroll and every internal scroller carries gdy-scroll. Thumb color
-   via --gdy-scrollbar-thumb (scrollbarColor prop). */
 .gdy-thin-scroll .gdy-scroll {
   scrollbar-width: thin;
   scrollbar-color: var(--gdy-scrollbar-thumb, var(--gdy-input)) transparent;

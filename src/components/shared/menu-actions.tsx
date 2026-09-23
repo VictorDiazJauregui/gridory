@@ -1,6 +1,3 @@
-/* Shared row/card menu module: resolution logic plus its render helper. It is a
-   utility module, not a Fast-Refresh component boundary, so the "only export
-   components" rule does not apply here. */
 /* eslint-disable react-refresh/only-export-components */
 import type { ReactNode } from "react";
 import { Archive, ArchiveRestore, Clock3, Pencil, Trash2 } from "lucide-react";
@@ -41,7 +38,6 @@ export type MenuItem<TData> =
   | MenuSeparator
   | MenuLabel;
 
-/** Subset of `RowActions` the menu resolver relies on (both components). */
 export interface MenuActionsInput<TData> {
   edit?: boolean;
   archive?: boolean;

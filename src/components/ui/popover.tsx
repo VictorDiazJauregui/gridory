@@ -15,10 +15,6 @@ function PopoverTrigger({
   return <PopoverPrimitive.Trigger data-slot="popover-trigger" {...props} />;
 }
 
-/**
- * Portaled content: `gdy-scope` brings the library reset into the portal and
- * `gdy-popover-content` carries the styles (src/components/ui/styles.css).
- */
 function PopoverContent({
   className,
   align = "center",

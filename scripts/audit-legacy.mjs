@@ -1,16 +1,8 @@
 #!/usr/bin/env node
 /**
- * Style contract audit (part 1): fails when
- *  - a legacy prefix (rdt-, rkb-, lui-) or the former product name shows up in
- *    the sources, the built package or the guides;
- *  - a literal color is written outside src/styles/tokens.css;
- *  - a component token (--gdy-<component>-*) is consumed without a fallback;
- *  - a Tailwind leftover survives: `--tw-`, `@tailwind`, `@config` or `@apply`
- *    in a library stylesheet, `--tw-` in dist/gridory.css, or tailwind-merge,
- *    clsx, class-variance-authority or tailwindcss in the built JS or in
- *    the runtime dependencies (the library ships plain gdy-* CSS).
- *
- * Run through `npm run audit:styles` after `npm run build`.
+ * Style contract audit, part 1: no legacy names, no literal colors outside
+ * tokens.css, no component token without a fallback, no Tailwind leftovers
+ * (see README › Auditoría). Runs through `npm run audit:styles` after the build.
  */
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";

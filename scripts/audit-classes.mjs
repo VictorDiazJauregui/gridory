@@ -1,28 +1,8 @@
 #!/usr/bin/env node
 /**
- * Style contract audit (part 2): keeps the class hooks, the state attributes
- * and the stylesheet in sync.
- *  - every gdy-* class written by the library has a rule in dist/gridory.css
- *    or is a declared hook-only class (scripts/audit-allowlist.json →
- *    hookOnly: structural hooks shipped without default declarations);
- *  - every .gdy-* rule in dist/gridory.css is emitted by the library or listed
- *    as a public utility in the allowlist;
- *  - every hook-only class is really emitted and really has no rule;
- *  - no is-* state class survives in the library or in dist (states are
- *    data-* attributes or ARIA attributes);
- *  - every [data-*] / [aria-*] attribute selector in the library stylesheets
- *    is emitted by the library, set by Radix or react-day-picker at runtime or
- *    set by the host app (the last two listed in the allowlist); variant
- *    attributes (data-variant, data-size) take their value from a prop, so the
- *    value is checked as a string literal instead;
- *  - in every module (each directory of src/components except mocks) every
- *    class literal (className="…", strings inside className={cn(…)}, values of
- *    a classNames map) is a gdy-* hook, and no rdp-* name survives in those
- *    sources nor as a rule in dist (react-day-picker defaults are not merged
- *    in);
- *  - the demo mocks only use classes that exist.
- *
- * Needs dist/gridory.css, so run it after `npm run build`.
+ * Style contract audit, part 2: the class hooks, the state attributes and the
+ * stylesheet stay in sync (see README › Auditoría). Needs dist/gridory.css, so
+ * run it after `npm run build`.
  */
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
@@ -89,7 +69,6 @@ const definedInDist = collect([distCss], CLASS_IN_CSS);
 const publicUtilities = new Set(allowlist.publicUtilities);
 const hookOnly = new Set(allowlist.hookOnly);
 const variantAttributes = new Set(allowlist.variantAttributes);
-// Every module is strict: no utility class may reach the DOM from the library.
 const strictModules = readdirSync(path.join(root, "src/components"))
   .filter((entry) => entry !== "mocks" && statSync(path.join(root, "src/components", entry)).isDirectory())
   .sort();
@@ -156,8 +135,6 @@ for (const file of libraryStylesheets) {
 }
 
 // 6. Strict modules: every class literal is a gdy-* hook, no rdp-* survives ----
-// Sources of class literals: className="…", the string arguments of
-// className={cn(…)}, and the values of a classNames map (inline or a const).
 const CLASS_LITERAL_CONTEXTS = [
   /className=\{?"([^"]*)"/g,
   /className=\{cn\(([\s\S]*?)\)\}/g,

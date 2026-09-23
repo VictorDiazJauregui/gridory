@@ -25,7 +25,6 @@ export const hasDateFilterValue = (value?: DateFilterState) => {
 export const dateFnsPattern = (mask: DateInputFormat): string =>
   mask.replace("mm", "MM");
 
-/** Parses manually typed text under the given mask. Returns undefined if invalid. */
 export const parseInputToDate = (
   text: string,
   mask: DateInputFormat,
@@ -37,7 +36,6 @@ export const parseInputToDate = (
   return parsed;
 };
 
-/** Renders a Date using the given mask (for placeholder-consistent display). */
 export const formatDateToInput = (
   date: Date | undefined,
   mask: DateInputFormat,

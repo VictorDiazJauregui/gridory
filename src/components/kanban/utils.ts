@@ -32,7 +32,6 @@ export const normalizeInputRows = <TData>(
     : (array as TData[]);
 };
 
-/** Options of the toolbar group selector: one per grouping, prefixed with the selector label. */
 export const buildGroupSelectOptions = <TData>(
   groups: KanbanGroupOption<TData>[],
   selectorLabel: string,

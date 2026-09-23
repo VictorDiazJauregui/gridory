@@ -1,8 +1,8 @@
 import preset from "./tailwind-preset.js";
 
 /**
- * Tailwind config for the local demo (index.html + src/App.tsx + mocks).
- * The library stylesheet uses tailwind.lib.config.js instead.
+ * Tailwind config for the local demo only (index.html, src/App.tsx, mocks);
+ * the library ships plain CSS.
  *
  * @type {import('tailwindcss').Config}
  */

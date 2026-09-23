@@ -1,4 +1,3 @@
-// Data table
 export { DataTable } from "./table";
 export type {
   ColumnSortingState,
@@ -9,7 +8,6 @@ export type {
   RowGroupingResult,
 } from "./table";
 
-// Kanban board
 export { KanbanBoard } from "./kanban";
 export type {
   KanbanBoardFeatures,
@@ -23,7 +21,6 @@ export type {
   KanbanSortingState,
 } from "./kanban";
 
-// Data model and toolbar contracts shared by table and kanban
 export type {
   AiButtonConfig,
   ArchivedViewConfig,
@@ -64,7 +61,6 @@ export type {
   ToolbarSide,
 } from "./components/shared";
 
-// AI assistant
 export { AIChatSidebar, AIChatButton, useAIChat } from "./ai";
 export {
   AI_PROVIDER_PRESETS,

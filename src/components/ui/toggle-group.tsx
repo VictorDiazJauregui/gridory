@@ -16,7 +16,6 @@ function ToggleGroup({
   );
 }
 
-/** Radix writes `data-state="on|off"`; the on state is styled from it. */
 function ToggleGroupItem({
   className,
   children,

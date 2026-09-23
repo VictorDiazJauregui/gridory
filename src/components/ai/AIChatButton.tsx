@@ -9,10 +9,8 @@ interface AIChatButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 /**
- * Launcher button. The host places it in its own toolbar, outside any Gridory
- * root, so it carries `gdy-scope` itself. Hooks: `gdy-ai-button` on the
- * button primitive (outline, sm), `gdy-ai-button-icon` and
- * `gdy-ai-button-label` (hidden below 640px). Styles in ./styles.css.
+ * Rendered in the host's own toolbar, outside any Gridory root, so it carries
+ * `gdy-scope` itself.
  */
 export function AIChatButton({
   label = "AI",

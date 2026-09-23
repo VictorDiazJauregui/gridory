@@ -21,11 +21,6 @@ export type ButtonSize =
   | "icon-sm"
   | "icon-lg";
 
-/**
- * Button primitive: one class hook (`gdy-button`) plus `data-variant` and
- * `data-size`, styled in src/components/ui/styles.css. Any class passed through
- * `className` is appended after the hook.
- */
 const Button = React.forwardRef<
   HTMLButtonElement,
   React.ComponentProps<"button"> & {
