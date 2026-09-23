@@ -57,6 +57,7 @@ export const KanbanBoard = <TData,>({
   onCardMove,
   onCardClick,
   onGroupChange,
+  groupSelectorLabel = "Agrupar por",
   searchPlaceholder = "Buscar cards...",
   createLabel = "Nuevo",
   onCreate,
@@ -293,13 +294,13 @@ export const KanbanBoard = <TData,>({
           groupSelector={
             flags.groupSelector
               ? {
-                  options: buildGroupSelectOptions(groups, "Agrupar por"),
+                  options: buildGroupSelectOptions(groups, groupSelectorLabel),
                   value: selectedGroup?.id ?? "",
                   onChange: (groupId) => {
                     setSelectedGroupId(groupId);
                     onGroupChange?.(groupId);
                   },
-                  ariaLabel: "Agrupar por",
+                  ariaLabel: groupSelectorLabel,
                 }
               : undefined
           }

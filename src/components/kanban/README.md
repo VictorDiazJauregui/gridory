@@ -42,6 +42,7 @@ interface KanbanBoardProps<TData> {
   onCardMove?: (event: KanbanMoveEvent<TData>) => void;
   onCardClick?: (event: KanbanCardClickEvent<TData>) => void;
   onGroupChange?: (groupId: string) => void;
+  groupSelectorLabel?: string;
   searchPlaceholder?: string;
   createLabel?: string;
   onCreate?: () => void;
@@ -216,6 +217,15 @@ Se dispara al cambiar agrupación seleccionada.
 
 ```ts
 onGroupChange?: (groupId: string) => void
+```
+
+### `groupSelectorLabel`
+
+Prefijo de cada opción del selector de agrupación de la barra (`Agrupar por: Estado`) y su
+`aria-label`. Por defecto `"Agrupar por"`.
+
+```ts
+groupSelectorLabel?: string
 ```
 
 ### `onCardMove`
