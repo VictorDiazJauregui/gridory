@@ -125,7 +125,11 @@ type CalendarDayButtonProps = React.ComponentProps<typeof DayButton> & {
   locale?: Partial<Locale>;
 };
 
-/** Own day button: the hook comes from `classNames.day_button`. */
+/**
+ * Own day button: the hook comes from `classNames.day_button`. Like the default
+ * DayButton of react-day-picker, it takes the DOM focus when the picker marks
+ * the day as focused (arrow keys, Home/End, PageUp/PageDown).
+ */
 function CalendarDayButton({
   className,
   day,
@@ -133,8 +137,14 @@ function CalendarDayButton({
   locale,
   ...props
 }: CalendarDayButtonProps) {
+  const ref = React.useRef<HTMLButtonElement>(null);
+  React.useEffect(() => {
+    if (modifiers.focused) ref.current?.focus();
+  }, [modifiers.focused]);
+
   return (
     <button
+      ref={ref}
       className={className}
       data-day={day.date.toLocaleDateString(locale?.code)}
       data-selected-single={
