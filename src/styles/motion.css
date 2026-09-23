@@ -1,0 +1,71 @@
+/*
+ * Motion: the library's time-based effects, kept in one file so a consumer can
+ * override them by class or switch them off (for example
+ * `.gdy-menu-content[data-state] { animation: none }`). Everything here is
+ * gated behind `prefers-reduced-motion: no-preference`; the assistant's
+ * "thinking" spinner lives in src/components/ai/styles.css and stays because
+ * it reports progress rather than decorating.
+ *
+ * Floating surfaces (popover, menu and select content) fade and grow from
+ * their anchor. Radix keeps the node mounted with data-state="closed" until
+ * the exit animation ends, and its data-side picks the edge the surface enters
+ * from. The custom properties are internal (always read with a fallback).
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .gdy-popover-content[data-state="open"],
+  .gdy-menu-content[data-state="open"],
+  .gdy-select-content[data-state="open"] {
+    animation: gdy-pop-in 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* The select content unmounts as soon as it closes (Radix keeps no closed
+     state for it), so only the popover and the menu animate out. */
+  .gdy-popover-content[data-state="closed"],
+  .gdy-menu-content[data-state="closed"] {
+    animation: gdy-pop-out 100ms ease-in;
+  }
+
+  .gdy-popover-content[data-side="bottom"],
+  .gdy-menu-content[data-side="bottom"],
+  .gdy-select-content[data-side="bottom"] {
+    --gdy-motion-y: -8px;
+  }
+
+  .gdy-popover-content[data-side="top"],
+  .gdy-menu-content[data-side="top"],
+  .gdy-select-content[data-side="top"] {
+    --gdy-motion-y: 8px;
+  }
+
+  .gdy-popover-content[data-side="left"],
+  .gdy-menu-content[data-side="left"],
+  .gdy-select-content[data-side="left"] {
+    --gdy-motion-x: 8px;
+  }
+
+  .gdy-popover-content[data-side="right"],
+  .gdy-menu-content[data-side="right"],
+  .gdy-select-content[data-side="right"] {
+    --gdy-motion-x: -8px;
+  }
+
+  /* Assistant panel: slides in from the right edge (transform is set by
+     src/components/ai/styles.css, open and closed). */
+  .gdy-ai-sidebar {
+    transition: transform 0.3s cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+@keyframes gdy-pop-in {
+  from {
+    opacity: 0;
+    transform: translate(var(--gdy-motion-x, 0px), var(--gdy-motion-y, 0px)) scale(0.95);
+  }
+}
+
+@keyframes gdy-pop-out {
+  to {
+    opacity: 0;
+    transform: translate(var(--gdy-motion-x, 0px), var(--gdy-motion-y, 0px)) scale(0.95);
+  }
+}

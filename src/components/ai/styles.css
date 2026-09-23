@@ -86,7 +86,6 @@
   background-color: var(--gdy-ai-bg, var(--gdy-background));
   box-shadow: var(--gdy-shadow-lg);
   transform: translateX(100%);
-  transition: transform 0.3s cubic-bezier(0, 0, 0.2, 1);
 }
 
 .gdy-ai-sidebar[data-state="open"] {
