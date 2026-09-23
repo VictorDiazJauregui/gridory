@@ -129,7 +129,7 @@ export const KanbanBoard = <TData,>({
 
   useEffect(() => {
     if (groups.some((group) => group.id === selectedGroupId)) return;
-    setSelectedGroupId(groups[0]?.id ?? "");
+    setSelectedGroupId(groups[0].id);
   }, [groups, selectedGroupId]);
 
   const selectedGroup = useMemo(
@@ -198,7 +198,6 @@ export const KanbanBoard = <TData,>({
   );
 
   const groupColumns = useMemo(() => {
-    if (!selectedGroup) return [];
     if (selectedGroup.values?.length) return selectedGroup.values;
 
     const uniqueValues = new Map<string, string>();
@@ -214,8 +213,6 @@ export const KanbanBoard = <TData,>({
   }, [selectedGroup, cards]);
 
   const cardsByGroup = useMemo(() => {
-    if (!selectedGroup) return {};
-
     const grouped: Record<string, TData[]> = {};
     groupColumns.forEach((column) => {
       grouped[column.value] = [];
@@ -242,8 +239,6 @@ export const KanbanBoard = <TData,>({
   };
 
   const moveCard = (cardId: string, toValue: string) => {
-    if (!selectedGroup) return;
-
     const sourceIndex = cards.findIndex(
       (card, index) => getCardId(card, index) === cardId,
     );
@@ -298,7 +293,7 @@ export const KanbanBoard = <TData,>({
             flags.groupSelector
               ? {
                   options: buildGroupSelectOptions(groups, groupSelectorLabel),
-                  value: selectedGroup?.id ?? "",
+                  value: selectedGroup.id,
                   onChange: (groupId) => {
                     setSelectedGroupId(groupId);
                     onGroupChange?.(groupId);
@@ -499,8 +494,7 @@ export const KanbanBoard = <TData,>({
                               data-dragging={isDragging || undefined}
                               draggable={flags.dragAndDrop}
                               onDragStart={(event) => {
-                                if (!flags.dragAndDrop || !selectedGroup)
-                                  return;
+                                if (!flags.dragAndDrop) return;
                                 dragHappenedRef.current = true;
                                 event.dataTransfer.setData(
                                   "text/plain",
@@ -524,7 +518,7 @@ export const KanbanBoard = <TData,>({
                                 onCardClick?.({
                                   card,
                                   cardId,
-                                  groupId: selectedGroup?.id ?? "",
+                                  groupId: selectedGroup.id,
                                   value,
                                 });
                               }}
@@ -533,7 +527,7 @@ export const KanbanBoard = <TData,>({
                                 <>
                                   {renderCard(card, {
                                     card,
-                                    groupId: selectedGroup?.id ?? "",
+                                    groupId: selectedGroup.id,
                                     groupValue: value,
                                   })}
                                   {flags.rowActions ? (
@@ -549,14 +543,7 @@ export const KanbanBoard = <TData,>({
                                 <DefaultKanbanCard
                                   card={card}
                                   fields={fields as ColumnDefinition<TData>[]}
-                                  group={
-                                    selectedGroup ?? {
-                                      id: "default",
-                                      label: "Grupo",
-                                      accessor: () => "",
-                                      setValue: (inputCard) => inputCard,
-                                    }
-                                  }
+                                  group={selectedGroup}
                                   groupValue={value}
                                   rowActions={
                                     flags.rowActions ? rowActions : undefined
