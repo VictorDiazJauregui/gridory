@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
-import { DataTableMock } from "@/components/mocks/DataTable.mock";
-import { KanbanBoardMock } from "@/components/mocks/KanbanBoard.mock";
-import { AIAssistantIntegratedMock } from "@/components/mocks/AIAssistantIntegrated.mock";
+import { DataTableMock } from "@/components/mocks/table/DataTable.mock";
+import { KanbanBoardMock } from "@/components/mocks/kanban/KanbanBoard.mock";
+import { AIAssistantIntegratedMock } from "@/components/mocks/ai/AIAssistantIntegrated.mock";
 
 type ModuleItem = {
   id: string;

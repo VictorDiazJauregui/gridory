@@ -1,4 +1,4 @@
-import { normalizeToArray } from "../../shared/row-pipeline";
+import { normalizeToArray } from "../../shared/rows/row-pipeline";
 import type { SelectOption } from "../../shared/toolbar-controls";
 import { GROUP_NONE_VALUE } from "../constants";
 import type {

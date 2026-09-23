@@ -1,4 +1,4 @@
-import { resolveSortDirection } from "../../shared/use-column-sorting";
+import { resolveSortDirection } from "../../shared/controls/use-column-sorting";
 import type { ColumnDefinition, SortDirection } from "../types";
 import type { KanbanSectionProps } from "../model/use-kanban-board-state";
 

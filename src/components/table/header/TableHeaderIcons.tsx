@@ -1,5 +1,5 @@
 import { ChevronDown, Filter } from "lucide-react";
-import { resolveSortDirection } from "../../shared/use-column-sorting";
+import { resolveSortDirection } from "../../shared/controls/use-column-sorting";
 import { SortIcon } from "./SortIcon";
 import type { TableColumnProps } from "../model/use-table-core";
 

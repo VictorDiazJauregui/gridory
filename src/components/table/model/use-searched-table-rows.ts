@@ -1,5 +1,5 @@
-import { useArchivedRows } from "../../shared/use-archived-rows";
-import { useSearchedRows } from "../../shared/use-searched-rows";
+import { useArchivedRows } from "../../shared/rows/use-archived-rows";
+import { useSearchedRows } from "../../shared/rows/use-searched-rows";
 import type { TableSettings } from "../settings";
 import type { TableState } from "./use-table-state";
 

@@ -10,9 +10,9 @@ import type {
   ToggleGroupConfig,
 } from "../toolbar-controls";
 import type { SelectTheme } from "../select-theme";
-import { resolveToolbarClusters, type ToolbarLayout } from "../toolbar-layout";
-import { SimpleSelect } from "../../ui/select";
-import { SegmentedControl } from "../../ui/toggle-group";
+import { resolveToolbarClusters, type ToolbarLayout } from "./toolbar-layout";
+import { SimpleSelect } from "../../ui/select/select";
+import { SegmentedControl } from "../../ui/toggle-group/toggle-group";
 import { ToolbarAiButton } from "./ToolbarAiButton";
 import { ToolbarClearFilters } from "./ToolbarClearFilters";
 import { ToolbarCreateButton } from "./ToolbarCreateButton";

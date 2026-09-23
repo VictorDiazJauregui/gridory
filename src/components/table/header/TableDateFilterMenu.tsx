@@ -2,8 +2,8 @@ import {
   buildDateFilterMenuKey,
   pickCalendarSettings,
   resolveEmptyDateState,
-} from "../../shared/column-filters";
-import { DateFilterMenu } from "../../shared/toolbar";
+} from "../../shared/controls/column-filters";
+import { DateFilterMenu } from "../../shared/date-filter-menu/DateFilterMenu";
 import { buildSortMenuProps } from "./sort-menu-props";
 import type { TableColumnProps } from "../model/use-table-core";
 

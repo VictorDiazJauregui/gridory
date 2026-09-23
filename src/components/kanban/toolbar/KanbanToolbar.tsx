@@ -1,4 +1,4 @@
-import { Toolbar } from "../../shared/toolbar";
+import { Toolbar } from "../../shared/toolbar/Toolbar";
 import {
   buildArchivedToolbarProps,
   pickToolbarPassThrough,

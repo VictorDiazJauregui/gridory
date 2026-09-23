@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { useArchivedMode } from "../../shared/use-archived-mode";
-import { useColumnFilters } from "../../shared/use-column-filters";
-import { useColumnSorting } from "../../shared/use-column-sorting";
+import { useArchivedMode } from "../../shared/controls/use-archived-mode";
+import { useColumnFilters } from "../../shared/controls/use-column-filters";
+import { useColumnSorting } from "../../shared/controls/use-column-sorting";
 import type { KanbanBoardProps } from "../types";
 
 export const useBoardControls = <TData>({

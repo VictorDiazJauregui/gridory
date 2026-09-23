@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { ToolbarSide } from "./toolbar-layout";
+import type { ToolbarSide } from "./toolbar/toolbar-layout";
 
 export interface SelectOption {
   value: string;
