@@ -20,6 +20,8 @@ const nextSortCycle = (
 
 export const useColumnSorting = () => {
   const [sorting, setSorting] = useState<ColumnSortingState | null>(null);
+  const sortBy = (id: string, direction: SortDirection) =>
+    setSorting({ id, direction });
   const toggleColumnSort = (id: string, direction: SortDirection) =>
     setSorting((previous) =>
       previous?.id === id && previous.direction === direction
@@ -30,5 +32,5 @@ export const useColumnSorting = () => {
     setSorting((previous) => nextSortCycle(previous, id));
   const clearColumnSort = (id: string) =>
     setSorting((previous) => (previous?.id === id ? null : previous));
-  return { sorting, toggleColumnSort, cycleColumnSort, clearColumnSort };
+  return { sorting, sortBy, toggleColumnSort, cycleColumnSort, clearColumnSort };
 };

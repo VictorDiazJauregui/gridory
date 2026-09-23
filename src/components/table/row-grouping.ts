@@ -20,6 +20,35 @@ export const buildGroupSelectOptions = (
   })),
 ];
 
+export const resolveGroupOptions = <TData>(
+  columns: ColumnDefinition<TData>[],
+  groupableColumnIds?: string[],
+) =>
+  (groupableColumnIds ?? [])
+    .map((id) => columns.find((column) => column.id === id))
+    .filter((column): column is ColumnDefinition<TData> => Boolean(column))
+    .map((column) => ({ id: column.id, label: column.header }));
+
+interface InitialGroupByInput {
+  defaultGroupBy: string | null;
+  groupableColumnIds?: string[];
+}
+
+export const resolveInitialGroupBy = ({
+  defaultGroupBy,
+  groupableColumnIds,
+}: InitialGroupByInput) =>
+  defaultGroupBy && (groupableColumnIds ?? []).includes(defaultGroupBy)
+    ? defaultGroupBy
+    : null;
+
+export const toggleSetMember = (set: Set<string>, value: string) => {
+  const next = new Set(set);
+  if (next.has(value)) next.delete(value);
+  else next.add(value);
+  return next;
+};
+
 interface GroupOptionPosition {
   label: string;
   rank: number;
