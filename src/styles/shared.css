@@ -429,16 +429,6 @@
   padding: 0;
 }
 
-/* Range filter: keep the two calendar months side by side (like the base
-   calendar's md:flex-row). Shipped as plain CSS because the consumer's Tailwind
-   does not scan this package, so the md:flex-row utility never gets generated. */
-@media (min-width: 768px) {
-  .gdy-calendar-popover .rdp-months {
-    flex-direction: row;
-    gap: 1rem;
-  }
-}
-
 /* Thin scrollbars (thinScrollbars prop, default ON): the module root carries
    gdy-thin-scroll and every internal scroller carries gdy-scroll. Thumb color
    via --gdy-scrollbar-thumb (scrollbarColor prop). */
@@ -458,25 +448,5 @@
 }
 
 .gdy-thin-scroll .gdy-scroll::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-/* Thin scrollbar for the react-day-picker month/year dropdown selects
-   (portaled outside the component root, so this rule is global). */
-.rdp-dropdown {
-  scrollbar-width: thin;
-  scrollbar-color: var(--gdy-scrollbar-thumb, var(--gdy-input)) transparent;
-}
-
-.rdp-dropdown::-webkit-scrollbar {
-  width: 8px;
-}
-
-.rdp-dropdown::-webkit-scrollbar-thumb {
-  background-color: var(--gdy-scrollbar-thumb, var(--gdy-input));
-  border-radius: 8px;
-}
-
-.rdp-dropdown::-webkit-scrollbar-track {
   background: transparent;
 }

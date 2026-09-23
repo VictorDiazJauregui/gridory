@@ -35,7 +35,13 @@
     "gdy-menu-item-label",
     "gdy-select-value",
     "gdy-select-item-text",
-    "gdy-toggle-item-label"
+    "gdy-toggle-item-label",
+    "gdy-calendar-weeks",
+    "gdy-calendar-week-number",
+    "gdy-calendar-week-number-header",
+    "gdy-calendar-footer",
+    "gdy-calendar-months-dropdown",
+    "gdy-calendar-years-dropdown"
   ],
   "variantAttributes": [
     "data-variant",
