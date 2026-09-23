@@ -34,12 +34,22 @@ No contiene lógica de negocio específica; solo emite eventos para que cada pro
 
 Directorio: `src/components/table/`
 
-- `index.tsx`: ensamblado principal y orquestación de estado.
-- `types.ts`: contratos públicos e internos.
-- `row-grouping.ts`: agrupado por columna y opciones del selector de grupo.
-- `constants.ts`: defaults y constantes.
-- `TablePagination.tsx`: footer de paginación.
-- `RowActionsMenu.tsx`: menú de acciones por fila.
+- `index.tsx`: `DataTable`, que compone el modelo y los tres bloques (toolbar, área de scroll, paginación).
+- `types.ts`: contratos públicos e internos. `constants.ts`: defaults y constantes.
+- `settings.ts`: props con defaults aplicados y flags de features (`TableSettings`).
+- Modelo (`use-table-core.ts`): `useTableCore` compone `use-table-state.ts` (búsqueda, orden, filtros, agrupado
+  y archivados), `use-table-rows.ts` (normalización, `use-searched-table-rows.ts`, `use-filtered-table-rows.ts`,
+  `use-grouped-rows.ts`) y `use-table-paging.ts` (`use-table-pagination.ts`, `use-paged-rows.ts`, `page-range.ts`,
+  `use-view-snapshot.ts`, `use-reset-page-on-change.ts`, `use-scroll-reset-on-page-change.ts`);
+  `use-table-options.ts` y `use-table-columns.tsx` preparan la instancia de TanStack.
+- Agrupado: `row-grouping.ts`, `use-row-grouping-state.ts`, `use-collapsed-groups.ts`.
+- Props derivadas: `toolbar-props.ts`, `pagination-props.ts`, `sort-menu-props.ts`, `header-action.ts`.
+- Cabecera: `TableHead.tsx`, `TableHeaderCell.tsx`, `TableHeaderTrigger.tsx`, `TableHeaderIcons.tsx`,
+  `SortIcon.tsx`, `TableColumnFilterMenu.tsx`, `TableDateFilterMenu.tsx`, `TableValueFilterMenu.tsx`.
+- Cuerpo: `TableScrollArea.tsx`, `TableBody.tsx`, `body-rows.tsx`, `TableGroupRow.tsx`,
+  `GroupToggleButton.tsx`, `TableDataRow.tsx`, `TableCellContent.tsx`, `InlineSelectCell.tsx`.
+- Acciones y paginación: `RowActionsMenu.tsx`, `RowActionsTrigger.tsx`, `TablePagination.tsx`,
+  `PaginationSummary.tsx`, `PaginationControls.tsx`, `PageStepButton.tsx`.
 - `styles.css`: estilos propios del módulo (`.gdy-table-*`).
 
 Compartido con el kanban, en `src/components/shared/`:
@@ -53,6 +63,11 @@ Compartido con el kanban, en `src/components/shared/`:
   calendario, scroll) de las que extienden `DataTableProps` y `KanbanBoardProps`.
 - `date-filter.ts`: estado vacío del filtro de fecha, comparación y máscara de fechas.
 - `hooks.ts`: `useClickOutside`, `useActiveFilters`.
+- Estado compartido: `use-column-sorting.ts`, `use-column-filters.ts`, `use-filter-menu-anchor.ts`,
+  `use-archived-mode.ts`; etapas del pipeline como hooks (`use-searched-rows.ts`, `use-archived-rows.ts`,
+  `use-filtered-rows.ts`, `use-sorted-rows.ts`); `column-filters.ts` (estado vacío, clave del menú de fecha,
+  ajustes de calendario), `prop-defaults.ts`, `root-style.ts`, `stop-propagation.ts` y
+  `toolbar/toolbar-props.ts` (props de archivados y de paso directo al `Toolbar`).
 - `src/styles/shared.css`: estilos compartidos (`.gdy-toolbar`, `.gdy-btn`, `.gdy-input`,
   `.gdy-panel`, `.gdy-date-*`, `.gdy-view-switch`, scroll fino).
 
