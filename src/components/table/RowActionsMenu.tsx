@@ -5,7 +5,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { renderMenuNodes, resolveMenuNodes } from "../shared/menu-actions";
-import type { ReusableRowActions } from "./types";
+import type { RowActions } from "./types";
 
 const stopClick = (event: { stopPropagation: () => void }) =>
   event.stopPropagation();
@@ -15,7 +15,7 @@ export function RowActionsMenu<TData>({
   actions,
 }: {
   row: TData;
-  actions: ReusableRowActions<TData>;
+  actions: RowActions<TData>;
 }) {
   const nodes = resolveMenuNodes(row, actions);
   if (nodes.length === 0) return null;

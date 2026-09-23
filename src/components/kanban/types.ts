@@ -1,105 +1,52 @@
-import type { CSSProperties, ReactNode } from "react";
-import type { ReusableRowAction } from "../shared/row-action";
-import type { ReusableMenuItem } from "../shared/menu-actions";
-import type { ReusableSelectTheme } from "../shared/select-theme";
-import type { ReusableToolbarLayout } from "../shared/toolbar-layout";
+import type { ReactNode } from "react";
+import type { SelectTheme } from "../shared/select-theme";
+import type { ToolbarLayout } from "../shared/toolbar-layout";
 import type {
-  ReusableHeaderSelectConfig,
-  ReusableToggleGroupConfig,
+  HeaderSelectConfig,
+  ToggleGroupConfig,
 } from "../shared/toolbar-controls";
+import type {
+  AiButtonConfig,
+  ArchivedViewConfig,
+  ColumnDefinition,
+  DataInput,
+  DateFilterState,
+  DateInputFormat,
+  FilterOption,
+  Primitive,
+  RowActions,
+  SortDirection,
+  ViewSwitchConfig,
+} from "../shared/data-model";
 
-export type Primitive = string | number | boolean | null | undefined;
-export type DateFilterOp = "gt" | "lt" | "bt";
-/** Display and manual-entry mask for date filter inputs. */
-export type DateInputFormat = "dd/mm/yyyy" | "dd-mm-yyyy" | "mm/dd/yyyy" | "mm-dd-yyyy";
-export type SortDirection = "asc" | "desc";
+export type {
+  AiButtonConfig,
+  ArchivedViewConfig,
+  ArchivedViewMode,
+  CellHighlight,
+  ColumnDefinition,
+  DataInput,
+  DateFilterOp,
+  DateFilterState,
+  DateInputFormat,
+  FilterOption,
+  Primitive,
+  RowActions,
+  SortDirection,
+  ViewMode,
+  ViewSwitchConfig,
+} from "../shared/data-model";
 
-export type ReusableTableInput<TData> =
-  | TData[]
-  | {
-      data?: unknown;
-      items?: unknown;
-      results?: unknown;
-      records?: unknown;
-      payload?: { data?: unknown; items?: unknown; results?: unknown };
-    };
-
-export interface ReusableFilterOption {
-  value: string;
-  label: string;
-}
-
-export interface ReusableCellHighlight {
-  className?: string;
-  style?: CSSProperties;
-}
-
-export interface ReusableColumn<TData> {
-  id: string;
-  header: string;
-  accessor: (row: TData) => Primitive | Primitive[];
-  cell?: (row: TData) => ReactNode;
-  type?: "text" | "number" | "date";
-  sortable?: boolean;
-  searchable?: boolean;
-  filterable?: boolean;
-  filterOptions?: ReusableFilterOption[];
-  width?: number;
-  inlineEditOptions?: ReusableFilterOption[];
-  onInlineEdit?: (row: TData, value: string) => void;
-  valueHighlights?: Record<string, ReusableCellHighlight>;
-}
-
-export interface ReusableRowActions<TData> {
-  edit?: boolean;
-  archive?: boolean;
-  remove?: boolean;
-  history?: boolean;
-  onEdit?: (row: TData) => void;
-  onArchive?: (row: TData) => void;
-  onArchiveToggle?: (row: TData) => void;
-  onRemove?: (row: TData) => void;
-  onHistory?: (row: TData) => void;
-  getIsArchived?: (row: TData) => boolean;
-  archiveLabel?: string;
-  unarchiveLabel?: string;
-  deleteLabel?: string;
-  editLabel?: string;
-  historyLabel?: string;
-  /**
-   * Extra menu actions beyond the built-ins. Each needs a unique `id` (validated
-   * against `edit`/`archive`/`remove`/`history` and against other custom actions);
-   * `placement` renders it before (`"top"`) or after (`"bottom"`, default) the
-   * built-ins. No separators are inserted; use `menuActions` for full control.
-   */
-  customActions?: ReusableRowAction<TData>[];
-  /**
-   * Fully explicit, ordered menu composition. When provided it overrides
-   * `customActions`: built-ins are referenced by id (`{ kind: "builtin", id }`),
-   * separators (`{ kind: "separator", id }`) and headings
-   * (`{ kind: "label", id, label }`) are placed only where you add them, and
-   * every item's order and visibility is under your control.
-   */
-  menuActions?: ReusableMenuItem<TData>[];
-}
-
-export interface DateFilterState {
-  /** Selected operator. Empty string means no operator has been chosen yet. */
-  op: DateFilterOp | "";
-  date: string;
-  dateFrom: string;
-  dateTo: string;
-}
-
-export interface ReusableKanbanGroupOption<TData> {
+/** A way of grouping cards into columns: reads and writes the grouping value. */
+export interface KanbanGroupOption<TData> {
   id: string;
   label: string;
   accessor: (card: TData) => Primitive | Primitive[];
   setValue: (card: TData, nextValue: string) => TData;
-  values?: ReusableFilterOption[];
+  values?: FilterOption[];
 }
 
-export interface ReusableKanbanFeatures {
+export interface KanbanBoardFeatures {
   search?: boolean;
   sorting?: boolean;
   filtering?: boolean;
@@ -111,34 +58,11 @@ export interface ReusableKanbanFeatures {
 
 export interface KanbanSortingState {
   id: string;
-  direction: "asc" | "desc";
+  direction: SortDirection;
 }
 
-export type ArchivedViewMode = "all" | "active" | "archived";
-
-export type ReusableViewMode = "table" | "kanban";
-
-export interface ReusableViewSwitchConfig {
-  active: ReusableViewMode;
-  onChange: (view: ReusableViewMode) => void;
-  tableLabel?: string;
-  kanbanLabel?: string;
-}
-
-export interface ReusableAiButtonConfig {
-  onClick: () => void;
-  label?: string;
-}
-
-export interface ArchivedViewConfig {
-  value?: ArchivedViewMode;
-  defaultValue?: ArchivedViewMode;
-  onChange?: (mode: ArchivedViewMode) => void;
-  label?: string;
-  optionLabels?: Partial<Record<ArchivedViewMode, string>>;
-}
-
-export interface ReusableKanbanMoveEvent<TData> {
+/** Payload of `onCardMove`: the card before and after the drop. */
+export interface KanbanMoveEvent<TData> {
   card: TData;
   updatedCard: TData;
   cardId: string;
@@ -147,34 +71,36 @@ export interface ReusableKanbanMoveEvent<TData> {
   toValue: string;
 }
 
-export interface ReusableKanbanCardClickEvent<TData> {
+/** Payload of `onCardClick`. */
+export interface KanbanCardClickEvent<TData> {
   card: TData;
   cardId: string;
   groupId: string;
   value: string;
 }
 
-export interface ReusableKanbanCardRenderContext<TData> {
+/** Second argument of `renderCard`. */
+export interface KanbanCardRenderContext<TData> {
   card: TData;
   groupId: string;
   groupValue: string;
 }
 
-export interface ReusableKanbanProps<TData> {
-  fields: ReusableColumn<TData>[];
-  data: ReusableTableInput<TData>;
-  groups: ReusableKanbanGroupOption<TData>[];
+export interface KanbanBoardProps<TData> {
+  fields: ColumnDefinition<TData>[];
+  data: DataInput<TData>;
+  groups: KanbanGroupOption<TData>[];
   defaultGroupId: string;
   normalizeRow?: (row: unknown, index: number) => TData;
   getCardId: (card: TData, index: number) => string;
-  features?: ReusableKanbanFeatures;
-  rowActions?: ReusableRowActions<TData>;
+  features?: KanbanBoardFeatures;
+  rowActions?: RowActions<TData>;
   renderCard?: (
     card: TData,
-    context: ReusableKanbanCardRenderContext<TData>,
+    context: KanbanCardRenderContext<TData>,
   ) => ReactNode;
-  onCardMove?: (event: ReusableKanbanMoveEvent<TData>) => void;
-  onCardClick?: (event: ReusableKanbanCardClickEvent<TData>) => void;
+  onCardMove?: (event: KanbanMoveEvent<TData>) => void;
+  onCardClick?: (event: KanbanCardClickEvent<TData>) => void;
   onGroupChange?: (groupId: string) => void;
   searchPlaceholder?: string;
   createLabel?: string;
@@ -184,10 +110,10 @@ export interface ReusableKanbanProps<TData> {
   boardMinHeightClassName?: string;
   columnBodyMaxHeight?: number;
   archivedView?: ArchivedViewConfig;
-  viewSwitch?: ReusableViewSwitchConfig;
-  aiButton?: ReusableAiButtonConfig;
-  toggleGroups?: ReusableToggleGroupConfig[];
-  headerSelectors?: ReusableHeaderSelectConfig[];
+  viewSwitch?: ViewSwitchConfig;
+  aiButton?: AiButtonConfig;
+  toggleGroups?: ToggleGroupConfig[];
+  headerSelectors?: HeaderSelectConfig[];
   /**
    * Explicit toolbar composition. When provided it is authoritative: only the
    * listed slot ids render, on the given side and order (built-in ids: `search`,
@@ -195,9 +121,9 @@ export interface ReusableKanbanProps<TData> {
    * toggle/selector id). Omit it to keep the default layout, where each control
    * honors its own `position` (default `"right"`).
    */
-  toolbarLayout?: ReusableToolbarLayout;
+  toolbarLayout?: ToolbarLayout;
   /** Global styling for every styled select in the component (header + inline). */
-  selectTheme?: ReusableSelectTheme;
+  selectTheme?: SelectTheme;
   /**
    * Renders thin, light-gray scrollbars on every internal scroll area
    * (rows/board viewport, option lists, capped-height regions). Cosmetic only.

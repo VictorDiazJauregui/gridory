@@ -1,17 +1,17 @@
 import type {
-  ReusableColumn,
-  ReusableRowActions,
+  ColumnDefinition,
+  RowActions,
 } from "./types";
 import { normalizeToArray } from "./utils";
 import { KanbanCardMenu } from "./KanbanCardMenu";
-import type { ReusableKanbanGroupOption } from "./types";
+import type { KanbanGroupOption } from "./types";
 
 interface DefaultKanbanCardProps<TData> {
   card: TData;
-  fields: ReusableColumn<TData>[];
-  group: ReusableKanbanGroupOption<TData>;
+  fields: ColumnDefinition<TData>[];
+  group: KanbanGroupOption<TData>;
   groupValue: string;
-  rowActions?: ReusableRowActions<TData>;
+  rowActions?: RowActions<TData>;
 }
 
 const formatDateValue = (value: string) => {

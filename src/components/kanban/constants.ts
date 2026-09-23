@@ -1,6 +1,6 @@
-import type { ReusableKanbanFeatures } from "./types";
+import type { KanbanBoardFeatures } from "./types";
 
-export const DEFAULT_KANBAN_FEATURES: Required<ReusableKanbanFeatures> = {
+export const DEFAULT_KANBAN_FEATURES: Required<KanbanBoardFeatures> = {
   search: true,
   sorting: true,
   filtering: true,

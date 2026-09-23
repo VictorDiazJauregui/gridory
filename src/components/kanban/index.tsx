@@ -6,7 +6,7 @@ import { DateFilterMenu } from "./DateFilterMenu";
 import { FilterMenu } from "./FilterMenu";
 import { EMPTY_DATE_FILTER_STATE } from "./date-utils";
 import { useActiveFilters, useClickOutside } from "./hooks";
-import type { DateFilterState, ReusableColumn } from "./types";
+import type { DateFilterState, ColumnDefinition } from "./types";
 import {
   applyArchivedView,
   applyColumnFilters,
@@ -27,8 +27,8 @@ import type {
   KanbanDateFiltersState,
   KanbanFiltersState,
   KanbanSortingState,
-  ReusableKanbanGroupOption,
-  ReusableKanbanProps,
+  KanbanGroupOption,
+  KanbanBoardProps,
 } from "./types";
 
 const resolveSortDirection = (
@@ -39,11 +39,11 @@ const resolveSortDirection = (
 };
 
 const getGroupValue = <TData,>(
-  group: ReusableKanbanGroupOption<TData>,
+  group: KanbanGroupOption<TData>,
   card: TData,
 ) => normalizeToArray(group.accessor(card))[0] ?? "";
 
-export const ReusableKanban = <TData,>({
+export const KanbanBoard = <TData,>({
   fields,
   data,
   groups,
@@ -78,16 +78,16 @@ export const ReusableKanban = <TData,>({
   calendarMonthYearDropdown = true,
   calendarFromYear = new Date().getFullYear() - 100,
   calendarToYear = new Date().getFullYear() + 10,
-}: ReusableKanbanProps<TData>) => {
+}: KanbanBoardProps<TData>) => {
   if (groups.length === 0) {
     throw new Error(
-      "ReusableKanban requiere al menos una configuración de agrupación en `groups`.",
+      "KanbanBoard requiere al menos una configuración de agrupación en `groups`.",
     );
   }
 
   if (!groups.some((group) => group.id === defaultGroupId)) {
     throw new Error(
-      "ReusableKanban requiere que `defaultGroupId` exista dentro de `groups`.",
+      "KanbanBoard requiere que `defaultGroupId` exista dentro de `groups`.",
     );
   }
 
@@ -541,7 +541,7 @@ export const ReusableKanban = <TData,>({
                               ) : (
                                 <DefaultKanbanCard
                                   card={card}
-                                  fields={fields as ReusableColumn<TData>[]}
+                                  fields={fields as ColumnDefinition<TData>[]}
                                   group={
                                     selectedGroup ?? {
                                       id: "default",
@@ -575,34 +575,34 @@ export const ReusableKanban = <TData,>({
 export type {
   ArchivedViewConfig,
   ArchivedViewMode,
-  ReusableViewMode,
-  ReusableViewSwitchConfig,
-  ReusableAiButtonConfig,
-  ReusableColumn,
-  ReusableRowActions,
-  ReusableKanbanFeatures,
-  ReusableKanbanGroupOption,
-  ReusableKanbanMoveEvent,
-  ReusableKanbanCardClickEvent,
-  ReusableKanbanProps,
-  ReusableTableInput,
+  ViewMode,
+  ViewSwitchConfig,
+  AiButtonConfig,
+  ColumnDefinition,
+  RowActions,
+  KanbanBoardFeatures,
+  KanbanGroupOption,
+  KanbanMoveEvent,
+  KanbanCardClickEvent,
+  KanbanBoardProps,
+  DataInput,
 } from "./types";
 
 export type {
-  ReusableRowAction,
-  ReusableRowActionPlacement,
-  ReusableRowActionVariant,
-  ReusableBuiltInActionId,
-  ReusableBuiltInMenuRef,
-  ReusableMenuItem,
-  ReusableMenuLabel,
-  ReusableMenuSeparator,
-  ReusableSelectTheme,
-  ReusableToolbarLayout,
-  ReusableToolbarSide,
-  ReusableToggleDisplay,
-  ReusableToggleGroupConfig,
-  ReusableToggleOption,
-  ReusableHeaderSelectConfig,
-  ReusableSelectOption,
+  RowAction,
+  RowActionPlacement,
+  RowActionVariant,
+  BuiltInActionId,
+  BuiltInMenuRef,
+  MenuItem,
+  MenuLabel,
+  MenuSeparator,
+  SelectTheme,
+  ToolbarLayout,
+  ToolbarSide,
+  ToggleDisplay,
+  ToggleGroupConfig,
+  ToggleOption,
+  HeaderSelectConfig,
+  SelectOption,
 } from "../shared";

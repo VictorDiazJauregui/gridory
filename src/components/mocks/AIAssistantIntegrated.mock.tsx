@@ -1,8 +1,8 @@
 import { useMemo, useRef, useState } from "react";
-import { ReusableDataTable, type ReusableColumn } from "../table";
+import { DataTable, type ColumnDefinition } from "../table";
 import {
-  ReusableKanban,
-  type ReusableKanbanGroupOption,
+  KanbanBoard,
+  type KanbanGroupOption,
 } from "../kanban";
 import {
   AIChatButton,
@@ -116,7 +116,7 @@ export const AIAssistantIntegratedMock = () => {
   );
   const hasApiKey = providerConfig.apiKey.length > 0;
 
-  const tableColumns = useMemo<ReusableColumn<MockCompanyRow>[]>(
+  const tableColumns = useMemo<ColumnDefinition<MockCompanyRow>[]>(
     () => [
       {
         id: "name",
@@ -178,7 +178,7 @@ export const AIAssistantIntegratedMock = () => {
   );
 
   const kanbanFields = tableColumns;
-  const kanbanGroups = useMemo<ReusableKanbanGroupOption<MockCompanyRow>[]>(
+  const kanbanGroups = useMemo<KanbanGroupOption<MockCompanyRow>[]>(
     () => [
       {
         id: "status",
@@ -391,7 +391,7 @@ export const AIAssistantIntegratedMock = () => {
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_320px]">
         <div className="rounded-lg border bg-white p-3">
           {view === "table" ? (
-            <ReusableDataTable
+            <DataTable
               columns={tableColumns}
               data={{ results: rows }}
               getRowId={(row) => row.id}
@@ -436,7 +436,7 @@ export const AIAssistantIntegratedMock = () => {
               }}
             />
           ) : (
-            <ReusableKanban
+            <KanbanBoard
               fields={kanbanFields}
               data={{ results: rows }}
               groups={kanbanGroups}

@@ -1,4 +1,4 @@
-# ReusableDataTable
+# DataTable
 
 Componente de tabla reusable, migrable y orientado a eventos.
 
@@ -6,8 +6,8 @@ Ruta recomendada de import:
 
 ```tsx
 import {
-  ReusableDataTable,
-  type ReusableColumn,
+  DataTable,
+  type ColumnDefinition,
 } from "@/components/table";
 ```
 
@@ -15,7 +15,7 @@ import {
 
 ## 1) ¿Qué resuelve?
 
-`ReusableDataTable` centraliza en un solo componente:
+`DataTable` centraliza en un solo componente:
 
 - búsqueda global
 - filtros por columna (texto/opciones)
@@ -49,13 +49,13 @@ Directorio: `src/components/table/`
 
 Compatibilidad legado:
 
-- `src/components/ReusableDataTable.tsx` re-exporta desde el módulo nuevo.
+- `src/components/DataTable.tsx` re-exporta desde el módulo nuevo.
 
 ---
 
 ## 3) API principal (resumen)
 
-`ReusableDataTableProps<TData>` (resumen de props más relevantes):
+`DataTableProps<TData>` (resumen de props más relevantes):
 
 - `columns`: definición de columnas.
 - `data`: arreglo o contenedor (`results`, `items`, `data`, etc.).
@@ -114,8 +114,8 @@ rowActions={{
 
 ```tsx
 import {
-  ReusableDataTable,
-  type ReusableColumn,
+  DataTable,
+  type ColumnDefinition,
 } from "@/components/table";
 
 interface Row {
@@ -125,7 +125,7 @@ interface Row {
   createdAt: string;
 }
 
-const columns: ReusableColumn<Row>[] = [
+const columns: ColumnDefinition<Row>[] = [
   {
     id: "name",
     header: "Nombre",
@@ -151,7 +151,7 @@ const columns: ReusableColumn<Row>[] = [
   },
 ];
 
-<ReusableDataTable
+<DataTable
   columns={columns}
   data={{ results: rows }}
   getRowId={(row) => row.id}
@@ -196,7 +196,7 @@ Copiar:
 2. `src/components/ui/button.tsx`
 3. `src/components/ui/calendar.tsx`
 4. `src/components/ui/popover.tsx`
-5. Archivo puente opcional `src/components/ReusableDataTable.tsx` si quieres compatibilidad de import legado.
+5. Archivo puente opcional `src/components/DataTable.tsx` si quieres compatibilidad de import legado.
 
 Configurar:
 
@@ -275,7 +275,7 @@ anteriores.
 ### Activación
 
 ```tsx
-<ReusableDataTable
+<DataTable
   columns={columns}
   data={{ results: rows }}
   getRowId={(row) => row.id}
@@ -326,13 +326,13 @@ ninguna otra fuente (ni de `cell` ni de `inlineEditOptions`).
 - **Valores vacíos / null**: siempre bajo `groupEmptyValueLabel` y al final.
 - Solo se renderizan grupos para valores presentes en las filas: una opción sin
   filas no genera encabezado.
-- `ReusableGroupHeader.value` sigue siendo el valor crudo (lo usa el colapso de
+- `GroupHeader.value` sigue siendo el valor crudo (lo usa el colapso de
   grupos); solo cambian la etiqueta y el orden.
 - `filterOptions` se aplica al agrupado aunque la columna no sea `filterable`; si
   lo es, las mismas opciones alimentan su menú de filtro.
 
 ```tsx
-const columns: ReusableColumn<Lead>[] = [
+const columns: ColumnDefinition<Lead>[] = [
   {
     id: "stage",
     header: "Etapa",
@@ -349,7 +349,7 @@ const columns: ReusableColumn<Lead>[] = [
   },
 ];
 
-<ReusableDataTable
+<DataTable
   columns={columns}
   data={{ results: leads }}
   getRowId={(row) => row.id}
@@ -400,7 +400,7 @@ y el componente se comporta igual que en versiones anteriores.
 ### Activación
 
 ```tsx
-<ReusableDataTable
+<DataTable
   columns={columns}
   data={{ results: rows }}
   rowActions={{
@@ -447,7 +447,7 @@ URL), pasá `value` y manejalo en `onChange`:
 ```tsx
 const [archivedMode, setArchivedMode] = useState<ArchivedViewMode>("active");
 
-<ReusableDataTable
+<DataTable
   // ...
   archivedView={{
     value: archivedMode,
@@ -536,9 +536,9 @@ la expone el módulo Kanban, así que ambos comparten el contrato.
 ### Activación
 
 ```tsx
-const [view, setView] = useState<ReusableViewMode>("table");
+const [view, setView] = useState<ViewMode>("table");
 
-<ReusableDataTable
+<DataTable
   columns={columns}
   data={{ results: rows }}
   viewSwitch={{ active: view, onChange: setView }}
@@ -550,18 +550,18 @@ const [view, setView] = useState<ReusableViewMode>("table");
 | Campo         | Tipo                              | Default    | Descripción                                              |
 | ------------- | --------------------------------- | ---------- | -------------------------------------------------------- |
 | `active`      | `"table" \| "kanban"`             | requerido  | Vista activa. El switch resalta el botón correspondiente. |
-| `onChange`    | `(view: ReusableViewMode) => void`| requerido  | Se dispara solo al pasar a una vista distinta de la activa. |
+| `onChange`    | `(view: ViewMode) => void`| requerido  | Se dispara solo al pasar a una vista distinta de la activa. |
 | `tableLabel`  | `string`                          | `"Tabla"`  | Texto del botón de tabla.                                |
 | `kanbanLabel` | `string`                          | `"Kanban"` | Texto del botón de kanban.                               |
 
 ### Contrato TS
 
 ```ts
-export type ReusableViewMode = "table" | "kanban";
+export type ViewMode = "table" | "kanban";
 
-export interface ReusableViewSwitchConfig {
-  active: ReusableViewMode;
-  onChange: (view: ReusableViewMode) => void;
+export interface ViewSwitchConfig {
+  active: ViewMode;
+  onChange: (view: ViewMode) => void;
   tableLabel?: string;
   kanbanLabel?: string;
 }
@@ -591,7 +591,7 @@ mismo. La misma API la expone el módulo Kanban.
 ### Activación
 
 ```tsx
-<ReusableDataTable
+<DataTable
   columns={columns}
   data={{ results: rows }}
   aiButton={{ onClick: () => openAiAssistant() }}
@@ -608,7 +608,7 @@ mismo. La misma API la expone el módulo Kanban.
 ### Contrato TS
 
 ```ts
-export interface ReusableAiButtonConfig {
+export interface AiButtonConfig {
   onClick: () => void;
   label?: string;
 }
@@ -655,7 +655,7 @@ const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 15 });
 const [search, setSearch] = useState("");
 const { rows, total } = useServerPage(pagination, search); // tu fetch
 
-<ReusableDataTable
+<DataTable
   columns={columns}
   data={rows} // SOLO la página actual
   getRowId={(row) => row.id}
@@ -734,7 +734,7 @@ componentes.
 
 ### Retrocompatibilidad
 
-- No se añaden ni modifican props de `ReusableDataTable`; el arreglo es
+- No se añaden ni modifican props de `DataTable`; el arreglo es
   transparente para el componente.
 - No afecta la persistencia ni las fechas ya guardadas: los filtros de fecha
   (`gt`/`lt`/`bt`) y el sort por fecha operan exactamente igual que antes.
@@ -753,11 +753,11 @@ retrocompatible**: sin estas props, la tabla se comporta igual que en v1.8.0.
 
 ```tsx
 // Scroll interno autosuficiente (no depende del alto del padre) + header fijo:
-<ReusableDataTable columns={columns} data={rows} tableMaxHeightClassName="rdt-max-h-md" />
+<DataTable columns={columns} data={rows} tableMaxHeightClassName="rdt-max-h-md" />
 
 // Llenar el alto del contenedor padre (padre con alto acotado) + header fijo:
 <div style={{ height: "calc(100vh - 120px)" }}>
-  <ReusableDataTable columns={columns} data={rows} fillHeight />
+  <DataTable columns={columns} data={rows} fillHeight />
 </div>
 ```
 
@@ -811,10 +811,10 @@ defecto es cosmético/intencional.
 ```tsx
 // Todo por defecto (scrollbars finos ON, calendario con mes/año ON, hover ON,
 // submenú de fecha sin operador preseleccionado, formato dd/mm/yyyy):
-<ReusableDataTable columns={columns} data={rows} getRowId={(r) => r.id} />
+<DataTable columns={columns} data={rows} getRowId={(r) => r.id} />
 
 // Personalización:
-<ReusableDataTable
+<DataTable
   columns={columns}
   data={rows}
   getRowId={(r) => r.id}
@@ -824,7 +824,7 @@ defecto es cosmético/intencional.
 />
 
 // Opt-out del comportamiento nuevo:
-<ReusableDataTable
+<DataTable
   columns={columns}
   data={rows}
   getRowId={(r) => r.id}
@@ -969,7 +969,7 @@ v1.11.0.
 ### Contrato TS
 
 ```ts
-export interface ReusableRowAction<TData> {
+export interface RowAction<TData> {
   id: string;                         // único; validado contra los built-ins
   label: string;
   icon?: ReactNode;
@@ -1001,7 +1001,7 @@ export interface ReusableRowAction<TData> {
 ```tsx
 import { Copy, Send } from "lucide-react";
 
-<ReusableDataTable
+<DataTable
   columns={columns}
   data={{ results: rows }}
   getRowId={(row) => row.id}
@@ -1039,13 +1039,13 @@ orden por defecto.
 Cada ítem es una unión discriminada por `kind`:
 
 ```ts
-export type ReusableMenuItem<TData> =
-  | ReusableMenuActionItem<TData>
-  | ReusableMenuBuiltinItem
-  | ReusableMenuSeparatorItem
-  | ReusableMenuLabelItem;
+export type MenuItem<TData> =
+  | MenuActionItem<TData>
+  | MenuBuiltinItem
+  | MenuSeparatorItem
+  | MenuLabelItem;
 
-interface ReusableMenuActionItem<TData> {
+interface MenuActionItem<TData> {
   kind?: "action";                     // opcional; es el valor por defecto
   id: string;
   label: string;
@@ -1056,17 +1056,17 @@ interface ReusableMenuActionItem<TData> {
   hidden?: (row: TData) => boolean;
 }
 
-interface ReusableMenuBuiltinItem {
+interface MenuBuiltinItem {
   kind: "builtin";
   id: "edit" | "archive" | "remove" | "history";
 }
 
-interface ReusableMenuSeparatorItem {
+interface MenuSeparatorItem {
   kind: "separator";
   id: string;
 }
 
-interface ReusableMenuLabelItem {
+interface MenuLabelItem {
   kind: "label";
   id: string;
   label: string;
@@ -1077,7 +1077,7 @@ interface ReusableMenuLabelItem {
 Semántica de cada `kind`:
 
 - **`action`** (o sin `kind`): acción personalizada; misma firma que un
-  `ReusableRowAction` (icono, evento, `variant`, `disabled`, `hidden`).
+  `RowAction` (icono, evento, `variant`, `disabled`, `hidden`).
 - **`builtin`**: referencia a una acción por defecto por su `id`
   (`edit`/`archive`/`remove`/`history`); reutiliza el callback y la etiqueta
   definidos en `rowActions`. Si ese built-in no está disponible (sin callback), el
@@ -1093,7 +1093,7 @@ se lanza `DuplicateRowActionError`.
 ```tsx
 import { Copy, Download } from "lucide-react";
 
-<ReusableDataTable
+<DataTable
   columns={columns}
   data={{ results: rows }}
   getRowId={(row) => row.id}
@@ -1135,7 +1135,7 @@ buscador). Para el control total de lados y orden del toolbar, usá `toolbarLayo
 ### Contrato TS
 
 ```ts
-export interface ReusableToggleGroupConfig {
+export interface ToggleGroupConfig {
   id: string;
   options: { value: string; label: string; icon?: ReactNode }[]; // >= 2
   value: string;
@@ -1151,7 +1151,7 @@ export interface ReusableToggleGroupConfig {
 ```tsx
 import { LayoutGrid, List } from "lucide-react";
 
-<ReusableDataTable
+<DataTable
   columns={columns}
   data={{ results: rows }}
   getRowId={(row) => row.id}
@@ -1188,7 +1188,7 @@ de todo el toolbar, usá `toolbarLayout` (ver sección 26).
 ### Contrato TS
 
 ```ts
-export interface ReusableHeaderSelectConfig {
+export interface HeaderSelectConfig {
   id: string;
   label?: string;                      // prefijo/placeholder
   options: { value: string; label: string }[];
@@ -1202,7 +1202,7 @@ export interface ReusableHeaderSelectConfig {
 ### Activación
 
 ```tsx
-<ReusableDataTable
+<DataTable
   columns={columns}
   data={{ results: rows }}
   getRowId={(row) => row.id}
@@ -1255,7 +1255,7 @@ a **todos** los selectores estilizados de la tabla (header, "Agrupar por", "Most
 tamaño de página y edición inline en celda) en una sola declaración.
 
 ```ts
-export interface ReusableSelectTheme {
+export interface SelectTheme {
   background?: string;
   hoverBackground?: string;        // hover del recuadro (trigger)
   border?: string;
@@ -1290,7 +1290,7 @@ También podés tematizar solo por CSS declarando las variables (sin tocar props
 | `--lui-select-item-active-bg`   | `optionActiveBackground` |
 
 ```tsx
-<ReusableDataTable
+<DataTable
   columns={columns}
   data={{ results: rows }}
   getRowId={(row) => row.id}
@@ -1335,7 +1335,7 @@ Sin `toolbarLayout`:
 ### Composición explícita (`toolbarLayout`)
 
 ```ts
-export interface ReusableToolbarLayout {
+export interface ToolbarLayout {
   left?: string[];
   right?: string[];
 }
@@ -1353,7 +1353,7 @@ La visibilidad "dura" la siguen gobernando los feature flags: un slot apagado (p
 `features` o porque su configuración no se pasó) **no** aparece aunque esté listado.
 
 ```tsx
-<ReusableDataTable
+<DataTable
   columns={columns}
   data={{ results: rows }}
   getRowId={(row) => row.id}

@@ -1,9 +1,9 @@
-# Reusable Kanban
+# KanbanBoard
 
 Componente Kanban reutilizable y migrable del sistema UI.
 
 - Ruta: `src/components/kanban`
-- Export principal: `ReusableKanban`
+- Export principal: `KanbanBoard`
 - Estilos base: `styles.css` (patrón visual alineado a la tabla reusable / shadcn-like)
 
 ---
@@ -25,21 +25,21 @@ Componente Kanban reutilizable y migrable del sistema UI.
 ## API (Props)
 
 ```ts
-interface ReusableKanbanProps<TData> {
-  fields: ReusableColumn<TData>[];
-  data: ReusableTableInput<TData>;
-  groups: ReusableKanbanGroupOption<TData>[];
+interface KanbanBoardProps<TData> {
+  fields: ColumnDefinition<TData>[];
+  data: DataInput<TData>;
+  groups: KanbanGroupOption<TData>[];
   defaultGroupId: string;
   normalizeRow?: (row: unknown, index: number) => TData;
   getCardId: (card: TData, index: number) => string;
-  features?: ReusableKanbanFeatures;
-  rowActions?: ReusableRowActions<TData>;
+  features?: KanbanBoardFeatures;
+  rowActions?: RowActions<TData>;
   renderCard?: (
     card: TData,
-    context: ReusableKanbanCardRenderContext<TData>,
+    context: KanbanCardRenderContext<TData>,
   ) => ReactNode;
-  onCardMove?: (event: ReusableKanbanMoveEvent<TData>) => void;
-  onCardClick?: (event: ReusableKanbanCardClickEvent<TData>) => void;
+  onCardMove?: (event: KanbanMoveEvent<TData>) => void;
+  onCardClick?: (event: KanbanCardClickEvent<TData>) => void;
   onGroupChange?: (groupId: string) => void;
   searchPlaceholder?: string;
   createLabel?: string;
@@ -49,10 +49,10 @@ interface ReusableKanbanProps<TData> {
   boardMinHeightClassName?: string;
   columnBodyMaxHeight?: number;
   archivedView?: ArchivedViewConfig;
-  toggleGroups?: ReusableToggleGroupConfig[];
-  headerSelectors?: ReusableHeaderSelectConfig[];
-  toolbarLayout?: ReusableToolbarLayout;
-  selectTheme?: ReusableSelectTheme;
+  toggleGroups?: ToggleGroupConfig[];
+  headerSelectors?: HeaderSelectConfig[];
+  toolbarLayout?: ToolbarLayout;
+  selectTheme?: SelectTheme;
 }
 ```
 
@@ -109,12 +109,12 @@ searchable: false;
 ## Configuración de agrupación (`groups`)
 
 ```ts
-interface ReusableKanbanGroupOption<TData> {
+interface KanbanGroupOption<TData> {
   id: string;
   label: string;
   accessor: (card: TData) => Primitive | Primitive[];
   setValue: (card: TData, nextValue: string) => TData;
-  values?: ReusableFilterOption[];
+  values?: FilterOption[];
 }
 ```
 
@@ -133,7 +133,7 @@ Si `values` no existe, las columnas se calculan desde los valores presentes en l
 ## Features opcionales (on/off)
 
 ```ts
-interface ReusableKanbanFeatures {
+interface KanbanBoardFeatures {
   search?: boolean;
   sorting?: boolean;
   filtering?: boolean;
@@ -222,7 +222,7 @@ onGroupChange?: (groupId: string) => void
 Se dispara al mover una card entre columnas (drag & drop).
 
 ```ts
-interface ReusableKanbanMoveEvent<TData> {
+interface KanbanMoveEvent<TData> {
   card: TData; // card original
   updatedCard: TData; // card con valor de agrupación actualizado
   cardId: string;
@@ -238,7 +238,7 @@ Se dispara al hacer click sobre una card. Es opcional — si no se pasa, las
 cards no son interactivas (comportamiento previo a `v1.2.0`).
 
 ```ts
-interface ReusableKanbanCardClickEvent<TData> {
+interface KanbanCardClickEvent<TData> {
   card: TData;
   cardId: string;
   groupId: string;
@@ -264,7 +264,7 @@ disparen `onCardClick`. Es el mismo contrato que sigue `KanbanCardMenu`.
 Ejemplo:
 
 ```tsx
-<ReusableKanban
+<KanbanBoard
   // ...
   onCardClick={({ card, cardId, groupId, value }) => {
     openDetailDrawer(card);
@@ -308,7 +308,7 @@ y el componente se comporta igual que en versiones anteriores.
 ### Activación
 
 ```tsx
-<ReusableKanban
+<KanbanBoard
   // ...
   rowActions={{
     getIsArchived: (card) => card.status === "Archivada",
@@ -350,7 +350,7 @@ Para que el selector aparezca se requieren **dos cosas**:
 - **Modo `"archived"` con datos sin archivados**: las columnas se muestran
   vacías con su mensaje "Sin cards".
 - **Modo controlado**: pasá `value` y manejá el estado con `onChange`,
-  igual que en `ReusableDataTable`.
+  igual que en `DataTable`.
 
 ---
 
@@ -365,11 +365,11 @@ el cambio mediante `onChange` para que el consumidor controle el estado.
 ### Forma del objeto `viewSwitch`
 
 ```ts
-type ReusableViewMode = "table" | "kanban";
+type ViewMode = "table" | "kanban";
 
-interface ReusableViewSwitchConfig {
-  active: ReusableViewMode;
-  onChange: (view: ReusableViewMode) => void;
+interface ViewSwitchConfig {
+  active: ViewMode;
+  onChange: (view: ViewMode) => void;
   tableLabel?: string;
   kanbanLabel?: string;
 }
@@ -394,9 +394,9 @@ interface ReusableViewSwitchConfig {
 ### Activación
 
 ```tsx
-const [view, setView] = useState<ReusableViewMode>("kanban");
+const [view, setView] = useState<ViewMode>("kanban");
 
-<ReusableKanban
+<KanbanBoard
   // ...
   viewSwitch={{ active: view, onChange: setView }}
 />;
@@ -412,7 +412,7 @@ Renderiza un botón en el toolbar para abrir un asistente de IA. La feature es
 ### Forma del objeto `aiButton`
 
 ```ts
-interface ReusableAiButtonConfig {
+interface AiButtonConfig {
   onClick: () => void;
   label?: string;
 }
@@ -426,7 +426,7 @@ interface ReusableAiButtonConfig {
 ### Activación
 
 ```tsx
-<ReusableKanban
+<KanbanBoard
   // ...
   aiButton={{ onClick: () => openAssistant() }}
 />
@@ -535,7 +535,7 @@ ambos componentes.
 
 ### Retrocompatibilidad
 
-- No se añaden ni modifican props de `ReusableKanban`; el arreglo es
+- No se añaden ni modifican props de `KanbanBoard`; el arreglo es
   transparente para el componente.
 - No afecta la persistencia ni las fechas ya guardadas: los filtros de fecha
   (`gt`/`lt`/`bt`) y el sort por fecha operan exactamente igual que antes.
@@ -567,7 +567,7 @@ renderCard={(card, context) => {
 `context`:
 
 ```ts
-interface ReusableKanbanCardRenderContext<TData> {
+interface KanbanCardRenderContext<TData> {
   card: TData;
   groupId: string;
   groupValue: string;
@@ -604,7 +604,7 @@ Popover de fecha sobre capas:
 ## Ejemplo completo de uso
 
 ```tsx
-<ReusableKanban
+<KanbanBoard
   fields={fields}
   data={{ results: rows }}
   groups={groups}
@@ -653,7 +653,7 @@ Popover de fecha sobre capas:
 
 ## Mock de referencia
 
-- `src/components/mocks/ReusableKanban.mock.tsx`
+- `src/components/mocks/KanbanBoard.mock.tsx`
 - `src/components/mocks/data/mockCompanyRows.ts`
 
 ---
@@ -661,7 +661,7 @@ Popover de fecha sobre capas:
 ## Filtros de fecha, scrollbars finos y hover de checklist (opcional, v1.10.0)
 
 Seis mejoras de UX **opcionales y retrocompatibles**, equivalentes a las de
-`ReusableDataTable` (los filtros del kanban son código duplicado con prefijo `rkb-`).
+`DataTable` (los filtros del kanban son código duplicado con prefijo `rkb-`).
 Sin estas props, el filtrado/orden es idéntico a v1.9.0; el único diff por defecto es
 cosmético/intencional.
 
@@ -705,7 +705,7 @@ cosmético/intencional.
 
 Correcciones visuales de los submenús de filtro y del tablero, **sin cambios de
 API** y retrocompatibles con v1.10.0. No hay props nuevas: aplican por defecto
-(equivalentes a las de `ReusableDataTable`; los filtros del kanban son código
+(equivalentes a las de `DataTable`; los filtros del kanban son código
 duplicado con prefijo `rkb-`).
 
 ### Comportamiento
@@ -784,7 +784,7 @@ v1.11.0.
 ### Contrato TS
 
 ```ts
-export interface ReusableRowAction<TData> {
+export interface RowAction<TData> {
   id: string;                         // único; validado contra los built-ins
   label: string;
   icon?: ReactNode;
@@ -796,7 +796,7 @@ export interface ReusableRowAction<TData> {
 }
 ```
 
-`ReusableRowAction`, `ReusableToggleGroupConfig` y `ReusableHeaderSelectConfig`
+`RowAction`, `ToggleGroupConfig` y `HeaderSelectConfig`
 viven en un módulo compartido consumido por tabla y kanban, así que el contrato es
 idéntico en ambos (en el kanban `TData` es la card).
 
@@ -820,7 +820,7 @@ idéntico en ambos (en el kanban `TData` es la card).
 ```tsx
 import { Copy, Send } from "lucide-react";
 
-<ReusableKanban
+<KanbanBoard
   // ...
   rowActions={{
     onEdit: (card) => {},
@@ -856,13 +856,13 @@ orden por defecto.
 Cada ítem es una unión discriminada por `kind` (en el kanban `TData` es la card):
 
 ```ts
-export type ReusableMenuItem<TData> =
-  | ReusableMenuActionItem<TData>
-  | ReusableMenuBuiltinItem
-  | ReusableMenuSeparatorItem
-  | ReusableMenuLabelItem;
+export type MenuItem<TData> =
+  | MenuActionItem<TData>
+  | MenuBuiltinItem
+  | MenuSeparatorItem
+  | MenuLabelItem;
 
-interface ReusableMenuActionItem<TData> {
+interface MenuActionItem<TData> {
   kind?: "action";                     // opcional; es el valor por defecto
   id: string;
   label: string;
@@ -873,17 +873,17 @@ interface ReusableMenuActionItem<TData> {
   hidden?: (card: TData) => boolean;
 }
 
-interface ReusableMenuBuiltinItem {
+interface MenuBuiltinItem {
   kind: "builtin";
   id: "edit" | "archive" | "remove" | "history";
 }
 
-interface ReusableMenuSeparatorItem {
+interface MenuSeparatorItem {
   kind: "separator";
   id: string;
 }
 
-interface ReusableMenuLabelItem {
+interface MenuLabelItem {
   kind: "label";
   id: string;
   label: string;
@@ -894,7 +894,7 @@ interface ReusableMenuLabelItem {
 Semántica de cada `kind`:
 
 - **`action`** (o sin `kind`): acción personalizada; misma firma que un
-  `ReusableRowAction` (icono, evento, `variant`, `disabled`, `hidden`).
+  `RowAction` (icono, evento, `variant`, `disabled`, `hidden`).
 - **`builtin`**: referencia a una acción por defecto por su `id`
   (`edit`/`archive`/`remove`/`history`); reutiliza el callback y la etiqueta
   definidos en `rowActions`. Si ese built-in no está disponible (sin callback), el
@@ -910,7 +910,7 @@ se lanza `DuplicateRowActionError`.
 ```tsx
 import { Copy, Download } from "lucide-react";
 
-<ReusableKanban
+<KanbanBoard
   // ...
   rowActions={{
     onEdit: (card) => editCard(card),
@@ -950,7 +950,7 @@ buscador). Para el control total de lados y orden del toolbar, usá `toolbarLayo
 ### Contrato TS
 
 ```ts
-export interface ReusableToggleGroupConfig {
+export interface ToggleGroupConfig {
   id: string;
   options: { value: string; label: string; icon?: ReactNode }[]; // >= 2
   value: string;
@@ -966,7 +966,7 @@ export interface ReusableToggleGroupConfig {
 ```tsx
 import { LayoutGrid, List } from "lucide-react";
 
-<ReusableKanban
+<KanbanBoard
   // ...
   toggleGroups={[
     {
@@ -1001,7 +1001,7 @@ de todo el toolbar, usá `toolbarLayout` (ver la sección de layout del toolbar)
 ### Contrato TS
 
 ```ts
-export interface ReusableHeaderSelectConfig {
+export interface HeaderSelectConfig {
   id: string;
   label?: string;                      // prefijo/placeholder
   options: { value: string; label: string }[];
@@ -1015,7 +1015,7 @@ export interface ReusableHeaderSelectConfig {
 ### Activación
 
 ```tsx
-<ReusableKanban
+<KanbanBoard
   // ...
   headerSelectors={[
     {
@@ -1062,10 +1062,10 @@ opcional `selectTheme` para tematizar todos los selectores a la vez (ver más ab
 Nueva prop **opcional** `selectTheme` a nivel de componente. Es **global**: se aplica
 a **todos** los selectores estilizados del kanban ("Mostrar", "Agrupar por" y los
 `headerSelectors`) en una sola declaración. Es el mismo contrato que expone
-`ReusableDataTable`.
+`DataTable`.
 
 ```ts
-export interface ReusableSelectTheme {
+export interface SelectTheme {
   background?: string;
   hoverBackground?: string;        // hover del recuadro (trigger)
   border?: string;
@@ -1100,7 +1100,7 @@ También podés tematizar solo por CSS declarando las variables (sin tocar props
 | `--lui-select-item-active-bg`   | `optionActiveBackground` |
 
 ```tsx
-<ReusableKanban
+<KanbanBoard
   // ...
   selectTheme={{
     background: "#f5f3ff",
@@ -1143,7 +1143,7 @@ Sin `toolbarLayout`:
 ### Composición explícita (`toolbarLayout`)
 
 ```ts
-export interface ReusableToolbarLayout {
+export interface ToolbarLayout {
   left?: string[];
   right?: string[];
 }
@@ -1161,7 +1161,7 @@ La visibilidad "dura" la siguen gobernando los feature flags: un slot apagado (p
 `features` o porque su configuración no se pasó) **no** aparece aunque esté listado.
 
 ```tsx
-<ReusableKanban
+<KanbanBoard
   // ...
   // "scope" es el id de un headerSelector y "brand" el id de un toggleGroup:
   toolbarLayout={{

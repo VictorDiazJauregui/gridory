@@ -1,37 +1,37 @@
 import type { ReactNode } from "react";
-import type { ReusableToolbarSide } from "./toolbar-layout";
+import type { ToolbarSide } from "./toolbar-layout";
 
-export interface ReusableSelectOption {
+export interface SelectOption {
   value: string;
   label: string;
 }
 
-export type ReusableToggleDisplay = "label" | "icon" | "both";
+export type ToggleDisplay = "label" | "icon" | "both";
 
-export interface ReusableToggleOption {
+export interface ToggleOption {
   value: string;
   label: string;
   icon?: ReactNode;
 }
 
-export interface ReusableToggleGroupConfig {
+export interface ToggleGroupConfig {
   id: string;
-  options: ReusableToggleOption[];
+  options: ToggleOption[];
   value: string;
   onChange: (value: string) => void;
-  display?: ReusableToggleDisplay;
+  display?: ToggleDisplay;
   ariaLabel?: string;
   /** Toolbar side when no `toolbarLayout` is set. Defaults to `"right"`. */
-  position?: ReusableToolbarSide;
+  position?: ToolbarSide;
 }
 
-export interface ReusableHeaderSelectConfig {
+export interface HeaderSelectConfig {
   id: string;
   label?: string;
-  options: ReusableSelectOption[];
+  options: SelectOption[];
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
   /** Toolbar side when no `toolbarLayout` is set. Defaults to `"right"`. */
-  position?: ReusableToolbarSide;
+  position?: ToolbarSide;
 }

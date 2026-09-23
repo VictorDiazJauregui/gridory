@@ -1,90 +1,39 @@
-import type { CSSProperties, ReactNode } from "react";
-import type { ReusableRowAction } from "../shared/row-action";
-import type { ReusableMenuItem } from "../shared/menu-actions";
-import type { ReusableSelectTheme } from "../shared/select-theme";
-import type { ReusableToolbarLayout } from "../shared/toolbar-layout";
+import type { SelectTheme } from "../shared/select-theme";
+import type { ToolbarLayout } from "../shared/toolbar-layout";
 import type {
-  ReusableHeaderSelectConfig,
-  ReusableToggleGroupConfig,
+  HeaderSelectConfig,
+  ToggleGroupConfig,
 } from "../shared/toolbar-controls";
+import type {
+  AiButtonConfig,
+  ArchivedViewConfig,
+  ColumnDefinition,
+  DataInput,
+  DateInputFormat,
+  RowActions,
+  SortDirection,
+  ViewSwitchConfig,
+} from "../shared/data-model";
 
-export type Primitive = string | number | boolean | null | undefined;
-export type DateFilterOp = "gt" | "lt" | "bt";
-/** Display and manual-entry mask for date filter inputs. */
-export type DateInputFormat = "dd/mm/yyyy" | "dd-mm-yyyy" | "mm/dd/yyyy" | "mm-dd-yyyy";
-export type SortDirection = "asc" | "desc";
+export type {
+  AiButtonConfig,
+  ArchivedViewConfig,
+  ArchivedViewMode,
+  CellHighlight,
+  ColumnDefinition,
+  DataInput,
+  DateFilterOp,
+  DateFilterState,
+  DateInputFormat,
+  FilterOption,
+  Primitive,
+  RowActions,
+  SortDirection,
+  ViewMode,
+  ViewSwitchConfig,
+} from "../shared/data-model";
 
-export type ReusableTableInput<TData> =
-  | TData[]
-  | {
-      data?: unknown;
-      items?: unknown;
-      results?: unknown;
-      records?: unknown;
-      payload?: { data?: unknown; items?: unknown; results?: unknown };
-    };
-
-export interface ReusableFilterOption {
-  value: string;
-  label: string;
-}
-
-export interface ReusableCellHighlight {
-  className?: string;
-  style?: CSSProperties;
-}
-
-export interface ReusableColumn<TData> {
-  id: string;
-  header: string;
-  accessor: (row: TData) => Primitive | Primitive[];
-  cell?: (row: TData) => ReactNode;
-  type?: "text" | "number" | "date";
-  sortable?: boolean;
-  searchable?: boolean;
-  filterable?: boolean;
-  filterOptions?: ReusableFilterOption[];
-  width?: number;
-  inlineEditOptions?: ReusableFilterOption[];
-  onInlineEdit?: (row: TData, value: string) => void;
-  valueHighlights?: Record<string, ReusableCellHighlight>;
-}
-
-export interface ReusableRowActions<TData> {
-  edit?: boolean;
-  archive?: boolean;
-  remove?: boolean;
-  history?: boolean;
-  onEdit?: (row: TData) => void;
-  onArchive?: (row: TData) => void;
-  onArchiveToggle?: (row: TData) => void;
-  onRemove?: (row: TData) => void;
-  onHistory?: (row: TData) => void;
-  getIsArchived?: (row: TData) => boolean;
-  archiveLabel?: string;
-  unarchiveLabel?: string;
-  deleteLabel?: string;
-  editLabel?: string;
-  historyLabel?: string;
-  /**
-   * Extra menu actions beyond the built-ins. Each needs a unique `id` (validated
-   * against `edit`/`archive`/`remove`/`history` and against other custom actions);
-   * `placement` renders it before (`"top"`) or after (`"bottom"`, default) the
-   * built-ins, preserving array order within each group. No separators are
-   * inserted; use `menuActions` for full control.
-   */
-  customActions?: ReusableRowAction<TData>[];
-  /**
-   * Fully explicit, ordered menu composition. When provided it overrides
-   * `customActions`: built-ins are referenced by id (`{ kind: "builtin", id }`),
-   * separators (`{ kind: "separator", id }`) and headings
-   * (`{ kind: "label", id, label }`) are placed only where you add them, and
-   * every item's order and visibility is under your control.
-   */
-  menuActions?: ReusableMenuItem<TData>[];
-}
-
-export interface ReusableTableFeatures {
+export interface DataTableFeatures {
   search?: boolean;
   sorting?: boolean;
   filtering?: boolean;
@@ -94,23 +43,15 @@ export interface ReusableTableFeatures {
   grouping?: boolean;
 }
 
-export interface ReusableGroupHeader {
+export interface GroupHeader {
   value: string;
   label: string;
   count: number;
 }
 
-export interface ReusableRowGroupingResult<TData> {
+export interface RowGroupingResult<TData> {
   flatRows: TData[];
-  headers: Map<number, ReusableGroupHeader>;
-}
-
-export interface DateFilterState {
-  /** Selected operator. Empty string means no operator has been chosen yet. */
-  op: DateFilterOp | "";
-  date: string;
-  dateFrom: string;
-  dateTo: string;
+  headers: Map<number, GroupHeader>;
 }
 
 export interface ColumnSortingState {
@@ -118,46 +59,22 @@ export interface ColumnSortingState {
   direction: SortDirection;
 }
 
-export type ArchivedViewMode = "all" | "active" | "archived";
-
-export type ReusableViewMode = "table" | "kanban";
-
-export interface ReusableViewSwitchConfig {
-  active: ReusableViewMode;
-  onChange: (view: ReusableViewMode) => void;
-  tableLabel?: string;
-  kanbanLabel?: string;
-}
-
-export interface ReusableAiButtonConfig {
-  onClick: () => void;
-  label?: string;
-}
-
-export interface ArchivedViewConfig {
-  value?: ArchivedViewMode;
-  defaultValue?: ArchivedViewMode;
-  onChange?: (mode: ArchivedViewMode) => void;
-  label?: string;
-  optionLabels?: Partial<Record<ArchivedViewMode, string>>;
-}
-
 export interface ManualPaginationState {
   pageIndex: number;
   pageSize: number;
 }
 
-export interface ReusableDataTableProps<TData> {
-  columns: ReusableColumn<TData>[];
-  data: ReusableTableInput<TData>;
+export interface DataTableProps<TData> {
+  columns: ColumnDefinition<TData>[];
+  data: DataInput<TData>;
   normalizeRow?: (row: unknown, index: number) => TData;
   getRowId?: (row: TData, index: number) => string;
-  features?: ReusableTableFeatures;
+  features?: DataTableFeatures;
   searchPlaceholder?: string;
   createLabel?: string;
   onCreate?: () => void;
   onRowClick?: (row: TData) => void;
-  rowActions?: ReusableRowActions<TData>;
+  rowActions?: RowActions<TData>;
   emptyMessage?: string;
   label?: string;
   pageSizeOptions?: number[];
@@ -259,20 +176,20 @@ export interface ReusableDataTableProps<TData> {
   groupNoneLabel?: string;
   groupEmptyValueLabel?: string;
   archivedView?: ArchivedViewConfig;
-  viewSwitch?: ReusableViewSwitchConfig;
-  aiButton?: ReusableAiButtonConfig;
+  viewSwitch?: ViewSwitchConfig;
+  aiButton?: AiButtonConfig;
   /**
    * Custom segmented controls for the toolbar. Each emits its own event; use them
    * to switch datasets/views beyond the table/kanban toggle. By default they sit
    * on the right (before the fixed controls); set each one's `position` to move it.
    */
-  toggleGroups?: ReusableToggleGroupConfig[];
+  toggleGroups?: ToggleGroupConfig[];
   /**
    * Extra generic header selects (besides group-by and archived). Each fires its
    * own `onChange` so the consumer can react over the list. Default `position` is
    * `"right"`.
    */
-  headerSelectors?: ReusableHeaderSelectConfig[];
+  headerSelectors?: HeaderSelectConfig[];
   /**
    * Explicit toolbar composition. When provided it is authoritative: only the
    * listed slot ids render, on the given side and order (built-in ids: `search`,
@@ -280,7 +197,7 @@ export interface ReusableDataTableProps<TData> {
    * toggle/selector id). Omit it to keep the default layout, where each control
    * honors its own `position` (default `"right"`).
    */
-  toolbarLayout?: ReusableToolbarLayout;
+  toolbarLayout?: ToolbarLayout;
   /** Global styling for every styled select in the component (header + inline). */
-  selectTheme?: ReusableSelectTheme;
+  selectTheme?: SelectTheme;
 }

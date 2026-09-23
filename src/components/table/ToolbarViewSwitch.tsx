@@ -1,13 +1,13 @@
 import { LayoutGrid, Table2 } from "lucide-react";
-import type { ReusableViewMode, ReusableViewSwitchConfig } from "./types";
+import type { ViewMode, ViewSwitchConfig } from "./types";
 import { cn } from "./utils";
 
 interface ToolbarViewSwitchProps {
-  config: ReusableViewSwitchConfig;
+  config: ViewSwitchConfig;
 }
 
 export const ToolbarViewSwitch = ({ config }: ToolbarViewSwitchProps) => {
-  const selectView = (view: ReusableViewMode) => {
+  const selectView = (view: ViewMode) => {
     if (config.active === view) return;
     config.onChange(view);
   };

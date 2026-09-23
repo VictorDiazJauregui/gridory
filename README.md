@@ -24,14 +24,15 @@ mutan tus datos; tu aplicación sigue siendo la única fuente de verdad.
 | Importación | Qué incluye |
 |---|---|
 | `gridory` | Todo el kit: componentes, hooks, helpers y tipos de los tres módulos. |
-| `gridory/table` | `ReusableDataTable`: búsqueda global, filtros por columna y fecha, orden tri-estado, paginación client o server-side, edición inline, agrupado de filas, acciones por fila componibles, barra de herramientas configurable y cabecera fija con scroll interno. |
-| `gridory/kanban` | `ReusableKanban`: tablero sobre el mismo modelo de datos, columnas por campo de agrupación, arrastrar y soltar, filtros, orden y render de tarjeta personalizado. |
+| `gridory/table` | `DataTable`: búsqueda global, filtros por columna y fecha, orden tri-estado, paginación client o server-side, edición inline, agrupado de filas, acciones por fila componibles, barra de herramientas configurable y cabecera fija con scroll interno. |
+| `gridory/kanban` | `KanbanBoard`: tablero sobre el mismo modelo de datos, columnas por campo de agrupación, arrastrar y soltar, filtros, orden y render de tarjeta personalizado. |
 | `gridory/ai` | `AIChatSidebar`, `AIChatButton` y `useAIChat`: asistente lateral para cualquier proveedor compatible con la API de OpenAI, con tool-calling que propone acciones que el usuario confirma. |
 | `gridory/styles.css` | CSS compilado de tabla, kanban y selectores (`dist/gridory.css`). |
 
 ## Instalación
 
-Dependencias peer: React 18.2+ o 19 y `react-dom`. La aplicación consumidora debe usar Tailwind CSS v3.
+Dependencias peer: React 18.2+ o 19 y `react-dom`. No hace falta Tailwind en la aplicación
+consumidora: `gridory/styles.css` es autocontenido (tokens de tema, reset acotado y utilidades).
 
 ```bash
 npm install gridory
@@ -51,11 +52,11 @@ import "gridory/styles.css";
 ### Tabla
 
 ```tsx
-import { ReusableDataTable, type ReusableColumn } from "gridory/table";
+import { DataTable, type ColumnDefinition } from "gridory/table";
 
 type Lead = { id: string; name: string; status: string };
 
-const columns: ReusableColumn<Lead>[] = [
+const columns: ColumnDefinition<Lead>[] = [
   { id: "name", header: "Nombre", accessor: (row) => row.name, searchable: true },
   {
     id: "status",
@@ -69,13 +70,13 @@ const columns: ReusableColumn<Lead>[] = [
   },
 ];
 
-<ReusableDataTable columns={columns} data={leads} getRowId={(row) => row.id} />;
+<DataTable columns={columns} data={leads} getRowId={(row) => row.id} />;
 ```
 
 ### Kanban
 
 ```tsx
-import { ReusableKanban } from "gridory/kanban";
+import { KanbanBoard } from "gridory/kanban";
 ```
 
 Usa las mismas definiciones de columna que la tabla (`fields`) y añade `groups`,

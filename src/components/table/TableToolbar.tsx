@@ -2,18 +2,18 @@ import { Fragment, type ReactNode } from "react";
 import { FilterX, Plus, Search } from "lucide-react";
 import type {
   ArchivedViewMode,
-  ReusableAiButtonConfig,
-  ReusableViewSwitchConfig,
+  AiButtonConfig,
+  ViewSwitchConfig,
 } from "./types";
 import type {
-  ReusableHeaderSelectConfig,
-  ReusableSelectOption,
-  ReusableToggleGroupConfig,
+  HeaderSelectConfig,
+  SelectOption,
+  ToggleGroupConfig,
 } from "../shared/toolbar-controls";
-import type { ReusableSelectTheme } from "../shared/select-theme";
+import type { SelectTheme } from "../shared/select-theme";
 import {
   resolveToolbarClusters,
-  type ReusableToolbarLayout,
+  type ToolbarLayout,
 } from "../shared/toolbar-layout";
 import { SimpleSelect } from "../ui/select";
 import { SegmentedControl } from "../ui/toggle-group";
@@ -56,18 +56,18 @@ interface TableToolbarProps {
   onArchivedModeChange: (mode: ArchivedViewMode) => void;
   archivedViewLabel?: string;
   archivedViewOptionLabels?: Partial<Record<ArchivedViewMode, string>>;
-  viewSwitch?: ReusableViewSwitchConfig;
-  aiButton?: ReusableAiButtonConfig;
-  toggleGroups?: ReusableToggleGroupConfig[];
-  headerSelectors?: ReusableHeaderSelectConfig[];
-  toolbarLayout?: ReusableToolbarLayout;
-  selectTheme?: ReusableSelectTheme;
+  viewSwitch?: ViewSwitchConfig;
+  aiButton?: AiButtonConfig;
+  toggleGroups?: ToggleGroupConfig[];
+  headerSelectors?: HeaderSelectConfig[];
+  toolbarLayout?: ToolbarLayout;
+  selectTheme?: SelectTheme;
 }
 
 const prefixedOptions = (
-  options: ReusableSelectOption[],
+  options: SelectOption[],
   prefix?: string,
-): ReusableSelectOption[] =>
+): SelectOption[] =>
   prefix
     ? options.map((option) => ({
         value: option.value,
@@ -75,7 +75,7 @@ const prefixedOptions = (
       }))
     : options;
 
-const buildArchivedOptions = (props: TableToolbarProps): ReusableSelectOption[] => {
+const buildArchivedOptions = (props: TableToolbarProps): SelectOption[] => {
   const label = props.archivedViewLabel ?? "Mostrar";
   const optionLabel = (mode: ArchivedViewMode) =>
     props.archivedViewOptionLabels?.[mode] ?? DEFAULT_ARCHIVED_OPTION_LABELS[mode];
@@ -85,7 +85,7 @@ const buildArchivedOptions = (props: TableToolbarProps): ReusableSelectOption[] 
   }));
 };
 
-const buildGroupSelectOptions = (props: TableToolbarProps): ReusableSelectOption[] => [
+const buildGroupSelectOptions = (props: TableToolbarProps): SelectOption[] => [
   { value: GROUP_NONE_VALUE, label: `${props.groupSelectorLabel}: ${props.groupNoneLabel}` },
   ...props.groupOptions.map((option) => ({
     value: option.id,

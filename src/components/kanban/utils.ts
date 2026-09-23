@@ -3,9 +3,9 @@ import type {
   ArchivedViewMode,
   DateFilterState,
   Primitive,
-  ReusableColumn,
-  ReusableFilterOption,
-  ReusableTableInput,
+  ColumnDefinition,
+  FilterOption,
+  DataInput,
   SortDirection,
 } from "./types";
 import type { DateInputFormat } from "./types";
@@ -15,7 +15,7 @@ export const cn = (...values: Array<string | false | null | undefined>) => {
 };
 
 export const normalizeInputRows = <TData>(
-  input: ReusableTableInput<TData>,
+  input: DataInput<TData>,
   normalizeRow?: (row: unknown, index: number) => TData,
 ): TData[] => {
   if (Array.isArray(input)) return input;
@@ -90,10 +90,10 @@ export const formatDateToString = (date: Date | undefined): string => {
 };
 
 export const computeColumnFilterOptions = <TData>(
-  columns: ReusableColumn<TData>[],
+  columns: ColumnDefinition<TData>[],
   rows: TData[],
-): Record<string, ReusableFilterOption[]> => {
-  const map: Record<string, ReusableFilterOption[]> = {};
+): Record<string, FilterOption[]> => {
+  const map: Record<string, FilterOption[]> = {};
 
   columns.forEach((column) => {
     if (!column.filterable || column.type === "date") return;
@@ -119,7 +119,7 @@ export const computeColumnFilterOptions = <TData>(
 
 export const applyGlobalSearch = <TData>(
   rows: TData[],
-  columns: ReusableColumn<TData>[],
+  columns: ColumnDefinition<TData>[],
   query: string,
   enabled: boolean,
 ) => {
@@ -164,7 +164,7 @@ export const applyColumnFilters = <TData>({
   enabled,
 }: {
   rows: TData[];
-  columns: ReusableColumn<TData>[];
+  columns: ColumnDefinition<TData>[];
   filters: Record<string, string[]>;
   dateFilters: Record<string, DateFilterState>;
   enabled: boolean;
@@ -203,7 +203,7 @@ export const applyColumnSorting = <TData>({
   enabled,
 }: {
   rows: TData[];
-  columns: ReusableColumn<TData>[];
+  columns: ColumnDefinition<TData>[];
   sorting: { id: string; direction: SortDirection } | null;
   enabled: boolean;
 }) => {
