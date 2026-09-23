@@ -57,7 +57,7 @@ const rangeAttributes = (modifiers: Modifiers) => ({
   "data-range-end": modifiers.range_end || undefined,
 });
 
-function Calendar({
+const Calendar = ({
   className,
   classNames,
   showOutsideDays = true,
@@ -66,7 +66,7 @@ function Calendar({
   formatters,
   components,
   ...props
-}: React.ComponentProps<typeof DayPicker>) {
+}: React.ComponentProps<typeof DayPicker>) => {
   const activeLocale = locale ?? es;
 
   return (
@@ -122,13 +122,13 @@ type CalendarDayButtonProps = React.ComponentProps<typeof DayButton> & {
  * DayButton of react-day-picker, it takes the DOM focus when the picker marks
  * the day as focused (arrow keys, Home/End, PageUp/PageDown).
  */
-function CalendarDayButton({
+const CalendarDayButton = ({
   className,
   day,
   modifiers,
   locale,
   ...props
-}: CalendarDayButtonProps) {
+}: CalendarDayButtonProps) => {
   const ref = React.useRef<HTMLButtonElement>(null);
   React.useEffect(() => {
     if (modifiers.focused) ref.current?.focus();

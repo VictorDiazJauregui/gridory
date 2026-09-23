@@ -3,10 +3,10 @@ import { ToggleGroup as ToggleGroupPrimitive } from "radix-ui";
 
 import { cn } from "../../lib/cn";
 
-function ToggleGroup({
+const ToggleGroup = ({
   className,
   ...props
-}: React.ComponentProps<typeof ToggleGroupPrimitive.Root>) {
+}: React.ComponentProps<typeof ToggleGroupPrimitive.Root>) => {
   return (
     <ToggleGroupPrimitive.Root
       data-slot="toggle-group"
@@ -16,11 +16,11 @@ function ToggleGroup({
   );
 }
 
-function ToggleGroupItem({
+const ToggleGroupItem = ({
   className,
   children,
   ...props
-}: React.ComponentProps<typeof ToggleGroupPrimitive.Item>) {
+}: React.ComponentProps<typeof ToggleGroupPrimitive.Item>) => {
   return (
     <ToggleGroupPrimitive.Item
       data-slot="toggle-group-item"
@@ -47,23 +47,23 @@ interface SegmentedControlProps {
   className?: string;
 }
 
-function resolveDisplay(
+const resolveDisplay = (
   option: SegmentedControlOption,
   display: "label" | "icon" | "both",
-) {
+) => {
   const showIcon = Boolean(option.icon) && display !== "label";
   const showLabel = display !== "icon" || !option.icon;
   return { showIcon, showLabel };
 }
 
-function SegmentedControl({
+const SegmentedControl = ({
   options,
   value,
   onChange,
   display = "both",
   ariaLabel,
   className,
-}: SegmentedControlProps) {
+}: SegmentedControlProps) => {
   return (
     <ToggleGroup
       type="single"
