@@ -184,6 +184,25 @@ En este proyecto ya están instaladas en `package.json`.
 
 - Estilos del componente: `src/components/table/styles.css`.
 - El componente usa clases prefijadas con `.rdt-`.
+- Los colores salen de los tokens base `--gdy-*` (ver "Tema y tokens" en el README raíz), que
+  traen tema claro y oscuro. Además la tabla lee estos tokens de componente opcionales, que se
+  declaran en `:root` o `.dark` de la app:
+
+| Token | Por defecto | Qué pinta |
+|---|---|---|
+| `--gdy-table-head-bg` | `--gdy-muted` | fondo de la cabecera (también fija) |
+| `--gdy-table-head-fg` | `--gdy-muted-foreground` | texto de la cabecera |
+| `--gdy-table-border` | `--gdy-border` | bordes de celdas y paginación |
+| `--gdy-table-row-hover-bg` | `--gdy-muted` | hover de filas clicables |
+| `--gdy-table-group-bg` | `--gdy-accent` | fila de grupo |
+| `--gdy-toolbar-border` | `--gdy-border` | borde inferior de la toolbar |
+| `--gdy-btn-bg` / `--gdy-btn-fg` / `--gdy-btn-hover-bg` | `--gdy-muted` / `--gdy-foreground` / tinte | botones de la toolbar |
+| `--gdy-btn-primary-bg` / `--gdy-btn-primary-fg` | `--gdy-primary` / `--gdy-primary-foreground` | botón primario (crear) |
+| `--gdy-input-bg` / `--gdy-input-border` | `--gdy-muted` / `--gdy-input` | buscador e inputs de fecha |
+| `--gdy-panel-bg` / `--gdy-panel-border` / `--gdy-panel-shadow` | `--gdy-popover` / `--gdy-border` / `--gdy-shadow-md` | paneles de filtro |
+| `--gdy-option-hover-bg` | tinte de `--gdy-muted` | hover del checklist (prop `optionHoverColor`) |
+| `--gdy-scrollbar-thumb` | `--gdy-input` | scrollbars finas (prop `scrollbarColor`) |
+
 - Si migras el componente, copia este archivo junto con el módulo.
 
 ---
@@ -223,7 +242,7 @@ Configurar:
   defecto a la **derecha** y con `position` configurable—, **composición explícita
   del toolbar** (`toolbarLayout`), y **selectores estilizados** (no nativos) en
   "Mostrar", "Agrupar por", tamaño de página y edición inline en celda con **theming
-  global** (`selectTheme` + variables CSS `--lui-select-*`), **desplegable a la
+  global** (`selectTheme` + variables CSS `--gdy-select-*`), **desplegable a la
   anchura del trigger** y **menos redondeo**. Todo opcional y retrocompatible con
   v1.11.0; las únicas diferencias por defecto son intencionales de UX (3.er clic de
   orden limpia el orden, el menú se reposiciona y ya no dibuja separadores
@@ -617,7 +636,7 @@ export interface AiButtonConfig {
 ### Personalización de estilos (switch y botón IA)
 
 Por defecto el botón IA comparte el estilo neutro de los botones del toolbar
-(fondo `#f8fafc`, texto `#0f172a`), idéntico en tabla y kanban. Ambos
+(tokens `--gdy-btn-bg` y `--gdy-btn-fg`), idéntico en tabla y kanban. Ambos
 controles exponen clases CSS estables con especificidad de una sola clase,
 pensadas como puntos de extensión:
 
@@ -839,8 +858,8 @@ defecto es cosmético/intencional.
 | Prop | Tipo | Default | Descripción |
 | ---- | ---- | ------- | ----------- |
 | `thinScrollbars` | `boolean` | `true` | Scrollbars finos gris claro en todas las áreas de scroll (filas, listas de opciones, regiones de alto acotado). `false` = scrollbars nativos. |
-| `scrollbarColor` | `string` | `#cbd5e1` | Color del thumb, vía la variable `--rdt-scrollbar-thumb`. |
-| `optionHoverColor` | `string` | `#f1f5f9` | Fondo hover de las filas del checklist de valores, vía `--rdt-option-hover-bg`. |
+| `scrollbarColor` | `string` | token `--gdy-input` | Color del thumb, vía la variable `--gdy-scrollbar-thumb`. |
+| `optionHoverColor` | `string` | tinte de `--gdy-muted` | Fondo hover de las filas del checklist de valores, vía `--gdy-option-hover-bg`. |
 | `dateFilterRequireOperator` | `boolean` | `true` | El submenú de fecha abre sin operador preseleccionado y sin input hasta elegir uno; "Limpiar" lo retira. `false` restaura el legacy (`gt` preseleccionado). |
 | `dateInputFormat` | `DateInputFormat` | `"dd/mm/yyyy"` | Máscara del placeholder, del display y del parseo manual. Valores: `"dd/mm/yyyy"`, `"dd-mm-yyyy"`, `"mm/dd/yyyy"`, `"mm-dd-yyyy"`. |
 | `calendarMonthYearDropdown` | `boolean` | `true` | Selector de mes+año en la fila de navegación del calendario. `false` = etiqueta estática. |
@@ -1272,22 +1291,22 @@ export interface SelectTheme {
 ```
 
 **Precedencia** (de mayor a menor): el valor por código (prop `selectTheme`) gana;
-si no, la variable CSS `--lui-select-*` correspondiente; si no, el token por defecto
+si no, la variable CSS `--gdy-select-*` correspondiente; si no, el token por defecto
 del tema (claro/oscuro).
 
 También podés tematizar solo por CSS declarando las variables (sin tocar props):
 
 | Variable CSS                    | Campo equivalente        |
 | ------------------------------- | ------------------------ |
-| `--lui-select-bg`               | `background`             |
-| `--lui-select-trigger-hover-bg` | `hoverBackground`        |
-| `--lui-select-border`           | `border`                 |
-| `--lui-select-text`             | `text`                   |
-| `--lui-select-radius`           | `radius`                 |
-| `--lui-select-content-bg`       | `contentBackground`      |
-| `--lui-select-item-text`        | `optionText`             |
-| `--lui-select-item-hover-bg`    | `optionHoverBackground`  |
-| `--lui-select-item-active-bg`   | `optionActiveBackground` |
+| `--gdy-select-bg`               | `background`             |
+| `--gdy-select-trigger-hover-bg` | `hoverBackground`        |
+| `--gdy-select-border`           | `border`                 |
+| `--gdy-select-text`             | `text`                   |
+| `--gdy-select-radius`           | `radius`                 |
+| `--gdy-select-content-bg`       | `contentBackground`      |
+| `--gdy-select-item-text`        | `optionText`             |
+| `--gdy-select-item-hover-bg`    | `optionHoverBackground`  |
+| `--gdy-select-item-active-bg`   | `optionActiveBackground` |
 
 ```tsx
 <DataTable

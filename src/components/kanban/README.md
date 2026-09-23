@@ -435,7 +435,7 @@ interface AiButtonConfig {
 ### Personalización de estilos (switch y botón IA)
 
 Por defecto el botón IA comparte el estilo neutro de los botones del toolbar
-(fondo `#f8fafc`, texto `#0f172a`), idéntico en tabla y kanban. Ambos
+(tokens `--gdy-btn-bg` y `--gdy-btn-fg`), idéntico en tabla y kanban. Ambos
 controles exponen clases CSS estables con especificidad de una sola clase,
 pensadas como puntos de extensión:
 
@@ -455,6 +455,25 @@ mismas clases en su propio CSS, cargado después del CSS del paquete:
   background: #ffffff;
 }
 ```
+
+### Tokens de color
+
+Los colores salen de los tokens base `--gdy-*` (ver "Tema y tokens" en el README raíz), que
+traen tema claro y oscuro. Además el kanban lee estos tokens de componente opcionales, que se
+declaran en `:root` o `.dark` de la app:
+
+| Token | Por defecto | Qué pinta |
+|---|---|---|
+| `--gdy-kanban-column-bg` / `--gdy-kanban-column-border` | `--gdy-muted` / `--gdy-border` | columnas |
+| `--gdy-kanban-card-bg` / `--gdy-kanban-card-border` | `--gdy-card` / `--gdy-border` | tarjetas y columna vacía |
+| `--gdy-kanban-drop-bg` / `--gdy-kanban-drop-outline` | tinte de `--gdy-muted` / `--gdy-muted-foreground` | columna destino durante el arrastre |
+| `--gdy-toolbar-border` | `--gdy-border` | borde de la toolbar y de la fila de filtros |
+| `--gdy-btn-bg` / `--gdy-btn-fg` / `--gdy-btn-hover-bg` | `--gdy-muted` / `--gdy-foreground` / tinte | botones de la toolbar |
+| `--gdy-btn-primary-bg` / `--gdy-btn-primary-fg` | `--gdy-primary` / `--gdy-primary-foreground` | botón primario (crear) |
+| `--gdy-input-bg` / `--gdy-input-border` | `--gdy-muted` / `--gdy-input` | buscador, inputs de fecha, disparadores de filtro |
+| `--gdy-panel-bg` / `--gdy-panel-border` / `--gdy-panel-shadow` | `--gdy-popover` / `--gdy-border` / `--gdy-shadow-md` | paneles de filtro |
+| `--gdy-option-hover-bg` | tinte de `--gdy-muted` | hover del checklist (prop `optionHoverColor`) |
+| `--gdy-scrollbar-thumb` | `--gdy-input` | scrollbars finas (prop `scrollbarColor`) |
 
 ---
 
@@ -670,8 +689,8 @@ cosmético/intencional.
 | Prop | Tipo | Default | Descripción |
 | ---- | ---- | ------- | ----------- |
 | `thinScrollbars` | `boolean` | `true` | Scrollbars finos gris claro en tablero, columnas y listas de opciones. `false` = nativos. |
-| `scrollbarColor` | `string` | `#cbd5e1` | Color del thumb, vía `--rkb-scrollbar-thumb`. |
-| `optionHoverColor` | `string` | `#f1f5f9` | Fondo hover de las filas del checklist, vía `--rkb-option-hover-bg`. |
+| `scrollbarColor` | `string` | token `--gdy-input` | Color del thumb, vía `--gdy-scrollbar-thumb`. |
+| `optionHoverColor` | `string` | tinte de `--gdy-muted` | Fondo hover de las filas del checklist, vía `--gdy-option-hover-bg`. |
 | `dateFilterRequireOperator` | `boolean` | `true` | Submenú de fecha sin operador preseleccionado ni input hasta elegir uno; "Limpiar" lo retira. `false` = legacy (`gt`). |
 | `dateInputFormat` | `DateInputFormat` | `"dd/mm/yyyy"` | Máscara de placeholder/display/parseo. Valores: `dd/mm/yyyy`, `dd-mm-yyyy`, `mm/dd/yyyy`, `mm-dd-yyyy`. |
 | `calendarMonthYearDropdown` | `boolean` | `true` | Selector de mes+año en el calendario. `false` = etiqueta. |
@@ -1082,22 +1101,22 @@ export interface SelectTheme {
 ```
 
 **Precedencia** (de mayor a menor): el valor por código (prop `selectTheme`) gana;
-si no, la variable CSS `--lui-select-*` correspondiente; si no, el token por defecto
+si no, la variable CSS `--gdy-select-*` correspondiente; si no, el token por defecto
 del tema (claro/oscuro).
 
 También podés tematizar solo por CSS declarando las variables (sin tocar props):
 
 | Variable CSS                    | Campo equivalente        |
 | ------------------------------- | ------------------------ |
-| `--lui-select-bg`               | `background`             |
-| `--lui-select-trigger-hover-bg` | `hoverBackground`        |
-| `--lui-select-border`           | `border`                 |
-| `--lui-select-text`             | `text`                   |
-| `--lui-select-radius`           | `radius`                 |
-| `--lui-select-content-bg`       | `contentBackground`      |
-| `--lui-select-item-text`        | `optionText`             |
-| `--lui-select-item-hover-bg`    | `optionHoverBackground`  |
-| `--lui-select-item-active-bg`   | `optionActiveBackground` |
+| `--gdy-select-bg`               | `background`             |
+| `--gdy-select-trigger-hover-bg` | `hoverBackground`        |
+| `--gdy-select-border`           | `border`                 |
+| `--gdy-select-text`             | `text`                   |
+| `--gdy-select-radius`           | `radius`                 |
+| `--gdy-select-content-bg`       | `contentBackground`      |
+| `--gdy-select-item-text`        | `optionText`             |
+| `--gdy-select-item-hover-bg`    | `optionHoverBackground`  |
+| `--gdy-select-item-active-bg`   | `optionActiveBackground` |
 
 ```tsx
 <KanbanBoard

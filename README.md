@@ -47,6 +47,52 @@ Importa el CSS compilado una sola vez en tu aplicación:
 import "gridory/styles.css";
 ```
 
+## Tema y tokens
+
+Colores, radio y sombras salen de variables CSS con prefijo `--gdy-*` incluidas en
+`gridory/styles.css`. Traen un **tema claro por defecto** y un **tema oscuro** que se activa con la
+clase `dark` o el atributo `data-theme="dark"` en un ancestro. Ponlo en `<html>`: los menús,
+selects y calendarios se montan en portales bajo `<body>`, así que un envoltorio intermedio no
+los alcanza.
+
+```html
+<html class="dark">
+```
+
+- **Puente con shadcn/ui.** Cada token base lee la variable shadcn del mismo nombre si la app la
+  define (`--gdy-primary: var(--primary, …)`), tanto en claro como en oscuro: una app con tokens
+  shadcn en colores completos (`oklch(…)`, `hsl(…)`, hex) tematiza Gridory sin configurar nada.
+  Si tus variables guardan canales sueltos (`--primary: 222 47% 11%`), declara los `--gdy-*`.
+- **Sobrescribir.** Declara el token en `:root` (claro) y en `.dark` (oscuro); las reglas de la
+  librería tienen especificidad cero, así que siempre ganas:
+
+```css
+:root { --gdy-primary: #0f766e; --gdy-radius: 6px; }
+.dark { --gdy-primary: #5eead4; }
+```
+
+| Token base | Claro | Oscuro | Uso |
+|---|---|---|---|
+| `--gdy-background` / `--gdy-foreground` | `oklch(1 0 0)` / `oklch(0.145 0 0)` | `oklch(0.145 0 0)` / `oklch(0.985 0 0)` | fondo y texto |
+| `--gdy-card` / `--gdy-card-foreground` | `oklch(1 0 0)` / `oklch(0.145 0 0)` | `oklch(0.205 0 0)` / `oklch(0.985 0 0)` | contenedor de tabla y kanban, tarjetas |
+| `--gdy-popover` / `--gdy-popover-foreground` | `oklch(1 0 0)` / `oklch(0.145 0 0)` | `oklch(0.205 0 0)` / `oklch(0.985 0 0)` | paneles de filtro, menús, selects, calendario |
+| `--gdy-primary` / `--gdy-primary-foreground` | `oklch(0.205 0 0)` / `oklch(0.985 0 0)` | `oklch(0.922 0 0)` / `oklch(0.205 0 0)` | botón primario, acento del asistente |
+| `--gdy-secondary` / `--gdy-secondary-foreground` | `oklch(0.97 0 0)` / `oklch(0.205 0 0)` | `oklch(0.269 0 0)` / `oklch(0.985 0 0)` | títulos de columna, etiquetas |
+| `--gdy-muted` / `--gdy-muted-foreground` | `oklch(0.97 0 0)` / `oklch(0.556 0 0)` | `oklch(0.269 0 0)` / `oklch(0.708 0 0)` | cabecera de tabla, columnas, botones, texto secundario |
+| `--gdy-accent` / `--gdy-accent-foreground` | `oklch(0.97 0 0)` / `oklch(0.205 0 0)` | `oklch(0.269 0 0)` / `oklch(0.985 0 0)` | hover, filas de grupo |
+| `--gdy-destructive` / `--gdy-destructive-foreground` | `oklch(0.577 0.245 27.325)` / `oklch(0.985 0 0)` | `oklch(0.704 0.191 22.216)` / `oklch(0.985 0 0)` | acciones destructivas |
+| `--gdy-border` / `--gdy-input` / `--gdy-ring` | `oklch(0.922 0 0)` / `oklch(0.922 0 0)` / `oklch(0.708 0 0)` | `oklch(1 0 0 / 10%)` / `oklch(1 0 0 / 15%)` / `oklch(0.556 0 0)` | bordes, bordes de inputs, foco |
+| `--gdy-radius` | `0.625rem` | igual | radio base |
+| `--gdy-link` | `oklch(0.546 0.245 262.881)` | `oklch(0.707 0.165 254.624)` | enlaces de los paneles de filtro |
+| `--gdy-overlay` | `rgb(0 0 0 / 0.3)` | `rgb(0 0 0 / 0.6)` | fondo del asistente en móvil |
+| `--gdy-shadow-sm` / `--gdy-shadow-md` | sombras suaves | sombras más densas | switch de vista, paneles |
+
+Sobre esos tokens base cada componente lee **tokens de componente** opcionales, con el mismo
+mecanismo de sobrescritura: `--gdy-table-*` (cabecera, bordes, hover de fila, filas de grupo),
+`--gdy-kanban-*` (columnas, tarjetas, zona de soltado), `--gdy-select-*` (equivalentes a la prop
+`selectTheme`), `--gdy-btn-*`, `--gdy-input-*`, `--gdy-panel-*`, `--gdy-option-hover-bg` y
+`--gdy-scrollbar-thumb`. La lista de cada módulo está en su README.
+
 ## Inicio rápido
 
 ### Tabla
