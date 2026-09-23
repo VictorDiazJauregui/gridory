@@ -1,93 +1,36 @@
-import * as React from "react";
-import { ToggleGroup as ToggleGroupPrimitive } from "radix-ui";
-
-import { cn } from "../../lib/cn";
-
-const ToggleGroup = ({
-  className,
-  ...props
-}: React.ComponentProps<typeof ToggleGroupPrimitive.Root>) => {
-  return (
-    <ToggleGroupPrimitive.Root
-      data-slot="toggle-group"
-      className={cn("gdy-toggle-group", className)}
-      {...props}
-    />
-  );
-}
-
-const ToggleGroupItem = ({
-  className,
-  children,
-  ...props
-}: React.ComponentProps<typeof ToggleGroupPrimitive.Item>) => {
-  return (
-    <ToggleGroupPrimitive.Item
-      data-slot="toggle-group-item"
-      className={cn("gdy-toggle-item", className)}
-      {...props}
-    >
-      {children}
-    </ToggleGroupPrimitive.Item>
-  );
-}
-
-interface SegmentedControlOption {
-  value: string;
-  label: string;
-  icon?: React.ReactNode;
-}
+import {
+  SegmentedControlItem,
+  type SegmentedControlDisplay,
+  type SegmentedControlOption,
+} from "./segmented-control-item";
+import { ToggleGroup } from "./toggle-group-primitives";
 
 interface SegmentedControlProps {
   options: SegmentedControlOption[];
   value: string;
   onChange: (value: string) => void;
-  display?: "label" | "icon" | "both";
+  display?: SegmentedControlDisplay;
   ariaLabel?: string;
   className?: string;
 }
 
-const resolveDisplay = (
-  option: SegmentedControlOption,
-  display: "label" | "icon" | "both",
-) => {
-  const showIcon = Boolean(option.icon) && display !== "label";
-  const showLabel = display !== "icon" || !option.icon;
-  return { showIcon, showLabel };
-}
-
-const SegmentedControl = ({
-  options,
-  value,
-  onChange,
-  display = "both",
-  ariaLabel,
-  className,
-}: SegmentedControlProps) => {
+const SegmentedControl = (props: SegmentedControlProps) => {
+  const { options, value, onChange, display = "both" } = props;
   return (
     <ToggleGroup
       type="single"
       value={value}
-      aria-label={ariaLabel}
+      aria-label={props.ariaLabel}
       onValueChange={(next) => next && onChange(next)}
-      className={className}
+      className={props.className}
     >
-      {options.map((option) => {
-        const { showIcon, showLabel } = resolveDisplay(option, display);
-        return (
-          <ToggleGroupItem
-            key={option.value}
-            value={option.value}
-            aria-label={option.label}
-            title={option.label}
-          >
-            {showIcon ? option.icon : null}
-            {showLabel ? (
-              <span className="gdy-toggle-item-label">{option.label}</span>
-            ) : null}
-          </ToggleGroupItem>
-        );
-      })}
+      {options.map((option) => (
+        <SegmentedControlItem
+          key={option.value}
+          option={option}
+          display={display}
+        />
+      ))}
     </ToggleGroup>
   );
 }
