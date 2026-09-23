@@ -41,7 +41,9 @@
     "gdy-calendar-week-number-header",
     "gdy-calendar-footer",
     "gdy-calendar-months-dropdown",
-    "gdy-calendar-years-dropdown"
+    "gdy-calendar-years-dropdown",
+    "gdy-ai-reset",
+    "gdy-ai-close"
   ],
   "variantAttributes": [
     "data-variant",

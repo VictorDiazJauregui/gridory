@@ -48,6 +48,15 @@ function resolveEmptyState(
   };
 }
 
+/**
+ * Chat sidebar. Every element carries a `gdy-ai-*` hook (styles in
+ * ./styles.css); the `classNames` slots are appended after the hook of the
+ * element they name (`root` → `gdy-ai-sidebar`, `header` → `gdy-ai-header`,
+ * `body` → `gdy-ai-body`, `footer` → `gdy-ai-footer`, `inputWrapper` →
+ * `gdy-ai-input-wrapper`, `textarea` → `gdy-ai-textarea`, `chip` →
+ * `gdy-ai-chip`, `userBubble` / `assistantBubble` → `gdy-ai-bubble`).
+ * States: `data-state="open|closed"` on the sidebar, `data-empty` on the body.
+ */
 export function AIChatSidebar(props: AIChatSidebarProps) {
   const {
     open,
@@ -159,72 +168,56 @@ export function AIChatSidebar(props: AIChatSidebarProps) {
   };
 
   const canReset = messages.length > 0 || pendingActions.length > 0;
+  const isEmpty = messages.length === 0;
 
   return (
     <>
       {open ? (
-        <div
-          className="gdy-scope fixed inset-0 z-40 bg-[var(--gdy-overlay)] backdrop-blur-[2px] md:hidden"
-          onClick={onClose}
-        />
+        <div className="gdy-scope gdy-ai-overlay" onClick={onClose} />
       ) : null}
 
       <aside
-        className={cn(
-          "gdy-scope fixed inset-y-0 right-0 z-50 flex max-w-[90vw] flex-col border-l bg-background shadow-2xl transition-transform duration-300 ease-out",
-          open ? "translate-x-0" : "translate-x-full",
-          className,
-          classNames?.root,
-        )}
+        className={cn("gdy-scope gdy-ai-sidebar", className, classNames?.root)}
+        data-state={open ? "open" : "closed"}
         style={{ width }}
       >
-        <header
-          className={cn(
-            "flex h-14 shrink-0 items-center gap-3 border-b bg-gradient-to-r from-primary/5 to-transparent px-4",
-            classNames?.header,
-          )}
-        >
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
-            <Sparkles className="h-4 w-4 text-primary" />
+        <header className={cn("gdy-ai-header", classNames?.header)}>
+          <div className="gdy-ai-header-badge">
+            <Sparkles className="gdy-ai-header-icon" />
           </div>
-          <div className="min-w-0 flex-1">
-            <h2 className="truncate text-sm font-semibold">{title}</h2>
-            <p className="truncate text-[11px] text-muted-foreground">
-              {resolvedSubtitle}
-            </p>
+          <div className="gdy-ai-heading">
+            <h2 className="gdy-ai-title">{title}</h2>
+            <p className="gdy-ai-subtitle">{resolvedSubtitle}</p>
           </div>
           {showResetButton ? (
             <Button
               variant="ghost"
-              size="sm"
-              className="h-7 w-7 shrink-0 p-0"
+              size="icon-sm"
+              className="gdy-ai-reset"
               onClick={handleReset}
               disabled={!canReset || isLoading}
               title={resolvedTexts.resetTooltip}
               aria-label={resolvedTexts.resetTooltip}
             >
-              <SquarePen className="h-4 w-4" />
+              <SquarePen className="gdy-ai-reset-icon" />
             </Button>
           ) : null}
           <Button
             variant="ghost"
-            size="sm"
-            className="h-7 w-7 shrink-0 p-0"
+            size="icon-sm"
+            className="gdy-ai-close"
             onClick={onClose}
             aria-label="Cerrar"
           >
-            <X className="h-4 w-4" />
+            <X className="gdy-ai-close-icon" />
           </Button>
         </header>
 
         <div
-          className={cn(
-            "flex-1 overflow-y-auto px-4 py-4 [scrollbar-width:thin]",
-            messages.length !== 0 && "space-y-2",
-            classNames?.body,
-          )}
+          className={cn("gdy-ai-body", classNames?.body)}
+          data-empty={isEmpty || undefined}
         >
-          {messages.length === 0 ? (
+          {isEmpty ? (
             <div className="flex h-full flex-col items-center justify-center gap-4 px-4 text-center">
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10">
                 {empty.icon ?? <Bot className="h-7 w-7 text-primary" />}
@@ -344,17 +337,9 @@ export function AIChatSidebar(props: AIChatSidebarProps) {
           <div ref={messagesEndRef} />
         </div>
 
-        <footer
-          className={cn(
-            "shrink-0 border-t bg-background p-2",
-            classNames?.footer,
-          )}
-        >
+        <footer className={cn("gdy-ai-footer", classNames?.footer)}>
           <div
-            className={cn(
-              "flex items-center gap-2 bg-muted/30 transition-all",
-              classNames?.inputWrapper,
-            )}
+            className={cn("gdy-ai-input-wrapper", classNames?.inputWrapper)}
           >
             <textarea
               ref={inputRef}
@@ -363,20 +348,17 @@ export function AIChatSidebar(props: AIChatSidebarProps) {
               onChange={(event) => setInput(event.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={resolvedTexts.placeholder}
-              className={cn(
-                "flex-1 resize-none overflow-y-auto rounded-xl border bg-transparent p-1 text-sm leading-snug outline-none placeholder:text-muted-foreground/60 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-1 focus-visible:outline-ring [scrollbar-width:thin]",
-                classNames?.textarea,
-              )}
+              className={cn("gdy-ai-textarea", classNames?.textarea)}
               disabled={isLoading}
             />
             <Button
-              size="sm"
-              className="h-8 w-8 shrink-0 rounded-lg p-0 hover:scale-105 transition-transform"
+              size="icon"
+              className="gdy-ai-send"
               onClick={() => void handleSend()}
               disabled={!input.trim() || isLoading}
               aria-label="Enviar"
             >
-              <Send className="h-4 w-4" />
+              <Send className="gdy-ai-send-icon" />
             </Button>
           </div>
         </footer>

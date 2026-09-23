@@ -55,3 +55,167 @@
     display: inline;
   }
 }
+
+/* ---------------------------------------------------- Overlay and sidebar */
+/* Mobile backdrop: gone from 768px, where the sidebar overlays the page alone. */
+.gdy-ai-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background-color: var(--gdy-overlay);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+
+@media (min-width: 768px) {
+  .gdy-ai-overlay {
+    display: none;
+  }
+}
+
+.gdy-ai-sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  max-width: 90vw;
+  border-left: 1px solid var(--gdy-border);
+  background-color: var(--gdy-ai-bg, var(--gdy-background));
+  box-shadow: var(--gdy-shadow-lg);
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0, 0, 0.2, 1);
+}
+
+.gdy-ai-sidebar[data-state="open"] {
+  transform: translateX(0);
+}
+
+/* ---------------------------------------------------------------- Header */
+.gdy-ai-header {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 12px;
+  height: 56px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--gdy-border);
+  background-image: linear-gradient(
+    to right,
+    color-mix(in oklab, var(--gdy-ai-accent, var(--gdy-primary)) 5%, transparent),
+    transparent
+  );
+}
+
+.gdy-ai-header-badge {
+  display: flex;
+  width: 32px;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--gdy-radius);
+  background-color: color-mix(in oklab, var(--gdy-ai-accent, var(--gdy-primary)) 10%, transparent);
+}
+
+.gdy-ai-header-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--gdy-ai-accent, var(--gdy-primary));
+}
+
+.gdy-ai-heading {
+  flex: 1 1 0%;
+  min-width: 0;
+}
+
+.gdy-ai-title {
+  overflow: hidden;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.gdy-ai-subtitle {
+  overflow: hidden;
+  font-size: 11px;
+  color: var(--gdy-muted-foreground);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* The reset and close buttons are the ghost/icon-sm primitive as is; the send
+   button is the default/icon primitive. Their icons share one size. */
+.gdy-ai-reset-icon,
+.gdy-ai-close-icon,
+.gdy-ai-send-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* ------------------------------------------------------------------ Body */
+/* Entries stack with an 8px gap; the empty state fills the body on its own. */
+.gdy-ai-body {
+  display: flex;
+  flex: 1 1 0%;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  padding: 16px;
+  scrollbar-width: thin;
+}
+
+.gdy-ai-body[data-empty] {
+  gap: 0;
+}
+
+/* ---------------------------------------------------------------- Footer */
+.gdy-ai-footer {
+  flex-shrink: 0;
+  padding: 8px;
+  border-top: 1px solid var(--gdy-border);
+  background-color: var(--gdy-ai-bg, var(--gdy-background));
+}
+
+.gdy-ai-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: color-mix(in oklab, var(--gdy-muted) 30%, transparent);
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gdy-ai-textarea {
+  flex: 1 1 0%;
+  padding: 4px;
+  border: 1px solid var(--gdy-border);
+  border-radius: 12px;
+  background-color: transparent;
+  font-size: 0.875rem;
+  line-height: 1.375;
+  resize: none;
+  overflow-y: auto;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  scrollbar-width: thin;
+}
+
+.gdy-ai-textarea::placeholder {
+  color: color-mix(in oklab, var(--gdy-muted-foreground) 60%, transparent);
+}
+
+.gdy-ai-textarea:focus-visible {
+  outline: 2px solid var(--gdy-ring);
+  outline-offset: -1px;
+}
+
+.gdy-button.gdy-ai-send {
+  transition-property: transform;
+}
+
+.gdy-button.gdy-ai-send:hover {
+  transform: scale(1.05);
+}
