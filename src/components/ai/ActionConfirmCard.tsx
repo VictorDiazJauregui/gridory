@@ -15,10 +15,10 @@ interface ActionConfirmCardProps {
   onCancel: (actionId: string) => void;
 }
 
-function resolveTitle(
+const resolveTitle = (
   action: AIPendingAction,
   entityNameSingular?: string,
-): string {
+): string => {
   const entity = entityNameSingular ?? "registro";
   if (action.type === "create-row" || action.type === "create-card") {
     return `Crear nuevo ${entity}`;
@@ -32,7 +32,7 @@ function resolveTitle(
   return "Acción personalizada";
 }
 
-function keyToLabel(key: string): string {
+const keyToLabel = (key: string): string => {
   return key
     .replace(/[_-]/g, " ")
     .replace(/\s+/g, " ")
@@ -40,16 +40,16 @@ function keyToLabel(key: string): string {
     .replace(/^\w/, (char) => char.toUpperCase());
 }
 
-function resolveFieldLabel(
+const resolveFieldLabel = (
   key: string,
   fields: AIFieldDescriptor[] | undefined,
-): { label: string; required: boolean } {
+): { label: string; required: boolean } => {
   const match = fields?.find((field) => field.id === key);
   if (match) return { label: match.label, required: Boolean(match.required) };
   return { label: keyToLabel(key), required: false };
 }
 
-function toDisplayValue(value: unknown): string {
+const toDisplayValue = (value: unknown): string => {
   if (value === null || value === undefined) return "—";
   if (typeof value === "string") return value;
   if (typeof value === "number" || typeof value === "boolean")
@@ -63,20 +63,13 @@ function toDisplayValue(value: unknown): string {
   }
 }
 
-/**
- * Pending action proposed by the model. Hooks: `gdy-ai-action-card` (with
- * `data-action-type`), `-header`, `-kicker`, `-title`, `-fields`, `-field`,
- * `-field-label`, `-required`, `-field-value`, `-empty`, `-actions`, and the
- * two buttons `gdy-ai-action-cancel` / `gdy-ai-action-confirm` on the button
- * primitive. Styles in ./styles.css.
- */
-export function ActionConfirmCard({
+export const ActionConfirmCard = ({
   action,
   schema,
   texts,
   onConfirm,
   onCancel,
-}: ActionConfirmCardProps) {
+}: ActionConfirmCardProps) => {
   const payloadEntries = Object.entries(action.payload ?? {});
   const title = resolveTitle(action, schema?.entityNameSingular);
   const confirmRequiredText =

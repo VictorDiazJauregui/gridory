@@ -17,6 +17,11 @@ export type DateInputFormat =
 
 export type SortDirection = "asc" | "desc";
 
+export interface ColumnSortingState {
+  id: string;
+  direction: SortDirection;
+}
+
 /**
  * Rows accepted by `DataTable` and `KanbanBoard`: a plain array or a common
  * API envelope (`{ data | items | results | records | payload }`). Use

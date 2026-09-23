@@ -3,28 +3,24 @@ import { Popover as PopoverPrimitive } from "radix-ui";
 
 import { cn } from "../../lib/cn";
 
-function Popover({
+const Popover = ({
   ...props
-}: React.ComponentProps<typeof PopoverPrimitive.Root>) {
+}: React.ComponentProps<typeof PopoverPrimitive.Root>) => {
   return <PopoverPrimitive.Root data-slot="popover" {...props} />;
 }
 
-function PopoverTrigger({
+const PopoverTrigger = ({
   ...props
-}: React.ComponentProps<typeof PopoverPrimitive.Trigger>) {
+}: React.ComponentProps<typeof PopoverPrimitive.Trigger>) => {
   return <PopoverPrimitive.Trigger data-slot="popover-trigger" {...props} />;
 }
 
-/**
- * Portaled content: `gdy-scope` brings the library reset into the portal and
- * `gdy-popover-content` carries the styles (src/components/ui/styles.css).
- */
-function PopoverContent({
+const PopoverContent = ({
   className,
   align = "center",
   sideOffset = 4,
   ...props
-}: React.ComponentProps<typeof PopoverPrimitive.Content>) {
+}: React.ComponentProps<typeof PopoverPrimitive.Content>) => {
   return (
     <PopoverPrimitive.Portal>
       <PopoverPrimitive.Content

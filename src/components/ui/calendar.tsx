@@ -14,14 +14,6 @@ import {
   ChevronRightIcon,
 } from "lucide-react";
 
-/**
- * Every react-day-picker element gets a `gdy-calendar-*` hook (no `rdp-*`
- * default is merged in). Day states are not classes: react-day-picker already
- * writes `data-today`, `data-selected`, `data-outside`, `data-disabled` and
- * `data-hidden` on the cell, and the `Day` / `DayButton` overrides below add
- * `data-range-start|middle|end` and `data-selected-single`.
- * Styles: src/components/ui/styles.css.
- */
 const CALENDAR_CLASS_NAMES: React.ComponentProps<typeof DayPicker>["classNames"] = {
   root: "gdy-calendar-root",
   months: "gdy-calendar-months",
@@ -65,7 +57,7 @@ const rangeAttributes = (modifiers: Modifiers) => ({
   "data-range-end": modifiers.range_end || undefined,
 });
 
-function Calendar({
+const Calendar = ({
   className,
   classNames,
   showOutsideDays = true,
@@ -74,7 +66,7 @@ function Calendar({
   formatters,
   components,
   ...props
-}: React.ComponentProps<typeof DayPicker>) {
+}: React.ComponentProps<typeof DayPicker>) => {
   const activeLocale = locale ?? es;
 
   return (
@@ -130,13 +122,13 @@ type CalendarDayButtonProps = React.ComponentProps<typeof DayButton> & {
  * DayButton of react-day-picker, it takes the DOM focus when the picker marks
  * the day as focused (arrow keys, Home/End, PageUp/PageDown).
  */
-function CalendarDayButton({
+const CalendarDayButton = ({
   className,
   day,
   modifiers,
   locale,
   ...props
-}: CalendarDayButtonProps) {
+}: CalendarDayButtonProps) => {
   const ref = React.useRef<HTMLButtonElement>(null);
   React.useEffect(() => {
     if (modifiers.focused) ref.current?.focus();
@@ -160,4 +152,4 @@ function CalendarDayButton({
   );
 }
 
-export { Calendar, CalendarDayButton };
+export { Calendar };

@@ -36,7 +36,7 @@ Directorio: `src/components/table/`
 
 - `index.tsx`: ensamblado principal y orquestación de estado.
 - `types.ts`: contratos públicos e internos.
-- `utils.ts`: funciones puras de normalización, filtros, orden y agrupado.
+- `row-grouping.ts`: agrupado por columna y opciones del selector de grupo.
 - `constants.ts`: defaults y constantes.
 - `TablePagination.tsx`: footer de paginación.
 - `RowActionsMenu.tsx`: menú de acciones por fila.
@@ -47,7 +47,11 @@ Compartido con el kanban, en `src/components/shared/`:
 - `toolbar/`: `Toolbar` (barra superior, la misma para tabla y kanban), `FilterMenu`,
   `DateFilterMenu`, `DatePickerWithInput`, `DateRangePicker`, `ToolbarAiButton`,
   `ToolbarViewSwitch`.
-- `date-utils.ts`: helpers de fecha y `EMPTY_DATE_FILTER_STATE`.
+- `row-pipeline.ts`: normalización de filas, búsqueda global, filtros por columna y fecha,
+  orden y vista de archivados.
+- `data-view-props.ts`: `DataViewProps`, las props comunes a tabla y kanban (toolbar, selects,
+  calendario, scroll) de las que extienden `DataTableProps` y `KanbanBoardProps`.
+- `date-filter.ts`: estado vacío del filtro de fecha, comparación y máscara de fechas.
 - `hooks.ts`: `useClickOutside`, `useActiveFilters`.
 - `src/styles/shared.css`: estilos compartidos (`.gdy-toolbar`, `.gdy-btn`, `.gdy-input`,
   `.gdy-panel`, `.gdy-date-*`, `.gdy-view-switch`, scroll fino).

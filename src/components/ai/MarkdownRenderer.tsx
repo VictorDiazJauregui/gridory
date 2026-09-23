@@ -1,13 +1,6 @@
 import type { ReactNode } from "react";
 
-/**
- * Minimal markdown for assistant replies: `### ` headings, `- ` and `1. `
- * items, blank-line gaps, `**bold**`. Hooks: `gdy-ai-markdown`, `gdy-ai-md-heading`,
- * `gdy-ai-md-item` (with `data-list="unordered|ordered"`), `gdy-ai-md-bullet`,
- * `gdy-ai-md-number`, `gdy-ai-md-item-text`, `gdy-ai-md-gap`, `gdy-ai-md-paragraph`,
- * `gdy-ai-md-strong`, `gdy-ai-md-text`. Styles in ./styles.css.
- */
-function renderInline(text: string): ReactNode[] {
+const renderInline = (text: string): ReactNode[] => {
   const parts = text.split(/(\*\*[^*]+\*\*)/g);
   return parts.map((part, index) => {
     if (part.startsWith("**") && part.endsWith("**")) {
@@ -25,7 +18,7 @@ function renderInline(text: string): ReactNode[] {
   });
 }
 
-export function MarkdownRenderer({ text }: { text: string }) {
+export const MarkdownRenderer = ({ text }: { text: string }) => {
   const lines = text.split("\n");
 
   return (
@@ -50,18 +43,16 @@ export function MarkdownRenderer({ text }: { text: string }) {
           );
         }
 
-        if (/^\d+\.\s/.test(line)) {
-          const match = line.match(/^(\d+)\.\s(.*)/);
-          if (match) {
-            return (
-              <div key={index} className="gdy-ai-md-item" data-list="ordered">
-                <span className="gdy-ai-md-number">{match[1]}.</span>
-                <span className="gdy-ai-md-item-text">
-                  {renderInline(match[2])}
-                </span>
-              </div>
-            );
-          }
+        const orderedItem = line.match(/^(\d+)\.\s(.*)/);
+        if (orderedItem) {
+          return (
+            <div key={index} className="gdy-ai-md-item" data-list="ordered">
+              <span className="gdy-ai-md-number">{orderedItem[1]}.</span>
+              <span className="gdy-ai-md-item-text">
+                {renderInline(orderedItem[2])}
+              </span>
+            </div>
+          );
         }
 
         if (line.trim() === "") {

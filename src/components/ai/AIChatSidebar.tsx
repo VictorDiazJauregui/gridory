@@ -22,12 +22,12 @@ import { useAIChat } from "./useAIChat";
 import type { AIChatMode, AIChatSidebarProps, AIEmptyState } from "./types";
 import "./styles.css";
 
-function resolveMode(props: AIChatSidebarProps): AIChatMode {
+const resolveMode = (props: AIChatSidebarProps): AIChatMode => {
   if (props.mode) return props.mode;
   return props.dataSchema ? "table" : "chatbot";
 }
 
-function resolveEmptyState(
+const resolveEmptyState = (
   mode: AIChatMode,
   explicit: AIEmptyState | undefined,
   textOverrides: AIChatSidebarProps["texts"],
@@ -35,7 +35,7 @@ function resolveEmptyState(
   title: string;
   description: string;
   icon?: AIEmptyState["icon"];
-} {
+} => {
   const fallback =
     mode === "chatbot" ? DEFAULT_EMPTY_STATE_CHATBOT : DEFAULT_EMPTY_STATE_DATA;
   const textBase =
@@ -48,18 +48,17 @@ function resolveEmptyState(
   };
 }
 
-/**
- * Chat sidebar. Every element carries a `gdy-ai-*` hook (styles in
- * ./styles.css); the `classNames` slots are appended after the hook of the
- * element they name (`root` → `gdy-ai-sidebar`, `header` → `gdy-ai-header`,
- * `body` → `gdy-ai-body`, `footer` → `gdy-ai-footer`, `inputWrapper` →
- * `gdy-ai-input-wrapper`, `textarea` → `gdy-ai-textarea`, `chip` →
- * `gdy-ai-chip`, `userBubble` / `assistantBubble` → `gdy-ai-bubble`).
- * States: `data-state="open|closed"` on the sidebar, `data-empty` on the body,
- * `data-role="user|assistant"` on messages and bubbles, `data-streaming` and
- * `data-thinking` on the transient rows.
- */
-export function AIChatSidebar(props: AIChatSidebarProps) {
+const resolveSubtitle = (
+  mode: AIChatMode,
+  dataSchema: AIChatSidebarProps["dataSchema"],
+): string => {
+  if (dataSchema) {
+    return `${dataSchema.rows?.length ?? 0} registros · ${dataSchema.entityName}`;
+  }
+  return mode === "chatbot" ? "Chat asistido" : "Asistente contextual";
+};
+
+export const AIChatSidebar = (props: AIChatSidebarProps) => {
   const {
     open,
     onClose,
@@ -129,13 +128,7 @@ export function AIChatSidebar(props: AIChatSidebarProps) {
       ? DEFAULT_SUGGESTED_MESSAGES_CHATBOT
       : DEFAULT_SUGGESTED_MESSAGES_DATA);
 
-  const resolvedSubtitle =
-    subtitle ??
-    (dataSchema
-      ? `${dataSchema.rows?.length ?? 0} registros · ${dataSchema.entityName}`
-      : mode === "chatbot"
-        ? "Chat asistido"
-        : "Asistente contextual");
+  const resolvedSubtitle = subtitle ?? resolveSubtitle(mode, dataSchema);
 
   const empty = resolveEmptyState(mode, emptyState, texts);
 

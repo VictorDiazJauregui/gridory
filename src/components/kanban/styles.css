@@ -1,9 +1,3 @@
-/*
- * KanbanBoard: module-specific rules (gdy-kanban-*). The toolbar, buttons,
- * inputs, filter panels, date pickers and scroll regions come from
- * src/styles/shared.css. Colors come from the tokens in src/styles/tokens.css.
- */
-
 .gdy-kanban {
   width: 100%;
   color: var(--gdy-foreground);

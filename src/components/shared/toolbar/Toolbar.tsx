@@ -25,15 +25,14 @@ const DEFAULT_ARCHIVED_OPTION_LABELS: Record<ArchivedViewMode, string> = {
 
 const ARCHIVED_OPTION_ORDER: ArchivedViewMode[] = ["active", "archived", "all"];
 
-/** Group-by select of the toolbar. Each module builds its own option list. */
-export interface ToolbarGroupSelector {
+interface ToolbarGroupSelector {
   options: SelectOption[];
   value: string;
   onChange: (value: string) => void;
   ariaLabel: string;
 }
 
-export interface ToolbarProps {
+interface ToolbarProps {
   showSearch: boolean;
   search: string;
   searchPlaceholder: string;
@@ -43,7 +42,6 @@ export interface ToolbarProps {
   showCreateButton: boolean;
   createLabel: string;
   onCreate?: () => void;
-  /** Omit it to hide the `group` slot. */
   groupSelector?: ToolbarGroupSelector;
   showArchivedView: boolean;
   archivedMode: ArchivedViewMode;
@@ -215,7 +213,6 @@ const splitCustomSides = (props: ToolbarProps) => {
   };
 };
 
-/** Toolbar shared by the table and the kanban: fixed slots plus custom controls. */
 export const Toolbar = (props: ToolbarProps) => {
   const slots: Record<string, ReactNode> = {};
   fillFixedSlots(props, slots);

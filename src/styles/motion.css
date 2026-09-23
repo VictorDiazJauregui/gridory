@@ -49,8 +49,6 @@
     --gdy-motion-x: -8px;
   }
 
-  /* Assistant panel: slides in from the right edge (transform is set by
-     src/components/ai/styles.css, open and closed). */
   .gdy-ai-sidebar {
     transition: transform 0.3s cubic-bezier(0, 0, 0.2, 1);
   }

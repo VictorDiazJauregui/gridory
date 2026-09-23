@@ -3,7 +3,7 @@ import { Slot } from "radix-ui";
 
 import { cn } from "../../lib/cn";
 
-export type ButtonVariant =
+type ButtonVariant =
   | "default"
   | "outline"
   | "secondary"
@@ -11,7 +11,7 @@ export type ButtonVariant =
   | "destructive"
   | "link";
 
-export type ButtonSize =
+type ButtonSize =
   | "default"
   | "xs"
   | "sm"
@@ -21,11 +21,6 @@ export type ButtonSize =
   | "icon-sm"
   | "icon-lg";
 
-/**
- * Button primitive: one class hook (`gdy-button`) plus `data-variant` and
- * `data-size`, styled in src/components/ui/styles.css. Any class passed through
- * `className` is appended after the hook.
- */
 const Button = React.forwardRef<
   HTMLButtonElement,
   React.ComponentProps<"button"> & {

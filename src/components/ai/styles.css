@@ -1,27 +1,10 @@
 /*
- * Assistant (src/components/ai): launcher, sidebar, conversation, action card
- * and markdown output. Every visual rule lives here under a gdy-ai-* class;
- * the launcher, the header buttons, the send button and the action buttons
- * compose the button primitive (src/components/ui/styles.css) and adjust it
- * at two classes.
- *
- * Specificity contract (same as the primitives):
- *  - base rule: one class (0-1-0), so a class the host passes through
- *    `className` or `classNames` and loads later wins;
- *  - variants (data-role on messages and bubbles): wrapped in :where(), still
- *    0-1-0, so the `userBubble` / `assistantBubble` slots override them;
- *  - states (data-state on the sidebar, data-empty on the body, :hover,
- *    :focus-visible, :disabled): plain, 0-2-0;
- *  - overrides of the button primitive: two classes (.gdy-button.gdy-ai-send).
- *
- * Component tokens, only consumed with a fallback: --gdy-ai-accent and
- * --gdy-ai-accent-fg (tints, chips, avatars, kicker, user bubble; the primary
- * pair by default), --gdy-ai-bg (sidebar and footer), --gdy-ai-user-bubble-bg
- * and -fg, --gdy-ai-assistant-bubble-bg and -fg.
+ * Same specificity contract as src/components/ui/styles.css: one class per
+ * base rule, variants (data-role) in :where(), states plain (0-2-0) and
+ * overrides of the button primitive at two classes (.gdy-button.gdy-ai-send).
  */
 
 /* -------------------------------------------------------------- Launcher */
-/* Composes the outline/sm button; the label hides below 640px. */
 .gdy-button.gdy-ai-button {
   height: 32px;
   gap: 6px;
@@ -146,8 +129,6 @@
   text-overflow: ellipsis;
 }
 
-/* The reset and close buttons are the ghost/icon-sm primitive as is; the send
-   button is the default/icon primitive. Their icons share one size. */
 .gdy-ai-reset-icon,
 .gdy-ai-close-icon,
 .gdy-ai-send-icon {
@@ -156,7 +137,6 @@
 }
 
 /* ------------------------------------------------------------------ Body */
-/* Entries stack with an 8px gap; the empty state fills the body on its own. */
 .gdy-ai-body {
   display: flex;
   flex: 1 1 0%;
@@ -289,9 +269,8 @@
 }
 
 /* -------------------------------------------------------------- Messages */
-/* A row per message: avatar plus bubble for the assistant, bubble alone
-   pushed to the end for the user. data-role is a variant, so the bubble
-   slots (userBubble, assistantBubble) override its colors. */
+/* data-role is a variant, so the bubble slots (userBubble, assistantBubble)
+   override its colors. */
 .gdy-ai-message {
   display: flex;
   justify-content: flex-start;
@@ -465,7 +444,6 @@
 }
 
 /* -------------------------------------------------------------- Markdown */
-/* Blocks stack with a 4px gap; headings add their own margin on top of it. */
 .gdy-ai-markdown {
   display: flex;
   flex-direction: column;

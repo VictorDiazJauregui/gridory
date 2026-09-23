@@ -244,7 +244,7 @@ Sin `VITE_AI_API_KEY` el mock se muestra igual, pero no hace llamadas reales al 
 |---|---|
 | `npm run dev` | Servidor de desarrollo con la demo. |
 | `npm run build` | Chequeo de tipos, bundle ESM en `dist/` y declaraciones en `dist/types/`. |
-| `npm run lint` | ESLint sobre todo el proyecto. |
+| `npm run lint` | ESLint sobre el código y los scripts, con las reglas de estilo del proyecto: funciones como `const`, sin `else` tras un `return`, sin ternarios anidados, anidación máxima de 2 y hasta 3 parámetros. |
 | `npm run typecheck` | `tsc -b` sin emitir archivos. |
 | `npm run audit:styles` | Tras `npm run build`: sin nombres heredados, colores literales fuera de `tokens.css` ni restos de Tailwind (`--tw-`, paquetes), tokens de componente con fallback, cada clase `gdy-*` con su regla (y viceversa) y solo ganchos `gdy-` en los módulos. |
 

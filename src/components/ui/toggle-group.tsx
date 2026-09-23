@@ -3,10 +3,10 @@ import { ToggleGroup as ToggleGroupPrimitive } from "radix-ui";
 
 import { cn } from "../../lib/cn";
 
-function ToggleGroup({
+const ToggleGroup = ({
   className,
   ...props
-}: React.ComponentProps<typeof ToggleGroupPrimitive.Root>) {
+}: React.ComponentProps<typeof ToggleGroupPrimitive.Root>) => {
   return (
     <ToggleGroupPrimitive.Root
       data-slot="toggle-group"
@@ -16,12 +16,11 @@ function ToggleGroup({
   );
 }
 
-/** Radix writes `data-state="on|off"`; the on state is styled from it. */
-function ToggleGroupItem({
+const ToggleGroupItem = ({
   className,
   children,
   ...props
-}: React.ComponentProps<typeof ToggleGroupPrimitive.Item>) {
+}: React.ComponentProps<typeof ToggleGroupPrimitive.Item>) => {
   return (
     <ToggleGroupPrimitive.Item
       data-slot="toggle-group-item"
@@ -33,13 +32,13 @@ function ToggleGroupItem({
   );
 }
 
-export interface SegmentedControlOption {
+interface SegmentedControlOption {
   value: string;
   label: string;
   icon?: React.ReactNode;
 }
 
-export interface SegmentedControlProps {
+interface SegmentedControlProps {
   options: SegmentedControlOption[];
   value: string;
   onChange: (value: string) => void;
@@ -48,23 +47,23 @@ export interface SegmentedControlProps {
   className?: string;
 }
 
-function resolveDisplay(
+const resolveDisplay = (
   option: SegmentedControlOption,
   display: "label" | "icon" | "both",
-) {
+) => {
   const showIcon = Boolean(option.icon) && display !== "label";
   const showLabel = display !== "icon" || !option.icon;
   return { showIcon, showLabel };
 }
 
-function SegmentedControl({
+const SegmentedControl = ({
   options,
   value,
   onChange,
   display = "both",
   ariaLabel,
   className,
-}: SegmentedControlProps) {
+}: SegmentedControlProps) => {
   return (
     <ToggleGroup
       type="single"
@@ -93,4 +92,4 @@ function SegmentedControl({
   );
 }
 
-export { ToggleGroup, ToggleGroupItem, SegmentedControl };
+export { SegmentedControl };

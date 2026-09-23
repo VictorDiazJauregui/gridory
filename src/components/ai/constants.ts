@@ -42,10 +42,10 @@ export const AI_PROVIDER_PRESETS = {
 
 export type AIProviderPreset = keyof typeof AI_PROVIDER_PRESETS;
 
-export function resolveProviderConfig(
+export const resolveProviderConfig = (
   preset: AIProviderPreset,
   overrides: Partial<AIProviderConfig> & Pick<AIProviderConfig, "apiKey">,
-): AIProviderConfig {
+): AIProviderConfig => {
   const base = AI_PROVIDER_PRESETS[preset];
   return {
     apiKey: overrides.apiKey,

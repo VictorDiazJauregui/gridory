@@ -20,13 +20,14 @@ import {
   ArrowUpDown,
   ChevronDown,
   Filter,
+  type LucideIcon,
 } from "lucide-react";
 import "./styles.css";
 import { cn } from "../../lib/cn";
 import {
   EMPTY_DATE_FILTER_STATE,
   hasDateFilterValue,
-} from "../shared/date-utils";
+} from "../shared/date-filter";
 import { useActiveFilters, useClickOutside } from "../shared/hooks";
 import { DateFilterMenu, FilterMenu, Toolbar } from "../shared/toolbar";
 import {
@@ -50,13 +51,34 @@ import {
   applyColumnFilters,
   applyColumnSorting,
   applyGlobalSearch,
-  applyRowGrouping,
-  buildGroupSelectOptions,
   computeColumnFilterOptions,
-  findGroupForIndex,
   normalizeInputRows,
   normalizeToArray,
-} from "./utils";
+} from "../shared/row-pipeline";
+import {
+  applyRowGrouping,
+  buildGroupSelectOptions,
+  findGroupForIndex,
+} from "./row-grouping";
+
+const renderCellValue = <TData,>(
+  column: ColumnDefinition<TData>,
+  row: TData,
+) => {
+  if (column.cell) return column.cell(row);
+  return String(normalizeToArray(column.accessor(row)).join(", ") || "—");
+};
+
+const SORT_ICON_BY_DIRECTION: Record<SortDirection | "none", LucideIcon> = {
+  asc: ArrowUp,
+  desc: ArrowDown,
+  none: ArrowUpDown,
+};
+
+const SortIcon = ({ direction }: { direction: SortDirection | null }) => {
+  const Icon = SORT_ICON_BY_DIRECTION[direction ?? "none"];
+  return <Icon size={13} className="gdy-table-head-sort-icon" />;
+};
 
 const resolveSortDirection = (
   sorting: ColumnSortingState | null,
@@ -85,7 +107,7 @@ const computePageCount = (config: PageCountConfig): number => {
   return Math.max(1, Math.ceil(config.localRowCount / config.pageSize));
 };
 
-export function DataTable<TData>({
+export const DataTable = <TData,>({
   columns,
   data,
   normalizeRow,
@@ -132,7 +154,7 @@ export function DataTable<TData>({
   headerSelectors,
   toolbarLayout,
   selectTheme,
-}: DataTableProps<TData>) {
+}: DataTableProps<TData>) => {
   const flags = { ...DEFAULT_FEATURES, ...features };
   const rows = useMemo(
     () => normalizeInputRows(data, normalizeRow),
@@ -209,12 +231,9 @@ export function DataTable<TData>({
 
   const searchedRows = useMemo(
     () =>
-      applyGlobalSearch(
-        rows,
-        columns,
-        manualPagination ? "" : search,
-        flags.search,
-      ),
+      flags.search && !manualPagination
+        ? applyGlobalSearch({ rows, columns, query: search })
+        : rows,
     [rows, columns, search, flags.search, manualPagination],
   );
 
@@ -354,13 +373,8 @@ export function DataTable<TData>({
                   theme={selectTheme}
                 />
               </div>
-            ) : column.cell ? (
-              column.cell(row.original)
             ) : (
-              String(
-                normalizeToArray(column.accessor(row.original)).join(", ") ||
-                  "—",
-              )
+              renderCellValue(column, row.original)
             )}
           </div>
         );
@@ -565,14 +579,9 @@ export function DataTable<TData>({
                             )}
                             {flags.sorting &&
                               column.sortable !== false &&
-                              !column.filterable &&
-                              (sortDirection === "asc" ? (
-                                <ArrowUp size={13} className="gdy-table-head-sort-icon" />
-                              ) : sortDirection === "desc" ? (
-                                <ArrowDown size={13} className="gdy-table-head-sort-icon" />
-                              ) : (
-                                <ArrowUpDown size={13} className="gdy-table-head-sort-icon" />
-                              ))}
+                              !column.filterable && (
+                                <SortIcon direction={sortDirection} />
+                              )}
                           </button>
 
                           {openFilterColumnId === column.id &&

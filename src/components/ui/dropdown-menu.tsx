@@ -3,31 +3,27 @@ import { DropdownMenu as DropdownMenuPrimitive } from "radix-ui";
 
 import { cn } from "../../lib/cn";
 
-function DropdownMenu({
+const DropdownMenu = ({
   ...props
-}: React.ComponentProps<typeof DropdownMenuPrimitive.Root>) {
+}: React.ComponentProps<typeof DropdownMenuPrimitive.Root>) => {
   return <DropdownMenuPrimitive.Root data-slot="dropdown-menu" {...props} />;
 }
 
-function DropdownMenuTrigger({
+const DropdownMenuTrigger = ({
   ...props
-}: React.ComponentProps<typeof DropdownMenuPrimitive.Trigger>) {
+}: React.ComponentProps<typeof DropdownMenuPrimitive.Trigger>) => {
   return (
     <DropdownMenuPrimitive.Trigger data-slot="dropdown-menu-trigger" {...props} />
   );
 }
 
-/**
- * Portaled content: `gdy-scope` brings the library reset into the portal and
- * `gdy-menu-content` carries the styles (src/components/ui/styles.css).
- */
-function DropdownMenuContent({
+const DropdownMenuContent = ({
   className,
   sideOffset = 6,
   collisionPadding = 8,
   align = "end",
   ...props
-}: React.ComponentProps<typeof DropdownMenuPrimitive.Content>) {
+}: React.ComponentProps<typeof DropdownMenuPrimitive.Content>) => {
   return (
     <DropdownMenuPrimitive.Portal>
       <DropdownMenuPrimitive.Content
@@ -42,14 +38,13 @@ function DropdownMenuContent({
   );
 }
 
-/** `data-variant="destructive"` tints the item; `data-disabled` comes from Radix. */
-function DropdownMenuItem({
+const DropdownMenuItem = ({
   className,
   variant = "default",
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.Item> & {
   variant?: "default" | "destructive";
-}) {
+}) => {
   return (
     <DropdownMenuPrimitive.Item
       data-slot="dropdown-menu-item"
@@ -60,10 +55,10 @@ function DropdownMenuItem({
   );
 }
 
-function DropdownMenuLabel({
+const DropdownMenuLabel = ({
   className,
   ...props
-}: React.ComponentProps<typeof DropdownMenuPrimitive.Label>) {
+}: React.ComponentProps<typeof DropdownMenuPrimitive.Label>) => {
   return (
     <DropdownMenuPrimitive.Label
       data-slot="dropdown-menu-label"
@@ -73,10 +68,10 @@ function DropdownMenuLabel({
   );
 }
 
-function DropdownMenuSeparator({
+const DropdownMenuSeparator = ({
   className,
   ...props
-}: React.ComponentProps<typeof DropdownMenuPrimitive.Separator>) {
+}: React.ComponentProps<typeof DropdownMenuPrimitive.Separator>) => {
   return (
     <DropdownMenuPrimitive.Separator
       data-slot="dropdown-menu-separator"

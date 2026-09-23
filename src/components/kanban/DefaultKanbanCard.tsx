@@ -2,7 +2,7 @@ import type {
   ColumnDefinition,
   RowActions,
 } from "./types";
-import { normalizeToArray } from "./utils";
+import { normalizeToArray } from "../shared/row-pipeline";
 import { KanbanCardMenu } from "./KanbanCardMenu";
 import type { KanbanGroupOption } from "./types";
 

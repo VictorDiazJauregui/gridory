@@ -4,7 +4,7 @@ import type {
   DateInputFormat,
   SortDirection,
 } from "../data-model";
-import { EMPTY_DATE_FILTER_STATE } from "../date-utils";
+import { EMPTY_DATE_FILTER_STATE } from "../date-filter";
 import { DatePickerWithInput } from "./DatePickerWithInput";
 import { DateRangePicker } from "./DateRangePicker";
 

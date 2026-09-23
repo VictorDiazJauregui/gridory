@@ -1,6 +1,3 @@
-/* Shared row/card menu module: resolution logic plus its render helper. It is a
-   utility module, not a Fast-Refresh component boundary, so the "only export
-   components" rule does not apply here. */
 /* eslint-disable react-refresh/only-export-components */
 import type { ReactNode } from "react";
 import { Archive, ArchiveRestore, Clock3, Pencil, Trash2 } from "lucide-react";
@@ -41,8 +38,7 @@ export type MenuItem<TData> =
   | MenuSeparator
   | MenuLabel;
 
-/** Subset of `RowActions` the menu resolver relies on (both components). */
-export interface MenuActionsInput<TData> {
+interface MenuActionsInput<TData> {
   edit?: boolean;
   archive?: boolean;
   remove?: boolean;
@@ -84,7 +80,7 @@ interface ResolvedLabelNode {
   className?: string;
 }
 
-export type ResolvedMenuNode =
+type ResolvedMenuNode =
   | ResolvedActionNode
   | ResolvedSeparatorNode
   | ResolvedLabelNode;
@@ -93,10 +89,10 @@ type BuiltInRegistry = Record<BuiltInActionId, ResolvedActionNode | null>;
 
 const RESERVED_IDS = BUILT_IN_ROW_ACTION_IDS as readonly string[];
 
-function buildEditNode<TData>(
+const buildEditNode = <TData,>(
   row: TData,
   actions: MenuActionsInput<TData>,
-): ResolvedActionNode | null {
+): ResolvedActionNode | null => {
   if (actions.edit === false || !actions.onEdit) return null;
   return {
     type: "action",
@@ -107,10 +103,10 @@ function buildEditNode<TData>(
   };
 }
 
-function buildArchiveNode<TData>(
+const buildArchiveNode = <TData,>(
   row: TData,
   actions: MenuActionsInput<TData>,
-): ResolvedActionNode | null {
+): ResolvedActionNode | null => {
   if (actions.archive === false) return null;
   if (!actions.onArchiveToggle && !actions.onArchive) return null;
   const isArchived = actions.getIsArchived?.(row) ?? false;
@@ -128,10 +124,10 @@ function buildArchiveNode<TData>(
   };
 }
 
-function buildRemoveNode<TData>(
+const buildRemoveNode = <TData,>(
   row: TData,
   actions: MenuActionsInput<TData>,
-): ResolvedActionNode | null {
+): ResolvedActionNode | null => {
   if (actions.remove === false || !actions.onRemove) return null;
   return {
     type: "action",
@@ -143,10 +139,10 @@ function buildRemoveNode<TData>(
   };
 }
 
-function buildHistoryNode<TData>(
+const buildHistoryNode = <TData,>(
   row: TData,
   actions: MenuActionsInput<TData>,
-): ResolvedActionNode | null {
+): ResolvedActionNode | null => {
   if (actions.history === false || !actions.onHistory) return null;
   return {
     type: "action",
@@ -157,10 +153,10 @@ function buildHistoryNode<TData>(
   };
 }
 
-function buildBuiltInRegistry<TData>(
+const buildBuiltInRegistry = <TData,>(
   row: TData,
   actions: MenuActionsInput<TData>,
-): BuiltInRegistry {
+): BuiltInRegistry => {
   return {
     edit: buildEditNode(row, actions),
     archive: buildArchiveNode(row, actions),
@@ -169,10 +165,10 @@ function buildBuiltInRegistry<TData>(
   };
 }
 
-function toActionNode<TData>(
+const toActionNode = <TData,>(
   row: TData,
   action: RowAction<TData>,
-): ResolvedActionNode {
+): ResolvedActionNode => {
   return {
     type: "action",
     key: action.id,
@@ -184,22 +180,22 @@ function toActionNode<TData>(
   };
 }
 
-function customToNodes<TData>(
+const customToNodes = <TData,>(
   row: TData,
   actions: RowAction<TData>[],
   placement: "top" | "bottom",
-): ResolvedActionNode[] {
+): ResolvedActionNode[] => {
   return actions
     .filter((action) => (action.placement ?? "bottom") === placement)
     .filter((action) => !action.hidden?.(row))
     .map((action) => toActionNode(row, action));
 }
 
-function resolveByPlacement<TData>(
+const resolveByPlacement = <TData,>(
   row: TData,
   builtIns: BuiltInRegistry,
   custom: RowAction<TData>[],
-): ResolvedMenuNode[] {
+): ResolvedMenuNode[] => {
   const middle = BUILT_IN_ROW_ACTION_IDS.map((id) => builtIns[id]).filter(
     (node): node is ResolvedActionNode => node !== null,
   );
@@ -210,15 +206,15 @@ function resolveByPlacement<TData>(
   ];
 }
 
-function isCustomAction<TData>(
+const isCustomAction = <TData,>(
   item: MenuItem<TData>,
-): item is RowAction<TData> & { kind?: "action" } {
+): item is RowAction<TData> & { kind?: "action" } => {
   return item.kind === undefined || item.kind === "action";
 }
 
-export function validateMenuActions<TData>(
+const validateMenuActions = <TData,>(
   items: MenuItem<TData>[],
-): void {
+): void => {
   const seenIds = new Set<string>();
   for (const item of items) {
     if (seenIds.has(item.id)) throw new DuplicateRowActionError(item.id);
@@ -228,11 +224,11 @@ export function validateMenuActions<TData>(
   }
 }
 
-function itemToNode<TData>(
+const itemToNode = <TData,>(
   row: TData,
   builtIns: BuiltInRegistry,
   item: MenuItem<TData>,
-): ResolvedMenuNode | null {
+): ResolvedMenuNode | null => {
   if (item.kind === "separator") return { type: "separator", key: item.id };
   if (item.kind === "label")
     return {
@@ -246,10 +242,10 @@ function itemToNode<TData>(
   return toActionNode(row, item);
 }
 
-export function resolveMenuNodes<TData>(
+export const resolveMenuNodes = <TData,>(
   row: TData,
   actions: MenuActionsInput<TData>,
-): ResolvedMenuNode[] {
+): ResolvedMenuNode[] => {
   const builtIns = buildBuiltInRegistry(row, actions);
   if (actions.menuActions?.length) {
     validateMenuActions(actions.menuActions);
@@ -267,7 +263,7 @@ export function resolveMenuNodes<TData>(
 const stopEvent = (event: { stopPropagation: () => void }) =>
   event.stopPropagation();
 
-export function renderMenuNodes(nodes: ResolvedMenuNode[]): ReactNode {
+export const renderMenuNodes = (nodes: ResolvedMenuNode[]): ReactNode => {
   return nodes.map((node) => {
     if (node.type === "separator")
       return <DropdownMenuSeparator key={node.key} />;

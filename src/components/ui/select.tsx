@@ -8,13 +8,13 @@ import {
   type SelectTheme,
 } from "../shared/select-theme";
 
-function Select({ ...props }: React.ComponentProps<typeof SelectPrimitive.Root>) {
+const Select = ({ ...props }: React.ComponentProps<typeof SelectPrimitive.Root>) => {
   return <SelectPrimitive.Root data-slot="select" {...props} />;
 }
 
-function SelectValue({
+const SelectValue = ({
   ...props
-}: React.ComponentProps<typeof SelectPrimitive.Value>) {
+}: React.ComponentProps<typeof SelectPrimitive.Value>) => {
   return (
     <SelectPrimitive.Value
       data-slot="select-value"
@@ -24,16 +24,11 @@ function SelectValue({
   );
 }
 
-/**
- * Trigger: `gdy-select-trigger` plus any class passed through `className`
- * (SimpleSelect appends `theme.triggerClassName` and `triggerClassName`).
- * Colors and radius read the `--gdy-select-*` tokens written by `selectTheme`.
- */
-function SelectTrigger({
+const SelectTrigger = ({
   className,
   children,
   ...props
-}: React.ComponentProps<typeof SelectPrimitive.Trigger>) {
+}: React.ComponentProps<typeof SelectPrimitive.Trigger>) => {
   return (
     <SelectPrimitive.Trigger
       data-slot="select-trigger"
@@ -48,16 +43,12 @@ function SelectTrigger({
   );
 }
 
-/**
- * Portaled content: `gdy-scope` brings the library reset into the portal and
- * `gdy-select-content` carries the styles (src/components/ui/styles.css).
- */
-function SelectContent({
+const SelectContent = ({
   className,
   children,
   position = "popper",
   ...props
-}: React.ComponentProps<typeof SelectPrimitive.Content>) {
+}: React.ComponentProps<typeof SelectPrimitive.Content>) => {
   return (
     <SelectPrimitive.Portal>
       <SelectPrimitive.Content
@@ -76,11 +67,11 @@ function SelectContent({
   );
 }
 
-function SelectItem({
+const SelectItem = ({
   className,
   children,
   ...props
-}: React.ComponentProps<typeof SelectPrimitive.Item>) {
+}: React.ComponentProps<typeof SelectPrimitive.Item>) => {
   return (
     <SelectPrimitive.Item
       data-slot="select-item"
@@ -97,10 +88,10 @@ function SelectItem({
   );
 }
 
-function SelectScrollUpButton({
+const SelectScrollUpButton = ({
   className,
   ...props
-}: React.ComponentProps<typeof SelectPrimitive.ScrollUpButton>) {
+}: React.ComponentProps<typeof SelectPrimitive.ScrollUpButton>) => {
   return (
     <SelectPrimitive.ScrollUpButton
       data-slot="select-scroll-up-button"
@@ -112,10 +103,10 @@ function SelectScrollUpButton({
   );
 }
 
-function SelectScrollDownButton({
+const SelectScrollDownButton = ({
   className,
   ...props
-}: React.ComponentProps<typeof SelectPrimitive.ScrollDownButton>) {
+}: React.ComponentProps<typeof SelectPrimitive.ScrollDownButton>) => {
   return (
     <SelectPrimitive.ScrollDownButton
       data-slot="select-scroll-down-button"
@@ -144,7 +135,7 @@ export interface SimpleSelectProps {
   theme?: SelectTheme;
 }
 
-function SimpleSelect({
+const SimpleSelect = ({
   options,
   value,
   onValueChange,
@@ -154,7 +145,7 @@ function SimpleSelect({
   triggerStyle,
   disabled,
   theme,
-}: SimpleSelectProps) {
+}: SimpleSelectProps) => {
   const hasValue = options.some((option) => option.value === value);
   const themeVars = selectThemeToVars(theme);
   return (
@@ -185,13 +176,4 @@ function SimpleSelect({
   );
 }
 
-export {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectScrollDownButton,
-  SelectScrollUpButton,
-  SelectTrigger,
-  SelectValue,
-  SimpleSelect,
-};
+export { SimpleSelect };

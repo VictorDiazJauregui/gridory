@@ -1,19 +1,12 @@
 export type ToolbarSide = "left" | "right";
 
-/**
- * Full, explicit toolbar composition. When provided it is authoritative:
- * only the listed slot ids render, in the given side and order (exclusive).
- * Slots hidden by their feature flags never render even if listed. Omit it to
- * keep the default layout (search left; custom controls then fixed controls
- * on the right).
- */
 export interface ToolbarLayout {
   left?: string[];
   right?: string[];
 }
 
-export const DEFAULT_LEFT_SLOT_IDS = ["search", "clearFilters"] as const;
-export const DEFAULT_RIGHT_SLOT_IDS = [
+const DEFAULT_LEFT_SLOT_IDS = ["search", "clearFilters"] as const;
+const DEFAULT_RIGHT_SLOT_IDS = [
   "archived",
   "group",
   "ai",
@@ -21,19 +14,19 @@ export const DEFAULT_RIGHT_SLOT_IDS = [
   "create",
 ] as const;
 
-export interface ToolbarClusterInput {
+interface ToolbarClusterInput {
   layout?: ToolbarLayout;
   isVisible: (id: string) => boolean;
   customLeftIds: string[];
   customRightIds: string[];
 }
 
-export interface ToolbarClusters {
+interface ToolbarClusters {
   left: string[];
   right: string[];
 }
 
-export function resolveToolbarClusters(input: ToolbarClusterInput): ToolbarClusters {
+export const resolveToolbarClusters = (input: ToolbarClusterInput): ToolbarClusters => {
   const { layout, isVisible } = input;
   if (layout) {
     return {

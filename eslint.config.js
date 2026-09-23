@@ -5,6 +5,14 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
+const codeStyleRules = {
+  'func-style': ['error', 'expression'],
+  'no-else-return': ['error', { allowElseIf: false }],
+  'no-nested-ternary': 'error',
+  'max-depth': ['error', 2],
+  'max-params': ['error', 3],
+}
+
 export default defineConfig([
   globalIgnores(['dist']),
   {
@@ -19,5 +27,15 @@ export default defineConfig([
       ecmaVersion: 2020,
       globals: globals.browser,
     },
+    rules: codeStyleRules,
+  },
+  {
+    files: ['scripts/**/*.mjs'],
+    extends: [js.configs.recommended],
+    languageOptions: {
+      ecmaVersion: 2022,
+      globals: globals.node,
+    },
+    rules: codeStyleRules,
   },
 ])
