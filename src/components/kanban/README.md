@@ -453,7 +453,8 @@ pensadas como puntos de extensión:
 - `gdy-btn-ai` — botón IA.
 - `gdy-view-switch` — contenedor del switch.
 - `gdy-view-switch-btn` — cada segmento del switch.
-- `gdy-view-switch-btn-active` — segmento activo.
+- `gdy-view-switch-btn[aria-pressed="true"]` — segmento activo (estado por atributo).
+- `gdy-view-switch-icon` / `gdy-btn-ai-icon` — iconos de cada control.
 
 El consumidor puede sobreescribir los valores por defecto declarando las
 mismas clases en su propio CSS, cargado después del CSS del paquete:
@@ -610,18 +611,28 @@ interface KanbanCardRenderContext<TData> {
 
 Archivos: `src/components/kanban/styles.css` (propios, `gdy-kanban-*`) y
 `src/styles/shared.css` (compartidos con la tabla: `gdy-card`, `gdy-toolbar`, `gdy-btn`,
-`gdy-input`, `gdy-panel`, `gdy-option-item`, `gdy-date-input`, `gdy-view-switch`). Los estados
-temporales usan `is-*` (`is-filtered`, `is-dragging`, `is-selected`, `is-checked`, `is-active`).
-Cada regla es de una sola clase, así que una regla con la misma clase en tu CSS, cargado después
-de `gridory/styles.css`, gana.
+`gdy-input`, `gdy-panel`, `gdy-option-item`, `gdy-date-input`, `gdy-view-switch`). Los estados van
+por atributo, no por clase: `data-filtered` en el trigger de filtro, `data-dragging` en la tarjeta
+arrastrada, `data-drop-target` en la columna destino, y en el panel compartido `data-selected` /
+`data-checked` (checklist) y `aria-pressed="true"` (orden y operador). Cada regla es de una sola
+clase (o flag de raíz más clase, como `.gdy-thin-scroll .gdy-scroll`), así que una regla con el
+mismo selector en tu CSS, cargado después de `gridory/styles.css`, gana.
 
 Clases principales:
 
 - `.gdy-kanban`, `.gdy-card`
-- `.gdy-kanban-filter-row`, `.gdy-kanban-filter-menu-holder`
-- `.gdy-kanban-board`, `.gdy-kanban-column`, `.gdy-kanban-column-head`, `.gdy-kanban-column-body`
-- `.gdy-kanban-card`, `.gdy-kanban-card-title`, `.gdy-kanban-card-value`
-- `.gdy-kanban-column-drop-target`
+- `.gdy-kanban-filter-row`, `.gdy-kanban-filter-item`, `.gdy-kanban-filter-trigger`
+  (`[data-filtered]`), `.gdy-kanban-filter-trigger-label`, `.gdy-kanban-filter-icon`,
+  `.gdy-kanban-filter-arrow`, `.gdy-kanban-filter-menu-holder`
+- `.gdy-kanban-board-wrap`, `.gdy-kanban-board`, `.gdy-kanban-column` (`[data-drop-target]`),
+  `.gdy-kanban-column-head`, `.gdy-kanban-column-title`, `.gdy-kanban-column-count`,
+  `.gdy-kanban-column-body`, `.gdy-kanban-empty-col`
+- `.gdy-kanban-card` (`[data-dragging]`), `.gdy-kanban-card-head`, `.gdy-kanban-card-main`,
+  `.gdy-kanban-card-title`, `.gdy-kanban-card-subtitle`, `.gdy-kanban-card-meta`, `.gdy-kanban-tag`,
+  `.gdy-kanban-card-value`, `.gdy-kanban-card-value-label`, `.gdy-kanban-card-actions`,
+  `.gdy-kanban-card-menu-icon`
+- Los ganchos sin estilos por defecto (iconos, `gdy-kanban-card-value-label`) están listados como
+  `hookOnly` en `scripts/audit-allowlist.json`.
 
 Tamaños de alto sugeridos:
 
@@ -1168,7 +1179,7 @@ Ambas son **opcionales y retrocompatibles**.
 
 Sin `toolbarLayout`:
 
-- **Izquierda**: el buscador.
+- **Izquierda**: el buscador y, cuando hay filtros activos, el botón "Limpiar filtros".
 - **Derecha**: los controles personalizados (`toggleGroups`/`headerSelectors`) como
   primeros elementos, seguidos de los controles fijos ("Mostrar", "Agrupar por",
   botón IA, switch de vista, botón crear).
