@@ -22,7 +22,7 @@ pnpm add gridory
 
 - React 18.2+ o 19.0+
 - React DOM 18.2+ o 19.0+
-- Tailwind CSS v3 configurado en el proyecto consumidor (el componente usa tokens como `primary`, `muted`, `background`, `border`, etc.).
+- Los estilos van en `gridory/styles.css` (impórtalo una vez en la app). No hace falta Tailwind.
 
 La dependencia `openai` viene empaquetada como dependencia directa del paquete y se usa para hablar con cualquier proveedor compatible con el formato `chat.completions` de OpenAI.
 
@@ -49,9 +49,37 @@ import {
 } from "gridory/ai";
 ```
 
-### Tokens Tailwind requeridos
+### Estilos
 
-El componente aplica clases como `bg-primary`, `text-primary-foreground`, `bg-muted`, `text-muted-foreground`, `bg-background`, `border`, `ring-primary/30`. Necesitas esos tokens en tu `tailwind.config.js` (típicamente vía `shadcn/ui` o equivalente).
+El asistente no depende de Tailwind: cada elemento lleva una clase `gdy-ai-*` con sus reglas en `gridory/styles.css`, y los colores salen de los tokens `--gdy-*` (claro por defecto; oscuro con `.dark` o `data-theme="dark"` en `<html>`). Tokens de componente, opcionales y siempre con fallback:
+
+| Token | Por defecto | Uso |
+|---|---|---|
+| `--gdy-ai-accent` / `--gdy-ai-accent-fg` | `--gdy-primary` / `--gdy-primary-foreground` | tintes del icono y del avatar, chips, kicker de la tarjeta, burbuja del usuario, lanzador |
+| `--gdy-ai-bg` | `--gdy-background` | fondo del panel y del pie |
+| `--gdy-ai-user-bubble-bg` / `--gdy-ai-user-bubble-fg` | el acento y su texto | burbuja del usuario |
+| `--gdy-ai-assistant-bubble-bg` / `--gdy-ai-assistant-bubble-fg` | `--gdy-muted` al 60 % / `--gdy-foreground` | burbujas del asistente y fila "Pensando" |
+
+Ganchos (una clase por elemento; las reglas de la librería pesan una sola clase):
+
+| Zona | Clases y atributos |
+|---|---|
+| Lanzador | `gdy-ai-button` sobre el primitivo `gdy-button` (outline, sm), `gdy-ai-button-icon`, `gdy-ai-button-label` (oculto por debajo de 640px) |
+| Panel | `gdy-ai-overlay` (solo por debajo de 768px), `gdy-ai-sidebar` con `data-state="open\|closed"` |
+| Cabecera | `gdy-ai-header`, `gdy-ai-header-badge`, `gdy-ai-header-icon`, `gdy-ai-heading`, `gdy-ai-title`, `gdy-ai-subtitle`, `gdy-ai-reset`, `gdy-ai-close` |
+| Cuerpo | `gdy-ai-body` con `data-empty`; estado vacío `gdy-ai-empty`, `gdy-ai-empty-badge`, `gdy-ai-empty-icon`, `gdy-ai-empty-title`, `gdy-ai-empty-description`, `gdy-ai-chips`, `gdy-ai-chip` |
+| Mensajes | `gdy-ai-message` y `gdy-ai-bubble` con `data-role="user\|assistant"` (`data-streaming` y `data-thinking` en las filas transitorias), `gdy-ai-avatar`, `gdy-ai-avatar-icon`, `gdy-ai-text`, `gdy-ai-thinking`, `gdy-ai-thinking-icon`, `gdy-ai-thinking-label` |
+| Tarjeta de acción | `gdy-ai-action-card` con `data-action-type`, `gdy-ai-action-kicker`, `gdy-ai-action-title`, `gdy-ai-action-fields`, `gdy-ai-action-field`, `gdy-ai-action-field-label`, `gdy-ai-action-required`, `gdy-ai-action-field-value`, `gdy-ai-action-actions`, `gdy-ai-action-cancel`, `gdy-ai-action-confirm` |
+| Pie | `gdy-ai-footer`, `gdy-ai-input-wrapper`, `gdy-ai-textarea`, `gdy-ai-send`, `gdy-ai-send-icon` |
+| Markdown | `gdy-ai-markdown`, `gdy-ai-md-heading`, `gdy-ai-md-item` con `data-list="unordered\|ordered"`, `gdy-ai-md-bullet`, `gdy-ai-md-number`, `gdy-ai-md-paragraph`, `gdy-ai-md-gap`, `gdy-ai-md-strong` |
+
+Una regla tuya con el mismo selector, cargada después de `gridory/styles.css`, gana. `data-role` es una variante y va dentro de `:where()`, así que una clase de una sola palabra también gana a los colores de las burbujas:
+
+```css
+.gdy-ai-sidebar { --gdy-ai-accent: #0f766e; }
+.gdy-ai-chip { border-radius: 6px; }
+.dark .gdy-ai-bubble:where([data-role="assistant"]) { background: #1f2937; }
+```
 
 ---
 
@@ -435,7 +463,7 @@ Todos son opcionales; lo no definido cae al default en español.
 />
 ```
 
-Se mergean con las clases base vía `cn()` (clsx + tailwind-merge).
+Cada slot se añade detrás del gancho del elemento que nombra (`root` → `gdy-ai-sidebar`, `header` → `gdy-ai-header`, `body` → `gdy-ai-body`, `footer` → `gdy-ai-footer`, `userBubble` / `assistantBubble` → `gdy-ai-bubble`, `chip` → `gdy-ai-chip`, `inputWrapper` → `gdy-ai-input-wrapper`, `textarea` → `gdy-ai-textarea`). El ejemplo usa utilidades de Tailwind porque esa app las tiene; sirve cualquier clase tuya, y como las reglas de la librería pesan una sola clase, la tuya gana si su hoja carga después de `gridory/styles.css`.
 
 ### Ancho y `className`
 
