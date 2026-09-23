@@ -1,6 +1,6 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { SimpleSelect } from "../ui/select";
-import type { ReusableSelectTheme } from "../shared/select-theme";
+import type { SelectTheme } from "../shared/select-theme";
 
 interface TablePaginationProps {
   enabled: boolean;
@@ -15,7 +15,7 @@ interface TablePaginationProps {
   pageCount: number;
   onPrevPage: () => void;
   onNextPage: () => void;
-  selectTheme?: ReusableSelectTheme;
+  selectTheme?: SelectTheme;
 }
 
 export const TablePagination = ({

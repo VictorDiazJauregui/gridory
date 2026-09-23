@@ -1,34 +1,52 @@
 import "./styles/index.css";
-export { ReusableDataTable } from "./components/table";
+
+export { DataTable } from "./components/table";
 export type {
-  DateFilterState,
+  ColumnSortingState,
+  DataTableFeatures,
+  DataTableProps,
+  GroupHeader,
   ManualPaginationState,
-  ReusableAiButtonConfig,
-  ReusableBuiltInActionId,
-  ReusableBuiltInMenuRef,
-  ReusableCellHighlight,
-  ReusableColumn,
-  ReusableDataTableProps,
-  ReusableFilterOption,
-  ReusableGroupHeader,
-  ReusableHeaderSelectConfig,
-  ReusableMenuItem,
-  ReusableMenuLabel,
-  ReusableMenuSeparator,
-  ReusableRowAction,
-  ReusableRowActionPlacement,
-  ReusableRowActions,
-  ReusableRowActionVariant,
-  ReusableRowGroupingResult,
-  ReusableSelectOption,
-  ReusableSelectTheme,
-  ReusableTableFeatures,
-  ReusableTableInput,
-  ReusableToggleDisplay,
-  ReusableToggleGroupConfig,
-  ReusableToggleOption,
-  ReusableToolbarLayout,
-  ReusableToolbarSide,
-  ReusableViewMode,
-  ReusableViewSwitchConfig,
-} from "./components/table";
+  RowGroupingResult,
+} from "./components/table/types";
+
+export type {
+  AiButtonConfig,
+  ArchivedViewConfig,
+  ArchivedViewMode,
+  CellHighlight,
+  ColumnDefinition,
+  DataInput,
+  DateFilterOp,
+  DateFilterState,
+  DateInputFormat,
+  FilterOption,
+  Primitive,
+  RowActions,
+  SortDirection,
+  ViewMode,
+  ViewSwitchConfig,
+} from "./components/shared/data-model";
+
+export {
+  BUILT_IN_ROW_ACTION_IDS,
+  DuplicateRowActionError,
+} from "./components/shared";
+export type {
+  BuiltInActionId,
+  BuiltInMenuRef,
+  HeaderSelectConfig,
+  MenuItem,
+  MenuLabel,
+  MenuSeparator,
+  RowAction,
+  RowActionPlacement,
+  RowActionVariant,
+  SelectOption,
+  SelectTheme,
+  ToggleDisplay,
+  ToggleGroupConfig,
+  ToggleOption,
+  ToolbarLayout,
+  ToolbarSide,
+} from "./components/shared";

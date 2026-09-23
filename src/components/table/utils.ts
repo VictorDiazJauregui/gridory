@@ -3,12 +3,12 @@ import type {
   ArchivedViewMode,
   DateFilterState,
   Primitive,
-  ReusableFilterOption,
-  ReusableTableInput,
-  ReusableColumn,
+  FilterOption,
+  DataInput,
+  ColumnDefinition,
   ColumnSortingState,
-  ReusableGroupHeader,
-  ReusableRowGroupingResult,
+  GroupHeader,
+  RowGroupingResult,
 } from "./types";
 import type { DateInputFormat } from "./types";
 
@@ -17,7 +17,7 @@ export const cn = (...values: Array<string | false | null | undefined>) => {
 };
 
 export const normalizeInputRows = <TData>(
-  input: ReusableTableInput<TData>,
+  input: DataInput<TData>,
   normalizeRow?: (row: unknown, index: number) => TData,
 ): TData[] => {
   if (Array.isArray(input)) return input;
@@ -92,10 +92,10 @@ export const formatDateToString = (date: Date | undefined): string => {
 };
 
 export const computeColumnFilterOptions = <TData>(
-  columns: ReusableColumn<TData>[],
+  columns: ColumnDefinition<TData>[],
   rows: TData[],
-): Record<string, ReusableFilterOption[]> => {
-  const map: Record<string, ReusableFilterOption[]> = {};
+): Record<string, FilterOption[]> => {
+  const map: Record<string, FilterOption[]> = {};
 
   columns.forEach((column) => {
     if (!column.filterable || column.type === "date") return;
@@ -121,7 +121,7 @@ export const computeColumnFilterOptions = <TData>(
 
 export const applyGlobalSearch = <TData>(
   rows: TData[],
-  columns: ReusableColumn<TData>[],
+  columns: ColumnDefinition<TData>[],
   query: string,
   enabled: boolean,
 ) => {
@@ -166,7 +166,7 @@ export const applyColumnFilters = <TData>({
   enabled,
 }: {
   rows: TData[];
-  columns: ReusableColumn<TData>[];
+  columns: ColumnDefinition<TData>[];
   filters: Record<string, string[]>;
   dateFilters: Record<string, DateFilterState>;
   enabled: boolean;
@@ -205,7 +205,7 @@ export const applyColumnSorting = <TData>({
   enabled,
 }: {
   rows: TData[];
-  columns: ReusableColumn<TData>[];
+  columns: ColumnDefinition<TData>[];
   sorting: ColumnSortingState | null;
   enabled: boolean;
 }) => {
@@ -257,7 +257,7 @@ interface GroupOptionPosition {
 const UNLISTED_GROUP_RANK = Number.MAX_SAFE_INTEGER;
 
 const indexGroupOptions = (
-  options: ReusableFilterOption[] = [],
+  options: FilterOption[] = [],
 ): Map<string, GroupOptionPosition> => {
   const positions = new Map<string, GroupOptionPosition>();
   options.forEach(({ value, label }, rank) => {
@@ -293,10 +293,10 @@ export const applyRowGrouping = <TData>({
   emptyLabel,
 }: {
   rows: TData[];
-  columns: ReusableColumn<TData>[];
+  columns: ColumnDefinition<TData>[];
   activeGroupBy: string | null;
   emptyLabel: string;
-}): ReusableRowGroupingResult<TData> => {
+}): RowGroupingResult<TData> => {
   if (!activeGroupBy) return { flatRows: rows, headers: new Map() };
 
   const groupColumn = columns.find((column) => column.id === activeGroupBy);
@@ -316,7 +316,7 @@ export const applyRowGrouping = <TData>({
   );
 
   const flatRows: TData[] = [];
-  const headers = new Map<number, ReusableGroupHeader>();
+  const headers = new Map<number, GroupHeader>();
 
   sortedKeys.forEach((key) => {
     const bucket = groups.get(key) ?? [];
@@ -332,7 +332,7 @@ export const applyRowGrouping = <TData>({
 };
 
 export const findGroupForIndex = (
-  headers: Map<number, ReusableGroupHeader>,
+  headers: Map<number, GroupHeader>,
   index: number,
 ): string | null => {
   let current: string | null = null;

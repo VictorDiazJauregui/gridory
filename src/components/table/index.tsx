@@ -38,8 +38,8 @@ import type {
   ArchivedViewMode,
   ColumnSortingState,
   DateFilterState,
-  ReusableColumn,
-  ReusableDataTableProps,
+  ColumnDefinition,
+  DataTableProps,
   SortDirection,
 } from "./types";
 import {
@@ -83,7 +83,7 @@ const computePageCount = (config: PageCountConfig): number => {
   return Math.max(1, Math.ceil(config.localRowCount / config.pageSize));
 };
 
-export function ReusableDataTable<TData>({
+export function DataTable<TData>({
   columns,
   data,
   normalizeRow,
@@ -130,7 +130,7 @@ export function ReusableDataTable<TData>({
   headerSelectors,
   toolbarLayout,
   selectTheme,
-}: ReusableDataTableProps<TData>) {
+}: DataTableProps<TData>) {
   const flags = { ...DEFAULT_FEATURES, ...features };
   const rows = useMemo(
     () => normalizeInputRows(data, normalizeRow),
@@ -178,7 +178,7 @@ export function ReusableDataTable<TData>({
     () =>
       (groupableColumnIds ?? [])
         .map((id) => columns.find((column) => column.id === id))
-        .filter((column): column is ReusableColumn<TData> => Boolean(column))
+        .filter((column): column is ColumnDefinition<TData> => Boolean(column))
         .map((column) => ({ id: column.id, label: column.header })),
     [groupableColumnIds, columns],
   );
@@ -753,41 +753,41 @@ export type {
   ArchivedViewMode,
   DateFilterState,
   ManualPaginationState,
-  ReusableAiButtonConfig,
-  ReusableCellHighlight,
-  ReusableColumn,
-  ReusableDataTableProps,
-  ReusableFilterOption,
-  ReusableGroupHeader,
-  ReusableRowActions,
-  ReusableRowGroupingResult,
-  ReusableTableFeatures,
-  ReusableTableInput,
-  ReusableViewMode,
-  ReusableViewSwitchConfig,
+  AiButtonConfig,
+  CellHighlight,
+  ColumnDefinition,
+  DataTableProps,
+  FilterOption,
+  GroupHeader,
+  RowActions,
+  RowGroupingResult,
+  DataTableFeatures,
+  DataInput,
+  ViewMode,
+  ViewSwitchConfig,
 } from "./types";
 
 export type {
-  ReusableRowAction,
-  ReusableRowActionPlacement,
-  ReusableRowActionVariant,
+  RowAction,
+  RowActionPlacement,
+  RowActionVariant,
 } from "../shared/row-action";
 export type {
-  ReusableBuiltInActionId,
-  ReusableBuiltInMenuRef,
-  ReusableMenuItem,
-  ReusableMenuLabel,
-  ReusableMenuSeparator,
+  BuiltInActionId,
+  BuiltInMenuRef,
+  MenuItem,
+  MenuLabel,
+  MenuSeparator,
 } from "../shared/menu-actions";
-export type { ReusableSelectTheme } from "../shared/select-theme";
+export type { SelectTheme } from "../shared/select-theme";
 export type {
-  ReusableToolbarLayout,
-  ReusableToolbarSide,
+  ToolbarLayout,
+  ToolbarSide,
 } from "../shared/toolbar-layout";
 export type {
-  ReusableHeaderSelectConfig,
-  ReusableSelectOption,
-  ReusableToggleDisplay,
-  ReusableToggleGroupConfig,
-  ReusableToggleOption,
+  HeaderSelectConfig,
+  SelectOption,
+  ToggleDisplay,
+  ToggleGroupConfig,
+  ToggleOption,
 } from "../shared/toolbar-controls";

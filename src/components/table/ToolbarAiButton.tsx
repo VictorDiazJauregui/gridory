@@ -1,8 +1,8 @@
 import { Sparkles } from "lucide-react";
-import type { ReusableAiButtonConfig } from "./types";
+import type { AiButtonConfig } from "./types";
 
 interface ToolbarAiButtonProps {
-  config: ReusableAiButtonConfig;
+  config: AiButtonConfig;
 }
 
 export const ToolbarAiButton = ({ config }: ToolbarAiButtonProps) => {
