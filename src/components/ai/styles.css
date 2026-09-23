@@ -1,0 +1,57 @@
+/*
+ * Assistant (src/components/ai): launcher, sidebar, conversation, action card
+ * and markdown output. Every visual rule lives here under a gdy-ai-* class;
+ * the launcher, the header buttons, the send button and the action buttons
+ * compose the button primitive (src/components/ui/styles.css) and adjust it
+ * at two classes.
+ *
+ * Specificity contract (same as the primitives):
+ *  - base rule: one class (0-1-0), so a class the host passes through
+ *    `className` or `classNames` and loads later wins;
+ *  - variants (data-role on messages and bubbles): wrapped in :where(), still
+ *    0-1-0, so the `userBubble` / `assistantBubble` slots override them;
+ *  - states (data-state on the sidebar, data-empty on the body, :hover,
+ *    :focus-visible, :disabled): plain, 0-2-0;
+ *  - overrides of the button primitive: two classes (.gdy-button.gdy-ai-send).
+ *
+ * Component tokens, only consumed with a fallback: --gdy-ai-accent and
+ * --gdy-ai-accent-fg (tints, chips, avatars, kicker, user bubble; the primary
+ * pair by default), --gdy-ai-bg (sidebar and footer), --gdy-ai-user-bubble-bg
+ * and -fg, --gdy-ai-assistant-bubble-bg and -fg.
+ */
+
+/* -------------------------------------------------------------- Launcher */
+/* Composes the outline/sm button; the label hides below 640px. */
+.gdy-button.gdy-ai-button {
+  height: 32px;
+  gap: 6px;
+  border-color: color-mix(in oklab, var(--gdy-ai-accent, var(--gdy-primary)) 30%, transparent);
+  color: var(--gdy-ai-accent, var(--gdy-primary));
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.gdy-button.gdy-ai-button:hover {
+  background-color: color-mix(in oklab, var(--gdy-ai-accent, var(--gdy-primary)) 5%, transparent);
+  color: var(--gdy-ai-accent, var(--gdy-primary));
+}
+
+/* The two-class rule above outweighs the primitive's focus border; restore it. */
+.gdy-button.gdy-ai-button:focus-visible {
+  border-color: var(--gdy-ring);
+}
+
+.gdy-ai-button-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.gdy-ai-button-label {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .gdy-ai-button-label {
+    display: inline;
+  }
+}

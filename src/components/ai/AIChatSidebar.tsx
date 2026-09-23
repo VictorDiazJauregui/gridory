@@ -20,6 +20,7 @@ import { MarkdownRenderer } from "./MarkdownRenderer";
 import { resolveSystemPrompt } from "./prompt-builders";
 import { useAIChat } from "./useAIChat";
 import type { AIChatMode, AIChatSidebarProps, AIEmptyState } from "./types";
+import "./styles.css";
 
 function resolveMode(props: AIChatSidebarProps): AIChatMode {
   if (props.mode) return props.mode;
