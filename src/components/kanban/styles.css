@@ -43,7 +43,7 @@
   font-weight: 500;
 }
 
-.gdy-kanban-filter-trigger.is-filtered {
+.gdy-kanban-filter-trigger[data-filtered] {
   border-color: var(--gdy-ring);
   color: var(--gdy-foreground);
   background: var(--gdy-muted);
@@ -141,7 +141,7 @@
   overflow-y: auto;
 }
 
-.gdy-kanban-column-drop-target {
+.gdy-kanban-column[data-drop-target] {
   outline: 2px dashed var(--gdy-kanban-drop-outline, var(--gdy-muted-foreground));
   outline-offset: -4px;
   background: var(
@@ -172,7 +172,7 @@
   cursor: grab;
 }
 
-.gdy-kanban-card.is-dragging {
+.gdy-kanban-card[data-dragging] {
   opacity: 0.5;
   cursor: grabbing;
 }

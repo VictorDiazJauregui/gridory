@@ -1,13 +1,18 @@
 #!/usr/bin/env node
 /**
- * Style contract audit (part 2): keeps the class hooks and the stylesheet in sync.
- *  - every gdy-* class and is-* state class written by the library has a rule
- *    in dist/gridory.css;
- *  - every .gdy-* / .is-* rule in dist/gridory.css is emitted by the library or
- *    listed as a public utility in scripts/audit-allowlist.json;
- *  - every [data-*] attribute selector in the library stylesheets is emitted by
- *    the library, set by Radix at runtime or set by the host app (both listed in
- *    the allowlist);
+ * Style contract audit (part 2): keeps the class hooks, the state attributes
+ * and the stylesheet in sync.
+ *  - every gdy-* class written by the library has a rule in dist/gridory.css
+ *    or is a declared hook-only class (scripts/audit-allowlist.json →
+ *    hookOnly: structural hooks shipped without default declarations);
+ *  - every .gdy-* rule in dist/gridory.css is emitted by the library or listed
+ *    as a public utility in the allowlist;
+ *  - every hook-only class is really emitted and really has no rule;
+ *  - no is-* state class survives in the library or in dist (states are
+ *    data-* attributes or ARIA attributes);
+ *  - every [data-*] / [aria-*] attribute selector in the library stylesheets
+ *    is emitted by the library, set by Radix at runtime or set by the host app
+ *    (the last two listed in the allowlist);
  *  - the demo mocks only use classes that exist.
  *
  * Needs dist/gridory.css, so run it after `npm run build`.
@@ -52,9 +57,11 @@ const libraryStylesheets = [
 
 // A class name is never preceded by a word char or a hyphen (that would be a
 // `--gdy-*` custom property, written as var(--gdy-x) or as an inline style key).
-const CLASS_IN_SOURCE = /(?<![\w-])(gdy-[a-z0-9]+(?:-[a-z0-9]+)*|is-[a-z]+(?:-[a-z]+)*)\b/g;
-const CLASS_IN_CSS = /\.(gdy-[a-z0-9]+(?:-[a-z0-9]+)*|is-[a-z]+(?:-[a-z]+)*)(?![a-z0-9-])/g;
-const ATTR_IN_CSS = /\[(data-[a-z0-9-]+)(?:\s*=\s*"?([^"\]]+)"?)?\]/g;
+const CLASS_IN_SOURCE = /(?<![\w-])(gdy-[a-z0-9]+(?:-[a-z0-9]+)*)\b/g;
+const STATE_CLASS_IN_SOURCE = /(?<![\w-])(is-[a-z]+(?:-[a-z]+)*)\b/g;
+const CLASS_IN_CSS = /\.(gdy-[a-z0-9]+(?:-[a-z0-9]+)*)(?![a-z0-9-])/g;
+const STATE_CLASS_IN_CSS = /\.(is-[a-z]+(?:-[a-z]+)*)(?![a-z0-9-])/g;
+const ATTR_IN_CSS = /\[((?:data|aria)-[a-z0-9-]+)(?:\s*=\s*"?([^"\]]+)"?)?\]/g;
 
 const collect = (files, regex) => {
   const found = new Map();
@@ -73,16 +80,24 @@ const usedByLibrary = collect(librarySources, CLASS_IN_SOURCE);
 const usedByMocks = collect(mockSources, CLASS_IN_SOURCE);
 const definedInDist = collect([distCss], CLASS_IN_CSS);
 const publicUtilities = new Set(allowlist.publicUtilities);
+const hookOnly = new Set(allowlist.hookOnly);
 const externalAttributes = new Set([
   ...allowlist.runtimeAttributes,
   ...allowlist.hostAttributes,
 ]);
 
-// 1. Every class the library writes has a rule -------------------------------
+// 0. State classes are retired: states are data-* / ARIA attributes ----------
+for (const [name, files] of collect(librarySources, STATE_CLASS_IN_SOURCE)) {
+  failures.push(`state class "${name}" in ${[...files].join(", ")}: use a data-* or ARIA attribute instead`);
+}
+for (const name of collect([distCss], STATE_CLASS_IN_CSS).keys()) {
+  failures.push(`rule ".${name}" in dist/gridory.css: state classes were replaced by attribute selectors`);
+}
+
+// 1. Every class the library writes has a rule (or is a declared hook) --------
 for (const [name, files] of usedByLibrary) {
-  if (!definedInDist.has(name)) {
-    failures.push(`class "${name}" is used in ${[...files].join(", ")} but has no rule in dist/gridory.css`);
-  }
+  if (definedInDist.has(name) || hookOnly.has(name)) continue;
+  failures.push(`class "${name}" is used in ${[...files].join(", ")} but has no rule in dist/gridory.css (give it a rule or list it in hookOnly)`);
 }
 
 // 2. Every rule is used (or is a documented public utility) ---------------------
@@ -96,7 +111,15 @@ for (const name of publicUtilities) {
   if (!definedInDist.has(name)) failures.push(`public utility "${name}" from the allowlist has no rule in dist/gridory.css`);
 }
 
-// 4. Attribute selectors resolve to something the library or Radix emits --------
+// 4. Hook-only classes are emitted and stay rule-less ---------------------------
+for (const name of hookOnly) {
+  if (!usedByLibrary.has(name)) failures.push(`hook-only class "${name}" from the allowlist is not emitted by any component`);
+  if (definedInDist.has(name)) failures.push(`hook-only class "${name}" now has a rule in dist/gridory.css; remove it from hookOnly`);
+}
+
+// 5. Attribute selectors resolve to something the library or Radix emits --------
+// data-* values are written literally in the components (data-slot="x"); aria-*
+// values come from booleans (aria-pressed={active}), so only the name is checked.
 const librarySourceText = librarySources
   .map((file) => stripComments(readFileSync(file, "utf8")))
   .join("\n");
@@ -105,14 +128,14 @@ for (const file of libraryStylesheets) {
   for (const match of text.matchAll(ATTR_IN_CSS)) {
     const [, attribute, value] = match;
     if (externalAttributes.has(attribute)) continue;
-    const needle = value ? `${attribute}="${value}"` : attribute;
+    const needle = value && attribute.startsWith("data-") ? `${attribute}="${value}"` : attribute;
     if (!librarySourceText.includes(needle)) {
       failures.push(`${path.relative(root, file)}: selector [${attribute}${value ? `="${value}"` : ""}] is never emitted by a component`);
     }
   }
 }
 
-// 5. Mocks only use existing classes --------------------------------------------
+// 6. Mocks only use existing classes --------------------------------------------
 for (const [name, files] of usedByMocks) {
   if (!definedInDist.has(name)) failures.push(`mock class "${name}" in ${[...files].join(", ")} has no rule in dist/gridory.css`);
 }
@@ -122,5 +145,5 @@ if (failures.length > 0) {
   process.exit(1);
 }
 console.log(
-  `audit-classes: OK (${usedByLibrary.size} classes emitted by the library, ${definedInDist.size} rules in dist/gridory.css, ${publicUtilities.size} public utilities)`,
+  `audit-classes: OK (${usedByLibrary.size} classes emitted by the library, ${definedInDist.size} rules in dist/gridory.css, ${publicUtilities.size} public utilities, ${hookOnly.size} hook-only classes)`,
 );

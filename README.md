@@ -102,15 +102,24 @@ extensión estable:
   `gdy-table-pagination`, `gdy-kanban-column`, `gdy-kanban-card`.
 - `gdy-<parte>` para lo que comparten tabla y kanban: `gdy-card`, `gdy-toolbar`, `gdy-btn`,
   `gdy-input`, `gdy-panel`, `gdy-option-item`, `gdy-date-input`, `gdy-view-switch`.
-- Estados temporales con `is-*` sobre esas clases: `is-active`, `is-selected`, `is-checked`,
-  `is-filtered`, `is-collapsed`, `is-dragging`.
+- Estados por atributo, nunca por clase: booleanos presentes o ausentes (`data-filtered`,
+  `data-selected`, `data-checked`, `data-dragging`, `data-drop-target`, `data-clickable`) y ARIA
+  cuando ya existe (`aria-pressed="true"` en el switch de vista y en los botones de orden y operador
+  del panel, `aria-expanded="false"` en el toggle de un grupo colapsado). Se estilizan como
+  `.gdy-kanban-card[data-dragging]` o `.gdy-view-switch-btn[aria-pressed="true"]`.
+- Ganchos estructurales sin estilos por defecto (`gdy-table-head`, `gdy-table-body`,
+  `gdy-table-empty-row`, los iconos `gdy-*-icon`…): existen para que los apuntes desde tu CSS. La
+  lista completa es `hookOnly` en `scripts/audit-allowlist.json`.
 - Utilidades que se pasan por props: `gdy-table-min-h-sm|md|lg`, `gdy-table-max-h-sm|md|lg` y
   `gdy-kanban-min-h-sm|md|lg`.
 
-Las reglas de la librería usan una sola clase, así que una regla con la misma clase en tu CSS,
-cargado después de `gridory/styles.css`, la sobrescribe. `npm run audit:styles` comprueba que cada
-clase emitida tenga su regla, que ninguna regla quede huérfana y que no sobreviva ningún nombre
-heredado.
+Las reglas de la librería usan una sola clase, o un flag de raíz más una clase
+(`.gdy-thin-scroll .gdy-scroll`, `.gdy-table-sticky .gdy-table-head-cell`, el hover de fila
+`.gdy-table-row[data-clickable]:hover .gdy-table-cell`), así que una regla con el mismo selector en
+tu CSS, cargado después de `gridory/styles.css`, la sobrescribe. `npm run audit:styles` comprueba
+que cada clase emitida tenga su regla o esté declarada como gancho, que ninguna regla quede
+huérfana, que no sobreviva ningún nombre heredado ni clase de estado, y que cada selector de
+atributo se emita de verdad.
 
 ## Inicio rápido
 

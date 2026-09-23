@@ -30,7 +30,7 @@ export function RowActionsMenu<TData>({
             title="Opciones"
             onClick={stopClick}
           >
-            <MoreHorizontal size={14} />
+            <MoreHorizontal size={14} className="gdy-table-actions-icon" />
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent onClick={stopClick}>

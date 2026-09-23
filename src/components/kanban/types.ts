@@ -102,6 +102,11 @@ export interface KanbanBoardProps<TData> {
   onCardMove?: (event: KanbanMoveEvent<TData>) => void;
   onCardClick?: (event: KanbanCardClickEvent<TData>) => void;
   onGroupChange?: (groupId: string) => void;
+  /**
+   * Prefix of every option in the toolbar group selector and its accessible
+   * label. Defaults to `"Agrupar por"`.
+   */
+  groupSelectorLabel?: string;
   searchPlaceholder?: string;
   createLabel?: string;
   onCreate?: () => void;

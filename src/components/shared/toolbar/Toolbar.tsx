@@ -1,24 +1,21 @@
 import { Fragment, type ReactNode } from "react";
 import { FilterX, Plus, Search } from "lucide-react";
-import { ToolbarAiButton, ToolbarViewSwitch } from "../shared/toolbar";
-import { SimpleSelect } from "../ui/select";
-import { SegmentedControl } from "../ui/toggle-group";
+import type {
+  AiButtonConfig,
+  ArchivedViewMode,
+  ViewSwitchConfig,
+} from "../data-model";
 import type {
   HeaderSelectConfig,
   SelectOption,
   ToggleGroupConfig,
-} from "../shared/toolbar-controls";
-import type { SelectTheme } from "../shared/select-theme";
-import {
-  resolveToolbarClusters,
-  type ToolbarLayout,
-} from "../shared/toolbar-layout";
-import type {
-  ArchivedViewMode,
-  AiButtonConfig,
-  KanbanGroupOption,
-  ViewSwitchConfig,
-} from "./types";
+} from "../toolbar-controls";
+import type { SelectTheme } from "../select-theme";
+import { resolveToolbarClusters, type ToolbarLayout } from "../toolbar-layout";
+import { SimpleSelect } from "../../ui/select";
+import { SegmentedControl } from "../../ui/toggle-group";
+import { ToolbarAiButton } from "./ToolbarAiButton";
+import { ToolbarViewSwitch } from "./ToolbarViewSwitch";
 
 const DEFAULT_ARCHIVED_OPTION_LABELS: Record<ArchivedViewMode, string> = {
   active: "Activos",
@@ -28,20 +25,26 @@ const DEFAULT_ARCHIVED_OPTION_LABELS: Record<ArchivedViewMode, string> = {
 
 const ARCHIVED_OPTION_ORDER: ArchivedViewMode[] = ["active", "archived", "all"];
 
-interface KanbanToolbarProps<TData> {
+/** Group-by select of the toolbar. Each module builds its own option list. */
+export interface ToolbarGroupSelector {
+  options: SelectOption[];
+  value: string;
+  onChange: (value: string) => void;
+  ariaLabel: string;
+}
+
+export interface ToolbarProps {
   showSearch: boolean;
   search: string;
   searchPlaceholder: string;
   onSearchChange: (value: string) => void;
   showClearFilters: boolean;
   onClearFilters: () => void;
-  showGroupSelector: boolean;
-  groups: KanbanGroupOption<TData>[];
-  selectedGroupId: string;
-  onGroupChange: (groupId: string) => void;
   showCreateButton: boolean;
   createLabel: string;
   onCreate?: () => void;
+  /** Omit it to hide the `group` slot. */
+  groupSelector?: ToolbarGroupSelector;
   showArchivedView: boolean;
   archivedMode: ArchivedViewMode;
   onArchivedModeChange: (mode: ArchivedViewMode) => void;
@@ -55,9 +58,18 @@ interface KanbanToolbarProps<TData> {
   selectTheme?: SelectTheme;
 }
 
-const buildArchivedOptions = <TData,>(
-  props: KanbanToolbarProps<TData>,
-): SelectOption[] => {
+const prefixedOptions = (
+  options: SelectOption[],
+  prefix?: string,
+): SelectOption[] =>
+  prefix
+    ? options.map((option) => ({
+        value: option.value,
+        label: `${prefix}: ${option.label}`,
+      }))
+    : options;
+
+const buildArchivedOptions = (props: ToolbarProps): SelectOption[] => {
   const label = props.archivedViewLabel ?? "Mostrar";
   const optionLabel = (mode: ArchivedViewMode) =>
     props.archivedViewOptionLabels?.[mode] ?? DEFAULT_ARCHIVED_OPTION_LABELS[mode];
@@ -66,21 +78,6 @@ const buildArchivedOptions = <TData,>(
     label: `${label}: ${optionLabel(mode)}`,
   }));
 };
-
-const buildGroupOptions = <TData,>(
-  groups: KanbanGroupOption<TData>[],
-): SelectOption[] =>
-  groups.map((group) => ({ value: group.id, label: `Agrupar por: ${group.label}` }));
-
-const buildHeaderSelectOptions = (
-  config: HeaderSelectConfig,
-): SelectOption[] =>
-  config.label
-    ? config.options.map((option) => ({
-        value: option.value,
-        label: `${config.label}: ${option.label}`,
-      }))
-    : config.options;
 
 const SearchSlot = ({
   search,
@@ -94,7 +91,13 @@ const SearchSlot = ({
   <div className="gdy-search">
     <Search size={14} className="gdy-search-icon" />
     <input
-      type="text"
+      type="search"
+      name="gdy-search"
+      autoComplete="off"
+      data-1p-ignore="true"
+      data-lpignore="true"
+      data-form-type="other"
+      data-bwignore="true"
       value={search}
       onChange={(event) => onChange(event.target.value)}
       placeholder={placeholder}
@@ -104,9 +107,13 @@ const SearchSlot = ({
 );
 
 const ClearFiltersSlot = ({ onClear }: { onClear: () => void }) => (
-  <button type="button" className="gdy-btn gdy-btn-ghost" onClick={onClear}>
-    <span>Limpiar filtros</span>
-    <FilterX size={12} />
+  <button
+    type="button"
+    className="gdy-btn gdy-btn-ghost gdy-toolbar-clear"
+    onClick={onClear}
+  >
+    <span className="gdy-toolbar-clear-label">Limpiar filtros</span>
+    <FilterX size={12} className="gdy-toolbar-clear-icon" />
   </button>
 );
 
@@ -117,14 +124,18 @@ const CreateSlot = ({
   label: string;
   onCreate: () => void;
 }) => (
-  <button type="button" className="gdy-btn gdy-btn-primary" onClick={onCreate}>
-    <Plus size={14} />
+  <button
+    type="button"
+    className="gdy-btn gdy-btn-primary gdy-toolbar-create"
+    onClick={onCreate}
+  >
+    <Plus size={14} className="gdy-toolbar-create-icon" />
     {label}
   </button>
 );
 
-const fillFixedSlots = <TData,>(
-  props: KanbanToolbarProps<TData>,
+const fillFixedSlots = (
+  props: ToolbarProps,
   slots: Record<string, ReactNode>,
 ) => {
   const { selectTheme } = props;
@@ -148,13 +159,13 @@ const fillFixedSlots = <TData,>(
         theme={selectTheme}
       />
     );
-  if (props.showGroupSelector && props.groups.length > 0)
+  if (props.groupSelector)
     slots.group = (
       <SimpleSelect
-        options={buildGroupOptions(props.groups)}
-        value={props.selectedGroupId}
-        onValueChange={props.onGroupChange}
-        ariaLabel="Agrupar por"
+        options={props.groupSelector.options}
+        value={props.groupSelector.value}
+        onValueChange={props.groupSelector.onChange}
+        ariaLabel={props.groupSelector.ariaLabel}
         theme={selectTheme}
       />
     );
@@ -164,8 +175,8 @@ const fillFixedSlots = <TData,>(
     slots.create = <CreateSlot label={props.createLabel} onCreate={props.onCreate} />;
 };
 
-const fillCustomSlots = <TData,>(
-  props: KanbanToolbarProps<TData>,
+const fillCustomSlots = (
+  props: ToolbarProps,
   slots: Record<string, ReactNode>,
 ) => {
   (props.toggleGroups ?? []).forEach((group) => {
@@ -182,7 +193,7 @@ const fillCustomSlots = <TData,>(
   (props.headerSelectors ?? []).forEach((selector) => {
     slots[selector.id] = (
       <SimpleSelect
-        options={buildHeaderSelectOptions(selector)}
+        options={prefixedOptions(selector.options, selector.label)}
         value={selector.value}
         onValueChange={selector.onChange}
         placeholder={selector.placeholder ?? selector.label}
@@ -193,7 +204,7 @@ const fillCustomSlots = <TData,>(
   });
 };
 
-const splitCustomSides = <TData,>(props: KanbanToolbarProps<TData>) => {
+const splitCustomSides = (props: ToolbarProps) => {
   const controls = [
     ...(props.toggleGroups ?? []),
     ...(props.headerSelectors ?? []),
@@ -204,7 +215,8 @@ const splitCustomSides = <TData,>(props: KanbanToolbarProps<TData>) => {
   };
 };
 
-export const KanbanToolbar = <TData,>(props: KanbanToolbarProps<TData>) => {
+/** Toolbar shared by the table and the kanban: fixed slots plus custom controls. */
+export const Toolbar = (props: ToolbarProps) => {
   const slots: Record<string, ReactNode> = {};
   fillFixedSlots(props, slots);
   fillCustomSlots(props, slots);

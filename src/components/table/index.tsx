@@ -28,11 +28,14 @@ import {
   hasDateFilterValue,
 } from "../shared/date-utils";
 import { useActiveFilters, useClickOutside } from "../shared/hooks";
-import { DateFilterMenu, FilterMenu } from "../shared/toolbar";
-import { DEFAULT_FEATURES, DEFAULT_PAGE_SIZES } from "./constants";
+import { DateFilterMenu, FilterMenu, Toolbar } from "../shared/toolbar";
+import {
+  DEFAULT_FEATURES,
+  DEFAULT_PAGE_SIZES,
+  GROUP_NONE_VALUE,
+} from "./constants";
 import { RowActionsMenu } from "./RowActionsMenu";
 import { TablePagination } from "./TablePagination";
-import { TableToolbar } from "./TableToolbar";
 import { SimpleSelect } from "../ui/select";
 import type {
   ArchivedViewMode,
@@ -48,6 +51,7 @@ import {
   applyColumnSorting,
   applyGlobalSearch,
   applyRowGrouping,
+  buildGroupSelectOptions,
   computeColumnFilterOptions,
   findGroupForIndex,
   normalizeInputRows,
@@ -433,7 +437,7 @@ export function DataTable<TData>({
       style={rootStyle}
     >
       <div className="gdy-scope gdy-card">
-        <TableToolbar
+        <Toolbar
           showSearch={flags.search}
           search={search}
           searchPlaceholder={searchPlaceholder}
@@ -446,12 +450,21 @@ export function DataTable<TData>({
           showCreateButton={flags.createButton}
           createLabel={createLabel}
           onCreate={onCreate}
-          showGroupSelector={flags.grouping && groupOptions.length > 0}
-          groupOptions={groupOptions}
-          activeGroupBy={activeGroupBy}
-          onGroupByChange={handleGroupByChange}
-          groupSelectorLabel={groupSelectorLabel}
-          groupNoneLabel={groupNoneLabel}
+          groupSelector={
+            flags.grouping && groupOptions.length > 0
+              ? {
+                  options: buildGroupSelectOptions(
+                    groupOptions,
+                    groupSelectorLabel,
+                    groupNoneLabel,
+                  ),
+                  value: activeGroupBy ?? GROUP_NONE_VALUE,
+                  onChange: (value) =>
+                    handleGroupByChange(value === GROUP_NONE_VALUE ? null : value),
+                  ariaLabel: groupSelectorLabel,
+                }
+              : undefined
+          }
           showArchivedView={
             Boolean(archivedView) && Boolean(rowActions?.getIsArchived)
           }
@@ -477,14 +490,15 @@ export function DataTable<TData>({
           )}
         >
           <table className="gdy-table-grid">
-            <thead>
+            <thead className="gdy-table-head">
               {table.getHeaderGroups().map((group) => (
-                <tr key={group.id}>
+                <tr key={group.id} className="gdy-table-head-row">
                   {group.headers.map((header) => {
                     const column = columns.find(
                       (item) => item.id === header.column.id,
                     );
-                    if (!column) return <th key={header.id} />;
+                    if (!column)
+                      return <th key={header.id} className="gdy-table-head-cell" />;
 
                     const sortDirection = resolveSortDirection(
                       sorting,
@@ -522,14 +536,16 @@ export function DataTable<TData>({
                     };
 
                     return (
-                      <th key={header.id} style={{ width: column.width }}>
-                        <div className="gdy-table-head-cell">
+                      <th
+                        key={header.id}
+                        className="gdy-table-head-cell"
+                        style={{ width: column.width }}
+                      >
+                        <div className="gdy-table-head-inner">
                           <button
                             type="button"
-                            className={cn(
-                              "gdy-table-head-trigger",
-                              hasColumnFilter && "is-filtered",
-                            )}
+                            className="gdy-table-head-trigger"
+                            data-filtered={hasColumnFilter || undefined}
                             onClick={handleHeaderAction}
                           >
                             <span className="gdy-table-head-label" title={column.header}>
@@ -551,11 +567,11 @@ export function DataTable<TData>({
                               column.sortable !== false &&
                               !column.filterable &&
                               (sortDirection === "asc" ? (
-                                <ArrowUp size={13} />
+                                <ArrowUp size={13} className="gdy-table-head-sort-icon" />
                               ) : sortDirection === "desc" ? (
-                                <ArrowDown size={13} />
+                                <ArrowDown size={13} className="gdy-table-head-sort-icon" />
                               ) : (
-                                <ArrowUpDown size={13} />
+                                <ArrowUpDown size={13} className="gdy-table-head-sort-icon" />
                               ))}
                           </button>
 
@@ -636,10 +652,13 @@ export function DataTable<TData>({
               ))}
             </thead>
 
-            <tbody>
+            <tbody className="gdy-table-body">
               {table.getRowModel().rows.length === 0 ? (
-                <tr>
-                  <td className="gdy-empty" colSpan={tableColumns.length}>
+                <tr className="gdy-table-empty-row">
+                  <td
+                    className="gdy-table-cell gdy-empty"
+                    colSpan={tableColumns.length}
+                  >
                     {emptyMessage}
                   </td>
                 </tr>
@@ -679,10 +698,7 @@ export function DataTable<TData>({
                           >
                             <ChevronDown
                               size={14}
-                              className={cn(
-                                "gdy-table-group-chevron",
-                                isHeaderCollapsed && "is-collapsed",
-                              )}
+                              className="gdy-table-group-chevron"
                             />
                             <span className="gdy-table-group-label">
                               {groupHeader.label}
@@ -700,7 +716,8 @@ export function DataTable<TData>({
                     elements.push(
                       <tr
                         key={row.id}
-                        className={cn(onRowClick && "gdy-table-row-clickable")}
+                        className="gdy-table-row"
+                        data-clickable={onRowClick ? true : undefined}
                         onClick={
                           onRowClick
                             ? () => onRowClick(row.original)
@@ -708,7 +725,7 @@ export function DataTable<TData>({
                         }
                       >
                         {row.getVisibleCells().map((cell) => (
-                          <td key={cell.id}>
+                          <td key={cell.id} className="gdy-table-cell">
                             {flexRender(
                               cell.column.columnDef.cell,
                               cell.getContext(),

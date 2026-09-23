@@ -38,15 +38,15 @@ Directorio: `src/components/table/`
 - `types.ts`: contratos públicos e internos.
 - `utils.ts`: funciones puras de normalización, filtros, orden y agrupado.
 - `constants.ts`: defaults y constantes.
-- `TableToolbar.tsx`: barra superior.
 - `TablePagination.tsx`: footer de paginación.
 - `RowActionsMenu.tsx`: menú de acciones por fila.
 - `styles.css`: estilos propios del módulo (`.gdy-table-*`).
 
 Compartido con el kanban, en `src/components/shared/`:
 
-- `toolbar/`: `FilterMenu`, `DateFilterMenu`, `DatePickerWithInput`, `DateRangePicker`,
-  `ToolbarAiButton`, `ToolbarViewSwitch`.
+- `toolbar/`: `Toolbar` (barra superior, la misma para tabla y kanban), `FilterMenu`,
+  `DateFilterMenu`, `DatePickerWithInput`, `DateRangePicker`, `ToolbarAiButton`,
+  `ToolbarViewSwitch`.
 - `date-utils.ts`: helpers de fecha y `EMPTY_DATE_FILTER_STATE`.
 - `hooks.ts`: `useClickOutside`, `useActiveFilters`.
 - `src/styles/shared.css`: estilos compartidos (`.gdy-toolbar`, `.gdy-btn`, `.gdy-input`,
@@ -183,13 +183,32 @@ En este proyecto ya están instaladas en `package.json`.
 
 ## 7) Estilos
 
-- Estilos propios del módulo: `src/components/table/styles.css`, con clases `gdy-table-*`
-  (`gdy-table-grid`, `gdy-table-head-trigger`, `gdy-table-pagination`, `gdy-table-group-row`…).
+- Estilos propios del módulo: `src/components/table/styles.css`, con clases `gdy-table-*`. Cada
+  elemento lleva su gancho: `gdy-table` (raíz, con los flags `gdy-table-fill`, `gdy-table-sticky`,
+  `gdy-thin-scroll`), `gdy-table-wrap`, `gdy-table-grid`, `gdy-table-head`, `gdy-table-head-row`,
+  `gdy-table-head-cell` (el `th`), `gdy-table-head-inner`, `gdy-table-head-trigger`,
+  `gdy-table-head-label`, `gdy-table-head-filter-icon`, `gdy-table-head-arrow`,
+  `gdy-table-head-sort-icon`, `gdy-table-menu-holder`, `gdy-table-body`, `gdy-table-row`,
+  `gdy-table-cell`, `gdy-table-cell-content`, `gdy-table-inline-select-wrap`,
+  `gdy-table-actions-cell`, `gdy-table-actions-icon`, `gdy-table-empty-row` (+ `gdy-empty` en la
+  celda), `gdy-table-group-row`, `gdy-table-group-cell`, `gdy-table-group-toggle`,
+  `gdy-table-group-chevron`, `gdy-table-group-label`, `gdy-table-group-count`,
+  `gdy-table-pagination`, `gdy-table-pagination-left|right|text`, `gdy-table-page-size`,
+  `gdy-table-pagination-icon`.
 - Estilos compartidos con el kanban: `src/styles/shared.css`, con clases `gdy-*` sin módulo
   (`gdy-card`, `gdy-toolbar`, `gdy-btn`, `gdy-input`, `gdy-panel`, `gdy-option-item`,
-  `gdy-date-input`, `gdy-view-switch`). Los estados temporales usan `is-*` (`is-filtered`,
-  `is-selected`, `is-checked`, `is-active`, `is-collapsed`). Cada regla es de una sola clase, así
-  que una regla con la misma clase en tu CSS, cargado después de `gridory/styles.css`, gana.
+  `gdy-date-input`, `gdy-view-switch`).
+- Estados por atributo, no por clase: `data-filtered` en `gdy-table-head-trigger`,
+  `data-clickable` en `gdy-table-row` (cuando hay `onRowClick`), `aria-expanded` en
+  `gdy-table-group-toggle` (el chevron gira con `[aria-expanded="false"]`), y en el panel
+  compartido `data-selected` / `data-checked` en el checklist y `aria-pressed="true"` en los
+  botones de orden y operador. Se estilizan con selectores de atributo:
+  `.gdy-table-row[data-clickable]:hover .gdy-table-cell { background: … }`.
+- Cada regla es de una sola clase, salvo el flag de raíz más clase (`.gdy-table-sticky
+  .gdy-table-head-cell`, `.gdy-table-fill .gdy-table-wrap`) y el hover de fila. Una regla con el
+  mismo selector en tu CSS, cargado después de `gridory/styles.css`, gana. Los ganchos sin
+  estilos por defecto (`gdy-table-head`, `gdy-table-body`, iconos) están listados como `hookOnly`
+  en `scripts/audit-allowlist.json`.
 - Utilidades públicas para props: `gdy-table-min-h-sm|md|lg` (`tableMinHeightClassName`) y
   `gdy-table-max-h-sm|md|lg` (`tableMaxHeightClassName`).
 - Los colores salen de los tokens base `--gdy-*` (ver "Tema y tokens" en el README raíz), que
@@ -651,7 +670,8 @@ pensadas como puntos de extensión:
 - `gdy-btn-ai` — botón IA.
 - `gdy-view-switch` — contenedor del switch.
 - `gdy-view-switch-btn` — cada segmento del switch.
-- `gdy-view-switch-btn-active` — segmento activo.
+- `gdy-view-switch-btn[aria-pressed="true"]` — segmento activo (estado por atributo).
+- `gdy-view-switch-icon` / `gdy-btn-ai-icon` — iconos de cada control.
 
 El consumidor puede sobreescribir los valores por defecto declarando las
 mismas clases en su propio CSS, cargado después del CSS del paquete:

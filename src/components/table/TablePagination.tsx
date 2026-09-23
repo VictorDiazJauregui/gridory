@@ -68,7 +68,7 @@ export const TablePagination = ({
           disabled={pageIndex <= 0}
           onClick={onPrevPage}
         >
-          <ChevronLeft size={16} />
+          <ChevronLeft size={16} className="gdy-table-pagination-icon" />
         </button>
         <button
           type="button"
@@ -76,7 +76,7 @@ export const TablePagination = ({
           disabled={pageIndex + 1 >= pageCount}
           onClick={onNextPage}
         >
-          <ChevronRight size={16} />
+          <ChevronRight size={16} className="gdy-table-pagination-icon" />
         </button>
       </div>
     </div>

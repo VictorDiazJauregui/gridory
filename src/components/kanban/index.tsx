@@ -8,13 +8,14 @@ import {
   hasDateFilterValue,
 } from "../shared/date-utils";
 import { useActiveFilters, useClickOutside } from "../shared/hooks";
-import { DateFilterMenu, FilterMenu } from "../shared/toolbar";
+import { DateFilterMenu, FilterMenu, Toolbar } from "../shared/toolbar";
 import type { DateFilterState, ColumnDefinition } from "./types";
 import {
   applyArchivedView,
   applyColumnFilters,
   applyColumnSorting,
   applyGlobalSearch,
+  buildGroupSelectOptions,
   computeColumnFilterOptions,
   normalizeInputRows,
   normalizeToArray,
@@ -22,7 +23,6 @@ import {
 import { DEFAULT_KANBAN_FEATURES } from "./constants";
 import { DefaultKanbanCard } from "./DefaultKanbanCard";
 import { KanbanCardMenu } from "./KanbanCardMenu";
-import { KanbanToolbar } from "./KanbanToolbar";
 import type {
   ArchivedViewMode,
   KanbanDateFiltersState,
@@ -57,6 +57,7 @@ export const KanbanBoard = <TData,>({
   onCardMove,
   onCardClick,
   onGroupChange,
+  groupSelectorLabel = "Agrupar por",
   searchPlaceholder = "Buscar cards...",
   createLabel = "Nuevo",
   onCreate,
@@ -280,7 +281,7 @@ export const KanbanBoard = <TData,>({
       style={rootStyle}
     >
       <div className="gdy-scope gdy-card">
-        <KanbanToolbar
+        <Toolbar
           showSearch={flags.search}
           search={search}
           searchPlaceholder={searchPlaceholder}
@@ -290,13 +291,19 @@ export const KanbanBoard = <TData,>({
             setFilters({});
             setDateFilters({});
           }}
-          showGroupSelector={flags.groupSelector}
-          groups={groups}
-          selectedGroupId={selectedGroup?.id ?? ""}
-          onGroupChange={(groupId) => {
-            setSelectedGroupId(groupId);
-            onGroupChange?.(groupId);
-          }}
+          groupSelector={
+            flags.groupSelector
+              ? {
+                  options: buildGroupSelectOptions(groups, groupSelectorLabel),
+                  value: selectedGroup?.id ?? "",
+                  onChange: (groupId) => {
+                    setSelectedGroupId(groupId);
+                    onGroupChange?.(groupId);
+                  },
+                  ariaLabel: groupSelectorLabel,
+                }
+              : undefined
+          }
           showCreateButton={flags.createButton}
           createLabel={createLabel}
           onCreate={onCreate}
@@ -327,10 +334,8 @@ export const KanbanBoard = <TData,>({
                 <div key={field.id} className="gdy-kanban-filter-item">
                   <button
                     type="button"
-                    className={cn(
-                      "gdy-kanban-filter-trigger",
-                      hasFieldFilter && "is-filtered",
-                    )}
+                    className="gdy-kanban-filter-trigger"
+                    data-filtered={hasFieldFilter || undefined}
                     onClick={() =>
                       setOpenFilterFieldId((previous) =>
                         previous === field.id ? null : field.id,
@@ -340,8 +345,10 @@ export const KanbanBoard = <TData,>({
                     <span className="gdy-kanban-filter-trigger-label" title={field.header}>
                       {field.header}
                     </span>
-                    {hasFieldFilter ? <Filter size={12} /> : null}
-                    <ChevronDown size={13} />
+                    {hasFieldFilter ? (
+                      <Filter size={12} className="gdy-kanban-filter-icon" />
+                    ) : null}
+                    <ChevronDown size={13} className="gdy-kanban-filter-arrow" />
                   </button>
 
                   {openFilterFieldId === field.id && (
@@ -442,10 +449,8 @@ export const KanbanBoard = <TData,>({
                 return (
                   <section
                     key={value || "__empty_value__"}
-                    className={cn(
-                      "gdy-kanban-column",
-                      isDropTarget && "gdy-kanban-column-drop-target",
-                    )}
+                    className="gdy-kanban-column"
+                    data-drop-target={isDropTarget || undefined}
                     onDragOver={(event) => {
                       if (!flags.dragAndDrop) return;
                       event.preventDefault();
@@ -487,10 +492,8 @@ export const KanbanBoard = <TData,>({
                           return (
                             <article
                               key={cardId}
-                              className={cn(
-                                "gdy-kanban-card",
-                                isDragging && "is-dragging",
-                              )}
+                              className="gdy-kanban-card"
+                              data-dragging={isDragging || undefined}
                               draggable={flags.dragAndDrop}
                               onDragStart={(event) => {
                                 if (!flags.dragAndDrop || !selectedGroup)

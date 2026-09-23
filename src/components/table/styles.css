@@ -38,41 +38,48 @@
   table-layout: fixed;
 }
 
-.gdy-table-grid thead tr {
+/* Header row, header cells (th) and data cells (td). Every cell rule is a
+   single class; the group cell (gdy-table-group-cell) has its own rule and
+   never carries gdy-table-cell. */
+.gdy-table-head-row {
   background: var(--gdy-table-head-bg, var(--gdy-muted));
 }
 
-.gdy-table-grid th,
-.gdy-table-grid td {
+.gdy-table-head-cell,
+.gdy-table-cell {
   border-bottom: 1px solid var(--gdy-table-border, var(--gdy-border));
   text-align: left;
   vertical-align: middle;
 }
 
-.gdy-table-grid th {
+.gdy-table-head-cell {
   position: relative;
   padding: 8px 14px;
 }
 
-.gdy-table-grid td {
+.gdy-table-cell {
   padding: 9px 14px;
 }
 
-/* Empty-state cell: two classes so it wins over the generic cell padding. */
-.gdy-table-grid .gdy-empty {
+/* Empty-state cell: two classes (0-2-0) because .gdy-empty (shared.css) and
+   .gdy-table-cell tie at 0-1-0 and the winner would depend on file order. */
+.gdy-table-cell.gdy-empty {
   padding: 34px 14px;
+  text-align: center;
 }
 
-.gdy-table-row-clickable {
+/* Rows: data-clickable is set when onRowClick is provided */
+.gdy-table-row[data-clickable] {
   cursor: pointer;
 }
 
-.gdy-table-row-clickable:hover td {
+.gdy-table-row[data-clickable]:hover .gdy-table-cell {
   background: var(--gdy-table-row-hover-bg, var(--gdy-muted));
 }
 
-/* Header cell content: label, sort/filter icons and the filter panel anchor */
-.gdy-table-head-cell {
+/* Header cell content: label, sort/filter icons and the filter panel anchor
+   (gdy-table-menu-holder is positioned against this element) */
+.gdy-table-head-inner {
   position: relative;
 }
 
@@ -90,7 +97,9 @@
   font-weight: 500;
 }
 
-.gdy-table-head-trigger.is-filtered .gdy-table-head-filter-icon {
+/* Filter icon (only rendered while the column has an active filter; the
+   trigger also carries data-filtered as a hook) */
+.gdy-table-head-filter-icon {
   background: transparent;
   color: var(--gdy-foreground);
   padding: 1px;
@@ -160,10 +169,14 @@
   gap: 8px;
 }
 
-/* Row grouping */
-.gdy-table-group-row td.gdy-table-group-cell {
-  background: var(--gdy-table-group-bg, var(--gdy-accent));
+/* Row grouping: the group cell repeats the cell basics (border, alignment)
+   because it does not carry gdy-table-cell. */
+.gdy-table-group-cell {
+  border-bottom: 1px solid var(--gdy-table-border, var(--gdy-border));
+  text-align: left;
+  vertical-align: middle;
   padding: 0;
+  background: var(--gdy-table-group-bg, var(--gdy-accent));
 }
 
 .gdy-table-group-toggle {
@@ -190,7 +203,7 @@
   transition: transform 0.15s ease;
 }
 
-.gdy-table-group-chevron.is-collapsed {
+.gdy-table-group-toggle[aria-expanded="false"] .gdy-table-group-chevron {
   transform: rotate(-90deg);
 }
 
@@ -250,12 +263,14 @@
   overflow-y: auto;
 }
 
-/* stickyHeader: pin the header while the rows area scrolls internally. Low
-   specificity (0-1-2) so consumer-scoped sticky rules keep winning. With
-   border-collapse the collapsed bottom border is dropped on a sticky cell, so
-   it is repainted as an identical 1px inset shadow; opaque background prevents
-   rows from showing through. z-index sits below the filter/row dropdowns. */
-.gdy-table-sticky thead th {
+/* stickyHeader: pin the header while the rows area scrolls internally. Root
+   flag + cell class (0-2-0) so it beats the base header cell by specificity,
+   never by file order; a consumer rule with the same two classes loaded later
+   still wins. With border-collapse the collapsed bottom border is dropped on a
+   sticky cell, so it is repainted as an identical 1px inset shadow; opaque
+   background prevents rows from showing through. z-index sits below the
+   filter/row dropdowns. */
+.gdy-table-sticky .gdy-table-head-cell {
   position: sticky;
   top: 0;
   z-index: 2;

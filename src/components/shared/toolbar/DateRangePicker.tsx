@@ -125,7 +125,7 @@ export const DateRangePicker = ({
               className="gdy-date-picker-trigger"
               aria-label="Seleccionar rango"
             >
-              <CalendarIcon size={14} />
+              <CalendarIcon size={14} className="gdy-date-picker-icon" />
             </button>
           </PopoverTrigger>
           <PopoverContent

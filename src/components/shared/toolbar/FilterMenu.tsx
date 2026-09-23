@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
 import { Check, Search } from "lucide-react";
-import { cn } from "../../../lib/cn";
 import type { FilterOption, SortDirection } from "../data-model";
 
 interface FilterMenuProps {
@@ -50,20 +49,16 @@ export const FilterMenu = ({
           <p className="gdy-panel-title">Ordenar</p>
           <button
             type="button"
-            className={cn(
-              "gdy-link-btn",
-              sortDirection === "asc" && "is-active",
-            )}
+            className="gdy-link-btn"
+            aria-pressed={sortDirection === "asc"}
             onClick={onSortAsc}
           >
             Ascendente (A → Z)
           </button>
           <button
             type="button"
-            className={cn(
-              "gdy-link-btn",
-              sortDirection === "desc" && "is-active",
-            )}
+            className="gdy-link-btn"
+            aria-pressed={sortDirection === "desc"}
             onClick={onSortDesc}
           >
             Descendente (Z → A)
@@ -123,16 +118,17 @@ export const FilterMenu = ({
                 <button
                   key={option.value}
                   type="button"
-                  className={cn("gdy-option-item", isChecked && "is-selected")}
+                  className="gdy-option-item"
+                  data-selected={isChecked || undefined}
                   onClick={() => toggleSelection(option.value)}
                 >
                   <span
-                    className={cn(
-                      "gdy-option-check",
-                      isChecked && "is-checked",
-                    )}
+                    className="gdy-option-check"
+                    data-checked={isChecked || undefined}
                   >
-                    {isChecked ? <Check size={11} /> : null}
+                    {isChecked ? (
+                      <Check size={11} className="gdy-option-check-icon" />
+                    ) : null}
                   </span>
                   <span className="gdy-option-label" title={option.label}>
                     {option.label}

@@ -11,3 +11,6 @@ export const DEFAULT_FEATURES: Required<DataTableFeatures> = {
   createButton: true,
   grouping: true,
 };
+
+/** Value of the "no grouping" option in the toolbar group selector. */
+export const GROUP_NONE_VALUE = "__gdy_group_none__";

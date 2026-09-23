@@ -15,7 +15,7 @@ export const ToolbarAiButton = ({ config }: ToolbarAiButtonProps) => {
       aria-label={label}
       onClick={config.onClick}
     >
-      <Sparkles size={14} />
+      <Sparkles size={14} className="gdy-btn-ai-icon" />
       {label}
     </button>
   );
