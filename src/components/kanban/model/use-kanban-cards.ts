@@ -2,8 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import {
   computeColumnFilterOptions,
   normalizeInputRows,
-} from "../shared/row-pipeline";
-import type { KanbanBoardProps } from "./types";
+} from "../../shared/row-pipeline";
+import type { KanbanBoardProps } from "../types";
 
 export const useKanbanCards = <TData>({
   data,

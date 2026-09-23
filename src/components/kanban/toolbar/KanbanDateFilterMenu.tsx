@@ -2,8 +2,8 @@ import {
   buildDateFilterMenuKey,
   pickCalendarSettings,
   resolveEmptyDateState,
-} from "../shared/column-filters";
-import { DateFilterMenu } from "../shared/toolbar";
+} from "../../shared/column-filters";
+import { DateFilterMenu } from "../../shared/toolbar";
 import { buildFilterSortProps } from "./filter-item";
 import type { KanbanFilterItemProps } from "./filter-item";
 

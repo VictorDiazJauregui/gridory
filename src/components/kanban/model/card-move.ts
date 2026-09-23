@@ -4,7 +4,7 @@ import type {
   KanbanBoardProps,
   KanbanGroupOption,
   KanbanMoveEvent,
-} from "./types";
+} from "../types";
 
 type CardIdResolver<TData> = (card: TData, index: number) => string;
 

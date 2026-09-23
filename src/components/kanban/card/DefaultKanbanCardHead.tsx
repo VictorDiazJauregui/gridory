@@ -1,6 +1,6 @@
 import { summarizeCard } from "./card-summary";
 import { KanbanCardMenu } from "./KanbanCardMenu";
-import type { ColumnDefinition, RowActions } from "./types";
+import type { ColumnDefinition, RowActions } from "../types";
 
 interface DefaultKanbanCardHeadProps<TData> {
   card: TData;

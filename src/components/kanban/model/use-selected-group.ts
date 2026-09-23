@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import type { KanbanBoardProps } from "./types";
+import type { KanbanBoardProps } from "../types";
 
 export const useSelectedGroup = <TData>({
   groups,

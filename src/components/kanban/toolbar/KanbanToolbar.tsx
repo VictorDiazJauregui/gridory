@@ -1,10 +1,10 @@
-import { Toolbar } from "../shared/toolbar";
+import { Toolbar } from "../../shared/toolbar";
 import {
   buildArchivedToolbarProps,
   pickToolbarPassThrough,
-} from "../shared/toolbar/toolbar-props";
+} from "../../shared/toolbar/toolbar-props";
 import { buildGroupSelector } from "./group-select-options";
-import type { KanbanSectionProps } from "./use-kanban-board-state";
+import type { KanbanSectionProps } from "../model/use-kanban-board-state";
 
 export const KanbanToolbar = <TData,>({
   state,

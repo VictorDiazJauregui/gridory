@@ -1,8 +1,8 @@
-import type { KanbanCardProps } from "./column-settings";
+import type { KanbanCardProps } from "../board/column-settings";
 import {
   buildCardClickHandler,
   buildCardDragHandlers,
-} from "./drag-handlers";
+} from "../board/drag-handlers";
 import { KanbanCardContent } from "./KanbanCardContent";
 
 export const KanbanCard = <TData,>(props: KanbanCardProps<TData>) => {

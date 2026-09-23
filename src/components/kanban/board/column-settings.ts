@@ -1,11 +1,11 @@
-import type { KanbanBoardView } from "./board-view";
+import type { KanbanBoardView } from "../board-view";
 import type {
   ColumnDefinition,
   KanbanBoardProps,
   KanbanGroupOption,
-} from "./types";
-import type { CardDragState } from "./use-card-drag";
-import type { KanbanBoardState } from "./use-kanban-board-state";
+} from "../types";
+import type { CardDragState } from "../model/use-card-drag";
+import type { KanbanBoardState } from "../model/use-kanban-board-state";
 
 type CardCallbacks<TData> = Pick<
   KanbanBoardProps<TData>,

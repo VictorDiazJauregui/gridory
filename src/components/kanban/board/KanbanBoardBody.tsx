@@ -1,6 +1,6 @@
-import { cn } from "../../lib/cn";
+import { cn } from "../../../lib/cn";
 import { KanbanColumns } from "./KanbanColumns";
-import type { KanbanSectionProps } from "./use-kanban-board-state";
+import type { KanbanSectionProps } from "../model/use-kanban-board-state";
 
 export const KanbanBoardBody = <TData,>({
   state,

@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
-import type { KanbanCardProps } from "./column-settings";
+import type { KanbanCardProps } from "../board/column-settings";
 import { KanbanCardMenu } from "./KanbanCardMenu";
-import type { KanbanCardRenderContext } from "./types";
+import type { KanbanCardRenderContext } from "../types";
 
 interface KanbanCustomCardProps<TData> extends KanbanCardProps<TData> {
   renderCard: (

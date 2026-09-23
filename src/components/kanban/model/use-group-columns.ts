@@ -4,7 +4,7 @@ import {
   groupCardsByValue,
   mergeColumnValues,
 } from "./group-columns";
-import type { KanbanGroupOption } from "./types";
+import type { KanbanGroupOption } from "../types";
 
 interface GroupColumnsInput<TData> {
   selectedGroup: KanbanGroupOption<TData>;

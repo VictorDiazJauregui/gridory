@@ -1,4 +1,4 @@
-import { hasColumnFilter } from "../shared/column-filters";
+import { hasColumnFilter } from "../../shared/column-filters";
 import type { KanbanFilterItemProps } from "./filter-item";
 import { KanbanDateFilterMenu } from "./KanbanDateFilterMenu";
 import { KanbanFilterTrigger } from "./KanbanFilterTrigger";

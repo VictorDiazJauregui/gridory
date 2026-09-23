@@ -1,6 +1,6 @@
 import type { DragEvent } from "react";
-import type { KanbanCardClickEvent } from "./types";
-import type { CardDragState } from "./use-card-drag";
+import type { KanbanCardClickEvent } from "../types";
+import type { CardDragState } from "../model/use-card-drag";
 
 interface ColumnDropInput {
   drag: CardDragState;

@@ -1,9 +1,9 @@
 import type { ComponentProps } from "react";
-import type { Toolbar } from "../shared/toolbar";
-import type { SelectOption } from "../shared/toolbar-controls";
-import type { KanbanBoardView } from "./board-view";
-import type { KanbanGroupOption } from "./types";
-import type { KanbanBoardState } from "./use-kanban-board-state";
+import type { Toolbar } from "../../shared/toolbar";
+import type { SelectOption } from "../../shared/toolbar-controls";
+import type { KanbanBoardView } from "../board-view";
+import type { KanbanGroupOption } from "../types";
+import type { KanbanBoardState } from "../model/use-kanban-board-state";
 
 type ToolbarGroupSelector = ComponentProps<typeof Toolbar>["groupSelector"];
 

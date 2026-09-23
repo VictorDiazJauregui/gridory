@@ -2,11 +2,11 @@ import "./styles.css";
 import { cn } from "../../lib/cn";
 import { resolveRootStyle } from "../shared/root-style";
 import { applyBoardDefaults, assertGroupConfiguration } from "./board-view";
-import { KanbanBoardBody } from "./KanbanBoardBody";
-import { KanbanFilterRow } from "./KanbanFilterRow";
-import { KanbanToolbar } from "./KanbanToolbar";
+import { KanbanBoardBody } from "./board/KanbanBoardBody";
+import { KanbanFilterRow } from "./toolbar/KanbanFilterRow";
+import { KanbanToolbar } from "./toolbar/KanbanToolbar";
 import type { KanbanBoardProps } from "./types";
-import { useKanbanBoardState } from "./use-kanban-board-state";
+import { useKanbanBoardState } from "./model/use-kanban-board-state";
 
 export const KanbanBoard = <TData,>(props: KanbanBoardProps<TData>) => {
   assertGroupConfiguration(props.groups, props.defaultGroupId);

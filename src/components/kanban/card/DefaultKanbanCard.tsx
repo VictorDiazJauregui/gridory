@@ -4,7 +4,7 @@ import type {
   ColumnDefinition,
   KanbanGroupOption,
   RowActions,
-} from "./types";
+} from "../types";
 
 interface DefaultKanbanCardProps<TData> {
   card: TData;

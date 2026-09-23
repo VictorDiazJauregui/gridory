@@ -1,4 +1,4 @@
-import type { KanbanCardProps } from "./column-settings";
+import type { KanbanCardProps } from "../board/column-settings";
 import { DefaultKanbanCard } from "./DefaultKanbanCard";
 import { KanbanCustomCard } from "./KanbanCustomCard";
 

@@ -1,4 +1,4 @@
-import { FilterMenu } from "../shared/toolbar";
+import { FilterMenu } from "../../shared/toolbar";
 import { buildFilterSortProps } from "./filter-item";
 import type { KanbanFilterItemProps } from "./filter-item";
 

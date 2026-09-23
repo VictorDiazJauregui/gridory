@@ -3,10 +3,10 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
-import { renderMenuNodes, resolveMenuNodes } from "../shared/menu-actions";
-import { stopPropagation } from "../shared/stop-propagation";
-import type { RowActions } from "./types";
+} from "../../ui/dropdown-menu";
+import { renderMenuNodes, resolveMenuNodes } from "../../shared/menu-actions";
+import { stopPropagation } from "../../shared/stop-propagation";
+import type { RowActions } from "../types";
 
 interface KanbanCardMenuProps<TData> {
   card: TData;

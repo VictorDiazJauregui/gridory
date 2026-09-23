@@ -1,5 +1,5 @@
 import type { KanbanColumnProps } from "./column-settings";
-import { KanbanCard } from "./KanbanCard";
+import { KanbanCard } from "../card/KanbanCard";
 
 const renderColumnCards = <TData,>(props: KanbanColumnProps<TData>) =>
   props.cards.map((card) => {

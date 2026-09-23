@@ -1,4 +1,4 @@
-import type { KanbanBoardView } from "./board-view";
+import type { KanbanBoardView } from "../board-view";
 import { buildCardMover } from "./card-move";
 import { useBoardControls } from "./use-board-controls";
 import { useCardDrag } from "./use-card-drag";

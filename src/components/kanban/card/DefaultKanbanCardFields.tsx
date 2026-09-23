@@ -1,6 +1,6 @@
-import { normalizeToArray } from "../shared/row-pipeline";
+import { normalizeToArray } from "../../shared/row-pipeline";
 import { formatDateValue } from "./card-summary";
-import type { ColumnDefinition } from "./types";
+import type { ColumnDefinition } from "../types";
 
 interface DefaultKanbanCardFieldsProps<TData> {
   card: TData;

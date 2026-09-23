@@ -2,12 +2,12 @@ import type {
   ArchivedViewMode,
   ColumnSortingState,
   DateFilterState,
-} from "../shared/data-model";
-import { useArchivedRows } from "../shared/use-archived-rows";
-import { useFilteredRows } from "../shared/use-filtered-rows";
-import { useSearchedRows } from "../shared/use-searched-rows";
-import { useSortedRows } from "../shared/use-sorted-rows";
-import type { KanbanBoardView } from "./board-view";
+} from "../../shared/data-model";
+import { useArchivedRows } from "../../shared/use-archived-rows";
+import { useFilteredRows } from "../../shared/use-filtered-rows";
+import { useSearchedRows } from "../../shared/use-searched-rows";
+import { useSortedRows } from "../../shared/use-sorted-rows";
+import type { KanbanBoardView } from "../board-view";
 
 interface VisibleCardsInput<TData> {
   cards: TData[];

@@ -1,7 +1,7 @@
 import { buildColumnSettings } from "./column-settings";
-import { resolveColumnLabel } from "./group-columns";
+import { resolveColumnLabel } from "../model/group-columns";
 import { KanbanColumn } from "./KanbanColumn";
-import type { KanbanSectionProps } from "./use-kanban-board-state";
+import type { KanbanSectionProps } from "../model/use-kanban-board-state";
 
 export const KanbanColumns = <TData,>({
   state,

@@ -1,5 +1,5 @@
-import { normalizeToArray } from "../shared/row-pipeline";
-import type { ColumnDefinition } from "./types";
+import { normalizeToArray } from "../../shared/row-pipeline";
+import type { ColumnDefinition } from "../types";
 
 export const formatDateValue = (value: string) => {
   if (!value) return "";

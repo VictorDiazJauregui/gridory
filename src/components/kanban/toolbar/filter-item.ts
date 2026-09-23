@@ -1,6 +1,6 @@
-import { resolveSortDirection } from "../shared/use-column-sorting";
-import type { ColumnDefinition, SortDirection } from "./types";
-import type { KanbanSectionProps } from "./use-kanban-board-state";
+import { resolveSortDirection } from "../../shared/use-column-sorting";
+import type { ColumnDefinition, SortDirection } from "../types";
+import type { KanbanSectionProps } from "../model/use-kanban-board-state";
 
 export interface KanbanFilterItemProps<TData>
   extends KanbanSectionProps<TData> {
