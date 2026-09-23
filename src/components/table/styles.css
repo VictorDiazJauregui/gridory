@@ -1,223 +1,82 @@
-.rdt {
+/*
+ * DataTable: module-specific rules (gdy-table-*). The toolbar, buttons, inputs,
+ * filter panels, date pickers and scroll regions come from
+ * src/styles/shared.css. Colors come from the tokens in src/styles/tokens.css.
+ */
+
+.gdy-table {
   width: 100%;
   color: var(--gdy-foreground);
   font-size: 14px;
 }
 
-.rdt * {
+.gdy-table * {
   box-sizing: border-box;
 }
 
-.rdt-card {
-  border: 1px solid var(--gdy-border);
-  border-radius: 10px;
-  background: var(--gdy-card);
-}
-
-.rdt-toolbar {
-  min-height: 40px;
-  padding: 6px 12px;
-  border-bottom: 1px solid var(--gdy-toolbar-border, var(--gdy-border));
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.rdt-toolbar-left {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.rdt-toolbar-right {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.rdt-toolbar-left:empty {
-  display: none;
-}
-
-.rdt-view-switch {
-  display: inline-flex;
-  align-items: center;
-  height: 32px;
-  padding: 2px;
-  border: 1px solid var(--gdy-input-border, var(--gdy-input));
-  border-radius: 8px;
-  background: var(--gdy-accent);
-}
-
-.rdt-view-switch-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  height: 26px;
-  padding: 0 10px;
-  border: none;
-  border-radius: 6px;
-  background: transparent;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--gdy-muted-foreground);
-  cursor: pointer;
-}
-
-.rdt-view-switch-btn-active {
-  background: var(--gdy-background);
-  color: var(--gdy-foreground);
-  box-shadow: var(--gdy-shadow-sm);
-}
-
-.rdt-search {
-  position: relative;
-}
-
-.rdt-search-icon {
-  position: absolute;
-  left: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--gdy-muted-foreground);
-}
-
-.rdt-input {
-  width: 200px;
-  height: 32px;
-  border-radius: 8px;
-  border: 1px solid var(--gdy-input-border, var(--gdy-input));
-  background: var(--gdy-input-bg, var(--gdy-muted));
-  padding: 0 10px 0 28px;
-  font-size: 12px;
-}
-
-.rdt-input:focus {
-  outline: 2px solid var(--gdy-ring);
-}
-
-.rdt-input::-webkit-search-decoration,
-.rdt-input::-webkit-search-cancel-button {
-  -webkit-appearance: none;
-  appearance: none;
-}
-
-.rdt-input-sm {
-  width: 100%;
-  padding-left: 8px;
-  padding-right: 28px;
-}
-
-.rdt-btn {
-  height: 32px;
-  border-radius: 8px;
-  border: 1px solid transparent;
-  background: var(--gdy-btn-bg, var(--gdy-muted));
-  color: var(--gdy-btn-fg, var(--gdy-foreground));
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0 10px;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.rdt-btn-primary {
-  background: var(--gdy-btn-primary-bg, var(--gdy-primary));
-  color: var(--gdy-btn-primary-fg, var(--gdy-primary-foreground));
-}
-
-.rdt-btn-primary:hover {
-  background: transparent;
-  color: var(--gdy-btn-primary-bg, var(--gdy-primary));
-  border: 1px solid var(--gdy-btn-primary-bg, var(--gdy-primary));
-}
-
-.rdt-btn-ghost {
-  color: var(--gdy-muted-foreground);
-  background: transparent;
-}
-
-.rdt-btn-ghost:hover {
-  color: var(--gdy-foreground);
-  background: transparent;
-  text-decoration: underline;
-}
-
-.rdt-btn-ai {
-  border: 1px solid transparent;
-  background: var(--gdy-btn-bg, var(--gdy-muted));
-  color: var(--gdy-btn-fg, var(--gdy-foreground));
-}
-
-.rdt-btn-ai:hover {
-  background: var(
-    --gdy-btn-hover-bg,
-    color-mix(in oklab, var(--gdy-foreground) 8%, var(--gdy-muted))
-  );
-}
-
-.rdt-btn-xs {
-  height: 28px;
-}
-
-.rdt-table-wrap {
+/* Rows scroll container (horizontal by default; vertical with fill/max-h) */
+.gdy-table-wrap {
   overflow-x: auto;
 }
 
-.rdt-min-h-sm {
+/* Public utilities for tableMinHeightClassName */
+.gdy-table-min-h-sm {
   min-height: 240px;
 }
 
-.rdt-min-h-md {
+.gdy-table-min-h-md {
   min-height: 360px;
 }
 
-.rdt-min-h-lg {
+.gdy-table-min-h-lg {
   min-height: 520px;
 }
 
-.rdt-table {
+.gdy-table-grid {
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
 }
 
-.rdt-table thead tr {
+.gdy-table-grid thead tr {
   background: var(--gdy-table-head-bg, var(--gdy-muted));
 }
 
-.rdt-table th,
-.rdt-table td {
+.gdy-table-grid th,
+.gdy-table-grid td {
   border-bottom: 1px solid var(--gdy-table-border, var(--gdy-border));
   text-align: left;
   vertical-align: middle;
 }
 
-.rdt-table th {
+.gdy-table-grid th {
   position: relative;
   padding: 8px 14px;
 }
 
-.rdt-table td {
+.gdy-table-grid td {
   padding: 9px 14px;
 }
 
-.rdt-row-clickable {
+/* Empty-state cell: two classes so it wins over the generic cell padding. */
+.gdy-table-grid .gdy-empty {
+  padding: 34px 14px;
+}
+
+.gdy-table-row-clickable {
   cursor: pointer;
 }
 
-.rdt-row-clickable:hover td {
+.gdy-table-row-clickable:hover td {
   background: var(--gdy-table-row-hover-bg, var(--gdy-muted));
 }
 
-.rdt-head-cell {
+/* Header cell content: label, sort/filter icons and the filter panel anchor */
+.gdy-table-head-cell {
   position: relative;
 }
 
-.rdt-head-trigger {
+.gdy-table-head-trigger {
   width: 100%;
   border: none;
   background: transparent;
@@ -231,251 +90,48 @@
   font-weight: 500;
 }
 
-.rdt-head-trigger.is-filtered .rdt-head-filter-icon {
+.gdy-table-head-trigger.is-filtered .gdy-table-head-filter-icon {
   background: transparent;
   color: var(--gdy-foreground);
   padding: 1px;
 }
 
-.rdt-head-label {
+.gdy-table-head-label {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.rdt-head-arrow {
+.gdy-table-head-arrow {
   opacity: 0.6;
 }
 
-.rdt-menu-holder {
+.gdy-table-menu-holder {
   position: absolute;
   z-index: 50;
   top: 28px;
   left: 0;
 }
 
-/* Calendar popover: clip the (rectangular) calendar to the rounded corners. */
-.rdt-popover-top {
-  z-index: 220;
-  overflow: hidden;
-}
-
-/* Range filter: keep the two calendar months side by side (like the base
-   calendar's md:flex-row). Shipped as plain CSS because the consumer's Tailwind
-   does not scan this package, so the md:flex-row utility never gets generated. */
-@media (min-width: 768px) {
-  .rdt-popover-top .rdp-months {
-    flex-direction: row;
-    gap: 1rem;
-  }
-}
-
-.rdt-panel {
-  width: fit-content !important;
-  max-width: 280px;
-  border: 1px solid var(--gdy-panel-border, var(--gdy-border));
-  background: var(--gdy-panel-bg, var(--gdy-popover));
-  border-radius: 8px;
-  box-shadow: var(--gdy-panel-shadow, var(--gdy-shadow-md));
-  overflow: hidden;
-}
-
-.rdt-panel-date {
-  width: 240px;
-}
-
-.rdt-panel-section {
-  border-bottom: 1px solid var(--gdy-panel-border, var(--gdy-border));
-  padding: 10px 12px;
-  width: fit-content !important;
-}
-
-.rdt-panel-section-stack {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 6px;
-}
-
-.rdt-panel-section-stack .rdt-panel-title {
-  margin-bottom: 2px;
-}
-
-.rdt-panel-section-stack .rdt-link-btn {
-  display: block;
-  width: 100%;
-  text-align: left;
-}
-
-.rdt-panel-title {
-  margin: 0 0 8px;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  color: var(--gdy-muted-foreground);
-  font-weight: 600;
-}
-
-.rdt-panel-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 12px;
-}
-
-.rdt-inline-links {
-  display: flex;
-  gap: 12px;
-}
-
-.rdt-link-btn {
-  border: none;
-  background: transparent;
-  color: var(--gdy-link);
-  font-size: 12px;
-  padding: 0;
-  cursor: pointer;
-  width: fit-content !important;
-}
-
-.rdt-link-btn-nowrap {
-  white-space: nowrap;
-}
-
-.rdt-link-btn:hover {
-  text-decoration: underline;
-}
-
-.rdt-link-btn.is-active {
-  color: var(--gdy-foreground);
-  text-decoration: none;
-}
-
-.rdt-search-sm {
-  position: relative;
-}
-
-.rdt-search-sm-icon {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--gdy-muted-foreground);
-}
-
-.rdt-option-list {
-  max-height: 220px;
-  overflow-y: auto;
-  margin-top: 8px;
-}
-
-.rdt-option-item {
-  width: 100%;
-  border: none;
-  background: transparent;
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  padding: 6px 8px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 12px;
-}
-
-.rdt-option-item.is-selected {
-  background: var(--gdy-muted);
-}
-
-.rdt-option-check {
-  width: 16px;
-  height: 16px;
-  border: 1px solid var(--gdy-input-border, var(--gdy-input));
-  border-radius: 4px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.rdt-option-check.is-checked {
-  border-color: var(--gdy-muted-foreground);
-  background: color-mix(in oklab, var(--gdy-foreground) 8%, var(--gdy-muted));
-}
-
-.rdt-option-label {
-  max-width: 210px;
+/* Cells */
+.gdy-table-cell-content {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.rdt-empty-sm {
-  color: var(--gdy-muted-foreground);
-  text-align: center;
-  font-size: 11px;
-  margin: 6px 0;
-}
-
-.rdt-panel-caption {
-  padding: 8px 12px;
-  margin: 0;
-  font-size: 11px;
-  color: var(--gdy-muted-foreground);
-}
-
-.rdt-date-input {
-  height: 32px;
-  width: 100%;
-  border: 1px solid var(--gdy-input-border, var(--gdy-input));
-  border-radius: 8px;
-  background: var(--gdy-input-bg, var(--gdy-muted));
-  color: var(--gdy-foreground);
-  padding: 0 8px;
-  font-size: 12px;
-}
-
-.rdt-cell-content {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.rdt-inline-select-wrap {
+.gdy-table-inline-select-wrap {
   width: 100%;
 }
 
-.rdt-actions-cell {
+.gdy-table-actions-cell {
   display: flex;
   justify-content: flex-end;
   position: relative;
 }
 
-.rdt-icon-btn,
-.rdt-btn-icon {
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
-  border: 1px solid transparent;
-  background: transparent;
-  color: var(--gdy-foreground);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-
-.rdt-icon-btn:hover,
-.rdt-btn-icon:hover {
-  background: var(--gdy-muted);
-}
-
-.rdt-empty {
-  text-align: center;
-  padding: 34px 14px !important;
-  color: var(--gdy-muted-foreground);
-}
-
-.rdt-pagination {
+/* Pagination footer */
+.gdy-table-pagination {
   border-top: 1px solid var(--gdy-table-border, var(--gdy-border));
   padding: 10px 12px;
   display: flex;
@@ -485,141 +141,32 @@
   flex-wrap: wrap;
 }
 
-.rdt-pagination-left,
-.rdt-pagination-right {
+.gdy-table-pagination-left,
+.gdy-table-pagination-right {
   display: flex;
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
 }
 
-.rdt-pagination-text {
+.gdy-table-pagination-text {
   color: var(--gdy-muted-foreground);
   font-size: 13px;
 }
 
-.rdt-page-size-wrap {
+.gdy-table-page-size {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.rdt-btn-icon:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
-.rdt-modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: var(--gdy-overlay);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 60;
-}
-
-.rdt-modal {
-  width: min(640px, calc(100vw - 28px));
-  background: var(--gdy-popover);
-  border-radius: 12px;
-  border: 1px solid var(--gdy-border);
-}
-
-.rdt-modal-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px;
-  border-bottom: 1px solid var(--gdy-border);
-  font-weight: 600;
-}
-
-.rdt-modal-body {
-  padding: 12px;
-}
-
-/* Date Picker with Input styles */
-.rdt-date-picker-input {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.rdt-date-input-with-icon {
-  padding-right: 32px;
-}
-
-.rdt-date-picker-trigger {
-  position: absolute;
-  right: 4px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 24px;
-  height: 24px;
-  border: none;
-  background: transparent;
-  color: var(--gdy-muted-foreground);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  border-radius: 4px;
-  transition:
-    background-color 0.15s,
-    color 0.15s;
-}
-
-.rdt-date-picker-trigger:hover {
-  background: var(--gdy-accent);
-  color: var(--gdy-foreground);
-}
-
-/* Archived view selector */
-.rdt-archived-wrap {
-  min-width: 180px;
-}
-
-.rdt-archived-select {
-  height: 32px;
-  width: 100%;
-  border: 1px solid var(--gdy-input-border, var(--gdy-input));
-  border-radius: 8px;
-  background: var(--gdy-background);
-  font-size: 12px;
-  color: var(--gdy-foreground);
-  padding: 0 8px;
-  cursor: pointer;
-}
-
-.rdt-archived-select:hover {
-  border-color: var(--gdy-ring);
-  background: var(--gdy-muted);
-}
-
 /* Row grouping */
-.rdt-group-wrap {
-  min-width: 200px;
-}
-
-.rdt-group-select {
-  height: 32px;
-  width: 100%;
-  border: 1px solid var(--gdy-input-border, var(--gdy-input));
-  border-radius: 8px;
-  background: var(--gdy-background);
-  font-size: 12px;
-  color: var(--gdy-foreground);
-  padding: 0 8px;
-  cursor: pointer;
-}
-
-.rdt-group-row td.rdt-group-cell {
+.gdy-table-group-row td.gdy-table-group-cell {
   background: var(--gdy-table-group-bg, var(--gdy-accent));
   padding: 0;
 }
 
-.rdt-group-toggle {
+.gdy-table-group-toggle {
   width: 100%;
   display: flex;
   align-items: center;
@@ -634,27 +181,27 @@
   text-align: left;
 }
 
-.rdt-group-toggle:hover {
+.gdy-table-group-toggle:hover {
   background: color-mix(in oklab, var(--gdy-foreground) 8%, var(--gdy-accent));
 }
 
-.rdt-group-chevron {
+.gdy-table-group-chevron {
   color: var(--gdy-muted-foreground);
   transition: transform 0.15s ease;
 }
 
-.rdt-group-chevron.is-collapsed {
+.gdy-table-group-chevron.is-collapsed {
   transform: rotate(-90deg);
 }
 
-.rdt-group-label {
+.gdy-table-group-label {
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.rdt-group-count {
+.gdy-table-group-count {
   color: var(--gdy-muted-foreground);
   font-weight: 500;
   font-size: 11px;
@@ -665,39 +212,40 @@
 
 /* fillHeight: the card fills its height-constrained parent and only the rows
    area scrolls, keeping toolbar (search + grouper) and pagination fixed. */
-.rdt-fill {
+.gdy-table-fill {
   display: flex;
   flex-direction: column;
   height: 100%;
   min-height: 0;
 }
 
-.rdt-fill .rdt-card {
+.gdy-table-fill .gdy-card {
   flex: 1;
   display: flex;
   flex-direction: column;
   min-height: 0;
 }
 
-.rdt-fill .rdt-table-wrap {
+.gdy-table-fill .gdy-table-wrap {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
 }
 
-/* Self-contained internal scroll region (companion to fillHeight): caps the
-   rows area height without needing a height-constrained parent. */
-.rdt-max-h-sm {
+/* Public utilities for tableMaxHeightClassName: self-contained internal scroll
+   region (companion to fillHeight) that caps the rows area height without
+   needing a height-constrained parent. */
+.gdy-table-max-h-sm {
   max-height: 320px;
   overflow-y: auto;
 }
 
-.rdt-max-h-md {
+.gdy-table-max-h-md {
   max-height: 480px;
   overflow-y: auto;
 }
 
-.rdt-max-h-lg {
+.gdy-table-max-h-lg {
   max-height: 640px;
   overflow-y: auto;
 }
@@ -707,7 +255,7 @@
    border-collapse the collapsed bottom border is dropped on a sticky cell, so
    it is repainted as an identical 1px inset shadow; opaque background prevents
    rows from showing through. z-index sits below the filter/row dropdowns. */
-.rdt-sticky thead th {
+.gdy-table-sticky thead th {
   position: sticky;
   top: 0;
   z-index: 2;
@@ -715,52 +263,3 @@
   border-bottom: none;
   box-shadow: inset 0 -1px 0 var(--gdy-table-border, var(--gdy-border));
 }
-
-/* Thin scrollbars (thinScrollbars, default ON). Thumb via --gdy-scrollbar-thumb. */
-.rdt-thin-scroll .rdt-table-wrap,
-.rdt-thin-scroll .rdt-option-list,
-.rdt-thin-scroll .rdt-max-h-sm,
-.rdt-thin-scroll .rdt-max-h-md,
-.rdt-thin-scroll .rdt-max-h-lg {
-  scrollbar-width: thin;
-  scrollbar-color: var(--gdy-scrollbar-thumb, var(--gdy-input)) transparent;
-}
-.rdt-thin-scroll .rdt-table-wrap::-webkit-scrollbar,
-.rdt-thin-scroll .rdt-option-list::-webkit-scrollbar,
-.rdt-thin-scroll .rdt-max-h-sm::-webkit-scrollbar,
-.rdt-thin-scroll .rdt-max-h-md::-webkit-scrollbar,
-.rdt-thin-scroll .rdt-max-h-lg::-webkit-scrollbar { width: 8px; height: 8px; }
-.rdt-thin-scroll .rdt-table-wrap::-webkit-scrollbar-thumb,
-.rdt-thin-scroll .rdt-option-list::-webkit-scrollbar-thumb,
-.rdt-thin-scroll .rdt-max-h-sm::-webkit-scrollbar-thumb,
-.rdt-thin-scroll .rdt-max-h-md::-webkit-scrollbar-thumb,
-.rdt-thin-scroll .rdt-max-h-lg::-webkit-scrollbar-thumb { background-color: var(--gdy-scrollbar-thumb, var(--gdy-input)); border-radius: 8px; }
-.rdt-thin-scroll .rdt-table-wrap::-webkit-scrollbar-track,
-.rdt-thin-scroll .rdt-option-list::-webkit-scrollbar-track,
-.rdt-thin-scroll .rdt-max-h-sm::-webkit-scrollbar-track,
-.rdt-thin-scroll .rdt-max-h-md::-webkit-scrollbar-track,
-.rdt-thin-scroll .rdt-max-h-lg::-webkit-scrollbar-track { background: transparent; }
-
-.rdt-panel-date .rdt-panel-section { width: 100% !important; }
-
-.rdt-date-range-inputs { display: grid; gap: 8px; }
-
-.rdt-option-item:hover {
-  background: var(
-    --gdy-option-hover-bg,
-    color-mix(in oklab, var(--gdy-foreground) 6%, var(--gdy-muted))
-  );
-}
-
-/* Thin scrollbar for the react-day-picker month/year dropdown selects
-   (portaled outside the component root, so this rule is global). */
-.rdp-dropdown {
-  scrollbar-width: thin;
-  scrollbar-color: var(--gdy-scrollbar-thumb, var(--gdy-input)) transparent;
-}
-.rdp-dropdown::-webkit-scrollbar { width: 8px; }
-.rdp-dropdown::-webkit-scrollbar-thumb {
-  background-color: var(--gdy-scrollbar-thumb, var(--gdy-input));
-  border-radius: 8px;
-}
-.rdp-dropdown::-webkit-scrollbar-track { background: transparent; }

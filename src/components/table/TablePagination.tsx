@@ -36,15 +36,15 @@ export const TablePagination = ({
   if (!enabled) return null;
 
   return (
-    <div className="rdt-pagination">
-      <div className="rdt-pagination-left">
-        <span className="rdt-pagination-text">
+    <div className="gdy-table-pagination">
+      <div className="gdy-table-pagination-left">
+        <span className="gdy-table-pagination-text">
           {totalRows === 0
             ? `0 ${label}`
             : `Mostrando ${from}–${to} de ${totalRows} ${label}`}
         </span>
-        <div className="rdt-page-size-wrap">
-          <span className="rdt-pagination-text">Elementos por página</span>
+        <div className="gdy-table-page-size">
+          <span className="gdy-table-pagination-text">Elementos por página</span>
           <SimpleSelect
             ariaLabel="Elementos por página"
             options={pageSizeOptions.map((size) => ({
@@ -58,13 +58,13 @@ export const TablePagination = ({
         </div>
       </div>
 
-      <div className="rdt-pagination-right">
-        <span className="rdt-pagination-text">
+      <div className="gdy-table-pagination-right">
+        <span className="gdy-table-pagination-text">
           Página {totalRows === 0 ? 0 : pageIndex + 1} de {pageCount}
         </span>
         <button
           type="button"
-          className="rdt-btn-icon"
+          className="gdy-icon-btn"
           disabled={pageIndex <= 0}
           onClick={onPrevPage}
         >
@@ -72,7 +72,7 @@ export const TablePagination = ({
         </button>
         <button
           type="button"
-          className="rdt-btn-icon"
+          className="gdy-icon-btn"
           disabled={pageIndex + 1 >= pageCount}
           onClick={onNextPage}
         >

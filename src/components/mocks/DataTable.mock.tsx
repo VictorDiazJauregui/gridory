@@ -165,7 +165,7 @@ export const DataTableMock = () => {
       label="empresas"
       createLabel="Nueva empresa"
       defaultPageSize={25}
-      tableMaxHeightClassName="rdt-max-h-md"
+      tableMaxHeightClassName="gdy-table-max-h-md"
       features={{ createButton: true }}
       onCreate={handleCreateRow}
       viewSwitch={{ active: view, onChange: setView }}
