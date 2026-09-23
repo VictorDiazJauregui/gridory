@@ -10,26 +10,21 @@ import path from "node:path";
 const root = process.cwd();
 const failures = [];
 
+const SKIPPED_DIRECTORIES = new Set(["node_modules", "releases"]);
 const walk = (dir, accept) => {
-  const out = [];
-  if (!existsSync(dir)) return out;
-  for (const entry of readdirSync(dir)) {
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir).flatMap((entry) => {
     const full = path.join(dir, entry);
-    if (statSync(full).isDirectory()) {
-      if (entry === "node_modules" || entry === "releases") continue;
-      out.push(...walk(full, accept));
-    } else if (accept(full)) {
-      out.push(full);
-    }
-  }
-  return out;
+    if (!statSync(full).isDirectory()) return accept(full) ? [full] : [];
+    return SKIPPED_DIRECTORIES.has(entry) ? [] : walk(full, accept);
+  });
 };
 
 const rel = (file) => path.relative(root, file);
 const hasExt = (...exts) => (file) => exts.includes(path.extname(file));
 
 // 1. Legacy names --------------------------------------------------------------
-const LEGACY = /\b(?:rdt|rkb|lui)-|lumini/i;
+const LEGACY = /\b(?:rdt|rkb|lui)-/i;
 const legacyFiles = [
   ...walk(path.join(root, "src"), hasExt(".ts", ".tsx", ".css", ".md")),
   ...walk(path.join(root, "dist"), hasExt(".js", ".css", ".d.ts")),

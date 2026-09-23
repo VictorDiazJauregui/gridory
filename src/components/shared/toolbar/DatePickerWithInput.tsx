@@ -36,11 +36,10 @@ export const DatePickerWithInput = ({
   const [localInput, setLocalInput] = useState("");
   const [isEditing, setIsEditing] = useState(false);
 
-  const displayValue = isEditing
-    ? localInput
-    : selectedDate
-      ? formatDateToInput(selectedDate, dateInputFormat)
-      : "";
+  const formattedDate = selectedDate
+    ? formatDateToInput(selectedDate, dateInputFormat)
+    : "";
+  const displayValue = isEditing ? localInput : formattedDate;
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const currentValue = event.target.value;

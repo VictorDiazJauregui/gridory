@@ -61,6 +61,14 @@ import {
   findGroupForIndex,
 } from "./row-grouping";
 
+const renderCellValue = <TData,>(
+  column: ColumnDefinition<TData>,
+  row: TData,
+) => {
+  if (column.cell) return column.cell(row);
+  return String(normalizeToArray(column.accessor(row)).join(", ") || "—");
+};
+
 const SORT_ICON_BY_DIRECTION: Record<SortDirection | "none", LucideIcon> = {
   asc: ArrowUp,
   desc: ArrowDown,
@@ -365,13 +373,8 @@ export const DataTable = <TData,>({
                   theme={selectTheme}
                 />
               </div>
-            ) : column.cell ? (
-              column.cell(row.original)
             ) : (
-              String(
-                normalizeToArray(column.accessor(row.original)).join(", ") ||
-                  "—",
-              )
+              renderCellValue(column, row.original)
             )}
           </div>
         );

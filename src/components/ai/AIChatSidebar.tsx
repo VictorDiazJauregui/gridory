@@ -48,6 +48,16 @@ const resolveEmptyState = (
   };
 }
 
+const resolveSubtitle = (
+  mode: AIChatMode,
+  dataSchema: AIChatSidebarProps["dataSchema"],
+): string => {
+  if (dataSchema) {
+    return `${dataSchema.rows?.length ?? 0} registros · ${dataSchema.entityName}`;
+  }
+  return mode === "chatbot" ? "Chat asistido" : "Asistente contextual";
+};
+
 export const AIChatSidebar = (props: AIChatSidebarProps) => {
   const {
     open,
@@ -118,13 +128,7 @@ export const AIChatSidebar = (props: AIChatSidebarProps) => {
       ? DEFAULT_SUGGESTED_MESSAGES_CHATBOT
       : DEFAULT_SUGGESTED_MESSAGES_DATA);
 
-  const resolvedSubtitle =
-    subtitle ??
-    (dataSchema
-      ? `${dataSchema.rows?.length ?? 0} registros · ${dataSchema.entityName}`
-      : mode === "chatbot"
-        ? "Chat asistido"
-        : "Asistente contextual");
+  const resolvedSubtitle = subtitle ?? resolveSubtitle(mode, dataSchema);
 
   const empty = resolveEmptyState(mode, emptyState, texts);
 

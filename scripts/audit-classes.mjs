@@ -52,13 +52,13 @@ const ATTR_IN_CSS = /\[((?:data|aria)-[a-z0-9-]+)(?:\s*=\s*"?([^"\]]+)"?)?\]/g;
 
 const collect = (files, regex) => {
   const found = new Map();
+  const record = (name, file) => {
+    if (!found.has(name)) found.set(name, new Set());
+    found.get(name).add(path.relative(root, file));
+  };
   for (const file of files) {
     const text = stripComments(readFileSync(file, "utf8"));
-    for (const match of text.matchAll(regex)) {
-      const name = match[1];
-      if (!found.has(name)) found.set(name, new Set());
-      found.get(name).add(path.relative(root, file));
-    }
+    for (const match of text.matchAll(regex)) record(match[1], file);
   }
   return found;
 };
@@ -114,24 +114,29 @@ for (const name of hookOnly) {
 const librarySourceText = librarySources
   .map((file) => stripComments(readFileSync(file, "utf8")))
   .join("\n");
+const checkVariantSelector = (relative, attribute, value) => {
+  if (!librarySourceText.includes(attribute)) {
+    failures.push(`${relative}: selector [${attribute}] is never emitted by a component`);
+    return;
+  }
+  if (value && !librarySourceText.includes(`"${value}"`)) {
+    failures.push(`${relative}: no component uses the value "${value}" of ${attribute}`);
+  }
+};
+const checkAttributeSelector = (relative, [, attribute, value]) => {
+  if (externalAttributes.has(attribute)) return;
+  if (variantAttributes.has(attribute)) {
+    checkVariantSelector(relative, attribute, value);
+    return;
+  }
+  const needle = value && attribute.startsWith("data-") ? `${attribute}="${value}"` : attribute;
+  if (!librarySourceText.includes(needle)) {
+    failures.push(`${relative}: selector [${attribute}${value ? `="${value}"` : ""}] is never emitted by a component`);
+  }
+};
 for (const file of libraryStylesheets) {
   const text = stripComments(readFileSync(file, "utf8"));
-  for (const match of text.matchAll(ATTR_IN_CSS)) {
-    const [, attribute, value] = match;
-    if (externalAttributes.has(attribute)) continue;
-    if (variantAttributes.has(attribute)) {
-      if (!librarySourceText.includes(attribute)) {
-        failures.push(`${path.relative(root, file)}: selector [${attribute}] is never emitted by a component`);
-      } else if (value && !librarySourceText.includes(`"${value}"`)) {
-        failures.push(`${path.relative(root, file)}: no component uses the value "${value}" of ${attribute}`);
-      }
-      continue;
-    }
-    const needle = value && attribute.startsWith("data-") ? `${attribute}="${value}"` : attribute;
-    if (!librarySourceText.includes(needle)) {
-      failures.push(`${path.relative(root, file)}: selector [${attribute}${value ? `="${value}"` : ""}] is never emitted by a component`);
-    }
-  }
+  for (const match of text.matchAll(ATTR_IN_CSS)) checkAttributeSelector(path.relative(root, file), match);
 }
 
 // 6. Strict modules: every class literal is a gdy-* hook, no rdp-* survives ----
@@ -142,23 +147,24 @@ const CLASS_LITERAL_CONTEXTS = [
   /const \w+_CLASS_NAMES[^{]*=\s*\{([\s\S]*?)\};/g,
 ];
 const GDY_TOKEN = /^gdy-[a-z0-9]+(?:-[a-z0-9]+)*$/;
-for (const moduleName of strictModules) {
-  const dir = path.join(root, "src/components", moduleName);
-  for (const file of walk(dir, isSource)) {
-    const text = stripComments(readFileSync(file, "utf8"));
-    const relative = path.relative(root, file);
-    if (text.includes("rdp-")) failures.push(`strict module "${moduleName}": ${relative} mentions an rdp-* class`);
-    for (const context of CLASS_LITERAL_CONTEXTS) {
-      for (const match of text.matchAll(context)) {
-        const literals = context === CLASS_LITERAL_CONTEXTS[0] ? [match[1]] : [...match[1].matchAll(/"([^"]*)"/g)].map((m) => m[1]);
-        for (const literal of literals) {
-          for (const token of literal.split(/\s+/).filter(Boolean)) {
-            if (!GDY_TOKEN.test(token)) failures.push(`strict module "${moduleName}": class "${token}" in ${relative} is not a gdy-* hook`);
-          }
-        }
-      }
-    }
+const literalsOf = (context, match) =>
+  context === CLASS_LITERAL_CONTEXTS[0] ? [match[1]] : [...match[1].matchAll(/"([^"]*)"/g)].map((m) => m[1]);
+const classTokensOf = (text) =>
+  CLASS_LITERAL_CONTEXTS.flatMap((context) =>
+    [...text.matchAll(context)].flatMap((match) =>
+      literalsOf(context, match).flatMap((literal) => literal.split(/\s+/).filter(Boolean)),
+    ),
+  );
+const checkStrictSource = (moduleName, file) => {
+  const text = stripComments(readFileSync(file, "utf8"));
+  const relative = path.relative(root, file);
+  if (text.includes("rdp-")) failures.push(`strict module "${moduleName}": ${relative} mentions an rdp-* class`);
+  for (const token of classTokensOf(text)) {
+    if (!GDY_TOKEN.test(token)) failures.push(`strict module "${moduleName}": class "${token}" in ${relative} is not a gdy-* hook`);
   }
+};
+for (const moduleName of strictModules) {
+  for (const file of walk(path.join(root, "src/components", moduleName), isSource)) checkStrictSource(moduleName, file);
 }
 if (/\.rdp-/.test(readFileSync(distCss, "utf8"))) failures.push("dist/gridory.css still contains an .rdp-* rule");
 
