@@ -219,3 +219,166 @@
 .gdy-button.gdy-ai-send:hover {
   transform: scale(1.05);
 }
+
+/* ----------------------------------------------------------- Empty state */
+.gdy-ai-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  height: 100%;
+  padding: 0 16px;
+  text-align: center;
+}
+
+.gdy-ai-empty-badge {
+  display: flex;
+  width: 56px;
+  height: 56px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  background-color: color-mix(in oklab, var(--gdy-ai-accent, var(--gdy-primary)) 10%, transparent);
+}
+
+.gdy-ai-empty-icon {
+  width: 28px;
+  height: 28px;
+  color: var(--gdy-ai-accent, var(--gdy-primary));
+}
+
+.gdy-ai-empty-title {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  color: var(--gdy-foreground);
+}
+
+.gdy-ai-empty-description {
+  max-width: 240px;
+  margin-top: 4px;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: var(--gdy-muted-foreground);
+}
+
+.gdy-ai-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.gdy-ai-chip {
+  padding: 6px 12px;
+  border: 1px solid color-mix(in oklab, var(--gdy-ai-accent, var(--gdy-primary)) 20%, transparent);
+  border-radius: 9999px;
+  background-color: color-mix(in oklab, var(--gdy-ai-accent, var(--gdy-primary)) 5%, transparent);
+  color: var(--gdy-ai-accent, var(--gdy-primary));
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 500;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-duration: 0.15s;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gdy-ai-chip:hover {
+  background-color: color-mix(in oklab, var(--gdy-ai-accent, var(--gdy-primary)) 10%, transparent);
+}
+
+/* -------------------------------------------------------------- Messages */
+/* A row per message: avatar plus bubble for the assistant, bubble alone
+   pushed to the end for the user. data-role is a variant, so the bubble
+   slots (userBubble, assistantBubble) override its colors. */
+.gdy-ai-message {
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+.gdy-ai-message:where([data-role="user"]) {
+  justify-content: flex-end;
+}
+
+.gdy-ai-avatar {
+  display: flex;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  margin-top: 2px;
+  align-items: center;
+  justify-content: center;
+  border-radius: calc(var(--gdy-radius) - 2px);
+  background-color: color-mix(in oklab, var(--gdy-ai-accent, var(--gdy-primary)) 10%, transparent);
+}
+
+.gdy-ai-avatar-icon {
+  width: 12px;
+  height: 12px;
+  color: var(--gdy-ai-accent, var(--gdy-primary));
+}
+
+.gdy-ai-bubble {
+  min-width: 0;
+  max-width: 85%;
+  padding: 10px 14px;
+  border-radius: 12px;
+  overflow-wrap: break-word;
+}
+
+.gdy-ai-bubble:where([data-role="assistant"]) {
+  border: 1px solid color-mix(in oklab, var(--gdy-border) 50%, transparent);
+  border-bottom-left-radius: calc(var(--gdy-radius) - 4px);
+  background-color: var(--gdy-ai-assistant-bubble-bg, color-mix(in oklab, var(--gdy-muted) 60%, transparent));
+  color: var(--gdy-ai-assistant-bubble-fg, var(--gdy-foreground));
+}
+
+.gdy-ai-bubble:where([data-role="user"]) {
+  border-bottom-right-radius: calc(var(--gdy-radius) - 4px);
+  background-color: var(--gdy-ai-user-bubble-bg, var(--gdy-ai-accent, var(--gdy-primary)));
+  color: var(--gdy-ai-user-bubble-fg, var(--gdy-ai-accent-fg, var(--gdy-primary-foreground)));
+}
+
+.gdy-ai-text {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+/* "Thinking" row shown until the first streamed token arrives. */
+.gdy-ai-thinking {
+  padding: 12px 16px;
+  border: 1px solid color-mix(in oklab, var(--gdy-border) 50%, transparent);
+  border-radius: 12px;
+  border-bottom-left-radius: calc(var(--gdy-radius) - 4px);
+  background-color: var(--gdy-ai-assistant-bubble-bg, color-mix(in oklab, var(--gdy-muted) 60%, transparent));
+}
+
+.gdy-ai-thinking-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.gdy-ai-thinking-icon {
+  width: 14px;
+  height: 14px;
+  color: var(--gdy-ai-accent, var(--gdy-primary));
+  animation: gdy-ai-spin 1s linear infinite;
+}
+
+.gdy-ai-thinking-label {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: var(--gdy-muted-foreground);
+}
+
+@keyframes gdy-ai-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -55,7 +55,9 @@ function resolveEmptyState(
  * `body` → `gdy-ai-body`, `footer` → `gdy-ai-footer`, `inputWrapper` →
  * `gdy-ai-input-wrapper`, `textarea` → `gdy-ai-textarea`, `chip` →
  * `gdy-ai-chip`, `userBubble` / `assistantBubble` → `gdy-ai-bubble`).
- * States: `data-state="open|closed"` on the sidebar, `data-empty` on the body.
+ * States: `data-state="open|closed"` on the sidebar, `data-empty` on the body,
+ * `data-role="user|assistant"` on messages and bubbles, `data-streaming` and
+ * `data-thinking` on the transient rows.
  */
 export function AIChatSidebar(props: AIChatSidebarProps) {
   const {
@@ -169,6 +171,8 @@ export function AIChatSidebar(props: AIChatSidebarProps) {
 
   const canReset = messages.length > 0 || pendingActions.length > 0;
   const isEmpty = messages.length === 0;
+  const bubbleClassName = (role: string) =>
+    role === "user" ? classNames?.userBubble : classNames?.assistantBubble;
 
   return (
     <>
@@ -218,29 +222,22 @@ export function AIChatSidebar(props: AIChatSidebarProps) {
           data-empty={isEmpty || undefined}
         >
           {isEmpty ? (
-            <div className="flex h-full flex-col items-center justify-center gap-4 px-4 text-center">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10">
-                {empty.icon ?? <Bot className="h-7 w-7 text-primary" />}
+            <div className="gdy-ai-empty">
+              <div className="gdy-ai-empty-badge">
+                {empty.icon ?? <Bot className="gdy-ai-empty-icon" />}
               </div>
-              <div>
-                <p className="text-sm font-semibold text-foreground">
-                  {empty.title}
-                </p>
-                <p className="mt-1 max-w-[240px] text-xs text-muted-foreground">
-                  {empty.description}
-                </p>
+              <div className="gdy-ai-empty-text">
+                <p className="gdy-ai-empty-title">{empty.title}</p>
+                <p className="gdy-ai-empty-description">{empty.description}</p>
               </div>
               {chips.length > 0 ? (
-                <div className="mt-2 flex flex-wrap justify-center gap-2">
+                <div className="gdy-ai-chips">
                   {chips.map((chip) => (
                     <button
                       key={chip.label}
                       type="button"
                       onClick={() => void handleSend(chip.prompt)}
-                      className={cn(
-                        "rounded-full border border-primary/20 bg-primary/5 px-3 py-1.5 text-xs font-medium text-primary transition-colors hover:bg-primary/10",
-                        classNames?.chip,
-                      )}
+                      className={cn("gdy-ai-chip", classNames?.chip)}
                     >
                       {chip.label}
                     </button>
@@ -253,52 +250,36 @@ export function AIChatSidebar(props: AIChatSidebarProps) {
           {messages.map((message) => (
             <div
               key={message.id}
-              className={cn(
-                "flex gap-2.5",
-                message.role === "user" ? "justify-end" : "justify-start",
-              )}
+              className="gdy-ai-message"
+              data-role={message.role}
             >
               {message.role === "assistant" ? (
-                <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary/10">
-                  <Sparkles className="h-3 w-3 text-primary" />
+                <div className="gdy-ai-avatar">
+                  <Sparkles className="gdy-ai-avatar-icon" />
                 </div>
               ) : null}
 
               <div
-                className={cn(
-                  "min-w-0 max-w-[85%] break-words rounded-xl px-3.5 py-2.5",
-                  message.role === "user"
-                    ? cn(
-                        "rounded-br-sm bg-primary text-primary-foreground",
-                        classNames?.userBubble,
-                      )
-                    : cn(
-                        "rounded-bl-sm border border-border/50 bg-muted/60 text-foreground",
-                        classNames?.assistantBubble,
-                      ),
-                )}
+                className={cn("gdy-ai-bubble", bubbleClassName(message.role))}
+                data-role={message.role}
               >
                 {message.role === "assistant" ? (
                   <MarkdownRenderer text={message.content} />
                 ) : (
-                  <p className="whitespace-pre-wrap break-words text-sm">
-                    {message.content}
-                  </p>
+                  <p className="gdy-ai-text">{message.content}</p>
                 )}
               </div>
             </div>
           ))}
 
           {streamingContent ? (
-            <div className="flex gap-2.5">
-              <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary/10">
-                <Sparkles className="h-3 w-3 text-primary" />
+            <div className="gdy-ai-message" data-role="assistant" data-streaming="">
+              <div className="gdy-ai-avatar">
+                <Sparkles className="gdy-ai-avatar-icon" />
               </div>
               <div
-                className={cn(
-                  "min-w-0 max-w-[85%] break-words rounded-xl rounded-bl-sm border border-border/50 bg-muted/60 px-3.5 py-2.5 text-foreground",
-                  classNames?.assistantBubble,
-                )}
+                className={cn("gdy-ai-bubble", classNames?.assistantBubble)}
+                data-role="assistant"
               >
                 <MarkdownRenderer text={`${streamingContent}▌`} />
               </div>
@@ -306,14 +287,14 @@ export function AIChatSidebar(props: AIChatSidebarProps) {
           ) : null}
 
           {isLoading && !streamingContent ? (
-            <div className="flex gap-2.5">
-              <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary/10">
-                <Sparkles className="h-3 w-3 text-primary" />
+            <div className="gdy-ai-message" data-role="assistant" data-thinking="">
+              <div className="gdy-ai-avatar">
+                <Sparkles className="gdy-ai-avatar-icon" />
               </div>
-              <div className="rounded-xl rounded-bl-sm border border-border/50 bg-muted/60 px-4 py-3">
-                <div className="flex items-center gap-2">
-                  <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
-                  <span className="text-xs text-muted-foreground">
+              <div className="gdy-ai-thinking">
+                <div className="gdy-ai-thinking-content">
+                  <Loader2 className="gdy-ai-thinking-icon" />
+                  <span className="gdy-ai-thinking-label">
                     {resolvedTexts.thinking}
                   </span>
                 </div>
@@ -334,7 +315,7 @@ export function AIChatSidebar(props: AIChatSidebarProps) {
               ))
             : null}
 
-          <div ref={messagesEndRef} />
+          <div ref={messagesEndRef} className="gdy-ai-end" />
         </div>
 
         <footer className={cn("gdy-ai-footer", classNames?.footer)}>

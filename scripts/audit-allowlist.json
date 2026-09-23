@@ -43,11 +43,14 @@
     "gdy-calendar-months-dropdown",
     "gdy-calendar-years-dropdown",
     "gdy-ai-reset",
-    "gdy-ai-close"
+    "gdy-ai-close",
+    "gdy-ai-empty-text",
+    "gdy-ai-end"
   ],
   "variantAttributes": [
     "data-variant",
-    "data-size"
+    "data-size",
+    "data-role"
   ],
   "strictModules": [
     "ui",
