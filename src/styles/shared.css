@@ -196,10 +196,14 @@
   cursor: not-allowed;
 }
 
-/* Filter panel (values and dates) */
+/* Filter panel (values and dates). Text defaults are explicit because the
+   table mounts the panel inside a <th> (browser bold, centered) and the
+   preflight makes buttons and inputs inherit font-weight. */
 .gdy-panel {
   width: fit-content;
   max-width: 280px;
+  font-weight: 400;
+  text-align: left;
   border: 1px solid var(--gdy-panel-border, var(--gdy-border));
   background: var(--gdy-panel-bg, var(--gdy-popover));
   border-radius: 8px;
