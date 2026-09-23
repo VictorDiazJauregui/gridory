@@ -43,10 +43,17 @@ const buildPageNavigation = (input: PageNavigationInput) => {
   return { changePageSize, goToPage };
 };
 
+export interface PageNavigation extends PageWindow {
+  pageCount: number;
+  setPageIndex: Dispatch<SetStateAction<number>>;
+  changePageSize: (size: number) => void;
+  goToPage: (next: number) => void;
+}
+
 export const useTablePagination = <TData>(
   localRowCount: number,
   settings: TableSettings<TData>,
-) => {
+): PageNavigation => {
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(settings.defaultPageSize);
   const pageCount = computePageCount(localRowCount, pageSize, settings);

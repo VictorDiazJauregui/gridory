@@ -1,9 +1,7 @@
 import type { TableModel } from "./use-table-core";
 
-export const buildPaginationProps = <TData>({
-  settings,
-  paging,
-}: TableModel<TData>) => {
+export const buildPaginationProps = <TData>(model: TableModel<TData>) => {
+  const { settings, paging } = model;
   const { range } = paging;
   return {
     enabled: settings.flags.pagination,

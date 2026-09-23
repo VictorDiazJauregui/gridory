@@ -159,19 +159,16 @@ const findGroupForIndex = (
   return current;
 };
 
-interface RowGroupStateInput {
-  headers: Map<number, GroupHeader>;
+interface RowGroupSelection {
   activeGroupBy: string | null;
   collapsedGroups: Set<string>;
-  absoluteIndex: number;
 }
 
-export const resolveRowGroupState = ({
-  headers,
-  activeGroupBy,
-  collapsedGroups,
-  absoluteIndex,
-}: RowGroupStateInput) => {
+export const resolveRowGroupState = (
+  headers: Map<number, GroupHeader>,
+  { activeGroupBy, collapsedGroups }: RowGroupSelection,
+  absoluteIndex: number,
+) => {
   const groupHeader = activeGroupBy ? headers.get(absoluteIndex) : undefined;
   const currentGroupValue = activeGroupBy
     ? findGroupForIndex(headers, absoluteIndex)

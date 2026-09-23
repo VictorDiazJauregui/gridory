@@ -14,5 +14,6 @@ export const computePageRange = <TData>(
   const to = flags.pagination
     ? Math.min((pageIndex + 1) * pageSize, totalRows)
     : totalRows;
-  return { totalRows, from, to };
+  const pageStartIndex = flags.pagination ? pageIndex * pageSize : 0;
+  return { totalRows, from, to, pageStartIndex };
 };

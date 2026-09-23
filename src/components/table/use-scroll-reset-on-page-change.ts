@@ -1,10 +1,11 @@
 import { useLayoutEffect, useRef } from "react";
+import type { TableSettings } from "./settings";
 import type { PageWindow } from "./use-table-pagination";
 import type { ViewSnapshot } from "./use-view-snapshot";
 
-export const useScrollResetOnPageChange = (
+export const useScrollResetOnPageChange = <TData>(
   { pageIndex, pageSize }: PageWindow,
-  scrollResetOnPageChange: boolean,
+  { scrollResetOnPageChange }: TableSettings<TData>,
   viewSnapshot: ViewSnapshot,
 ) => {
   const wrapRef = useRef<HTMLDivElement>(null);

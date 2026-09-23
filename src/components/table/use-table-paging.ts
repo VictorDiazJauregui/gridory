@@ -14,21 +14,9 @@ export const useTablePaging = <TData>(
 ) => {
   const pagination = useTablePagination(flatRows.length, settings);
   const viewSnapshot = useViewSnapshot(state);
-  useResetPageOnChange(
-    pagination.setPageIndex,
-    settings.manualPagination,
-    viewSnapshot,
-  );
-  const { scrollResetOnPageChange, flags } = settings;
-  const wrapRef = useScrollResetOnPageChange(
-    pagination,
-    scrollResetOnPageChange,
-    viewSnapshot,
-  );
+  useResetPageOnChange(pagination, settings, viewSnapshot);
+  const wrapRef = useScrollResetOnPageChange(pagination, settings, viewSnapshot);
   const pagedRows = usePagedRows(flatRows, pagination, settings);
-  const pageStartIndex = flags.pagination
-    ? pagination.pageIndex * pagination.pageSize
-    : 0;
   const range = computePageRange(flatRows.length, pagination, settings);
-  return { ...pagination, wrapRef, pagedRows, pageStartIndex, range };
+  return { ...pagination, wrapRef, pagedRows, range };
 };

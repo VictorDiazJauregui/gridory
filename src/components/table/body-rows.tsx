@@ -10,25 +10,25 @@ interface RowElementsInput<TData> extends TableModelProps<TData> {
   indexInPage: number;
 }
 
-export const buildRowElements = <TData,>({
-  row,
+const resolveRowPlacement = <TData,>({
   indexInPage,
   model,
-}: RowElementsInput<TData>): ReactNode[] => {
-  const { settings, state, grouping, paging } = model;
-  const { groupHeader, isCollapsed } = resolveRowGroupState({
-    headers: grouping.headers,
-    activeGroupBy: state.activeGroupBy,
-    collapsedGroups: state.collapsedGroups,
-    absoluteIndex: paging.pageStartIndex + indexInPage,
-  });
+}: RowElementsInput<TData>) => {
+  const { state, grouping, paging } = model;
+  const absoluteIndex = paging.range.pageStartIndex + indexInPage;
+  return resolveRowGroupState(grouping.headers, state, absoluteIndex);
+};
+
+export const buildRowElements = <TData,>(input: RowElementsInput<TData>) => {
+  const { row, model } = input;
+  const { groupHeader, isCollapsed } = resolveRowPlacement(input);
   const elements: ReactNode[] = [];
   if (groupHeader) {
     const key = `__group__:${groupHeader.value}`;
     elements.push(<TableGroupRow key={key} header={groupHeader} model={model} />);
   }
   if (!isCollapsed) {
-    const { onRowClick } = settings;
+    const { onRowClick } = model.settings;
     elements.push(<TableDataRow key={row.id} row={row} onRowClick={onRowClick} />);
   }
   return elements;

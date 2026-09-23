@@ -35,6 +35,19 @@ export default defineConfig([
     },
   },
   {
+    files: [
+      'src/components/table/**/*.{ts,tsx}',
+      'src/components/shared/*.ts',
+      'src/components/shared/toolbar/toolbar-props.ts',
+    ],
+    rules: {
+      'max-lines-per-function': [
+        'error',
+        { max: 20, skipBlankLines: true, skipComments: true },
+      ],
+    },
+  },
+  {
     files: ['scripts/**/*.mjs'],
     extends: [js.configs.recommended],
     languageOptions: {

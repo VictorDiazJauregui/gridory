@@ -16,9 +16,7 @@ export const TableHeaderIcons = <TData,>({
   const sortable = flags.sorting && column.sortable !== false;
   return (
     <>
-      {isFiltered && (
-        <Filter size={12} className="gdy-table-head-filter-icon" />
-      )}
+      {isFiltered && <Filter size={12} className="gdy-table-head-filter-icon" />}
       {flags.filtering && column.filterable && (
         <ChevronDown size={13} className="gdy-table-head-arrow" />
       )}

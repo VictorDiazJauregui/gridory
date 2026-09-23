@@ -1,4 +1,3 @@
-import type { CSSProperties } from "react";
 import type { SelectTheme } from "../shared/select-theme";
 import { stopPropagation } from "../shared/stop-propagation";
 import { SimpleSelect } from "../ui/select";
@@ -18,7 +17,6 @@ export const InlineSelectCell = <TData,>(
   const { column, row, value } = props;
   const options = column.inlineEditOptions ?? [];
   const valueExists = options.some((option) => option.value === value);
-  const triggerStyle: CSSProperties | undefined = props.highlight?.style;
   return (
     <div className="gdy-table-inline-select-wrap" onClick={stopPropagation}>
       <SimpleSelect
@@ -27,7 +25,7 @@ export const InlineSelectCell = <TData,>(
         onValueChange={(next) => column.onInlineEdit?.(row, next)}
         placeholder="Seleccionar..."
         triggerClassName="gdy-table-inline-select"
-        triggerStyle={triggerStyle}
+        triggerStyle={props.highlight?.style}
         theme={props.selectTheme}
       />
     </div>
