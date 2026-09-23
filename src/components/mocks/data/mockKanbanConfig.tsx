@@ -84,9 +84,6 @@ export const KANBAN_STATIC_PROPS = {
   aiButton: {
     onClick: () => window.alert("Evento aiButton -> abrir asistente IA"),
   },
-  archivedView: {
-    defaultValue: "active",
-    onChange: (mode) => console.log("onArchivedViewChange (kanban)", mode),
-  },
+  archivedView: { defaultValue: "active" },
   rowActions: KANBAN_ROW_ACTIONS,
 } satisfies Partial<KanbanBoardProps<MockCompanyRow>>;

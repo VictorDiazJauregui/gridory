@@ -129,10 +129,6 @@ export const TABLE_STATIC_PROPS = {
   aiButton: { onClick: () => window.alert("Evento aiButton onClick") },
   groupableColumnIds: ["status", "country", "brand"],
   defaultGroupBy: null,
-  onGroupChange: (groupBy) => console.log("onGroupChange", groupBy),
-  archivedView: {
-    defaultValue: "active",
-    onChange: (mode) => console.log("onArchivedViewChange (table)", mode),
-  },
+  archivedView: { defaultValue: "active" },
   rowActions: TABLE_ROW_ACTIONS,
 } satisfies Partial<DataTableProps<MockCompanyRow>>;
