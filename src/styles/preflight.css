@@ -23,7 +23,7 @@
   box-sizing: border-box;
   border-width: 0;
   border-style: solid;
-  border-color: var(--border);
+  border-color: var(--gdy-border);
 }
 
 :where(.gdy-scope) ::before,
@@ -56,9 +56,7 @@
 }
 
 :where(.gdy-scope) :is(code, kbd, samp, pre) {
-  font-family:
-    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
-    "Courier New", monospace;
+  font-family: var(--gdy-font-mono);
   font-size: 1em;
 }
 
@@ -100,7 +98,7 @@
 
 :where(.gdy-scope) :is(input, textarea)::placeholder {
   opacity: 1;
-  color: var(--muted-foreground);
+  color: var(--gdy-muted-foreground);
 }
 
 :where(.gdy-scope) textarea {
