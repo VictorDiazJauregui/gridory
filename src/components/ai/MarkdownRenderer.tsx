@@ -16,54 +16,45 @@ const renderInline = (text: string): ReactNode[] => {
       </span>
     );
   });
-}
+};
 
-export const MarkdownRenderer = ({ text }: { text: string }) => {
-  const lines = text.split("\n");
+const renderHeading = (line: string, index: number) => (
+  <h3 key={index} className="gdy-ai-md-heading">
+    {renderInline(line.slice(4))}
+  </h3>
+);
 
-  return (
-    <div className="gdy-ai-markdown">
-      {lines.map((line, index) => {
-        if (line.startsWith("### ")) {
-          return (
-            <h3 key={index} className="gdy-ai-md-heading">
-              {renderInline(line.slice(4))}
-            </h3>
-          );
-        }
+const renderBulletItem = (line: string, index: number) => (
+  <div key={index} className="gdy-ai-md-item" data-list="unordered">
+    <span className="gdy-ai-md-bullet">&#8226;</span>
+    <span className="gdy-ai-md-item-text">{renderInline(line.slice(2))}</span>
+  </div>
+);
 
-        if (line.startsWith("- ")) {
-          return (
-            <div key={index} className="gdy-ai-md-item" data-list="unordered">
-              <span className="gdy-ai-md-bullet">&#8226;</span>
-              <span className="gdy-ai-md-item-text">
-                {renderInline(line.slice(2))}
-              </span>
-            </div>
-          );
-        }
+const renderNumberedItem = (orderedItem: RegExpMatchArray, index: number) => (
+  <div key={index} className="gdy-ai-md-item" data-list="ordered">
+    <span className="gdy-ai-md-number">{orderedItem[1]}.</span>
+    <span className="gdy-ai-md-item-text">{renderInline(orderedItem[2])}</span>
+  </div>
+);
 
-        const orderedItem = line.match(/^(\d+)\.\s(.*)/);
-        if (orderedItem) {
-          return (
-            <div key={index} className="gdy-ai-md-item" data-list="ordered">
-              <span className="gdy-ai-md-number">{orderedItem[1]}.</span>
-              <span className="gdy-ai-md-item-text">
-                {renderInline(orderedItem[2])}
-              </span>
-            </div>
-          );
-        }
+const renderParagraph = (line: string, index: number) => (
+  <p key={index} className="gdy-ai-md-paragraph">
+    {renderInline(line)}
+  </p>
+);
 
-        if (line.trim() === "") {
-          return <div key={index} className="gdy-ai-md-gap" />;
-        }
-        return (
-          <p key={index} className="gdy-ai-md-paragraph">
-            {renderInline(line)}
-          </p>
-        );
-      })}
-    </div>
-  );
-}
+const renderMarkdownLine = (line: string, index: number): ReactNode => {
+  if (line.startsWith("### ")) return renderHeading(line, index);
+  if (line.startsWith("- ")) return renderBulletItem(line, index);
+  const orderedItem = line.match(/^(\d+)\.\s(.*)/);
+  if (orderedItem) return renderNumberedItem(orderedItem, index);
+  if (line.trim() === "") return <div key={index} className="gdy-ai-md-gap" />;
+  return renderParagraph(line, index);
+};
+
+export const MarkdownRenderer = ({ text }: { text: string }) => (
+  <div className="gdy-ai-markdown">
+    {text.split("\n").map(renderMarkdownLine)}
+  </div>
+);
