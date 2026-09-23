@@ -38,7 +38,7 @@ export type MenuItem<TData> =
   | MenuSeparator
   | MenuLabel;
 
-export interface MenuActionsInput<TData> {
+interface MenuActionsInput<TData> {
   edit?: boolean;
   archive?: boolean;
   remove?: boolean;
@@ -80,7 +80,7 @@ interface ResolvedLabelNode {
   className?: string;
 }
 
-export type ResolvedMenuNode =
+type ResolvedMenuNode =
   | ResolvedActionNode
   | ResolvedSeparatorNode
   | ResolvedLabelNode;
@@ -212,7 +212,7 @@ function isCustomAction<TData>(
   return item.kind === undefined || item.kind === "action";
 }
 
-export function validateMenuActions<TData>(
+function validateMenuActions<TData>(
   items: MenuItem<TData>[],
 ): void {
   const seenIds = new Set<string>();

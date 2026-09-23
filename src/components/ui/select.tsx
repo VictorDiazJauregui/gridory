@@ -176,13 +176,4 @@ function SimpleSelect({
   );
 }
 
-export {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectScrollDownButton,
-  SelectScrollUpButton,
-  SelectTrigger,
-  SelectValue,
-  SimpleSelect,
-};
+export { SimpleSelect };

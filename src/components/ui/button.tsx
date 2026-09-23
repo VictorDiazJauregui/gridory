@@ -3,7 +3,7 @@ import { Slot } from "radix-ui";
 
 import { cn } from "../../lib/cn";
 
-export type ButtonVariant =
+type ButtonVariant =
   | "default"
   | "outline"
   | "secondary"
@@ -11,7 +11,7 @@ export type ButtonVariant =
   | "destructive"
   | "link";
 
-export type ButtonSize =
+type ButtonSize =
   | "default"
   | "xs"
   | "sm"

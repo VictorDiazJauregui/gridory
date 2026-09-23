@@ -22,7 +22,7 @@ export const hasDateFilterValue = (value?: DateFilterState) => {
 };
 
 /** Maps the user-facing mask (mm = month) to a date-fns pattern (MM = month). */
-export const dateFnsPattern = (mask: DateInputFormat): string =>
+const dateFnsPattern = (mask: DateInputFormat): string =>
   mask.replace("mm", "MM");
 
 export const parseInputToDate = (

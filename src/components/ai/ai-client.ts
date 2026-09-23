@@ -18,7 +18,7 @@ export interface AIParsedToolCall {
   parsedArguments: Record<string, unknown> | null;
 }
 
-export interface StreamChatCompletionParams {
+interface StreamChatCompletionParams {
   client: OpenAI;
   messages: ChatCompletionMessageParam[];
   model: string;
@@ -28,7 +28,7 @@ export interface StreamChatCompletionParams {
   onContent?: (fullContent: string, delta: string) => void;
 }
 
-export interface StreamChatCompletionResult {
+interface StreamChatCompletionResult {
   content: string;
   toolCalls: AIParsedToolCall[];
   rawResponse: string;

@@ -8,7 +8,7 @@ export type {
   RowActionPlacement,
   RowActionVariant,
 } from "./row-action";
-export { resolveMenuNodes, renderMenuNodes, validateMenuActions } from "./menu-actions";
+export { resolveMenuNodes, renderMenuNodes } from "./menu-actions";
 export type {
   BuiltInActionId,
   BuiltInMenuRef,
@@ -18,11 +18,7 @@ export type {
 } from "./menu-actions";
 export { selectThemeToVars } from "./select-theme";
 export type { SelectTheme } from "./select-theme";
-export {
-  DEFAULT_LEFT_SLOT_IDS,
-  DEFAULT_RIGHT_SLOT_IDS,
-  resolveToolbarClusters,
-} from "./toolbar-layout";
+export { resolveToolbarClusters } from "./toolbar-layout";
 export type { ToolbarLayout, ToolbarSide } from "./toolbar-layout";
 export type {
   HeaderSelectConfig,

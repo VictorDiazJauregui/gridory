@@ -25,14 +25,14 @@ const DEFAULT_ARCHIVED_OPTION_LABELS: Record<ArchivedViewMode, string> = {
 
 const ARCHIVED_OPTION_ORDER: ArchivedViewMode[] = ["active", "archived", "all"];
 
-export interface ToolbarGroupSelector {
+interface ToolbarGroupSelector {
   options: SelectOption[];
   value: string;
   onChange: (value: string) => void;
   ariaLabel: string;
 }
 
-export interface ToolbarProps {
+interface ToolbarProps {
   showSearch: boolean;
   search: string;
   searchPlaceholder: string;

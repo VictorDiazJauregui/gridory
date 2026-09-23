@@ -5,8 +5,8 @@ export interface ToolbarLayout {
   right?: string[];
 }
 
-export const DEFAULT_LEFT_SLOT_IDS = ["search", "clearFilters"] as const;
-export const DEFAULT_RIGHT_SLOT_IDS = [
+const DEFAULT_LEFT_SLOT_IDS = ["search", "clearFilters"] as const;
+const DEFAULT_RIGHT_SLOT_IDS = [
   "archived",
   "group",
   "ai",
@@ -14,14 +14,14 @@ export const DEFAULT_RIGHT_SLOT_IDS = [
   "create",
 ] as const;
 
-export interface ToolbarClusterInput {
+interface ToolbarClusterInput {
   layout?: ToolbarLayout;
   isVisible: (id: string) => boolean;
   customLeftIds: string[];
   customRightIds: string[];
 }
 
-export interface ToolbarClusters {
+interface ToolbarClusters {
   left: string[];
   right: string[];
 }

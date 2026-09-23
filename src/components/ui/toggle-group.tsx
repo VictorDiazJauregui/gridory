@@ -32,13 +32,13 @@ function ToggleGroupItem({
   );
 }
 
-export interface SegmentedControlOption {
+interface SegmentedControlOption {
   value: string;
   label: string;
   icon?: React.ReactNode;
 }
 
-export interface SegmentedControlProps {
+interface SegmentedControlProps {
   options: SegmentedControlOption[];
   value: string;
   onChange: (value: string) => void;
@@ -92,4 +92,4 @@ function SegmentedControl({
   );
 }
 
-export { ToggleGroup, ToggleGroupItem, SegmentedControl };
+export { SegmentedControl };
