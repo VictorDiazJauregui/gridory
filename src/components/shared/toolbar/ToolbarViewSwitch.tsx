@@ -22,7 +22,7 @@ export const ToolbarViewSwitch = ({ config }: ToolbarViewSwitchProps) => {
         aria-pressed={isTableActive}
         onClick={() => selectView("table")}
       >
-        <Table2 size={14} />
+        <Table2 size={14} className="gdy-view-switch-icon" />
         {config.tableLabel ?? "Tabla"}
       </button>
       <button
@@ -31,7 +31,7 @@ export const ToolbarViewSwitch = ({ config }: ToolbarViewSwitchProps) => {
         aria-pressed={isKanbanActive}
         onClick={() => selectView("kanban")}
       >
-        <LayoutGrid size={14} />
+        <LayoutGrid size={14} className="gdy-view-switch-icon" />
         {config.kanbanLabel ?? "Kanban"}
       </button>
     </div>

@@ -33,7 +33,7 @@ export const KanbanCardMenu = <TData,>({
           aria-label="Opciones"
           onClick={stopClick}
         >
-          <MoreHorizontal size={14} />
+          <MoreHorizontal size={14} className="gdy-kanban-card-menu-icon" />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent onClick={stopClick}>

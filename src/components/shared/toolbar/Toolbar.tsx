@@ -107,9 +107,13 @@ const SearchSlot = ({
 );
 
 const ClearFiltersSlot = ({ onClear }: { onClear: () => void }) => (
-  <button type="button" className="gdy-btn gdy-btn-ghost" onClick={onClear}>
-    <span>Limpiar filtros</span>
-    <FilterX size={12} />
+  <button
+    type="button"
+    className="gdy-btn gdy-btn-ghost gdy-toolbar-clear"
+    onClick={onClear}
+  >
+    <span className="gdy-toolbar-clear-label">Limpiar filtros</span>
+    <FilterX size={12} className="gdy-toolbar-clear-icon" />
   </button>
 );
 
@@ -120,8 +124,12 @@ const CreateSlot = ({
   label: string;
   onCreate: () => void;
 }) => (
-  <button type="button" className="gdy-btn gdy-btn-primary" onClick={onCreate}>
-    <Plus size={14} />
+  <button
+    type="button"
+    className="gdy-btn gdy-btn-primary gdy-toolbar-create"
+    onClick={onCreate}
+  >
+    <Plus size={14} className="gdy-toolbar-create-icon" />
     {label}
   </button>
 );

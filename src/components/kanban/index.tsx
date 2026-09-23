@@ -345,8 +345,10 @@ export const KanbanBoard = <TData,>({
                     <span className="gdy-kanban-filter-trigger-label" title={field.header}>
                       {field.header}
                     </span>
-                    {hasFieldFilter ? <Filter size={12} /> : null}
-                    <ChevronDown size={13} />
+                    {hasFieldFilter ? (
+                      <Filter size={12} className="gdy-kanban-filter-icon" />
+                    ) : null}
+                    <ChevronDown size={13} className="gdy-kanban-filter-arrow" />
                   </button>
 
                   {openFilterFieldId === field.id && (

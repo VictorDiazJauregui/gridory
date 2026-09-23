@@ -18,7 +18,20 @@
     "gdy-table-empty-row",
     "gdy-table-group-row",
     "gdy-table-pagination-icon",
-    "gdy-table-actions-icon"
+    "gdy-table-actions-icon",
+    "gdy-kanban-filter-icon",
+    "gdy-kanban-filter-arrow",
+    "gdy-kanban-card-menu-icon",
+    "gdy-kanban-card-value-label",
+    "gdy-toolbar-clear",
+    "gdy-toolbar-clear-label",
+    "gdy-toolbar-clear-icon",
+    "gdy-toolbar-create",
+    "gdy-toolbar-create-icon",
+    "gdy-view-switch-icon",
+    "gdy-btn-ai-icon",
+    "gdy-option-check-icon",
+    "gdy-date-picker-icon"
   ],
   "runtimeAttributes": [
     "data-state",

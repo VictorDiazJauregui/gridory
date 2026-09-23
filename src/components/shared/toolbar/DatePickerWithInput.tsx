@@ -99,7 +99,7 @@ export const DatePickerWithInput = ({
             className="gdy-date-picker-trigger"
             aria-label="Seleccionar fecha"
           >
-            <CalendarIcon size={14} />
+            <CalendarIcon size={14} className="gdy-date-picker-icon" />
           </button>
         </PopoverTrigger>
         <PopoverContent

@@ -60,14 +60,14 @@ export const DefaultKanbanCard = <TData,>({
         if (!value) return null;
         return (
           <p key={field.id} className="gdy-kanban-card-value">
-            <strong>{field.header}:</strong> {value}
+            <strong className="gdy-kanban-card-value-label">{field.header}:</strong> {value}
           </p>
         );
       })}
 
       {dateField ? (
         <p className="gdy-kanban-card-value">
-          <strong>{dateField.header}:</strong>{" "}
+          <strong className="gdy-kanban-card-value-label">{dateField.header}:</strong>{" "}
           {formatDateValue(normalizeToArray(dateField.accessor(card))[0] ?? "")}
         </p>
       ) : null}

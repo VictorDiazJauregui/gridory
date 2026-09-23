@@ -126,7 +126,9 @@ export const FilterMenu = ({
                     className="gdy-option-check"
                     data-checked={isChecked || undefined}
                   >
-                    {isChecked ? <Check size={11} /> : null}
+                    {isChecked ? (
+                      <Check size={11} className="gdy-option-check-icon" />
+                    ) : null}
                   </span>
                   <span className="gdy-option-label" title={option.label}>
                     {option.label}
