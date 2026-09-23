@@ -322,10 +322,11 @@
   transform: rotate(180deg);
 }
 
+/* Never narrower than the trigger, but wide enough for every option. */
 .gdy-select-content {
   position: relative;
   z-index: 50;
-  width: var(--radix-select-trigger-width);
+  min-width: var(--radix-select-trigger-width);
   max-height: var(--radix-select-content-available-height);
   overflow: hidden;
   border-radius: var(--gdy-select-radius, calc(var(--gdy-radius) - 2px));
@@ -339,7 +340,6 @@
 
 .gdy-select-viewport {
   width: 100%;
-  min-width: var(--radix-select-trigger-width);
   padding: 4px;
   scroll-margin: 4px 0;
 }
@@ -355,6 +355,7 @@
   font-size: 0.875rem;
   line-height: 1.25rem;
   color: var(--gdy-select-item-text, inherit);
+  white-space: nowrap;
   cursor: pointer;
   outline: 2px solid transparent;
   outline-offset: 2px;
