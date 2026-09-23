@@ -399,3 +399,66 @@
   padding: 4px 0;
   cursor: default;
 }
+
+/* ---------------------------------------------------------- Toggle group */
+.gdy-toggle-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--gdy-border);
+  border-radius: var(--gdy-radius);
+  background-color: var(--gdy-toggle-bg, color-mix(in oklab, var(--gdy-muted) 50%, transparent));
+}
+
+.gdy-toggle-item {
+  display: inline-flex;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 10px;
+  border-radius: calc(var(--gdy-radius) - 2px);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  color: var(--gdy-muted-foreground);
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-duration: 0.15s;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gdy-toggle-item:hover {
+  color: var(--gdy-foreground);
+}
+
+.gdy-toggle-item:focus-visible {
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--gdy-ring) 50%, transparent);
+}
+
+.gdy-toggle-item:disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.gdy-toggle-item[data-state="on"] {
+  background-color: var(--gdy-toggle-active-bg, var(--gdy-background));
+  color: var(--gdy-foreground);
+  box-shadow: var(--gdy-shadow-sm);
+}
+
+.gdy-toggle-item[data-state="on"]:focus-visible {
+  box-shadow:
+    0 0 0 3px color-mix(in oklab, var(--gdy-ring) 50%, transparent),
+    var(--gdy-shadow-sm);
+}
+
+/* Icons arrive from the consumer (ToggleOption.icon) without a class. */
+.gdy-toggle-item svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  pointer-events: none;
+}

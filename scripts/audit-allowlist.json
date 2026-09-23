@@ -34,7 +34,8 @@
     "gdy-date-picker-icon",
     "gdy-menu-item-label",
     "gdy-select-value",
-    "gdy-select-item-text"
+    "gdy-select-item-text",
+    "gdy-toggle-item-label"
   ],
   "variantAttributes": [
     "data-variant",
