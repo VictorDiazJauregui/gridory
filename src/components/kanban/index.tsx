@@ -1,64 +1,35 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import type { CSSProperties } from "react";
+import { useMemo } from "react";
 import { ChevronDown, Filter } from "lucide-react";
 import "./styles.css";
 import { cn } from "../../lib/cn";
 import {
-  EMPTY_DATE_FILTER_STATE,
-  hasDateFilterValue,
-} from "../shared/date-filter";
-import { useActiveFilters, useClickOutside } from "../shared/hooks";
+  buildDateFilterMenuKey,
+  hasColumnFilter,
+  pickCalendarSettings,
+  resolveEmptyDateState,
+} from "../shared/column-filters";
+import { resolveRootStyle } from "../shared/root-style";
 import { DateFilterMenu, FilterMenu, Toolbar } from "../shared/toolbar";
-import type { DateFilterState, ColumnDefinition } from "./types";
-import {
-  applyArchivedView,
-  applyColumnFilters,
-  applyColumnSorting,
-  applyGlobalSearch,
-  computeColumnFilterOptions,
-  normalizeInputRows,
-} from "../shared/row-pipeline";
+import { buildArchivedToolbarProps } from "../shared/toolbar/toolbar-props";
+import { resolveSortDirection } from "../shared/use-column-sorting";
 import { applyBoardDefaults, assertGroupConfiguration } from "./board-view";
-import { planCardMove, replaceCard } from "./card-move";
-import {
-  collectGroupColumns,
-  groupCardsByValue,
-  mergeColumnValues,
-  resolveColumnLabel,
-} from "./group-columns";
+import { resolveColumnLabel } from "./group-columns";
 import { buildGroupSelectOptions } from "./group-select-options";
 import { DefaultKanbanCard } from "./DefaultKanbanCard";
 import { KanbanCardMenu } from "./KanbanCardMenu";
-import type {
-  ArchivedViewMode,
-  KanbanDateFiltersState,
-  KanbanFiltersState,
-  KanbanSortingState,
-  KanbanBoardProps,
-} from "./types";
-
-const resolveSortDirection = (
-  sorting: KanbanSortingState | null,
-  fieldId: string,
-): KanbanSortingState["direction"] | null => {
-  return sorting?.id === fieldId ? sorting.direction : null;
-};
+import type { KanbanBoardProps } from "./types";
+import { useKanbanBoardState } from "./use-kanban-board-state";
 
 export const KanbanBoard = <TData,>(props: KanbanBoardProps<TData>) => {
   assertGroupConfiguration(props.groups, props.defaultGroupId);
   const view = applyBoardDefaults(props);
+  const state = useKanbanBoardState(view);
   const {
     fields,
-    data,
     groups,
-    defaultGroupId,
-    normalizeRow,
-    getCardId,
     rowActions,
     renderCard,
-    onCardMove,
     onCardClick,
-    onGroupChange,
     groupSelectorLabel,
     searchPlaceholder,
     createLabel,
@@ -67,7 +38,6 @@ export const KanbanBoard = <TData,>(props: KanbanBoardProps<TData>) => {
     boardWrapClassName,
     boardMinHeightClassName,
     columnBodyMaxHeight,
-    archivedView,
     viewSwitch,
     aiButton,
     toggleGroups,
@@ -75,158 +45,49 @@ export const KanbanBoard = <TData,>(props: KanbanBoardProps<TData>) => {
     toolbarLayout,
     selectTheme,
     thinScrollbars,
-    scrollbarColor,
-    optionHoverColor,
     dateFilterRequireOperator,
-    dateInputFormat,
-    calendarMonthYearDropdown,
-    calendarFromYear,
-    calendarToYear,
     flags,
   } = view;
-
-  const inputCards = useMemo(
-    () => normalizeInputRows(data, normalizeRow),
-    [data, normalizeRow],
-  );
-  const [cards, setCards] = useState<TData[]>(inputCards);
-  const [search, setSearch] = useState("");
-  const [sorting, setSorting] = useState<KanbanSortingState | null>(null);
-  const [filters, setFilters] = useState<KanbanFiltersState>({});
-  const [dateFilters, setDateFilters] = useState<KanbanDateFiltersState>({});
-  const [openFilterFieldId, setOpenFilterFieldId] = useState<string | null>(
-    null,
-  );
-  const [selectedGroupId, setSelectedGroupId] = useState(defaultGroupId);
-  const [draggingCardId, setDraggingCardId] = useState<string | null>(null);
-  const [dragOverValue, setDragOverValue] = useState<string | null>(null);
-  const [internalArchivedMode, setInternalArchivedMode] =
-    useState<ArchivedViewMode>(archivedView?.defaultValue ?? "active");
-  const archivedMode = archivedView?.value ?? internalArchivedMode;
-
-  const handleArchivedModeChange = (next: ArchivedViewMode) => {
-    if (archivedView?.value === undefined) setInternalArchivedMode(next);
-    archivedView?.onChange?.(next);
-  };
-
-  const filterMenuRef = useRef<HTMLDivElement>(null);
-  useClickOutside(filterMenuRef, () => setOpenFilterFieldId(null));
-  const dragHappenedRef = useRef<boolean>(false);
-
-  useEffect(() => {
-    setCards(inputCards);
-  }, [inputCards]);
-
-  useEffect(() => {
-    if (groups.some((group) => group.id === selectedGroupId)) return;
-    setSelectedGroupId(groups[0].id);
-  }, [groups, selectedGroupId]);
-
-  const selectedGroup = useMemo(
-    () => groups.find((group) => group.id === selectedGroupId) ?? groups[0],
-    [groups, selectedGroupId],
-  );
-
-  const computedFilterOptions = useMemo(
-    () => computeColumnFilterOptions(fields, cards),
-    [fields, cards],
-  );
-
-  const searchedCards = useMemo(
-    () =>
-      flags.search
-        ? applyGlobalSearch({ rows: cards, columns: fields, query: search })
-        : cards,
-    [cards, fields, search, flags.search],
-  );
-
-  const archivedFilteredCards = useMemo(
-    () =>
-      archivedView
-        ? applyArchivedView({
-            rows: searchedCards,
-            mode: archivedMode,
-            getIsArchived: rowActions?.getIsArchived,
-          })
-        : searchedCards,
-    [searchedCards, archivedMode, archivedView, rowActions],
-  );
-
-  const filteredCards = useMemo(
-    () =>
-      applyColumnFilters({
-        rows: archivedFilteredCards,
-        columns: fields,
-        filters,
-        dateFilters: dateFilters as Record<string, DateFilterState>,
-        enabled: flags.filtering,
-      }),
-    [archivedFilteredCards, fields, filters, dateFilters, flags.filtering],
-  );
-
-  const sortedCards = useMemo(
-    () =>
-      applyColumnSorting({
-        rows: filteredCards,
-        columns: fields,
-        sorting: sorting ?? null,
-        enabled: flags.sorting,
-      }),
-    [filteredCards, fields, sorting, flags.sorting],
-  );
-
-  const visibleCards = sortedCards;
-
-  const hasActiveFilters = useActiveFilters(
+  const {
+    search,
+    setSearch,
+    sorting,
+    sortBy,
+    toggleColumnSort,
+    clearColumnSort,
     filters,
-    dateFilters as Record<string, DateFilterState>,
-  );
+    dateFilters,
+    hasActiveFilters,
+    setFilter,
+    setDateFilter,
+    clearFilters,
+    openFilterColumnId,
+    filterMenuRef,
+    toggleFilterMenu,
+    closeFilterMenu,
+    filterOptions,
+    selectedGroup,
+    changeGroup,
+    visibleCards,
+    groupColumns,
+    cardsByGroup,
+    visibleColumnValues,
+    resolveCardId,
+    moveCard,
+    drag,
+  } = state;
 
   const fieldFilters = useMemo(
     () => fields.filter((field) => field.filterable),
     [fields],
   );
 
-  const groupColumns = useMemo(
-    () => collectGroupColumns(selectedGroup, cards),
-    [selectedGroup, cards],
-  );
-
-  const cardsByGroup = useMemo(
-    () => groupCardsByValue(selectedGroup, groupColumns, visibleCards),
-    [visibleCards, selectedGroup, groupColumns],
-  );
-
-  const visibleColumnValues = useMemo(
-    () => mergeColumnValues(groupColumns, cardsByGroup),
-    [groupColumns, cardsByGroup],
-  );
-
-  const resolveCardId = (card: TData) => {
-    const index = cards.indexOf(card);
-    return getCardId(card, index >= 0 ? index : 0);
-  };
-
-  const moveCard = (cardId: string, toValue: string) => {
-    const move = { cards, getCardId, group: selectedGroup, cardId, toValue };
-    const event = planCardMove(move);
-    if (!event) return;
-    setCards(replaceCard(getCardId, cardId, event.updatedCard));
-    onCardMove?.(event);
-  };
-
-  const rootStyle = {
-    ...(scrollbarColor ? { ["--gdy-scrollbar-thumb"]: scrollbarColor } : {}),
-    ...(optionHoverColor ? { ["--gdy-option-hover-bg"]: optionHoverColor } : {}),
-  } as CSSProperties;
-  const emptyDateState: DateFilterState = dateFilterRequireOperator
-    ? EMPTY_DATE_FILTER_STATE
-    : { ...EMPTY_DATE_FILTER_STATE, op: "gt" };
+  const emptyDateState = resolveEmptyDateState(dateFilterRequireOperator);
 
   return (
     <div
       className={cn("gdy-kanban", thinScrollbars && "gdy-thin-scroll")}
-      style={rootStyle}
+      style={resolveRootStyle(view)}
     >
       <div className="gdy-scope gdy-card">
         <Toolbar
@@ -235,19 +96,13 @@ export const KanbanBoard = <TData,>(props: KanbanBoardProps<TData>) => {
           searchPlaceholder={searchPlaceholder}
           onSearchChange={setSearch}
           showClearFilters={flags.filtering && hasActiveFilters}
-          onClearFilters={() => {
-            setFilters({});
-            setDateFilters({});
-          }}
+          onClearFilters={clearFilters}
           groupSelector={
             flags.groupSelector
               ? {
                   options: buildGroupSelectOptions(groups, groupSelectorLabel),
                   value: selectedGroup.id,
-                  onChange: (groupId) => {
-                    setSelectedGroupId(groupId);
-                    onGroupChange?.(groupId);
-                  },
+                  onChange: changeGroup,
                   ariaLabel: groupSelectorLabel,
                 }
               : undefined
@@ -255,13 +110,7 @@ export const KanbanBoard = <TData,>(props: KanbanBoardProps<TData>) => {
           showCreateButton={flags.createButton}
           createLabel={createLabel}
           onCreate={onCreate}
-          showArchivedView={
-            Boolean(archivedView) && Boolean(rowActions?.getIsArchived)
-          }
-          archivedMode={archivedMode}
-          onArchivedModeChange={handleArchivedModeChange}
-          archivedViewLabel={archivedView?.label}
-          archivedViewOptionLabels={archivedView?.optionLabels}
+          {...buildArchivedToolbarProps(view, state)}
           viewSwitch={viewSwitch}
           aiButton={aiButton}
           toggleGroups={toggleGroups}
@@ -274,9 +123,11 @@ export const KanbanBoard = <TData,>(props: KanbanBoardProps<TData>) => {
           <div className="gdy-kanban-filter-row">
             {fieldFilters.map((field) => {
               const sortDirection = resolveSortDirection(sorting, field.id);
-              const hasFieldFilter =
-                (filters[field.id]?.length ?? 0) > 0 ||
-                hasDateFilterValue(dateFilters[field.id]);
+              const hasFieldFilter = hasColumnFilter(
+                field.id,
+                filters,
+                dateFilters,
+              );
 
               return (
                 <div key={field.id} className="gdy-kanban-filter-item">
@@ -284,11 +135,7 @@ export const KanbanBoard = <TData,>(props: KanbanBoardProps<TData>) => {
                     type="button"
                     className="gdy-kanban-filter-trigger"
                     data-filtered={hasFieldFilter || undefined}
-                    onClick={() =>
-                      setOpenFilterFieldId((previous) =>
-                        previous === field.id ? null : field.id,
-                      )
-                    }
+                    onClick={() => toggleFilterMenu(field.id)}
                   >
                     <span className="gdy-kanban-filter-trigger-label" title={field.header}>
                       {field.header}
@@ -299,72 +146,31 @@ export const KanbanBoard = <TData,>(props: KanbanBoardProps<TData>) => {
                     <ChevronDown size={13} className="gdy-kanban-filter-arrow" />
                   </button>
 
-                  {openFilterFieldId === field.id && (
+                  {openFilterColumnId === field.id && (
                     <div className="gdy-kanban-filter-menu-holder" ref={filterMenuRef}>
                       {field.type === "date" ? (
                         <DateFilterMenu
-                          key={`${field.id}-${dateFilters[field.id]?.op ?? "gt"}-${dateFilters[field.id]?.date ?? ""}-${dateFilters[field.id]?.dateFrom ?? ""}-${dateFilters[field.id]?.dateTo ?? ""}`}
+                          key={buildDateFilterMenuKey(field.id, dateFilters[field.id])}
                           state={dateFilters[field.id] ?? emptyDateState}
                           emptyState={emptyDateState}
-                          dateInputFormat={dateInputFormat}
-                          calendarMonthYearDropdown={calendarMonthYearDropdown}
-                          calendarFromYear={calendarFromYear}
-                          calendarToYear={calendarToYear}
-                          onChange={(next) =>
-                            setDateFilters((previous) => ({
-                              ...previous,
-                              [field.id]: next,
-                            }))
-                          }
-                          onClose={() => setOpenFilterFieldId(null)}
+                          {...pickCalendarSettings(view)}
+                          onChange={(next) => setDateFilter(field.id, next)}
+                          onClose={closeFilterMenu}
                           sortable={flags.sorting && field.sortable !== false}
                           sortDirection={sortDirection}
-                          onSortAsc={() =>
-                            setSorting({
-                              id: field.id,
-                              direction: "asc",
-                            })
-                          }
-                          onSortDesc={() =>
-                            setSorting({
-                              id: field.id,
-                              direction: "desc",
-                            })
-                          }
-                          onSortClear={() =>
-                            setSorting((previous) =>
-                              previous?.id === field.id ? null : previous,
-                            )
-                          }
+                          onSortAsc={() => sortBy(field.id, "asc")}
+                          onSortDesc={() => sortBy(field.id, "desc")}
+                          onSortClear={() => clearColumnSort(field.id)}
                         />
                       ) : (
                         <FilterMenu
-                          options={computedFilterOptions[field.id] ?? []}
+                          options={filterOptions[field.id] ?? []}
                           selected={filters[field.id] ?? []}
-                          onSelectedChange={(next) =>
-                            setFilters((previous) => ({
-                              ...previous,
-                              [field.id]: next,
-                            }))
-                          }
+                          onSelectedChange={(next) => setFilter(field.id, next)}
                           sortable={flags.sorting && field.sortable !== false}
                           sortDirection={sortDirection}
-                          onSortAsc={() =>
-                            setSorting((previous) =>
-                              previous?.id === field.id &&
-                              previous.direction === "asc"
-                                ? null
-                                : { id: field.id, direction: "asc" },
-                            )
-                          }
-                          onSortDesc={() =>
-                            setSorting((previous) =>
-                              previous?.id === field.id &&
-                              previous.direction === "desc"
-                                ? null
-                                : { id: field.id, direction: "desc" },
-                            )
-                          }
+                          onSortAsc={() => toggleColumnSort(field.id, "asc")}
+                          onSortDesc={() => toggleColumnSort(field.id, "desc")}
                         />
                       )}
                     </div>
@@ -389,7 +195,7 @@ export const KanbanBoard = <TData,>(props: KanbanBoardProps<TData>) => {
               {visibleColumnValues.map((value) => {
                 const cardsInColumn = cardsByGroup[value] ?? [];
                 const columnLabel = resolveColumnLabel(groupColumns, value);
-                const isDropTarget = dragOverValue === value;
+                const isDropTarget = drag.dragOverValue === value;
 
                 return (
                   <section
@@ -397,21 +203,21 @@ export const KanbanBoard = <TData,>(props: KanbanBoardProps<TData>) => {
                     className="gdy-kanban-column"
                     data-drop-target={isDropTarget || undefined}
                     onDragOver={(event) => {
-                      if (!flags.dragAndDrop) return;
+                      if (!drag.enabled) return;
                       event.preventDefault();
-                      setDragOverValue(value);
+                      drag.setDragOverValue(value);
                     }}
                     onDragLeave={() => {
-                      if (!flags.dragAndDrop) return;
-                      setDragOverValue((previous) =>
+                      if (!drag.enabled) return;
+                      drag.setDragOverValue((previous) =>
                         previous === value ? null : previous,
                       );
                     }}
                     onDrop={() => {
-                      if (!flags.dragAndDrop || !draggingCardId) return;
-                      moveCard(draggingCardId, value);
-                      setDragOverValue(null);
-                      setDraggingCardId(null);
+                      if (!drag.enabled || !drag.draggingCardId) return;
+                      moveCard(drag.draggingCardId, value);
+                      drag.setDragOverValue(null);
+                      drag.setDraggingCardId(null);
                     }}
                   >
                     <header className="gdy-kanban-column-head">
@@ -432,34 +238,34 @@ export const KanbanBoard = <TData,>(props: KanbanBoardProps<TData>) => {
                       ) : (
                         cardsInColumn.map((card) => {
                           const cardId = resolveCardId(card);
-                          const isDragging = draggingCardId === cardId;
+                          const isDragging = drag.draggingCardId === cardId;
 
                           return (
                             <article
                               key={cardId}
                               className="gdy-kanban-card"
                               data-dragging={isDragging || undefined}
-                              draggable={flags.dragAndDrop}
+                              draggable={drag.enabled}
                               onDragStart={(event) => {
-                                if (!flags.dragAndDrop) return;
-                                dragHappenedRef.current = true;
+                                if (!drag.enabled) return;
+                                drag.dragHappenedRef.current = true;
                                 event.dataTransfer.setData(
                                   "text/plain",
                                   cardId,
                                 );
                                 event.dataTransfer.effectAllowed = "move";
-                                setDraggingCardId(cardId);
+                                drag.setDraggingCardId(cardId);
                               }}
                               onDragEnd={() => {
-                                setDraggingCardId(null);
-                                setDragOverValue(null);
+                                drag.setDraggingCardId(null);
+                                drag.setDragOverValue(null);
                                 setTimeout(() => {
-                                  dragHappenedRef.current = false;
+                                  drag.dragHappenedRef.current = false;
                                 }, 0);
                               }}
                               onClick={() => {
-                                if (dragHappenedRef.current) {
-                                  dragHappenedRef.current = false;
+                                if (drag.dragHappenedRef.current) {
+                                  drag.dragHappenedRef.current = false;
                                   return;
                                 }
                                 onCardClick?.({
@@ -489,7 +295,7 @@ export const KanbanBoard = <TData,>(props: KanbanBoardProps<TData>) => {
                               ) : (
                                 <DefaultKanbanCard
                                   card={card}
-                                  fields={fields as ColumnDefinition<TData>[]}
+                                  fields={fields}
                                   group={selectedGroup}
                                   groupValue={value}
                                   rowActions={

@@ -1,5 +1,10 @@
+import type { Dispatch, SetStateAction } from "react";
 import { getGroupValue } from "./group-columns";
-import type { KanbanGroupOption, KanbanMoveEvent } from "./types";
+import type {
+  KanbanBoardProps,
+  KanbanGroupOption,
+  KanbanMoveEvent,
+} from "./types";
 
 type CardIdResolver<TData> = (card: TData, index: number) => string;
 
@@ -39,3 +44,31 @@ export const replaceCard =
     previousCards.map((card, index) =>
       getCardId(card, index) === cardId ? replacement : card,
     );
+
+interface CardMoverInput<TData> {
+  cards: TData[];
+  setCards: Dispatch<SetStateAction<TData[]>>;
+  selectedGroup: KanbanGroupOption<TData>;
+  view: Pick<KanbanBoardProps<TData>, "getCardId" | "onCardMove">;
+}
+
+export const buildCardMover = <TData>({
+  cards,
+  setCards,
+  selectedGroup,
+  view,
+}: CardMoverInput<TData>) => {
+  const { getCardId, onCardMove } = view;
+  const resolveCardId = (card: TData) => {
+    const index = cards.indexOf(card);
+    return getCardId(card, index >= 0 ? index : 0);
+  };
+  const moveCard = (cardId: string, toValue: string) => {
+    const move = { cards, getCardId, group: selectedGroup, cardId, toValue };
+    const event = planCardMove(move);
+    if (!event) return;
+    setCards(replaceCard(getCardId, cardId, event.updatedCard));
+    onCardMove?.(event);
+  };
+  return { resolveCardId, moveCard };
+};
