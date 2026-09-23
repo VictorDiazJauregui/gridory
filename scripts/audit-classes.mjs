@@ -11,8 +11,10 @@
  *  - no is-* state class survives in the library or in dist (states are
  *    data-* attributes or ARIA attributes);
  *  - every [data-*] / [aria-*] attribute selector in the library stylesheets
- *    is emitted by the library, set by Radix at runtime or set by the host app
- *    (the last two listed in the allowlist);
+ *    is emitted by the library, set by Radix or react-day-picker at runtime or
+ *    set by the host app (the last two listed in the allowlist); variant
+ *    attributes (data-variant, data-size) take their value from a prop, so the
+ *    value is checked as a string literal instead;
  *  - the demo mocks only use classes that exist.
  *
  * Needs dist/gridory.css, so run it after `npm run build`.
@@ -81,6 +83,7 @@ const usedByMocks = collect(mockSources, CLASS_IN_SOURCE);
 const definedInDist = collect([distCss], CLASS_IN_CSS);
 const publicUtilities = new Set(allowlist.publicUtilities);
 const hookOnly = new Set(allowlist.hookOnly);
+const variantAttributes = new Set(allowlist.variantAttributes);
 const externalAttributes = new Set([
   ...allowlist.runtimeAttributes,
   ...allowlist.hostAttributes,
@@ -128,6 +131,14 @@ for (const file of libraryStylesheets) {
   for (const match of text.matchAll(ATTR_IN_CSS)) {
     const [, attribute, value] = match;
     if (externalAttributes.has(attribute)) continue;
+    if (variantAttributes.has(attribute)) {
+      if (!librarySourceText.includes(attribute)) {
+        failures.push(`${path.relative(root, file)}: selector [${attribute}] is never emitted by a component`);
+      } else if (value && !librarySourceText.includes(`"${value}"`)) {
+        failures.push(`${path.relative(root, file)}: no component uses the value "${value}" of ${attribute}`);
+      }
+      continue;
+    }
     const needle = value && attribute.startsWith("data-") ? `${attribute}="${value}"` : attribute;
     if (!librarySourceText.includes(needle)) {
       failures.push(`${path.relative(root, file)}: selector [${attribute}${value ? `="${value}"` : ""}] is never emitted by a component`);

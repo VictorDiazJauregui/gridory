@@ -1,5 +1,5 @@
 {
-  "$comment": "publicUtilities: classes shipped for consumers to pass through props (tableMinHeightClassName, tableMaxHeightClassName, boardMinHeightClassName). hookOnly: structural hooks (thead, tbody, icons, wrappers) the library writes on purpose without any default declaration, so consumers can target them; the audit checks they are emitted and never gain a rule silently. runtimeAttributes: data attributes set by Radix at runtime, never written in a component. hostAttributes: data attributes the host app sets to configure the library (theme activation).",
+  "$comment": "publicUtilities: classes shipped for consumers to pass through props (tableMinHeightClassName, tableMaxHeightClassName, boardMinHeightClassName). hookOnly: structural hooks (thead, tbody, icons, wrappers) the library writes on purpose without any default declaration, so consumers can target them; the audit checks they are emitted and never gain a rule silently. variantAttributes: attributes whose value comes from a prop (data-variant={variant}); a selector on them is checked by attribute name plus the value as a string literal in the sources. runtimeAttributes: attributes set by Radix or react-day-picker at runtime, never written in a component. hostAttributes: data attributes the host app sets to configure the library (theme activation).",
   "publicUtilities": [
     "gdy-table-min-h-sm",
     "gdy-table-min-h-md",
@@ -33,6 +33,10 @@
     "gdy-option-check-icon",
     "gdy-date-picker-icon"
   ],
+  "variantAttributes": [
+    "data-variant",
+    "data-size"
+  ],
   "runtimeAttributes": [
     "data-state",
     "data-highlighted",
@@ -41,7 +45,12 @@
     "data-side",
     "data-align",
     "data-orientation",
-    "data-radix-popper-content-wrapper"
+    "data-radix-popper-content-wrapper",
+    "data-today",
+    "data-outside",
+    "data-hidden",
+    "data-focused",
+    "aria-disabled"
   ],
   "hostAttributes": [
     "data-theme"
