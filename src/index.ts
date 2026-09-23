@@ -1,34 +1,70 @@
-export { ReusableDataTable } from "./table";
+// Data table
+export { DataTable } from "./table";
 export type {
-  DateFilterState as ReusableDataTableDateFilterState,
-  ManualPaginationState as ReusableDataTableManualPaginationState,
-  ReusableAiButtonConfig as ReusableDataTableAiButtonConfig,
-  ReusableBuiltInActionId as ReusableDataTableBuiltInActionId,
-  ReusableBuiltInMenuRef as ReusableDataTableBuiltInMenuRef,
-  ReusableCellHighlight as ReusableDataTableCellHighlight,
-  ReusableColumn as ReusableDataTableColumn,
-  ReusableDataTableProps,
-  ReusableFilterOption as ReusableDataTableFilterOption,
-  ReusableGroupHeader as ReusableDataTableGroupHeader,
-  ReusableHeaderSelectConfig as ReusableDataTableHeaderSelectConfig,
-  ReusableMenuItem as ReusableDataTableMenuItem,
-  ReusableMenuLabel as ReusableDataTableMenuLabel,
-  ReusableMenuSeparator as ReusableDataTableMenuSeparator,
-  ReusableRowAction as ReusableDataTableRowAction,
-  ReusableRowActions as ReusableDataTableRowActions,
-  ReusableRowGroupingResult as ReusableDataTableRowGroupingResult,
-  ReusableSelectOption as ReusableDataTableSelectOption,
-  ReusableSelectTheme as ReusableDataTableSelectTheme,
-  ReusableTableFeatures,
-  ReusableTableInput as ReusableDataTableInput,
-  ReusableToggleGroupConfig as ReusableDataTableToggleGroupConfig,
-  ReusableToggleOption as ReusableDataTableToggleOption,
-  ReusableToolbarLayout as ReusableDataTableToolbarLayout,
-  ReusableToolbarSide as ReusableDataTableToolbarSide,
-  ReusableViewMode as ReusableDataTableViewMode,
-  ReusableViewSwitchConfig as ReusableDataTableViewSwitchConfig,
+  ColumnSortingState,
+  DataTableFeatures,
+  DataTableProps,
+  GroupHeader,
+  ManualPaginationState,
+  RowGroupingResult,
 } from "./table";
 
+// Kanban board
+export { KanbanBoard } from "./kanban";
+export type {
+  KanbanBoardFeatures,
+  KanbanBoardProps,
+  KanbanCardClickEvent,
+  KanbanCardRenderContext,
+  KanbanDateFiltersState,
+  KanbanFiltersState,
+  KanbanGroupOption,
+  KanbanMoveEvent,
+  KanbanSortingState,
+} from "./kanban";
+
+// Data model and toolbar contracts shared by table and kanban
+export type {
+  AiButtonConfig,
+  ArchivedViewConfig,
+  ArchivedViewMode,
+  CellHighlight,
+  ColumnDefinition,
+  DataInput,
+  DateFilterOp,
+  DateFilterState,
+  DateInputFormat,
+  FilterOption,
+  Primitive,
+  RowActions,
+  SortDirection,
+  ViewMode,
+  ViewSwitchConfig,
+} from "./components/shared/data-model";
+export {
+  BUILT_IN_ROW_ACTION_IDS,
+  DuplicateRowActionError,
+} from "./components/shared";
+export type {
+  BuiltInActionId,
+  BuiltInMenuRef,
+  HeaderSelectConfig,
+  MenuItem,
+  MenuLabel,
+  MenuSeparator,
+  RowAction,
+  RowActionPlacement,
+  RowActionVariant,
+  SelectOption,
+  SelectTheme,
+  ToggleDisplay,
+  ToggleGroupConfig,
+  ToggleOption,
+  ToolbarLayout,
+  ToolbarSide,
+} from "./components/shared";
+
+// AI assistant
 export { AIChatSidebar, AIChatButton, useAIChat } from "./ai";
 export {
   AI_PROVIDER_PRESETS,
@@ -66,31 +102,3 @@ export type {
   AISuggestedMessage,
   AITextOverrides,
 } from "./ai";
-
-export { ReusableKanban } from "./kanban";
-export type {
-  ReusableColumn as ReusableKanbanColumn,
-  ReusableRowActions as ReusableKanbanRowActions,
-  ReusableAiButtonConfig as ReusableKanbanAiButtonConfig,
-  ReusableKanbanFeatures,
-  ReusableKanbanGroupOption,
-  ReusableKanbanMoveEvent,
-  ReusableKanbanCardClickEvent,
-  ReusableKanbanProps,
-  ReusableTableInput as ReusableKanbanInput,
-  ReusableViewMode as ReusableKanbanViewMode,
-  ReusableViewSwitchConfig as ReusableKanbanViewSwitchConfig,
-  ReusableRowAction as ReusableKanbanRowAction,
-  ReusableBuiltInActionId as ReusableKanbanBuiltInActionId,
-  ReusableBuiltInMenuRef as ReusableKanbanBuiltInMenuRef,
-  ReusableMenuItem as ReusableKanbanMenuItem,
-  ReusableMenuLabel as ReusableKanbanMenuLabel,
-  ReusableMenuSeparator as ReusableKanbanMenuSeparator,
-  ReusableSelectTheme as ReusableKanbanSelectTheme,
-  ReusableToolbarLayout as ReusableKanbanToolbarLayout,
-  ReusableToolbarSide as ReusableKanbanToolbarSide,
-  ReusableHeaderSelectConfig as ReusableKanbanHeaderSelectConfig,
-  ReusableSelectOption as ReusableKanbanSelectOption,
-  ReusableToggleGroupConfig as ReusableKanbanToggleGroupConfig,
-  ReusableToggleOption as ReusableKanbanToggleOption,
-} from "./kanban";
