@@ -7,7 +7,7 @@ import {
 } from "react";
 import { Bot, Loader2, SquarePen, Send, Sparkles, X } from "lucide-react";
 import { Button } from "../ui/button";
-import { cn } from "../../lib/utils";
+import { cn } from "../../lib/cn";
 import {
   DEFAULT_EMPTY_STATE_CHATBOT,
   DEFAULT_EMPTY_STATE_DATA,

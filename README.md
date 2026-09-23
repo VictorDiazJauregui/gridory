@@ -32,8 +32,9 @@ mutan tus datos; tu aplicación sigue siendo la única fuente de verdad.
 ## Instalación
 
 Dependencias peer: React 18.2+ o 19 y `react-dom`. No hace falta Tailwind en la aplicación
-consumidora: `gridory/styles.css` es autocontenido (tokens de tema, reset acotado y las hojas
-`gdy-*` de cada módulo).
+consumidora ni lo usa la librería: `gridory/styles.css` es autocontenido (tokens de tema, reset
+acotado, las hojas `gdy-*` de cada módulo y las reglas de movimiento) y no emite utilidades,
+variables `--tw-*` ni dependencias de Tailwind.
 
 ```bash
 npm install gridory
@@ -42,7 +43,9 @@ npm install gridory
 > Mientras el paquete no esté publicado en npm, instálalo desde el repositorio o enlázalo
 > localmente con `npm link` después de ejecutar `npm run build`.
 
-Importa el CSS compilado una sola vez en tu aplicación:
+Importa el CSS compilado una sola vez en tu aplicación, antes de tu propio CSS: las reglas de la
+librería pesan una sola clase, así que cualquier regla tuya con el mismo selector cargada después
+gana.
 
 ```ts
 import "gridory/styles.css";
@@ -141,13 +144,27 @@ Las reglas de la librería usan una sola clase, o un flag de raíz más una clas
 tu CSS, cargado después de `gridory/styles.css`, la sobrescribe. Las variantes (`data-variant` y
 `data-size` de los primitivos, `data-role` de las burbujas del asistente) van dentro de `:where()`
 y pesan como la base, así que una clase que pases por `className`, `triggerClassName` o los slots
-de `classNames` también las sobrescribe; los estados van planos y ganan a la base. Cuando un módulo
+de `classNames` (se concatenan tal cual al gancho, sin fusionar utilidades) también las
+sobrescribe; los estados van planos y ganan a la base. Cuando un módulo
 ajusta un primitivo lo hace a dos clases (`.gdy-button.gdy-ai-send`,
 `.gdy-select-trigger.gdy-table-inline-select`), nunca por orden de carga. Las únicas reglas por etiqueta son `.gdy-menu-item svg` y `.gdy-toggle-item svg`, para
 los iconos que trae tu app. `npm run audit:styles` comprueba que cada clase emitida tenga su regla
 o esté declarada como gancho, que ninguna regla quede huérfana, que no sobreviva ningún nombre
-heredado ni clase de estado, que cada selector de atributo se emita de verdad y que en `ui`,
-`table`, `kanban`, `shared` y `ai` ningún literal de clase sea otra cosa que un gancho `gdy-`.
+heredado ni clase de estado, que cada selector de atributo se emita de verdad, que en ningún
+módulo de `src/components` un literal de clase sea otra cosa que un gancho `gdy-` y que no quede
+ningún resto de Tailwind (`--tw-`, directivas o paquetes) en las hojas, en `dist` ni en las
+dependencias.
+
+### Movimiento
+
+Todo lo que se mueve en el tiempo está en `src/styles/motion.css`, dentro de
+`@media (prefers-reduced-motion: no-preference)`: menús, selects y popovers (incluido el del
+calendario) aparecen con un fundido y un ligero crecimiento desde su ancla (`gdy-pop-in`, 150 ms)
+y el menú y el popover se despiden con `gdy-pop-out` (100 ms); el panel del asistente se desliza
+desde el borde derecho (`transform`, 0,3 s). Con `prefers-reduced-motion: reduce` nada se anima. El
+indicador «Pensando…» del asistente gira siempre porque señala progreso. Para cambiar o quitar una
+animación apunta al mismo selector desde tu CSS, por ejemplo
+`.gdy-menu-content[data-state] { animation: none; }`.
 
 ## Inicio rápido
 
@@ -209,6 +226,9 @@ npm run dev
 - `http://localhost:5173/mocks/kanban` — kanban
 - `http://localhost:5173/mocks/ai` — tabla + kanban + asistente de IA con panel de eventos
 
+La demo usa Tailwind solo para su propio shell (`tailwind.config.js`, `src/index.css`); la
+librería no lo necesita ni lo incluye en `dist/`.
+
 Para probar el chat con un proveedor real:
 
 1. Copia las variables: `cp .env.example .env.local`.
@@ -226,7 +246,7 @@ Sin `VITE_AI_API_KEY` el mock se muestra igual, pero no hace llamadas reales al 
 | `npm run build` | Chequeo de tipos, bundle ESM en `dist/` y declaraciones en `dist/types/`. |
 | `npm run lint` | ESLint sobre todo el proyecto. |
 | `npm run typecheck` | `tsc -b` sin emitir archivos. |
-| `npm run audit:styles` | Tras `npm run build`: sin nombres heredados ni colores literales fuera de `tokens.css`, tokens de componente con fallback, y cada clase `gdy-*` con su regla (y viceversa). |
+| `npm run audit:styles` | Tras `npm run build`: sin nombres heredados, colores literales fuera de `tokens.css` ni restos de Tailwind (`--tw-`, paquetes), tokens de componente con fallback, cada clase `gdy-*` con su regla (y viceversa) y solo ganchos `gdy-` en los módulos. |
 
 ## Documentación
 

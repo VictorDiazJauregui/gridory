@@ -1,9 +1,0 @@
-/*
- * Utilities used by the library, generated from the published components only
- * (see tailwind.lib.config.js). Preflight is disabled there; the scoped reset
- * lives in preflight.css. `@tailwind base` still emits the universal
- * `--tw-*` defaults that transforms, shadows and rings depend on.
- */
-@config "../../tailwind.lib.config.js";
-@tailwind base;
-@tailwind utilities;

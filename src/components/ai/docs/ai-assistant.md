@@ -463,7 +463,7 @@ Todos son opcionales; lo no definido cae al default en español.
 />
 ```
 
-Cada slot se añade detrás del gancho del elemento que nombra (`root` → `gdy-ai-sidebar`, `header` → `gdy-ai-header`, `body` → `gdy-ai-body`, `footer` → `gdy-ai-footer`, `userBubble` / `assistantBubble` → `gdy-ai-bubble`, `chip` → `gdy-ai-chip`, `inputWrapper` → `gdy-ai-input-wrapper`, `textarea` → `gdy-ai-textarea`). El ejemplo usa utilidades de Tailwind porque esa app las tiene; sirve cualquier clase tuya, y como las reglas de la librería pesan una sola clase, la tuya gana si su hoja carga después de `gridory/styles.css`.
+Cada slot se añade detrás del gancho del elemento que nombra (`root` → `gdy-ai-sidebar`, `header` → `gdy-ai-header`, `body` → `gdy-ai-body`, `footer` → `gdy-ai-footer`, `userBubble` / `assistantBubble` → `gdy-ai-bubble`, `chip` → `gdy-ai-chip`, `inputWrapper` → `gdy-ai-input-wrapper`, `textarea` → `gdy-ai-textarea`). El ejemplo usa utilidades de Tailwind porque esa app las tiene; sirve cualquier clase tuya. Los slots y `className` se concatenan tal cual al gancho (la librería no fusiona utilidades ni depende de Tailwind) y, como sus reglas pesan una sola clase, la tuya gana si su hoja carga después de `gridory/styles.css`.
 
 ### Ancho y `className`
 

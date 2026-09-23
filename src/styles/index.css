@@ -2,13 +2,14 @@
  * Library-wide stylesheet, imported by every entry point (table, kanban, ai).
  * Vite merges it with the component stylesheets into dist/gridory.css.
  * Order matters: tokens, reset, the primitives (src/components/ui), the
- * Tailwind base layer (no module renders a utility class any more; it leaves
- * with the Tailwind build), then the shared gdy-* layer that the module
- * stylesheets (gdy-table-*, gdy-kanban-*, gdy-ai-*) build on. Each module
- * imports its own stylesheet from its components.
+ * shared gdy-* layer that the module stylesheets (gdy-table-*, gdy-kanban-*,
+ * gdy-ai-*) build on, and the motion rules (animations and transitions,
+ * gated by prefers-reduced-motion). Each module imports its own stylesheet
+ * from its components. No Tailwind: every rule is hand-written under the
+ * gdy- prefix.
  */
 @import "./tokens.css";
 @import "./preflight.css";
 @import "../components/ui/styles.css";
-@import "./tailwind.css";
 @import "./shared.css";
+@import "./motion.css";

@@ -15,10 +15,11 @@
  *    set by the host app (the last two listed in the allowlist); variant
  *    attributes (data-variant, data-size) take their value from a prop, so the
  *    value is checked as a string literal instead;
- *  - in the strict modules (allowlist → strictModules) every class literal
- *    (className="…", strings inside className={cn(…)}, values of a classNames
- *    map) is a gdy-* hook, and no rdp-* name survives in those sources nor as
- *    a rule in dist (react-day-picker defaults are not merged in);
+ *  - in every module (each directory of src/components except mocks) every
+ *    class literal (className="…", strings inside className={cn(…)}, values of
+ *    a classNames map) is a gdy-* hook, and no rdp-* name survives in those
+ *    sources nor as a rule in dist (react-day-picker defaults are not merged
+ *    in);
  *  - the demo mocks only use classes that exist.
  *
  * Needs dist/gridory.css, so run it after `npm run build`.
@@ -88,7 +89,10 @@ const definedInDist = collect([distCss], CLASS_IN_CSS);
 const publicUtilities = new Set(allowlist.publicUtilities);
 const hookOnly = new Set(allowlist.hookOnly);
 const variantAttributes = new Set(allowlist.variantAttributes);
-const strictModules = allowlist.strictModules;
+// Every module is strict: no utility class may reach the DOM from the library.
+const strictModules = readdirSync(path.join(root, "src/components"))
+  .filter((entry) => entry !== "mocks" && statSync(path.join(root, "src/components", entry)).isDirectory())
+  .sort();
 const externalAttributes = new Set([
   ...allowlist.runtimeAttributes,
   ...allowlist.hostAttributes,
