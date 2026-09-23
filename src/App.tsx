@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { ReusableDataTableMock } from "@/components/mocks/ReusableDataTable.mock";
-import { ReusableKanbanMock } from "@/components/mocks/ReusableKanban.mock";
+import { DataTableMock } from "@/components/mocks/DataTable.mock";
+import { KanbanBoardMock } from "@/components/mocks/KanbanBoard.mock";
 import { AIAssistantIntegratedMock } from "@/components/mocks/AIAssistantIntegrated.mock";
 
 type ModuleItem = {
@@ -12,13 +12,13 @@ type ModuleItem = {
 const MODULES: ModuleItem[] = [
   {
     id: "table",
-    label: "Mock ReusableDataTable",
-    content: <ReusableDataTableMock />,
+    label: "Mock DataTable",
+    content: <DataTableMock />,
   },
   {
     id: "kanban",
-    label: "Mock ReusableKanban",
-    content: <ReusableKanbanMock />,
+    label: "Mock KanbanBoard",
+    content: <KanbanBoardMock />,
   },
   {
     id: "ai",

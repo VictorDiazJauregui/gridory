@@ -1,10 +1,6 @@
 import { useMemo, useState } from "react";
 import { CalendarClock, Copy, Download, LayoutList } from "lucide-react";
-import {
-  ReusableDataTable,
-  type ReusableColumn,
-  type ReusableViewMode,
-} from "../table";
+import { DataTable, type ColumnDefinition, type ViewMode } from "../table";
 import { MOCK_COMPANY_ROWS, type MockCompanyRow } from "./data/mockCompanyRows";
 
 const COUNTRY_OPTIONS = [
@@ -15,10 +11,10 @@ const COUNTRY_OPTIONS = [
   { value: "Perú", label: "Perú" },
 ];
 
-export const ReusableDataTableMock = () => {
+export const DataTableMock = () => {
   const [rows, setRows] = useState(MOCK_COMPANY_ROWS);
   const [, setCreatedCount] = useState(1);
-  const [view, setView] = useState<ReusableViewMode>("table");
+  const [view, setView] = useState<ViewMode>("table");
   const [scope, setScope] = useState("all");
   const [country, setCountry] = useState("all");
 
@@ -39,7 +35,7 @@ export const ReusableDataTableMock = () => {
     });
   };
 
-  const columns = useMemo<ReusableColumn<MockCompanyRow>[]>(
+  const columns = useMemo<ColumnDefinition<MockCompanyRow>[]>(
     () => [
       {
         id: "name",
@@ -162,7 +158,7 @@ export const ReusableDataTableMock = () => {
   };
 
   return (
-    <ReusableDataTable
+    <DataTable
       columns={columns}
       data={{ results: displayedRows }}
       getRowId={(row) => row.id}
@@ -181,7 +177,11 @@ export const ReusableDataTableMock = () => {
           onChange: setScope,
           options: [
             { value: "all", label: "Todas", icon: <LayoutList size={14} /> },
-            { value: "recent", label: "2026", icon: <CalendarClock size={14} /> },
+            {
+              value: "recent",
+              label: "2026",
+              icon: <CalendarClock size={14} />,
+            },
           ],
         },
       ]}

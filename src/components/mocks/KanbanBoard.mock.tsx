@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
 import { CalendarClock, Copy, Download, LayoutList, Share2 } from "lucide-react";
 import {
-  ReusableKanban,
-  type ReusableColumn,
-  type ReusableKanbanGroupOption,
-  type ReusableViewMode,
+  KanbanBoard,
+  type ColumnDefinition,
+  type KanbanGroupOption,
+  type ViewMode,
 } from "../kanban";
 import { MOCK_COMPANY_ROWS, type MockCompanyRow } from "./data/mockCompanyRows";
 
@@ -15,14 +15,14 @@ const BRAND_OPTIONS = [
   { value: "Arctic", label: "Arctic" },
 ];
 
-export const ReusableKanbanMock = () => {
+export const KanbanBoardMock = () => {
   const [cards, setCards] = useState(MOCK_COMPANY_ROWS);
   const [, setCreatedCount] = useState(1);
-  const [view, setView] = useState<ReusableViewMode>("kanban");
+  const [view, setView] = useState<ViewMode>("kanban");
   const [scope, setScope] = useState("all");
   const [brand, setBrand] = useState("all");
 
-  const fields = useMemo<ReusableColumn<MockCompanyRow>[]>(
+  const fields = useMemo<ColumnDefinition<MockCompanyRow>[]>(
     () => [
       {
         id: "name",
@@ -83,7 +83,7 @@ export const ReusableKanbanMock = () => {
     [],
   );
 
-  const groups = useMemo<ReusableKanbanGroupOption<MockCompanyRow>[]>(
+  const groups = useMemo<KanbanGroupOption<MockCompanyRow>[]>(
     () => [
       {
         id: "status",
@@ -139,7 +139,7 @@ export const ReusableKanbanMock = () => {
   }, [cards, scope, brand]);
 
   return (
-    <ReusableKanban
+    <KanbanBoard
       fields={fields}
       data={{ results: displayedCards }}
       groups={groups}
