@@ -4,7 +4,6 @@ import {
   useMemo,
   useRef,
   useState,
-  type CSSProperties,
   type ReactNode,
 } from "react";
 import {
@@ -25,11 +24,23 @@ import {
 import "./styles.css";
 import { cn } from "../../lib/cn";
 import {
-  EMPTY_DATE_FILTER_STATE,
-  hasDateFilterValue,
-} from "../shared/date-filter";
-import { useActiveFilters, useClickOutside } from "../shared/hooks";
+  buildDateFilterMenuKey,
+  hasColumnFilter,
+  resolveEmptyDateState,
+} from "../shared/column-filters";
+import { resolveRootStyle } from "../shared/root-style";
 import { DateFilterMenu, FilterMenu, Toolbar } from "../shared/toolbar";
+import { buildArchivedToolbarProps } from "../shared/toolbar/toolbar-props";
+import { useArchivedMode } from "../shared/use-archived-mode";
+import { useArchivedRows } from "../shared/use-archived-rows";
+import { useColumnFilters } from "../shared/use-column-filters";
+import {
+  resolveSortDirection,
+  useColumnSorting,
+} from "../shared/use-column-sorting";
+import { useFilteredRows } from "../shared/use-filtered-rows";
+import { useSearchedRows } from "../shared/use-searched-rows";
+import { useSortedRows } from "../shared/use-sorted-rows";
 import {
   DEFAULT_FEATURES,
   DEFAULT_PAGE_SIZES,
@@ -39,18 +50,11 @@ import { RowActionsMenu } from "./RowActionsMenu";
 import { TablePagination } from "./TablePagination";
 import { SimpleSelect } from "../ui/select";
 import type {
-  ArchivedViewMode,
-  ColumnSortingState,
-  DateFilterState,
   ColumnDefinition,
   DataTableProps,
   SortDirection,
 } from "./types";
 import {
-  applyArchivedView,
-  applyColumnFilters,
-  applyColumnSorting,
-  applyGlobalSearch,
   computeColumnFilterOptions,
   normalizeInputRows,
   normalizeToArray,
@@ -78,13 +82,6 @@ const SORT_ICON_BY_DIRECTION: Record<SortDirection | "none", LucideIcon> = {
 const SortIcon = ({ direction }: { direction: SortDirection | null }) => {
   const Icon = SORT_ICON_BY_DIRECTION[direction ?? "none"];
   return <Icon size={13} className="gdy-table-head-sort-icon" />;
-};
-
-const resolveSortDirection = (
-  sorting: ColumnSortingState | null,
-  columnId: string,
-): ColumnSortingState["direction"] | null => {
-  return sorting?.id === columnId ? sorting.direction : null;
 };
 
 interface PageCountConfig {
@@ -162,16 +159,13 @@ export const DataTable = <TData,>({
   );
 
   const [search, setSearch] = useState("");
-  const [sorting, setSorting] = useState<ColumnSortingState | null>(null);
+  const { sorting, toggleColumnSort, cycleColumnSort, clearColumnSort } =
+    useColumnSorting();
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(defaultPageSize);
-  const [openFilterColumnId, setOpenFilterColumnId] = useState<string | null>(
-    null,
-  );
-  const [filters, setFilters] = useState<Record<string, string[]>>({});
-  const [dateFilters, setDateFilters] = useState<
-    Record<string, DateFilterState>
-  >({});
+  const columnFilters = useColumnFilters();
+  const { filters, dateFilters, openFilterColumnId, filterMenuRef } =
+    columnFilters;
   const [activeGroupBy, setActiveGroupBy] = useState<string | null>(() =>
     defaultGroupBy && (groupableColumnIds ?? []).includes(defaultGroupBy)
       ? defaultGroupBy
@@ -180,23 +174,8 @@ export const DataTable = <TData,>({
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(
     () => new Set(),
   );
-  const [internalArchivedMode, setInternalArchivedMode] =
-    useState<ArchivedViewMode>(archivedView?.defaultValue ?? "active");
-  const archivedMode = archivedView?.value ?? internalArchivedMode;
-  const filterMenuRef = useRef<HTMLDivElement>(null);
+  const { archivedMode, changeArchivedMode } = useArchivedMode(archivedView);
   const wrapRef = useRef<HTMLDivElement>(null);
-
-  const handleArchivedModeChange = (next: ArchivedViewMode) => {
-    if (archivedView?.value === undefined) setInternalArchivedMode(next);
-    archivedView?.onChange?.(next);
-  };
-
-  const toggleColumnSort = (columnId: string, direction: SortDirection) =>
-    setSorting((prev) =>
-      prev?.id === columnId && prev.direction === direction
-        ? null
-        : { id: columnId, direction },
-    );
 
   const groupOptions = useMemo(
     () =>
@@ -222,55 +201,36 @@ export const DataTable = <TData,>({
       return next;
     });
 
-  useClickOutside(filterMenuRef, () => setOpenFilterColumnId(null));
-
   const computedFilterOptions = useMemo(
     () => computeColumnFilterOptions(columns, rows),
     [columns, rows],
   );
 
-  const searchedRows = useMemo(
-    () =>
-      flags.search && !manualPagination
-        ? applyGlobalSearch({ rows, columns, query: search })
-        : rows,
-    [rows, columns, search, flags.search, manualPagination],
-  );
-
-  const archivedFilteredRows = useMemo(
-    () =>
-      archivedView
-        ? applyArchivedView({
-            rows: searchedRows,
-            mode: archivedMode,
-            getIsArchived: rowActions?.getIsArchived,
-          })
-        : searchedRows,
-    [searchedRows, archivedMode, archivedView, rowActions],
-  );
-
-  const filteredRows = useMemo(
-    () =>
-      applyColumnFilters({
-        rows: archivedFilteredRows,
-        columns,
-        filters,
-        dateFilters,
-        enabled: flags.filtering,
-      }),
-    [archivedFilteredRows, columns, filters, dateFilters, flags.filtering],
-  );
-
-  const sortedRows = useMemo(
-    () =>
-      applyColumnSorting({
-        rows: filteredRows,
-        columns,
-        sorting,
-        enabled: flags.sorting,
-      }),
-    [filteredRows, columns, sorting, flags.sorting],
-  );
+  const searchedRows = useSearchedRows({
+    rows,
+    columns,
+    query: search,
+    enabled: flags.search && !manualPagination,
+  });
+  const archivedFilteredRows = useArchivedRows({
+    rows: searchedRows,
+    archivedView,
+    mode: archivedMode,
+    rowActions,
+  });
+  const filteredRows = useFilteredRows({
+    rows: archivedFilteredRows,
+    columns,
+    filters,
+    dateFilters,
+    enabled: flags.filtering,
+  });
+  const sortedRows = useSortedRows({
+    rows: filteredRows,
+    columns,
+    sorting,
+    enabled: flags.sorting,
+  });
 
   const grouping = useMemo(
     () =>
@@ -331,8 +291,6 @@ export const DataTable = <TData,>({
   }, [flatRows, safePageIndex, pageSize, flags.pagination, manualPagination]);
 
   const pageStartIndex = flags.pagination ? safePageIndex * pageSize : 0;
-
-  const hasActiveFilters = useActiveFilters(filters, dateFilters);
 
   const tableColumns = useMemo<ColumnDef<TData>[]>(() => {
     const visibleColumns = activeGroupBy
@@ -432,13 +390,8 @@ export const DataTable = <TData,>({
   const showStickyHeader =
     stickyHeader && (fillHeight || Boolean(tableMaxHeightClassName));
 
-  const rootStyle = {
-    ...(scrollbarColor ? { ["--gdy-scrollbar-thumb"]: scrollbarColor } : {}),
-    ...(optionHoverColor ? { ["--gdy-option-hover-bg"]: optionHoverColor } : {}),
-  } as CSSProperties;
-  const emptyDateState: DateFilterState = dateFilterRequireOperator
-    ? EMPTY_DATE_FILTER_STATE
-    : { ...EMPTY_DATE_FILTER_STATE, op: "gt" };
+  const rootStyle = resolveRootStyle({ scrollbarColor, optionHoverColor });
+  const emptyDateState = resolveEmptyDateState(dateFilterRequireOperator);
 
   return (
     <div
@@ -456,11 +409,8 @@ export const DataTable = <TData,>({
           search={search}
           searchPlaceholder={searchPlaceholder}
           onSearchChange={handleSearchChange}
-          showClearFilters={flags.filtering && hasActiveFilters}
-          onClearFilters={() => {
-            setFilters({});
-            setDateFilters({});
-          }}
+          showClearFilters={flags.filtering && columnFilters.hasActiveFilters}
+          onClearFilters={columnFilters.clearFilters}
           showCreateButton={flags.createButton}
           createLabel={createLabel}
           onCreate={onCreate}
@@ -479,13 +429,10 @@ export const DataTable = <TData,>({
                 }
               : undefined
           }
-          showArchivedView={
-            Boolean(archivedView) && Boolean(rowActions?.getIsArchived)
-          }
-          archivedMode={archivedMode}
-          onArchivedModeChange={handleArchivedModeChange}
-          archivedViewLabel={archivedView?.label}
-          archivedViewOptionLabels={archivedView?.optionLabels}
+          {...buildArchivedToolbarProps(
+            { archivedView, rowActions },
+            { archivedMode, changeArchivedMode },
+          )}
           viewSwitch={viewSwitch}
           aiButton={aiButton}
           toggleGroups={toggleGroups}
@@ -518,27 +465,15 @@ export const DataTable = <TData,>({
                       sorting,
                       column.id,
                     );
-                    const hasColumnFilter =
-                      (filters[column.id]?.length ?? 0) > 0 ||
-                      hasDateFilterValue(dateFilters[column.id]);
-
-                    const openFilter = () => {
-                      setOpenFilterColumnId((prev) =>
-                        prev === column.id ? null : column.id,
-                      );
-                    };
+                    const isFiltered = hasColumnFilter(
+                      column.id,
+                      filters,
+                      dateFilters,
+                    );
 
                     const toggleSort = () => {
                       if (!flags.sorting || column.sortable === false) return;
-                      setSorting((prev) => {
-                        if (!prev || prev.id !== column.id) {
-                          return { id: column.id, direction: "asc" };
-                        }
-                        if (prev.direction === "asc") {
-                          return { id: column.id, direction: "desc" };
-                        }
-                        return null;
-                      });
+                      cycleColumnSort(column.id);
                     };
 
                     const handleHeaderAction = () => {
@@ -546,7 +481,7 @@ export const DataTable = <TData,>({
                         toggleSort();
                         return;
                       }
-                      openFilter();
+                      columnFilters.toggleFilterMenu(column.id);
                     };
 
                     return (
@@ -559,13 +494,13 @@ export const DataTable = <TData,>({
                           <button
                             type="button"
                             className="gdy-table-head-trigger"
-                            data-filtered={hasColumnFilter || undefined}
+                            data-filtered={isFiltered || undefined}
                             onClick={handleHeaderAction}
                           >
                             <span className="gdy-table-head-label" title={column.header}>
                               {column.header}
                             </span>
-                            {hasColumnFilter && (
+                            {isFiltered && (
                               <Filter
                                 size={12}
                                 className="gdy-table-head-filter-icon"
@@ -593,7 +528,10 @@ export const DataTable = <TData,>({
                               >
                                 {column.type === "date" ? (
                                   <DateFilterMenu
-                                    key={`${column.id}-${dateFilters[column.id]?.op ?? "gt"}-${dateFilters[column.id]?.date ?? ""}-${dateFilters[column.id]?.dateFrom ?? ""}-${dateFilters[column.id]?.dateTo ?? ""}`}
+                                    key={buildDateFilterMenuKey(
+                                      column.id,
+                                      dateFilters[column.id],
+                                    )}
                                     state={
                                       dateFilters[column.id] ?? emptyDateState
                                     }
@@ -605,12 +543,9 @@ export const DataTable = <TData,>({
                                     calendarFromYear={calendarFromYear}
                                     calendarToYear={calendarToYear}
                                     onChange={(next) =>
-                                      setDateFilters((prev) => ({
-                                        ...prev,
-                                        [column.id]: next,
-                                      }))
+                                      columnFilters.setDateFilter(column.id, next)
                                     }
-                                    onClose={() => setOpenFilterColumnId(null)}
+                                    onClose={columnFilters.closeFilterMenu}
                                     sortable={
                                       flags.sorting && column.sortable !== false
                                     }
@@ -621,11 +556,7 @@ export const DataTable = <TData,>({
                                     onSortDesc={() =>
                                       toggleColumnSort(column.id, "desc")
                                     }
-                                    onSortClear={() =>
-                                      setSorting((prev) =>
-                                        prev?.id === column.id ? null : prev,
-                                      )
-                                    }
+                                    onSortClear={() => clearColumnSort(column.id)}
                                   />
                                 ) : (
                                   <FilterMenu
@@ -634,10 +565,7 @@ export const DataTable = <TData,>({
                                     }
                                     selected={filters[column.id] ?? []}
                                     onSelectedChange={(next) =>
-                                      setFilters((prev) => ({
-                                        ...prev,
-                                        [column.id]: next,
-                                      }))
+                                      columnFilters.setFilter(column.id, next)
                                     }
                                     sortable={
                                       flags.sorting && column.sortable !== false
