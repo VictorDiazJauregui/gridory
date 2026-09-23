@@ -1,10 +1,11 @@
+import { normalizeToArray } from "../shared/row-pipeline";
+import { formatDateValue, summarizeCard } from "./card-summary";
+import { KanbanCardMenu } from "./KanbanCardMenu";
 import type {
   ColumnDefinition,
+  KanbanGroupOption,
   RowActions,
 } from "./types";
-import { normalizeToArray } from "../shared/row-pipeline";
-import { KanbanCardMenu } from "./KanbanCardMenu";
-import type { KanbanGroupOption } from "./types";
 
 interface DefaultKanbanCardProps<TData> {
   card: TData;
@@ -14,13 +15,6 @@ interface DefaultKanbanCardProps<TData> {
   rowActions?: RowActions<TData>;
 }
 
-const formatDateValue = (value: string) => {
-  if (!value) return "";
-  const [year, month, day] = value.slice(0, 10).split("-");
-  if (!year || !month || !day) return value;
-  return `${day}/${month}/${year}`;
-};
-
 export const DefaultKanbanCard = <TData,>({
   card,
   fields,
@@ -28,16 +22,9 @@ export const DefaultKanbanCard = <TData,>({
   groupValue,
   rowActions,
 }: DefaultKanbanCardProps<TData>) => {
-  const primaryField = fields[0];
-  const secondaryField = fields[1];
   const extraFields = fields.slice(2, 4);
   const dateField = fields.find((field) => field.type === "date");
-
-  const title =
-    normalizeToArray(primaryField?.accessor(card) ?? "").join(", ") || "Card";
-  const subtitle = secondaryField
-    ? normalizeToArray(secondaryField.accessor(card)).join(", ")
-    : "";
+  const { title, subtitle } = summarizeCard(card, fields);
 
   return (
     <>

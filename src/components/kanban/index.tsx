@@ -17,10 +17,16 @@ import {
   applyGlobalSearch,
   computeColumnFilterOptions,
   normalizeInputRows,
-  normalizeToArray,
 } from "../shared/row-pipeline";
+import { applyBoardDefaults, assertGroupConfiguration } from "./board-view";
+import { planCardMove, replaceCard } from "./card-move";
+import {
+  collectGroupColumns,
+  groupCardsByValue,
+  mergeColumnValues,
+  resolveColumnLabel,
+} from "./group-columns";
 import { buildGroupSelectOptions } from "./group-select-options";
-import { DEFAULT_KANBAN_FEATURES } from "./constants";
 import { DefaultKanbanCard } from "./DefaultKanbanCard";
 import { KanbanCardMenu } from "./KanbanCardMenu";
 import type {
@@ -28,7 +34,6 @@ import type {
   KanbanDateFiltersState,
   KanbanFiltersState,
   KanbanSortingState,
-  KanbanGroupOption,
   KanbanBoardProps,
 } from "./types";
 
@@ -39,61 +44,46 @@ const resolveSortDirection = (
   return sorting?.id === fieldId ? sorting.direction : null;
 };
 
-const getGroupValue = <TData,>(
-  group: KanbanGroupOption<TData>,
-  card: TData,
-) => normalizeToArray(group.accessor(card))[0] ?? "";
-
-export const KanbanBoard = <TData,>({
-  fields,
-  data,
-  groups,
-  defaultGroupId,
-  normalizeRow,
-  getCardId,
-  features,
-  rowActions,
-  renderCard,
-  onCardMove,
-  onCardClick,
-  onGroupChange,
-  groupSelectorLabel = "Agrupar por",
-  searchPlaceholder = "Buscar cards...",
-  createLabel = "Nuevo",
-  onCreate,
-  emptyMessage = "No se encontraron resultados",
-  boardWrapClassName,
-  boardMinHeightClassName = "gdy-kanban-min-h-md",
-  columnBodyMaxHeight = 480,
-  archivedView,
-  viewSwitch,
-  aiButton,
-  toggleGroups,
-  headerSelectors,
-  toolbarLayout,
-  selectTheme,
-  thinScrollbars = true,
-  scrollbarColor,
-  optionHoverColor,
-  dateFilterRequireOperator = true,
-  dateInputFormat = "dd/mm/yyyy",
-  calendarMonthYearDropdown = true,
-  calendarFromYear = new Date().getFullYear() - 100,
-  calendarToYear = new Date().getFullYear() + 10,
-}: KanbanBoardProps<TData>) => {
-  if (groups.length === 0) {
-    throw new Error(
-      "KanbanBoard requiere al menos una configuración de agrupación en `groups`.",
-    );
-  }
-
-  if (!groups.some((group) => group.id === defaultGroupId)) {
-    throw new Error(
-      "KanbanBoard requiere que `defaultGroupId` exista dentro de `groups`.",
-    );
-  }
-
-  const flags = { ...DEFAULT_KANBAN_FEATURES, ...features };
+export const KanbanBoard = <TData,>(props: KanbanBoardProps<TData>) => {
+  assertGroupConfiguration(props.groups, props.defaultGroupId);
+  const view = applyBoardDefaults(props);
+  const {
+    fields,
+    data,
+    groups,
+    defaultGroupId,
+    normalizeRow,
+    getCardId,
+    rowActions,
+    renderCard,
+    onCardMove,
+    onCardClick,
+    onGroupChange,
+    groupSelectorLabel,
+    searchPlaceholder,
+    createLabel,
+    onCreate,
+    emptyMessage,
+    boardWrapClassName,
+    boardMinHeightClassName,
+    columnBodyMaxHeight,
+    archivedView,
+    viewSwitch,
+    aiButton,
+    toggleGroups,
+    headerSelectors,
+    toolbarLayout,
+    selectTheme,
+    thinScrollbars,
+    scrollbarColor,
+    optionHoverColor,
+    dateFilterRequireOperator,
+    dateInputFormat,
+    calendarMonthYearDropdown,
+    calendarFromYear,
+    calendarToYear,
+    flags,
+  } = view;
 
   const inputCards = useMemo(
     () => normalizeInputRows(data, normalizeRow),
@@ -197,41 +187,20 @@ export const KanbanBoard = <TData,>({
     [fields],
   );
 
-  const groupColumns = useMemo(() => {
-    if (selectedGroup.values?.length) return selectedGroup.values;
+  const groupColumns = useMemo(
+    () => collectGroupColumns(selectedGroup, cards),
+    [selectedGroup, cards],
+  );
 
-    const uniqueValues = new Map<string, string>();
-    cards.forEach((card) => {
-      const value = getGroupValue(selectedGroup, card);
-      if (!uniqueValues.has(value))
-        uniqueValues.set(value, value || "Sin valor");
-    });
+  const cardsByGroup = useMemo(
+    () => groupCardsByValue(selectedGroup, groupColumns, visibleCards),
+    [visibleCards, selectedGroup, groupColumns],
+  );
 
-    return Array.from(uniqueValues.entries())
-      .map(([value, label]) => ({ value, label }))
-      .sort((first, second) => first.label.localeCompare(second.label, "es"));
-  }, [selectedGroup, cards]);
-
-  const cardsByGroup = useMemo(() => {
-    const grouped: Record<string, TData[]> = {};
-    groupColumns.forEach((column) => {
-      grouped[column.value] = [];
-    });
-
-    visibleCards.forEach((card) => {
-      const value = getGroupValue(selectedGroup, card);
-      if (!grouped[value]) grouped[value] = [];
-      grouped[value].push(card);
-    });
-
-    return grouped;
-  }, [visibleCards, selectedGroup, groupColumns]);
-
-  const visibleColumnValues = useMemo(() => {
-    const fromConfig = groupColumns.map((column) => column.value);
-    const fromRows = Object.keys(cardsByGroup);
-    return Array.from(new Set([...fromConfig, ...fromRows]));
-  }, [groupColumns, cardsByGroup]);
+  const visibleColumnValues = useMemo(
+    () => mergeColumnValues(groupColumns, cardsByGroup),
+    [groupColumns, cardsByGroup],
+  );
 
   const resolveCardId = (card: TData) => {
     const index = cards.indexOf(card);
@@ -239,30 +208,11 @@ export const KanbanBoard = <TData,>({
   };
 
   const moveCard = (cardId: string, toValue: string) => {
-    const sourceIndex = cards.findIndex(
-      (card, index) => getCardId(card, index) === cardId,
-    );
-    if (sourceIndex < 0) return;
-
-    const sourceCard = cards[sourceIndex];
-    const fromValue = getGroupValue(selectedGroup, sourceCard);
-    if (fromValue === toValue) return;
-
-    const updatedCard = selectedGroup.setValue(sourceCard, toValue);
-    setCards((previousCards) =>
-      previousCards.map((card, index) =>
-        getCardId(card, index) === cardId ? updatedCard : card,
-      ),
-    );
-
-    onCardMove?.({
-      card: sourceCard,
-      updatedCard,
-      cardId,
-      groupId: selectedGroup.id,
-      fromValue,
-      toValue,
-    });
+    const move = { cards, getCardId, group: selectedGroup, cardId, toValue };
+    const event = planCardMove(move);
+    if (!event) return;
+    setCards(replaceCard(getCardId, cardId, event.updatedCard));
+    onCardMove?.(event);
   };
 
   const rootStyle = {
@@ -438,10 +388,7 @@ export const KanbanBoard = <TData,>({
             <div className="gdy-kanban-board">
               {visibleColumnValues.map((value) => {
                 const cardsInColumn = cardsByGroup[value] ?? [];
-                const configuredLabel = groupColumns.find(
-                  (column) => column.value === value,
-                )?.label;
-                const columnLabel = (configuredLabel ?? value) || "Sin valor";
+                const columnLabel = resolveColumnLabel(groupColumns, value);
                 const isDropTarget = dragOverValue === value;
 
                 return (
