@@ -1,5 +1,4 @@
 import { Fragment, type ReactNode } from "react";
-import { FilterX, Plus, Search } from "lucide-react";
 import type {
   AiButtonConfig,
   ArchivedViewMode,
@@ -15,6 +14,9 @@ import { resolveToolbarClusters, type ToolbarLayout } from "../toolbar-layout";
 import { SimpleSelect } from "../../ui/select";
 import { SegmentedControl } from "../../ui/toggle-group";
 import { ToolbarAiButton } from "./ToolbarAiButton";
+import { ToolbarClearFilters } from "./ToolbarClearFilters";
+import { ToolbarCreateButton } from "./ToolbarCreateButton";
+import { ToolbarSearch } from "./ToolbarSearch";
 import { ToolbarViewSwitch } from "./ToolbarViewSwitch";
 
 const DEFAULT_ARCHIVED_OPTION_LABELS: Record<ArchivedViewMode, string> = {
@@ -56,6 +58,8 @@ interface ToolbarProps {
   selectTheme?: SelectTheme;
 }
 
+type ToolbarSlots = Record<string, ReactNode>;
+
 const prefixedOptions = (
   options: SelectOption[],
   prefix?: string,
@@ -70,113 +74,70 @@ const prefixedOptions = (
 const buildArchivedOptions = (props: ToolbarProps): SelectOption[] => {
   const label = props.archivedViewLabel ?? "Mostrar";
   const optionLabel = (mode: ArchivedViewMode) =>
-    props.archivedViewOptionLabels?.[mode] ?? DEFAULT_ARCHIVED_OPTION_LABELS[mode];
+    props.archivedViewOptionLabels?.[mode] ??
+    DEFAULT_ARCHIVED_OPTION_LABELS[mode];
   return ARCHIVED_OPTION_ORDER.map((mode) => ({
     value: mode,
     label: `${label}: ${optionLabel(mode)}`,
   }));
 };
 
-const SearchSlot = ({
-  search,
-  placeholder,
-  onChange,
-}: {
-  search: string;
-  placeholder: string;
-  onChange: (value: string) => void;
-}) => (
-  <div className="gdy-search">
-    <Search size={14} className="gdy-search-icon" />
-    <input
-      type="search"
-      name="gdy-search"
-      autoComplete="off"
-      data-1p-ignore="true"
-      data-lpignore="true"
-      data-form-type="other"
-      data-bwignore="true"
-      value={search}
-      onChange={(event) => onChange(event.target.value)}
-      placeholder={placeholder}
-      className="gdy-input"
-    />
-  </div>
-);
-
-const ClearFiltersSlot = ({ onClear }: { onClear: () => void }) => (
-  <button
-    type="button"
-    className="gdy-btn gdy-btn-ghost gdy-toolbar-clear"
-    onClick={onClear}
-  >
-    <span className="gdy-toolbar-clear-label">Limpiar filtros</span>
-    <FilterX size={12} className="gdy-toolbar-clear-icon" />
-  </button>
-);
-
-const CreateSlot = ({
-  label,
-  onCreate,
-}: {
-  label: string;
-  onCreate: () => void;
-}) => (
-  <button
-    type="button"
-    className="gdy-btn gdy-btn-primary gdy-toolbar-create"
-    onClick={onCreate}
-  >
-    <Plus size={14} className="gdy-toolbar-create-icon" />
-    {label}
-  </button>
-);
-
-const fillFixedSlots = (
-  props: ToolbarProps,
-  slots: Record<string, ReactNode>,
-) => {
-  const { selectTheme } = props;
+const fillSearchSlots = (props: ToolbarProps, slots: ToolbarSlots) => {
   if (props.showSearch)
     slots.search = (
-      <SearchSlot
+      <ToolbarSearch
         search={props.search}
         placeholder={props.searchPlaceholder}
         onChange={props.onSearchChange}
       />
     );
   if (props.showClearFilters)
-    slots.clearFilters = <ClearFiltersSlot onClear={props.onClearFilters} />;
-  if (props.showArchivedView)
-    slots.archived = (
-      <SimpleSelect
-        options={buildArchivedOptions(props)}
-        value={props.archivedMode}
-        onValueChange={(value) => props.onArchivedModeChange(value as ArchivedViewMode)}
-        ariaLabel={props.archivedViewLabel ?? "Mostrar"}
-        theme={selectTheme}
-      />
-    );
-  if (props.groupSelector)
-    slots.group = (
-      <SimpleSelect
-        options={props.groupSelector.options}
-        value={props.groupSelector.value}
-        onValueChange={props.groupSelector.onChange}
-        ariaLabel={props.groupSelector.ariaLabel}
-        theme={selectTheme}
-      />
-    );
-  if (props.aiButton) slots.ai = <ToolbarAiButton config={props.aiButton} />;
-  if (props.viewSwitch) slots.viewSwitch = <ToolbarViewSwitch config={props.viewSwitch} />;
-  if (props.showCreateButton && props.onCreate)
-    slots.create = <CreateSlot label={props.createLabel} onCreate={props.onCreate} />;
+    slots.clearFilters = <ToolbarClearFilters onClear={props.onClearFilters} />;
 };
 
-const fillCustomSlots = (
-  props: ToolbarProps,
-  slots: Record<string, ReactNode>,
-) => {
+const fillArchivedSlot = (props: ToolbarProps, slots: ToolbarSlots) => {
+  if (!props.showArchivedView) return;
+  slots.archived = (
+    <SimpleSelect
+      options={buildArchivedOptions(props)}
+      value={props.archivedMode}
+      onValueChange={(value) =>
+        props.onArchivedModeChange(value as ArchivedViewMode)
+      }
+      ariaLabel={props.archivedViewLabel ?? "Mostrar"}
+      theme={props.selectTheme}
+    />
+  );
+};
+
+const fillGroupSlot = (props: ToolbarProps, slots: ToolbarSlots) => {
+  const { groupSelector, selectTheme } = props;
+  if (!groupSelector) return;
+  slots.group = (
+    <SimpleSelect
+      options={groupSelector.options}
+      value={groupSelector.value}
+      onValueChange={groupSelector.onChange}
+      ariaLabel={groupSelector.ariaLabel}
+      theme={selectTheme}
+    />
+  );
+};
+
+const fillActionSlots = (props: ToolbarProps, slots: ToolbarSlots) => {
+  if (props.aiButton) slots.ai = <ToolbarAiButton config={props.aiButton} />;
+  if (props.viewSwitch)
+    slots.viewSwitch = <ToolbarViewSwitch config={props.viewSwitch} />;
+  if (props.showCreateButton && props.onCreate)
+    slots.create = (
+      <ToolbarCreateButton
+        label={props.createLabel}
+        onCreate={props.onCreate}
+      />
+    );
+};
+
+const fillToggleGroupSlots = (props: ToolbarProps, slots: ToolbarSlots) => {
   (props.toggleGroups ?? []).forEach((group) => {
     slots[group.id] = (
       <SegmentedControl
@@ -188,6 +149,9 @@ const fillCustomSlots = (
       />
     );
   });
+};
+
+const fillHeaderSelectorSlots = (props: ToolbarProps, slots: ToolbarSlots) => {
   (props.headerSelectors ?? []).forEach((selector) => {
     slots[selector.id] = (
       <SimpleSelect
@@ -202,29 +166,43 @@ const fillCustomSlots = (
   });
 };
 
+const buildSlots = (props: ToolbarProps): ToolbarSlots => {
+  const slots: ToolbarSlots = {};
+  fillSearchSlots(props, slots);
+  fillArchivedSlot(props, slots);
+  fillGroupSlot(props, slots);
+  fillActionSlots(props, slots);
+  fillToggleGroupSlots(props, slots);
+  fillHeaderSelectorSlots(props, slots);
+  return slots;
+};
+
 const splitCustomSides = (props: ToolbarProps) => {
   const controls = [
     ...(props.toggleGroups ?? []),
     ...(props.headerSelectors ?? []),
   ];
+  const leftControls = controls.filter((item) => item.position === "left");
+  const rightControls = controls.filter((item) => item.position !== "left");
   return {
-    left: controls.filter((control) => control.position === "left").map((c) => c.id),
-    right: controls.filter((control) => control.position !== "left").map((c) => c.id),
+    left: leftControls.map((item) => item.id),
+    right: rightControls.map((item) => item.id),
   };
 };
 
-export const Toolbar = (props: ToolbarProps) => {
-  const slots: Record<string, ReactNode> = {};
-  fillFixedSlots(props, slots);
-  fillCustomSlots(props, slots);
+const resolveClusters = (props: ToolbarProps, slots: ToolbarSlots) => {
   const custom = splitCustomSides(props);
-  const clusters = resolveToolbarClusters({
+  return resolveToolbarClusters({
     layout: props.toolbarLayout,
     isVisible: (id) => id in slots,
     customLeftIds: custom.left,
     customRightIds: custom.right,
   });
+};
 
+export const Toolbar = (props: ToolbarProps) => {
+  const slots = buildSlots(props);
+  const clusters = resolveClusters(props, slots);
   return (
     <div className="gdy-toolbar">
       <div className="gdy-toolbar-left">

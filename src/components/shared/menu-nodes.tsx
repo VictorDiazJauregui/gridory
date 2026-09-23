@@ -1,11 +1,5 @@
-/* eslint-disable react-refresh/only-export-components */
 import type { ReactNode } from "react";
 import { Archive, ArchiveRestore, Clock3, Pencil, Trash2 } from "lucide-react";
-import {
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-} from "../ui/dropdown-menu";
 import {
   BUILT_IN_ROW_ACTION_IDS,
   DuplicateRowActionError,
@@ -58,7 +52,7 @@ interface MenuActionsInput<TData> {
   menuActions?: MenuItem<TData>[];
 }
 
-interface ResolvedActionNode {
+export interface ResolvedActionNode {
   type: "action";
   key: string;
   icon: ReactNode;
@@ -80,14 +74,15 @@ interface ResolvedLabelNode {
   className?: string;
 }
 
-type ResolvedMenuNode =
+export type ResolvedMenuNode =
   | ResolvedActionNode
   | ResolvedSeparatorNode
   | ResolvedLabelNode;
 
 type BuiltInRegistry = Record<BuiltInActionId, ResolvedActionNode | null>;
 
-const RESERVED_IDS = BUILT_IN_ROW_ACTION_IDS as readonly string[];
+const isReservedId = (id: string) =>
+  (BUILT_IN_ROW_ACTION_IDS as readonly string[]).includes(id);
 
 const buildEditNode = <TData,>(
   row: TData,
@@ -101,7 +96,7 @@ const buildEditNode = <TData,>(
     label: actions.editLabel ?? "Editar",
     onSelect: () => actions.onEdit?.(row),
   };
-}
+};
 
 const buildArchiveNode = <TData,>(
   row: TData,
@@ -122,7 +117,7 @@ const buildArchiveNode = <TData,>(
         ? actions.onArchiveToggle(row)
         : actions.onArchive?.(row),
   };
-}
+};
 
 const buildRemoveNode = <TData,>(
   row: TData,
@@ -137,7 +132,7 @@ const buildRemoveNode = <TData,>(
     variant: "destructive",
     onSelect: () => actions.onRemove?.(row),
   };
-}
+};
 
 const buildHistoryNode = <TData,>(
   row: TData,
@@ -151,7 +146,7 @@ const buildHistoryNode = <TData,>(
     label: actions.historyLabel ?? "Ver historial",
     onSelect: () => actions.onHistory?.(row),
   };
-}
+};
 
 const buildBuiltInRegistry = <TData,>(
   row: TData,
@@ -163,7 +158,7 @@ const buildBuiltInRegistry = <TData,>(
     remove: buildRemoveNode(row, actions),
     history: buildHistoryNode(row, actions),
   };
-}
+};
 
 const toActionNode = <TData,>(
   row: TData,
@@ -178,7 +173,7 @@ const toActionNode = <TData,>(
     disabled: action.disabled?.(row) ?? false,
     onSelect: () => action.onClick(row),
   };
-}
+};
 
 const customToNodes = <TData,>(
   row: TData,
@@ -189,7 +184,7 @@ const customToNodes = <TData,>(
     .filter((action) => (action.placement ?? "bottom") === placement)
     .filter((action) => !action.hidden?.(row))
     .map((action) => toActionNode(row, action));
-}
+};
 
 const resolveByPlacement = <TData,>(
   row: TData,
@@ -204,13 +199,13 @@ const resolveByPlacement = <TData,>(
     ...middle,
     ...customToNodes(row, custom, "bottom"),
   ];
-}
+};
 
 const isCustomAction = <TData,>(
   item: MenuItem<TData>,
 ): item is RowAction<TData> & { kind?: "action" } => {
   return item.kind === undefined || item.kind === "action";
-}
+};
 
 const validateMenuActions = <TData,>(
   items: MenuItem<TData>[],
@@ -218,11 +213,11 @@ const validateMenuActions = <TData,>(
   const seenIds = new Set<string>();
   for (const item of items) {
     if (seenIds.has(item.id)) throw new DuplicateRowActionError(item.id);
-    if (isCustomAction(item) && RESERVED_IDS.includes(item.id))
+    if (isCustomAction(item) && isReservedId(item.id))
       throw new DuplicateRowActionError(item.id);
     seenIds.add(item.id);
   }
-}
+};
 
 const itemToNode = <TData,>(
   row: TData,
@@ -240,7 +235,7 @@ const itemToNode = <TData,>(
   if (item.kind === "builtin") return builtIns[item.id];
   if (item.hidden?.(row)) return null;
   return toActionNode(row, item);
-}
+};
 
 export const resolveMenuNodes = <TData,>(
   row: TData,
@@ -258,32 +253,4 @@ export const resolveMenuNodes = <TData,>(
     builtIns,
     validateCustomRowActions(actions.customActions),
   );
-}
-
-const stopEvent = (event: { stopPropagation: () => void }) =>
-  event.stopPropagation();
-
-export const renderMenuNodes = (nodes: ResolvedMenuNode[]): ReactNode => {
-  return nodes.map((node) => {
-    if (node.type === "separator")
-      return <DropdownMenuSeparator key={node.key} />;
-    if (node.type === "label")
-      return (
-        <DropdownMenuLabel key={node.key} className={node.className}>
-          {node.label}
-        </DropdownMenuLabel>
-      );
-    return (
-      <DropdownMenuItem
-        key={node.key}
-        variant={node.variant}
-        disabled={node.disabled}
-        onSelect={node.onSelect}
-        onClick={stopEvent}
-      >
-        {node.icon}
-        <span className="gdy-menu-item-label">{node.label}</span>
-      </DropdownMenuItem>
-    );
-  });
-}
+};
