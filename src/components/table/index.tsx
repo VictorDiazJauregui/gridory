@@ -28,11 +28,14 @@ import {
   hasDateFilterValue,
 } from "../shared/date-utils";
 import { useActiveFilters, useClickOutside } from "../shared/hooks";
-import { DateFilterMenu, FilterMenu } from "../shared/toolbar";
-import { DEFAULT_FEATURES, DEFAULT_PAGE_SIZES } from "./constants";
+import { DateFilterMenu, FilterMenu, Toolbar } from "../shared/toolbar";
+import {
+  DEFAULT_FEATURES,
+  DEFAULT_PAGE_SIZES,
+  GROUP_NONE_VALUE,
+} from "./constants";
 import { RowActionsMenu } from "./RowActionsMenu";
 import { TablePagination } from "./TablePagination";
-import { TableToolbar } from "./TableToolbar";
 import { SimpleSelect } from "../ui/select";
 import type {
   ArchivedViewMode,
@@ -48,6 +51,7 @@ import {
   applyColumnSorting,
   applyGlobalSearch,
   applyRowGrouping,
+  buildGroupSelectOptions,
   computeColumnFilterOptions,
   findGroupForIndex,
   normalizeInputRows,
@@ -433,7 +437,7 @@ export function DataTable<TData>({
       style={rootStyle}
     >
       <div className="gdy-scope gdy-card">
-        <TableToolbar
+        <Toolbar
           showSearch={flags.search}
           search={search}
           searchPlaceholder={searchPlaceholder}
@@ -446,12 +450,21 @@ export function DataTable<TData>({
           showCreateButton={flags.createButton}
           createLabel={createLabel}
           onCreate={onCreate}
-          showGroupSelector={flags.grouping && groupOptions.length > 0}
-          groupOptions={groupOptions}
-          activeGroupBy={activeGroupBy}
-          onGroupByChange={handleGroupByChange}
-          groupSelectorLabel={groupSelectorLabel}
-          groupNoneLabel={groupNoneLabel}
+          groupSelector={
+            flags.grouping && groupOptions.length > 0
+              ? {
+                  options: buildGroupSelectOptions(
+                    groupOptions,
+                    groupSelectorLabel,
+                    groupNoneLabel,
+                  ),
+                  value: activeGroupBy ?? GROUP_NONE_VALUE,
+                  onChange: (value) =>
+                    handleGroupByChange(value === GROUP_NONE_VALUE ? null : value),
+                  ariaLabel: groupSelectorLabel,
+                }
+              : undefined
+          }
           showArchivedView={
             Boolean(archivedView) && Boolean(rowActions?.getIsArchived)
           }

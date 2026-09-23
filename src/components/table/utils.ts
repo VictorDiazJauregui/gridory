@@ -1,4 +1,6 @@
 import { toComparableDate } from "../shared/date-utils";
+import type { SelectOption } from "../shared/toolbar-controls";
+import { GROUP_NONE_VALUE } from "./constants";
 import type {
   ArchivedViewMode,
   DateFilterState,
@@ -31,6 +33,19 @@ export const normalizeInputRows = <TData>(
     ? array.map((row, index) => normalizeRow(row, index))
     : (array as TData[]);
 };
+
+/** Options of the toolbar group selector: "none" first, then one per groupable column. */
+export const buildGroupSelectOptions = (
+  groupOptions: Array<{ id: string; label: string }>,
+  selectorLabel: string,
+  noneLabel: string,
+): SelectOption[] => [
+  { value: GROUP_NONE_VALUE, label: `${selectorLabel}: ${noneLabel}` },
+  ...groupOptions.map((option) => ({
+    value: option.id,
+    label: `${selectorLabel}: ${option.label}`,
+  })),
+];
 
 export const normalizeToArray = (value: Primitive | Primitive[]): string[] => {
   if (Array.isArray(value))

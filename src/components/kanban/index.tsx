@@ -8,13 +8,14 @@ import {
   hasDateFilterValue,
 } from "../shared/date-utils";
 import { useActiveFilters, useClickOutside } from "../shared/hooks";
-import { DateFilterMenu, FilterMenu } from "../shared/toolbar";
+import { DateFilterMenu, FilterMenu, Toolbar } from "../shared/toolbar";
 import type { DateFilterState, ColumnDefinition } from "./types";
 import {
   applyArchivedView,
   applyColumnFilters,
   applyColumnSorting,
   applyGlobalSearch,
+  buildGroupSelectOptions,
   computeColumnFilterOptions,
   normalizeInputRows,
   normalizeToArray,
@@ -22,7 +23,6 @@ import {
 import { DEFAULT_KANBAN_FEATURES } from "./constants";
 import { DefaultKanbanCard } from "./DefaultKanbanCard";
 import { KanbanCardMenu } from "./KanbanCardMenu";
-import { KanbanToolbar } from "./KanbanToolbar";
 import type {
   ArchivedViewMode,
   KanbanDateFiltersState,
@@ -280,7 +280,7 @@ export const KanbanBoard = <TData,>({
       style={rootStyle}
     >
       <div className="gdy-scope gdy-card">
-        <KanbanToolbar
+        <Toolbar
           showSearch={flags.search}
           search={search}
           searchPlaceholder={searchPlaceholder}
@@ -290,13 +290,19 @@ export const KanbanBoard = <TData,>({
             setFilters({});
             setDateFilters({});
           }}
-          showGroupSelector={flags.groupSelector}
-          groups={groups}
-          selectedGroupId={selectedGroup?.id ?? ""}
-          onGroupChange={(groupId) => {
-            setSelectedGroupId(groupId);
-            onGroupChange?.(groupId);
-          }}
+          groupSelector={
+            flags.groupSelector
+              ? {
+                  options: buildGroupSelectOptions(groups, "Agrupar por"),
+                  value: selectedGroup?.id ?? "",
+                  onChange: (groupId) => {
+                    setSelectedGroupId(groupId);
+                    onGroupChange?.(groupId);
+                  },
+                  ariaLabel: "Agrupar por",
+                }
+              : undefined
+          }
           showCreateButton={flags.createButton}
           createLabel={createLabel}
           onCreate={onCreate}

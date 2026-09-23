@@ -1,4 +1,5 @@
 import { toComparableDate } from "../shared/date-utils";
+import type { SelectOption } from "../shared/toolbar-controls";
 import type {
   ArchivedViewMode,
   DateFilterState,
@@ -6,6 +7,7 @@ import type {
   ColumnDefinition,
   FilterOption,
   DataInput,
+  KanbanGroupOption,
   SortDirection,
 } from "./types";
 
@@ -29,6 +31,16 @@ export const normalizeInputRows = <TData>(
     ? array.map((row, index) => normalizeRow(row, index))
     : (array as TData[]);
 };
+
+/** Options of the toolbar group selector: one per grouping, prefixed with the selector label. */
+export const buildGroupSelectOptions = <TData>(
+  groups: KanbanGroupOption<TData>[],
+  selectorLabel: string,
+): SelectOption[] =>
+  groups.map((group) => ({
+    value: group.id,
+    label: `${selectorLabel}: ${group.label}`,
+  }));
 
 export const normalizeToArray = (value: Primitive | Primitive[]): string[] => {
   if (Array.isArray(value))
