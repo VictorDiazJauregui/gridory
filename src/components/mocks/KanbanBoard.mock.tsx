@@ -173,15 +173,6 @@ export const KanbanBoardMock = () => {
         left: ["scope", "search", "clearFilters"],
         right: ["brand", "archived", "group", "ai", "viewSwitch", "create"],
       }}
-      selectTheme={{
-        background: "#f5f3ff",
-        hoverBackground: "#ede9fe",
-        border: "#c4b5fd",
-        text: "#5b21b6",
-        radius: 8,
-        optionHoverBackground: "#ede9fe",
-        optionActiveBackground: "#ddd6fe",
-      }}
       aiButton={{
         onClick: () => window.alert("Evento aiButton -> abrir asistente IA"),
       }}
