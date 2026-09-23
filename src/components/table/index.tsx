@@ -20,6 +20,7 @@ import {
   ArrowUpDown,
   ChevronDown,
   Filter,
+  type LucideIcon,
 } from "lucide-react";
 import "./styles.css";
 import { cn } from "../../lib/cn";
@@ -59,6 +60,17 @@ import {
   buildGroupSelectOptions,
   findGroupForIndex,
 } from "./row-grouping";
+
+const SORT_ICON_BY_DIRECTION: Record<SortDirection | "none", LucideIcon> = {
+  asc: ArrowUp,
+  desc: ArrowDown,
+  none: ArrowUpDown,
+};
+
+const SortIcon = ({ direction }: { direction: SortDirection | null }) => {
+  const Icon = SORT_ICON_BY_DIRECTION[direction ?? "none"];
+  return <Icon size={13} className="gdy-table-head-sort-icon" />;
+};
 
 const resolveSortDirection = (
   sorting: ColumnSortingState | null,
@@ -564,14 +576,9 @@ export function DataTable<TData>({
                             )}
                             {flags.sorting &&
                               column.sortable !== false &&
-                              !column.filterable &&
-                              (sortDirection === "asc" ? (
-                                <ArrowUp size={13} className="gdy-table-head-sort-icon" />
-                              ) : sortDirection === "desc" ? (
-                                <ArrowDown size={13} className="gdy-table-head-sort-icon" />
-                              ) : (
-                                <ArrowUpDown size={13} className="gdy-table-head-sort-icon" />
-                              ))}
+                              !column.filterable && (
+                                <SortIcon direction={sortDirection} />
+                              )}
                           </button>
 
                           {openFilterColumnId === column.id &&

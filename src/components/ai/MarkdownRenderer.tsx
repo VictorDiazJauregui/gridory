@@ -43,18 +43,16 @@ export function MarkdownRenderer({ text }: { text: string }) {
           );
         }
 
-        if (/^\d+\.\s/.test(line)) {
-          const match = line.match(/^(\d+)\.\s(.*)/);
-          if (match) {
-            return (
-              <div key={index} className="gdy-ai-md-item" data-list="ordered">
-                <span className="gdy-ai-md-number">{match[1]}.</span>
-                <span className="gdy-ai-md-item-text">
-                  {renderInline(match[2])}
-                </span>
-              </div>
-            );
-          }
+        const orderedItem = line.match(/^(\d+)\.\s(.*)/);
+        if (orderedItem) {
+          return (
+            <div key={index} className="gdy-ai-md-item" data-list="ordered">
+              <span className="gdy-ai-md-number">{orderedItem[1]}.</span>
+              <span className="gdy-ai-md-item-text">
+                {renderInline(orderedItem[2])}
+              </span>
+            </div>
+          );
         }
 
         if (line.trim() === "") {

@@ -63,17 +63,17 @@ function parseToolCallArguments(value: string): Record<string, unknown> | null {
   }
 }
 
+const JSON_SCHEMA_TYPE_BY_VALUE_TYPE: Record<string, string> = {
+  number: "number",
+  boolean: "boolean",
+};
+
 function fieldToSchema(field: AIFieldDescriptor): Record<string, unknown> {
   const description = field.description ?? field.label;
 
   if (field.fixedValue !== undefined) {
     return {
-      type:
-        typeof field.fixedValue === "number"
-          ? "number"
-          : typeof field.fixedValue === "boolean"
-            ? "boolean"
-            : "string",
+      type: JSON_SCHEMA_TYPE_BY_VALUE_TYPE[typeof field.fixedValue] ?? "string",
       const: field.fixedValue,
       description: `${description}. Valor fijo obligatorio.`,
     };

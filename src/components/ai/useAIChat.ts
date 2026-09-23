@@ -15,6 +15,7 @@ import type {
   AIChatMessage,
   AIChatMode,
   AIDataSchema,
+  AIHistoryStrategy,
   AIMemoryConfig,
   AIPendingAction,
   AIProviderConfig,
@@ -86,65 +87,68 @@ function extractJsonBlock(content: string): string | null {
   return objectMatch?.[0] ? objectMatch[0].trim() : null;
 }
 
+const CREATE_ALIASES = new Set(["create-row", "create_record", "create"]);
+const ACTION_TYPE_BY_ALIAS: Record<string, AIActionType> = {
+  "create-card": "create-card",
+  "update-row": "update-row",
+  update_record: "update-row",
+  "move-card": "move-card",
+  move_card: "move-card",
+};
+
+const createActionTypeFor = (mode: AIChatMode): AIActionType =>
+  mode === "kanban" ? "create-card" : "create-row";
+
+const resolveActionTypeFromAlias = (
+  rawType: string,
+  mode: AIChatMode,
+): AIActionType => {
+  if (CREATE_ALIASES.has(rawType)) return createActionTypeFor(mode);
+  return ACTION_TYPE_BY_ALIAS[rawType] ?? "custom";
+};
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null;
+
+const inferActionTypeFromShape = (
+  parsed: Record<string, unknown>,
+  mode: AIChatMode,
+): AIActionType => {
+  if (isRecord(parsed.record)) return createActionTypeFor(mode);
+  if (isRecord(parsed.updates)) return "update-row";
+  const hasTargetColumn =
+    typeof parsed.targetColumn === "string" ||
+    typeof parsed.target_column === "string";
+  if (hasTargetColumn && typeof parsed.id === "string") return "move-card";
+  return "custom";
+};
+
+const parseJsonRecord = (raw: string): Record<string, unknown> | null => {
+  try {
+    return JSON.parse(raw) as Record<string, unknown>;
+  } catch {
+    return null;
+  }
+};
+
 function parseFallbackAction(
   content: string,
   mode: AIChatMode,
 ): AIPendingAction | null {
   const jsonRaw = extractJsonBlock(content);
-  if (!jsonRaw) return null;
+  const parsed = jsonRaw ? parseJsonRecord(jsonRaw) : null;
+  if (!parsed) return null;
 
-  try {
-    const parsed = JSON.parse(jsonRaw) as Record<string, unknown>;
-    const rawType = String(parsed.type ?? parsed.action ?? "").toLowerCase();
+  const rawType = String(parsed.type ?? parsed.action ?? "").toLowerCase();
+  const type = rawType
+    ? resolveActionTypeFromAlias(rawType, mode)
+    : inferActionTypeFromShape(parsed, mode);
+  const payload =
+    (parsed.payload as Record<string, unknown> | undefined) ??
+    (parsed.record as Record<string, unknown> | undefined) ??
+    parsed;
 
-    const hasRecordObject =
-      typeof parsed.record === "object" && parsed.record !== null;
-    const hasUpdatesObject =
-      typeof parsed.updates === "object" && parsed.updates !== null;
-    const hasMoveShape =
-      (typeof parsed.targetColumn === "string" ||
-        typeof parsed.target_column === "string") &&
-      typeof parsed.id === "string";
-
-    const actionType: AIActionType = rawType
-      ? rawType === "create-row" ||
-        rawType === "create_record" ||
-        rawType === "create"
-        ? mode === "kanban"
-          ? "create-card"
-          : "create-row"
-        : rawType === "create-card"
-          ? "create-card"
-          : rawType === "update-row" || rawType === "update_record"
-            ? "update-row"
-            : rawType === "move-card" || rawType === "move_card"
-              ? "move-card"
-              : "custom"
-      : hasRecordObject
-        ? mode === "kanban"
-          ? "create-card"
-          : "create-row"
-        : hasUpdatesObject
-          ? "update-row"
-          : hasMoveShape
-            ? "move-card"
-            : "custom";
-
-    const payload =
-      (parsed.payload as Record<string, unknown> | undefined) ??
-      (parsed.record as Record<string, unknown> | undefined) ??
-      parsed;
-
-    return {
-      id: `fallback-${createId()}`,
-      type: actionType,
-      mode,
-      payload,
-      rawResponse: content,
-    };
-  } catch {
-    return null;
-  }
+  return { id: `fallback-${createId()}`, type, mode, payload, rawResponse: content };
 }
 
 function applyFixedValues(
@@ -166,12 +170,19 @@ function applyFixedValues(
   return result;
 }
 
-function mapToolCallToAction(
-  toolCall: AIParsedToolCall,
-  rawResponse: string,
-  mode: AIChatMode,
-  schema?: AIDataSchema,
-): AIPendingAction | null {
+interface ToolCallActionInput {
+  toolCall: AIParsedToolCall;
+  rawResponse: string;
+  mode: AIChatMode;
+  schema?: AIDataSchema;
+}
+
+function mapToolCallToAction({
+  toolCall,
+  rawResponse,
+  mode,
+  schema,
+}: ToolCallActionInput): AIPendingAction | null {
   const args = toolCall.parsedArguments ?? {};
 
   if (toolCall.name === "create_record") {
@@ -223,6 +234,43 @@ function mapToolCallToAction(
 
   return null;
 }
+
+interface RetryContext {
+  fullMessages: ChatCompletionMessageParam[];
+  strategy: AIHistoryStrategy;
+  maxMessages: number;
+}
+
+const resolveRetryPayload = (
+  error: unknown,
+  { fullMessages, strategy, maxMessages }: RetryContext,
+): ChatCompletionMessageParam[] => {
+  if (!isContextLengthError(error) || strategy === "minimal") throw error;
+  if (strategy === "sliding-window") {
+    return applyHistoryStrategy(
+      fullMessages,
+      "sliding-window",
+      Math.max(2, Math.floor(maxMessages / 2)),
+    );
+  }
+  return applyHistoryStrategy(fullMessages, "minimal", maxMessages);
+};
+
+interface FallbackContext {
+  enableActions: boolean;
+  mode: AIChatMode;
+  schema?: AIDataSchema;
+}
+
+const resolveFallbackActions = (
+  content: string,
+  { enableActions, mode, schema }: FallbackContext,
+): AIPendingAction[] => {
+  if (!enableActions) return [];
+  const action = parseFallbackAction(content, mode);
+  if (!action) return [];
+  return [{ ...action, payload: applyFixedValues(action.payload, schema) }];
+};
 
 function toOpenAIMessages(
   messages: AIChatMessage[],
@@ -347,29 +395,13 @@ export function useAIChat(config: UseAIChatConfig): UseAIChatReturn {
         try {
           result = await runStream(primaryPayload);
         } catch (streamError) {
-          if (
-            isContextLengthError(streamError) &&
-            strategy === "sliding-window"
-          ) {
-            const reducedPayload = applyHistoryStrategy(
+          result = await runStream(
+            resolveRetryPayload(streamError, {
               fullMessages,
-              "sliding-window",
-              Math.max(2, Math.floor(resolvedMemory.maxMessages / 2)),
-            );
-            result = await runStream(reducedPayload);
-          } else if (
-            isContextLengthError(streamError) &&
-            strategy !== "minimal"
-          ) {
-            const minimalPayload = applyHistoryStrategy(
-              fullMessages,
-              "minimal",
-              resolvedMemory.maxMessages,
-            );
-            result = await runStream(minimalPayload);
-          } else {
-            throw streamError;
-          }
+              strategy,
+              maxMessages: resolvedMemory.maxMessages,
+            }),
+          );
         }
 
         setStreamingContent("");
@@ -377,27 +409,26 @@ export function useAIChat(config: UseAIChatConfig): UseAIChatReturn {
         const mappedActions = enableActions
           ? result.toolCalls
               .map((toolCall) =>
-                mapToolCallToAction(
+                mapToolCallToAction({
                   toolCall,
-                  result.rawResponse || result.content,
+                  rawResponse: result.rawResponse || result.content,
                   mode,
-                  dataSchema,
-                ),
+                  schema: dataSchema,
+                }),
               )
               .filter((action): action is AIPendingAction => Boolean(action))
           : [];
 
-        if (mappedActions.length > 0) {
-          setPendingActions((previous) => [...previous, ...mappedActions]);
-        } else if (enableActions) {
-          const fallbackAction = parseFallbackAction(result.content, mode);
-          if (fallbackAction) {
-            fallbackAction.payload = applyFixedValues(
-              fallbackAction.payload,
-              dataSchema,
-            );
-            setPendingActions((previous) => [...previous, fallbackAction]);
-          }
+        const newActions =
+          mappedActions.length > 0
+            ? mappedActions
+            : resolveFallbackActions(result.content, {
+                enableActions,
+                mode,
+                schema: dataSchema,
+              });
+        if (newActions.length > 0) {
+          setPendingActions((previous) => [...previous, ...newActions]);
         }
 
         const assistantText =
