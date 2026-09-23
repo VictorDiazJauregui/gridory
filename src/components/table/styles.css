@@ -133,6 +133,13 @@
   width: 100%;
 }
 
+/* Inline-edit select of a cell: two classes (0-2-0) so it beats the height and
+   fit-content width of .gdy-select-trigger by specificity, not by order. */
+.gdy-select-trigger.gdy-table-inline-select {
+  height: 28px;
+  width: 100%;
+}
+
 .gdy-table-actions-cell {
   display: flex;
   justify-content: flex-end;

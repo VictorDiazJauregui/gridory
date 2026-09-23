@@ -349,7 +349,7 @@ export function DataTable<TData>({
                     column.onInlineEdit?.(row.original, next)
                   }
                   placeholder="Seleccionar..."
-                  triggerClassName="h-7 w-full"
+                  triggerClassName="gdy-table-inline-select"
                   triggerStyle={valueHighlight?.style}
                   theme={selectTheme}
                 />

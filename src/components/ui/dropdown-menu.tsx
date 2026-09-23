@@ -1,7 +1,7 @@
 import * as React from "react";
 import { DropdownMenu as DropdownMenuPrimitive } from "radix-ui";
 
-import { cn } from "../../lib/utils";
+import { cn } from "../../lib/cn";
 
 function DropdownMenu({
   ...props
@@ -17,6 +17,10 @@ function DropdownMenuTrigger({
   );
 }
 
+/**
+ * Portaled content: `gdy-scope` brings the library reset into the portal and
+ * `gdy-menu-content` carries the styles (src/components/ui/styles.css).
+ */
 function DropdownMenuContent({
   className,
   sideOffset = 6,
@@ -31,24 +35,14 @@ function DropdownMenuContent({
         align={align}
         sideOffset={sideOffset}
         collisionPadding={collisionPadding}
-        className={cn(
-          "gdy-scope z-50 min-w-[9rem] origin-(--radix-dropdown-menu-content-transform-origin) overflow-y-auto overflow-x-hidden rounded-lg bg-popover p-1 text-sm text-popover-foreground shadow-md ring-1 ring-foreground/10 duration-100 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
-          className,
-        )}
+        className={cn("gdy-scope gdy-menu-content", className)}
         {...props}
       />
     </DropdownMenuPrimitive.Portal>
   );
 }
 
-function DropdownMenuGroup({
-  ...props
-}: React.ComponentProps<typeof DropdownMenuPrimitive.Group>) {
-  return (
-    <DropdownMenuPrimitive.Group data-slot="dropdown-menu-group" {...props} />
-  );
-}
-
+/** `data-variant="destructive"` tints the item; `data-disabled` comes from Radix. */
 function DropdownMenuItem({
   className,
   variant = "default",
@@ -60,10 +54,7 @@ function DropdownMenuItem({
     <DropdownMenuPrimitive.Item
       data-slot="dropdown-menu-item"
       data-variant={variant}
-      className={cn(
-        "relative flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-none select-none transition-colors focus:bg-accent focus:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50 data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 data-[variant=destructive]:focus:text-destructive [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
-        className,
-      )}
+      className={cn("gdy-menu-item", className)}
       {...props}
     />
   );
@@ -76,10 +67,7 @@ function DropdownMenuLabel({
   return (
     <DropdownMenuPrimitive.Label
       data-slot="dropdown-menu-label"
-      className={cn(
-        "px-2 py-1.5 text-xs font-medium text-muted-foreground",
-        className,
-      )}
+      className={cn("gdy-menu-label", className)}
       {...props}
     />
   );
@@ -92,7 +80,7 @@ function DropdownMenuSeparator({
   return (
     <DropdownMenuPrimitive.Separator
       data-slot="dropdown-menu-separator"
-      className={cn("-mx-1 my-1 h-px bg-border", className)}
+      className={cn("gdy-menu-separator", className)}
       {...props}
     />
   );
@@ -101,7 +89,6 @@ function DropdownMenuSeparator({
 export {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,

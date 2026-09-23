@@ -103,7 +103,7 @@ export const DatePickerWithInput = ({
           </button>
         </PopoverTrigger>
         <PopoverContent
-          className="w-auto p-0 gdy-calendar-popover"
+          className="gdy-calendar-popover"
           align="end"
           sideOffset={4}
           onInteractOutside={(event) => event.preventDefault()}

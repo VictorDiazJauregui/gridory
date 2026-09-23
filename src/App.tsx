@@ -17,17 +17,17 @@ const THEME_STORAGE_KEY = "gridory-demo-theme";
 const MODULES: ModuleItem[] = [
   {
     id: "table",
-    label: "Mock DataTable",
+    label: "Tabla",
     content: <DataTableMock />,
   },
   {
     id: "kanban",
-    label: "Mock KanbanBoard",
+    label: "Kanban",
     content: <KanbanBoardMock />,
   },
   {
     id: "ai",
-    label: "Mock AI Assistant",
+    label: "Asistente IA",
     content: <AIAssistantIntegratedMock />,
   },
   {

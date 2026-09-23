@@ -1,7 +1,7 @@
 import * as React from "react";
 import { ToggleGroup as ToggleGroupPrimitive } from "radix-ui";
 
-import { cn } from "../../lib/utils";
+import { cn } from "../../lib/cn";
 
 function ToggleGroup({
   className,
@@ -10,15 +10,13 @@ function ToggleGroup({
   return (
     <ToggleGroupPrimitive.Root
       data-slot="toggle-group"
-      className={cn(
-        "inline-flex items-center gap-0.5 rounded-lg border border-border bg-muted/50 p-0.5",
-        className,
-      )}
+      className={cn("gdy-toggle-group", className)}
       {...props}
     />
   );
 }
 
+/** Radix writes `data-state="on|off"`; the on state is styled from it. */
 function ToggleGroupItem({
   className,
   children,
@@ -27,10 +25,7 @@ function ToggleGroupItem({
   return (
     <ToggleGroupPrimitive.Item
       data-slot="toggle-group-item"
-      className={cn(
-        "inline-flex h-7 items-center justify-center gap-1.5 rounded-md px-2.5 text-sm font-medium text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-background data-[state=on]:text-foreground data-[state=on]:shadow-sm [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
-        className,
-      )}
+      className={cn("gdy-toggle-item", className)}
       {...props}
     >
       {children}
@@ -88,7 +83,9 @@ function SegmentedControl({
             title={option.label}
           >
             {showIcon ? option.icon : null}
-            {showLabel ? <span>{option.label}</span> : null}
+            {showLabel ? (
+              <span className="gdy-toggle-item-label">{option.label}</span>
+            ) : null}
           </ToggleGroupItem>
         );
       })}

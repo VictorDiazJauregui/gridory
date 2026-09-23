@@ -11,8 +11,14 @@
  *  - no is-* state class survives in the library or in dist (states are
  *    data-* attributes or ARIA attributes);
  *  - every [data-*] / [aria-*] attribute selector in the library stylesheets
- *    is emitted by the library, set by Radix at runtime or set by the host app
- *    (the last two listed in the allowlist);
+ *    is emitted by the library, set by Radix or react-day-picker at runtime or
+ *    set by the host app (the last two listed in the allowlist); variant
+ *    attributes (data-variant, data-size) take their value from a prop, so the
+ *    value is checked as a string literal instead;
+ *  - in the strict modules (allowlist → strictModules) every class literal
+ *    (className="…", strings inside className={cn(…)}, values of a classNames
+ *    map) is a gdy-* hook, and no rdp-* name survives in those sources nor as
+ *    a rule in dist (react-day-picker defaults are not merged in);
  *  - the demo mocks only use classes that exist.
  *
  * Needs dist/gridory.css, so run it after `npm run build`.
@@ -81,6 +87,8 @@ const usedByMocks = collect(mockSources, CLASS_IN_SOURCE);
 const definedInDist = collect([distCss], CLASS_IN_CSS);
 const publicUtilities = new Set(allowlist.publicUtilities);
 const hookOnly = new Set(allowlist.hookOnly);
+const variantAttributes = new Set(allowlist.variantAttributes);
+const strictModules = allowlist.strictModules;
 const externalAttributes = new Set([
   ...allowlist.runtimeAttributes,
   ...allowlist.hostAttributes,
@@ -128,6 +136,14 @@ for (const file of libraryStylesheets) {
   for (const match of text.matchAll(ATTR_IN_CSS)) {
     const [, attribute, value] = match;
     if (externalAttributes.has(attribute)) continue;
+    if (variantAttributes.has(attribute)) {
+      if (!librarySourceText.includes(attribute)) {
+        failures.push(`${path.relative(root, file)}: selector [${attribute}] is never emitted by a component`);
+      } else if (value && !librarySourceText.includes(`"${value}"`)) {
+        failures.push(`${path.relative(root, file)}: no component uses the value "${value}" of ${attribute}`);
+      }
+      continue;
+    }
     const needle = value && attribute.startsWith("data-") ? `${attribute}="${value}"` : attribute;
     if (!librarySourceText.includes(needle)) {
       failures.push(`${path.relative(root, file)}: selector [${attribute}${value ? `="${value}"` : ""}] is never emitted by a component`);
@@ -135,7 +151,37 @@ for (const file of libraryStylesheets) {
   }
 }
 
-// 6. Mocks only use existing classes --------------------------------------------
+// 6. Strict modules: every class literal is a gdy-* hook, no rdp-* survives ----
+// Sources of class literals: className="…", the string arguments of
+// className={cn(…)}, and the values of a classNames map (inline or a const).
+const CLASS_LITERAL_CONTEXTS = [
+  /className=\{?"([^"]*)"/g,
+  /className=\{cn\(([\s\S]*?)\)\}/g,
+  /classNames=\{\{([\s\S]*?)\}\}/g,
+  /const \w+_CLASS_NAMES[^{]*=\s*\{([\s\S]*?)\};/g,
+];
+const GDY_TOKEN = /^gdy-[a-z0-9]+(?:-[a-z0-9]+)*$/;
+for (const moduleName of strictModules) {
+  const dir = path.join(root, "src/components", moduleName);
+  for (const file of walk(dir, isSource)) {
+    const text = stripComments(readFileSync(file, "utf8"));
+    const relative = path.relative(root, file);
+    if (text.includes("rdp-")) failures.push(`strict module "${moduleName}": ${relative} mentions an rdp-* class`);
+    for (const context of CLASS_LITERAL_CONTEXTS) {
+      for (const match of text.matchAll(context)) {
+        const literals = context === CLASS_LITERAL_CONTEXTS[0] ? [match[1]] : [...match[1].matchAll(/"([^"]*)"/g)].map((m) => m[1]);
+        for (const literal of literals) {
+          for (const token of literal.split(/\s+/).filter(Boolean)) {
+            if (!GDY_TOKEN.test(token)) failures.push(`strict module "${moduleName}": class "${token}" in ${relative} is not a gdy-* hook`);
+          }
+        }
+      }
+    }
+  }
+}
+if (/\.rdp-/.test(readFileSync(distCss, "utf8"))) failures.push("dist/gridory.css still contains an .rdp-* rule");
+
+// 7. Mocks only use existing classes --------------------------------------------
 for (const [name, files] of usedByMocks) {
   if (!definedInDist.has(name)) failures.push(`mock class "${name}" in ${[...files].join(", ")} has no rule in dist/gridory.css`);
 }
@@ -145,5 +191,5 @@ if (failures.length > 0) {
   process.exit(1);
 }
 console.log(
-  `audit-classes: OK (${usedByLibrary.size} classes emitted by the library, ${definedInDist.size} rules in dist/gridory.css, ${publicUtilities.size} public utilities, ${hookOnly.size} hook-only classes)`,
+  `audit-classes: OK (${usedByLibrary.size} classes emitted by the library, ${definedInDist.size} rules in dist/gridory.css, ${publicUtilities.size} public utilities, ${hookOnly.size} hook-only classes, strict modules: ${strictModules.join(", ")})`,
 );

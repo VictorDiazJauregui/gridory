@@ -5,7 +5,9 @@ Componente Kanban reutilizable y migrable del sistema UI.
 - Ruta: `src/components/kanban`
 - Export principal: `KanbanBoard`
 - Estilos propios: `styles.css` (clases `gdy-kanban-*`); toolbar, filtros, fechas y botones
-  vienen de `src/styles/shared.css` y `src/components/shared/toolbar/`, compartidos con la tabla
+  vienen de `src/styles/shared.css` y `src/components/shared/toolbar/`, compartidos con la tabla;
+  los primitivos (select, menú, popover, calendario, toggle) llevan clases `gdy-*` desde
+  `src/components/ui/styles.css`
 
 ---
 
@@ -633,6 +635,9 @@ Clases principales:
   `.gdy-kanban-card-menu-icon`
 - Los ganchos sin estilos por defecto (iconos, `gdy-kanban-card-value-label`) están listados como
   `hookOnly` en `scripts/audit-allowlist.json`.
+- Primitivos (selects de la toolbar, menú de tarjeta, popover y calendario del filtro de fecha,
+  toggles): `gdy-select-*`, `gdy-menu-*` (`[data-disabled]` en las acciones deshabilitadas),
+  `gdy-popover-content`, `gdy-calendar-*` y `gdy-toggle-*` en `src/components/ui/styles.css`.
 
 Tamaños de alto sugeridos:
 
@@ -770,16 +775,15 @@ y clases `gdy-*` con la tabla).
   ancho completo.
 - **Calendario de rango lado a lado**: al elegir "Entre (rango)", los dos meses
   se muestran en fila a partir de `768px` vía
-  `@media (min-width: 768px) { .gdy-calendar-popover .rdp-months { flex-direction: row } }`.
+  `@media (min-width: 768px) { .gdy-calendar-months { flex-direction: row } }`.
 
 ### Por qué CSS plano para el rango
 
-El wrapper del calendario compone los meses con la utilidad `md:flex-row`, pero
-el Tailwind del proyecto consumidor no escanea este paquete, así que esa utilidad
-no se genera en runtime y los meses caían apilados. El fix se envía como CSS en
-`src/styles/shared.css` (compilado en `dist/gridory.css`), acotado al popover del
-rango, para no depender del Tailwind del consumidor. No se toca
-`ui/calendar.tsx`.
+El calendario no usa utilidades: `src/components/ui/styles.css` declara
+`.gdy-calendar-months` en columna y, desde 768px, en fila, así que el rango se ve
+igual en cualquier app sin depender de su Tailwind. `ui/calendar.tsx` solo asigna
+los ganchos `gdy-calendar-*` y deja los estados del día en atributos
+(`data-today`, `data-selected`, `data-range-start|middle|end`).
 
 ---
 
@@ -1097,9 +1101,9 @@ opcional `selectTheme` para tematizar todos los selectores a la vez (ver más ab
 
 ### Ajustes visuales (v1.12.0)
 
-- **Ancho del desplegable = ancho del trigger**: el panel de opciones ahora iguala
-  el ancho del recuadro (antes era más ancho por un `min-width` fijo). Para etiquetas
-  largas conviene fijar un ancho al trigger (por ejemplo con `triggerClassName`).
+- **Ancho del desplegable ≥ ancho del trigger**: el panel de opciones nunca es más
+  estrecho que el recuadro y crece hasta que cada opción quepa en una línea (antes
+  igualaba el ancho exacto y las etiquetas largas se partían en dos líneas).
 - **Menos redondeo**: las esquinas del trigger y del panel se redujeron para un look
   más sobrio.
 
@@ -1164,7 +1168,7 @@ También podés tematizar solo por CSS declarando las variables (sin tocar props
 
 - `selectTheme` es opcional; sin ella, los selectores usan los tokens por defecto del
   tema (claro/oscuro). Las únicas diferencias visuales por defecto son intencionales:
-  el desplegable iguala el ancho del trigger y el redondeo es menor.
+  el desplegable nunca es más estrecho que el trigger y el redondeo es menor.
 
 ---
 
