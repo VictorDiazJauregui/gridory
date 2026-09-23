@@ -6,7 +6,7 @@ import { cn } from "../../lib/cn";
 import {
   EMPTY_DATE_FILTER_STATE,
   hasDateFilterValue,
-} from "../shared/date-utils";
+} from "../shared/date-filter";
 import { useActiveFilters, useClickOutside } from "../shared/hooks";
 import { DateFilterMenu, FilterMenu, Toolbar } from "../shared/toolbar";
 import type { DateFilterState, ColumnDefinition } from "./types";
@@ -15,11 +15,11 @@ import {
   applyColumnFilters,
   applyColumnSorting,
   applyGlobalSearch,
-  buildGroupSelectOptions,
   computeColumnFilterOptions,
   normalizeInputRows,
   normalizeToArray,
-} from "./utils";
+} from "../shared/row-pipeline";
+import { buildGroupSelectOptions } from "./group-select-options";
 import { DEFAULT_KANBAN_FEATURES } from "./constants";
 import { DefaultKanbanCard } from "./DefaultKanbanCard";
 import { KanbanCardMenu } from "./KanbanCardMenu";
@@ -143,7 +143,10 @@ export const KanbanBoard = <TData,>({
   );
 
   const searchedCards = useMemo(
-    () => applyGlobalSearch(cards, fields, search, flags.search),
+    () =>
+      flags.search
+        ? applyGlobalSearch({ rows: cards, columns: fields, query: search })
+        : cards,
     [cards, fields, search, flags.search],
   );
 

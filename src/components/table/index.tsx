@@ -26,7 +26,7 @@ import { cn } from "../../lib/cn";
 import {
   EMPTY_DATE_FILTER_STATE,
   hasDateFilterValue,
-} from "../shared/date-utils";
+} from "../shared/date-filter";
 import { useActiveFilters, useClickOutside } from "../shared/hooks";
 import { DateFilterMenu, FilterMenu, Toolbar } from "../shared/toolbar";
 import {
@@ -50,13 +50,15 @@ import {
   applyColumnFilters,
   applyColumnSorting,
   applyGlobalSearch,
-  applyRowGrouping,
-  buildGroupSelectOptions,
   computeColumnFilterOptions,
-  findGroupForIndex,
   normalizeInputRows,
   normalizeToArray,
-} from "./utils";
+} from "../shared/row-pipeline";
+import {
+  applyRowGrouping,
+  buildGroupSelectOptions,
+  findGroupForIndex,
+} from "./row-grouping";
 
 const resolveSortDirection = (
   sorting: ColumnSortingState | null,
@@ -209,12 +211,9 @@ export function DataTable<TData>({
 
   const searchedRows = useMemo(
     () =>
-      applyGlobalSearch(
-        rows,
-        columns,
-        manualPagination ? "" : search,
-        flags.search,
-      ),
+      flags.search && !manualPagination
+        ? applyGlobalSearch({ rows, columns, query: search })
+        : rows,
     [rows, columns, search, flags.search, manualPagination],
   );
 

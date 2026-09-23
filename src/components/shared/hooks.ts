@@ -1,6 +1,6 @@
 import { useEffect, useMemo, type RefObject } from "react";
 import type { DateFilterState } from "./data-model";
-import { hasDateFilterValue } from "./date-utils";
+import { hasDateFilterValue } from "./date-filter";
 
 /**
  * Calls `onOutside` on any mousedown outside `ref`. Clicks inside the portaled

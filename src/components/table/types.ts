@@ -11,7 +11,6 @@ import type {
   DataInput,
   DateInputFormat,
   RowActions,
-  SortDirection,
   ViewSwitchConfig,
 } from "../shared/data-model";
 
@@ -21,6 +20,7 @@ export type {
   ArchivedViewMode,
   CellHighlight,
   ColumnDefinition,
+  ColumnSortingState,
   DataInput,
   DateFilterOp,
   DateFilterState,
@@ -52,11 +52,6 @@ export interface GroupHeader {
 export interface RowGroupingResult<TData> {
   flatRows: TData[];
   headers: Map<number, GroupHeader>;
-}
-
-export interface ColumnSortingState {
-  id: string;
-  direction: SortDirection;
 }
 
 export interface ManualPaginationState {
