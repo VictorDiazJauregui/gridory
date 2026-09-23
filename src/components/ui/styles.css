@@ -1,0 +1,189 @@
+/*
+ * Primitives (src/components/ui): button, popover, dropdown menu, select,
+ * toggle group and calendar. Radix and react-day-picker keep the behaviour;
+ * this sheet owns every visual rule under a gdy-* class.
+ *
+ * Loaded before the utility layer on purpose (see src/styles/index.css):
+ * each base rule and each variant weighs one class, so a class the host
+ * passes through `className` (or `triggerClassName`) and loads later wins.
+ *
+ * Specificity contract:
+ *  - base rule: one class (0-1-0);
+ *  - variants (data-variant, data-size): wrapped in :where(), still 0-1-0;
+ *  - states (data-state, data-highlighted, data-disabled, aria-*, the calendar
+ *    day flags): plain attribute selectors, 0-2-0, so a state beats the base;
+ *  - the only descendant rules target the icons a consumer renders inside a
+ *    menu item or a toggle item (they arrive as ReactNode, without a class).
+ *
+ * Colors come from the base tokens; the component tokens read here
+ * (--gdy-menu-*, --gdy-popover-*, --gdy-toggle-*, --gdy-calendar-*,
+ * --gdy-select-*) are only consumed, always with a fallback.
+ */
+
+/* ---------------------------------------------------------------- Button */
+.gdy-button {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: var(--gdy-radius);
+  background-clip: padding-box;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  white-space: nowrap;
+  user-select: none;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gdy-button:focus-visible {
+  border-color: var(--gdy-ring);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--gdy-ring) 50%, transparent);
+}
+
+.gdy-button:active {
+  transform: translateY(1px);
+}
+
+.gdy-button:disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.gdy-button:where([data-variant="default"]) {
+  background-color: var(--gdy-primary);
+  color: var(--gdy-primary-foreground);
+}
+
+.gdy-button:where([data-variant="default"]):hover {
+  background-color: color-mix(in oklab, var(--gdy-primary) 80%, transparent);
+}
+
+.gdy-button:where([data-variant="outline"]) {
+  border-color: var(--gdy-border);
+  background-color: var(--gdy-background);
+}
+
+.gdy-button:where([data-variant="outline"]):hover,
+.gdy-button:where([data-variant="outline"])[aria-expanded="true"] {
+  background-color: var(--gdy-muted);
+  color: var(--gdy-foreground);
+}
+
+.gdy-button:where([data-variant="secondary"]) {
+  background-color: var(--gdy-secondary);
+  color: var(--gdy-secondary-foreground);
+}
+
+.gdy-button:where([data-variant="secondary"]):hover {
+  background-color: color-mix(in oklab, var(--gdy-secondary) 80%, transparent);
+}
+
+.gdy-button:where([data-variant="secondary"])[aria-expanded="true"] {
+  background-color: var(--gdy-secondary);
+  color: var(--gdy-secondary-foreground);
+}
+
+.gdy-button:where([data-variant="ghost"]):hover,
+.gdy-button:where([data-variant="ghost"])[aria-expanded="true"] {
+  background-color: var(--gdy-muted);
+  color: var(--gdy-foreground);
+}
+
+.gdy-button:where([data-variant="destructive"]) {
+  background-color: color-mix(in oklab, var(--gdy-destructive) 10%, transparent);
+  color: var(--gdy-destructive);
+}
+
+.gdy-button:where([data-variant="destructive"]):hover {
+  background-color: color-mix(in oklab, var(--gdy-destructive) 20%, transparent);
+}
+
+.gdy-button:where([data-variant="destructive"]):focus-visible {
+  border-color: color-mix(in oklab, var(--gdy-destructive) 40%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--gdy-destructive) 20%, transparent);
+}
+
+.gdy-button:where([data-variant="link"]) {
+  color: var(--gdy-primary);
+  text-underline-offset: 4px;
+}
+
+.gdy-button:where([data-variant="link"]):hover {
+  text-decoration-line: underline;
+}
+
+/* Sizes carry the height, gap and padding; the icon sizes are square and unpadded. */
+.gdy-button:where([data-size="default"]) {
+  height: 32px;
+  gap: 6px;
+  padding: 0 10px;
+}
+
+.gdy-button:where([data-size="xs"]) {
+  height: 24px;
+  gap: 4px;
+  padding: 0 8px;
+  border-radius: calc(var(--gdy-radius) - 2px);
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.gdy-button:where([data-size="sm"]) {
+  height: 28px;
+  gap: 4px;
+  padding: 0 10px;
+  border-radius: calc(var(--gdy-radius) - 2px);
+}
+
+.gdy-button:where([data-size="lg"]) {
+  height: 36px;
+  gap: 6px;
+  padding: 0 10px;
+}
+
+.gdy-button:where([data-size="icon"]) {
+  width: 32px;
+  height: 32px;
+}
+
+.gdy-button:where([data-size="icon-xs"]) {
+  width: 24px;
+  height: 24px;
+  border-radius: calc(var(--gdy-radius) - 2px);
+}
+
+.gdy-button:where([data-size="icon-sm"]) {
+  width: 28px;
+  height: 28px;
+  border-radius: calc(var(--gdy-radius) - 2px);
+}
+
+.gdy-button:where([data-size="icon-lg"]) {
+  width: 36px;
+  height: 36px;
+}
+
+/* --------------------------------------------------------------- Popover */
+.gdy-popover-content {
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 18rem;
+  padding: 10px;
+  border-radius: var(--gdy-radius);
+  background-color: var(--gdy-popover-bg, var(--gdy-popover));
+  color: var(--gdy-popover-fg, var(--gdy-popover-foreground));
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--gdy-foreground) 10%, transparent),
+    var(--gdy-shadow-md);
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  transform-origin: var(--radix-popover-content-transform-origin);
+}

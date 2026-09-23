@@ -419,12 +419,14 @@
 }
 
 /* Calendar popover: sits above the filter panels (table holder z 50, kanban
-   holder z 200) and clips the (rectangular) calendar to the rounded corners.
-   The data-slot part gives the rule two-selector specificity so it beats the
-   popover's own z-50 utility whatever the stylesheet order in the app. */
-[data-slot="popover-content"].gdy-calendar-popover {
+   holder z 200), clips the (rectangular) calendar to the rounded corners and
+   drops the popover's default width and padding. Two classes (0-2-0) so it
+   beats .gdy-popover-content by specificity, never by stylesheet order. */
+.gdy-popover-content.gdy-calendar-popover {
   z-index: 220;
   overflow: hidden;
+  width: auto;
+  padding: 0;
 }
 
 /* Range filter: keep the two calendar months side by side (like the base
