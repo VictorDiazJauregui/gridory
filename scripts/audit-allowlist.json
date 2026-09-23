@@ -45,7 +45,10 @@
     "gdy-ai-reset",
     "gdy-ai-close",
     "gdy-ai-empty-text",
-    "gdy-ai-end"
+    "gdy-ai-end",
+    "gdy-ai-md-item-text",
+    "gdy-ai-md-paragraph",
+    "gdy-ai-md-text"
   ],
   "variantAttributes": [
     "data-variant",
