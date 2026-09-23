@@ -11,7 +11,15 @@
     "gdy-kanban-min-h-md",
     "gdy-kanban-min-h-lg"
   ],
-  "hookOnly": [],
+  "hookOnly": [
+    "gdy-table-head",
+    "gdy-table-head-sort-icon",
+    "gdy-table-body",
+    "gdy-table-empty-row",
+    "gdy-table-group-row",
+    "gdy-table-pagination-icon",
+    "gdy-table-actions-icon"
+  ],
   "runtimeAttributes": [
     "data-state",
     "data-highlighted",

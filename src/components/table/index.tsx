@@ -490,14 +490,15 @@ export function DataTable<TData>({
           )}
         >
           <table className="gdy-table-grid">
-            <thead>
+            <thead className="gdy-table-head">
               {table.getHeaderGroups().map((group) => (
-                <tr key={group.id}>
+                <tr key={group.id} className="gdy-table-head-row">
                   {group.headers.map((header) => {
                     const column = columns.find(
                       (item) => item.id === header.column.id,
                     );
-                    if (!column) return <th key={header.id} />;
+                    if (!column)
+                      return <th key={header.id} className="gdy-table-head-cell" />;
 
                     const sortDirection = resolveSortDirection(
                       sorting,
@@ -535,8 +536,12 @@ export function DataTable<TData>({
                     };
 
                     return (
-                      <th key={header.id} style={{ width: column.width }}>
-                        <div className="gdy-table-head-cell">
+                      <th
+                        key={header.id}
+                        className="gdy-table-head-cell"
+                        style={{ width: column.width }}
+                      >
+                        <div className="gdy-table-head-inner">
                           <button
                             type="button"
                             className="gdy-table-head-trigger"
@@ -562,11 +567,11 @@ export function DataTable<TData>({
                               column.sortable !== false &&
                               !column.filterable &&
                               (sortDirection === "asc" ? (
-                                <ArrowUp size={13} />
+                                <ArrowUp size={13} className="gdy-table-head-sort-icon" />
                               ) : sortDirection === "desc" ? (
-                                <ArrowDown size={13} />
+                                <ArrowDown size={13} className="gdy-table-head-sort-icon" />
                               ) : (
-                                <ArrowUpDown size={13} />
+                                <ArrowUpDown size={13} className="gdy-table-head-sort-icon" />
                               ))}
                           </button>
 
@@ -647,10 +652,13 @@ export function DataTable<TData>({
               ))}
             </thead>
 
-            <tbody>
+            <tbody className="gdy-table-body">
               {table.getRowModel().rows.length === 0 ? (
-                <tr>
-                  <td className="gdy-empty" colSpan={tableColumns.length}>
+                <tr className="gdy-table-empty-row">
+                  <td
+                    className="gdy-table-cell gdy-empty"
+                    colSpan={tableColumns.length}
+                  >
                     {emptyMessage}
                   </td>
                 </tr>
@@ -717,7 +725,7 @@ export function DataTable<TData>({
                         }
                       >
                         {row.getVisibleCells().map((cell) => (
-                          <td key={cell.id}>
+                          <td key={cell.id} className="gdy-table-cell">
                             {flexRender(
                               cell.column.columnDef.cell,
                               cell.getContext(),
