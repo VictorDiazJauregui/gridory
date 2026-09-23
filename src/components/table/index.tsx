@@ -99,7 +99,7 @@ const computePageCount = (config: PageCountConfig): number => {
   return Math.max(1, Math.ceil(config.localRowCount / config.pageSize));
 };
 
-export function DataTable<TData>({
+export const DataTable = <TData,>({
   columns,
   data,
   normalizeRow,
@@ -146,7 +146,7 @@ export function DataTable<TData>({
   headerSelectors,
   toolbarLayout,
   selectTheme,
-}: DataTableProps<TData>) {
+}: DataTableProps<TData>) => {
   const flags = { ...DEFAULT_FEATURES, ...features };
   const rows = useMemo(
     () => normalizeInputRows(data, normalizeRow),

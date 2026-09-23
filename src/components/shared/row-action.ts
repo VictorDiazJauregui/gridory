@@ -31,9 +31,9 @@ export class DuplicateRowActionError extends Error {
   }
 }
 
-export function validateCustomRowActions<TData>(
+export const validateCustomRowActions = <TData>(
   actions: RowAction<TData>[] | undefined,
-): RowAction<TData>[] {
+): RowAction<TData>[] => {
   if (!actions?.length) return [];
   const seenIds = new Set<string>(BUILT_IN_ROW_ACTION_IDS);
   for (const action of actions) {

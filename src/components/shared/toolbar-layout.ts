@@ -26,7 +26,7 @@ interface ToolbarClusters {
   right: string[];
 }
 
-export function resolveToolbarClusters(input: ToolbarClusterInput): ToolbarClusters {
+export const resolveToolbarClusters = (input: ToolbarClusterInput): ToolbarClusters => {
   const { layout, isVisible } = input;
   if (layout) {
     return {

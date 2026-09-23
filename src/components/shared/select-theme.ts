@@ -31,7 +31,7 @@ const SELECT_VAR_BY_KEY: Record<string, string> = {
   optionActiveBackground: "--gdy-select-item-active-bg",
 };
 
-export function selectThemeToVars(theme?: SelectTheme): CSSProperties {
+export const selectThemeToVars = (theme?: SelectTheme): CSSProperties => {
   if (!theme) return {};
   const vars: Record<string, string> = {};
   for (const [key, cssVar] of Object.entries(SELECT_VAR_BY_KEY)) {

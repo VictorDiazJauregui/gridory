@@ -10,13 +10,13 @@ import type { RowActions } from "./types";
 const stopClick = (event: { stopPropagation: () => void }) =>
   event.stopPropagation();
 
-export function RowActionsMenu<TData>({
+export const RowActionsMenu = <TData,>({
   row,
   actions,
 }: {
   row: TData;
   actions: RowActions<TData>;
-}) {
+}) => {
   const nodes = resolveMenuNodes(row, actions);
   if (nodes.length === 0) return null;
 
