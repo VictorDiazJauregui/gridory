@@ -2,7 +2,8 @@
 /**
  * Style contract audit, part 1: no legacy names, no literal colors outside
  * tokens.css, no component token without a fallback, no Tailwind leftovers
- * (see README › Auditoría). Runs through `npm run audit:styles` after the build.
+ * (see docs/theming.md › Style audit). Runs through `npm run audit:styles`
+ * after the build.
  */
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
@@ -30,6 +31,9 @@ const legacyFiles = [
   ...walk(path.join(root, "dist"), hasExt(".js", ".css", ".d.ts")),
   ...walk(path.join(root, "docs"), hasExt(".md")),
   path.join(root, "README.md"),
+  path.join(root, "README.es.md"),
+  path.join(root, "CONTRIBUTING.md"),
+  path.join(root, "CONTRIBUTING.es.md"),
   path.join(root, "tailwind-preset.js"),
 ].filter(existsSync);
 
