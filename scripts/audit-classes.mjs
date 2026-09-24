@@ -1,67 +1,36 @@
 #!/usr/bin/env node
 /**
  * Style contract audit, part 2: the class hooks, the state attributes and the
- * stylesheet stay in sync (see README › Auditoría). Needs dist/gridory.css, so
- * run it after `npm run build`.
+ * stylesheet stay in sync (see docs/theming.md › Style audit). Needs
+ * dist/gridory.css, so run it after `npm run build`.
  */
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
+import {
+  ATTR_IN_CSS,
+  CLASS_IN_CSS,
+  CLASS_IN_SOURCE,
+  STATE_CLASS_IN_CSS,
+  STATE_CLASS_IN_SOURCE,
+  collect,
+  distCss,
+  isSource,
+  librarySources,
+  libraryStylesheets,
+  mockSources,
+  readAllowlist,
+  root,
+  stripComments,
+  walk,
+} from "./style-sources.mjs";
 
-const root = process.cwd();
-const distCss = path.join(root, "dist/gridory.css");
 if (!existsSync(distCss)) {
   console.error("audit-classes: dist/gridory.css not found, run `npm run build` first");
   process.exit(1);
 }
 
-const allowlist = JSON.parse(
-  readFileSync(path.join(root, "scripts/audit-allowlist.json"), "utf8"),
-);
+const allowlist = readAllowlist();
 const failures = [];
-
-const walk = (dir, accept) => {
-  const out = [];
-  for (const entry of readdirSync(dir)) {
-    const full = path.join(dir, entry);
-    if (statSync(full).isDirectory()) out.push(...walk(full, accept));
-    else if (accept(full)) out.push(full);
-  }
-  return out;
-};
-const isSource = (file) => /\.(ts|tsx)$/.test(file);
-const isStylesheet = (file) => file.endsWith(".css");
-const stripComments = (text) =>
-  text.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
-
-const librarySources = walk(path.join(root, "src/components"), isSource).filter(
-  (file) => !file.includes(`${path.sep}mocks${path.sep}`),
-);
-const mockSources = walk(path.join(root, "src/components/mocks"), isSource);
-const libraryStylesheets = [
-  ...walk(path.join(root, "src/styles"), isStylesheet),
-  ...walk(path.join(root, "src/components"), isStylesheet),
-];
-
-// A class name is never preceded by a word char or a hyphen (that would be a
-// `--gdy-*` custom property, written as var(--gdy-x) or as an inline style key).
-const CLASS_IN_SOURCE = /(?<![\w-])(gdy-[a-z0-9]+(?:-[a-z0-9]+)*)\b/g;
-const STATE_CLASS_IN_SOURCE = /(?<![\w-])(is-[a-z]+(?:-[a-z]+)*)\b/g;
-const CLASS_IN_CSS = /\.(gdy-[a-z0-9]+(?:-[a-z0-9]+)*)(?![a-z0-9-])/g;
-const STATE_CLASS_IN_CSS = /\.(is-[a-z]+(?:-[a-z]+)*)(?![a-z0-9-])/g;
-const ATTR_IN_CSS = /\[((?:data|aria)-[a-z0-9-]+)(?:\s*=\s*"?([^"\]]+)"?)?\]/g;
-
-const collect = (files, regex) => {
-  const found = new Map();
-  const record = (name, file) => {
-    if (!found.has(name)) found.set(name, new Set());
-    found.get(name).add(path.relative(root, file));
-  };
-  for (const file of files) {
-    const text = stripComments(readFileSync(file, "utf8"));
-    for (const match of text.matchAll(regex)) record(match[1], file);
-  }
-  return found;
-};
 
 const usedByLibrary = collect(librarySources, CLASS_IN_SOURCE);
 const usedByMocks = collect(mockSources, CLASS_IN_SOURCE);

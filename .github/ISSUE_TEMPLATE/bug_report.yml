@@ -1,0 +1,55 @@
+name: Bug report
+description: Something does not work as documented.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report it. English or Spanish are both fine.
+        Security problems go through "Report a vulnerability" in the Security tab, not here.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you did, what you expected and what you got instead.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Steps, a code snippet, or a link to a small repository or StackBlitz.
+      render: tsx
+    validations:
+      required: true
+  - type: dropdown
+    id: module
+    attributes:
+      label: Module
+      options:
+        - DataTable
+        - KanbanBoard
+        - AI assistant
+        - Styles and theming
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: gridory-version
+    attributes:
+      label: Gridory version or commit
+      placeholder: 1.0.0 or a commit hash
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: React version and browser
+      placeholder: React 19.1, Chrome 140
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else
+      description: Console errors, screenshots, whether it happens in light and dark theme.

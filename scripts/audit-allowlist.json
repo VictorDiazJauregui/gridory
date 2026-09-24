@@ -64,6 +64,7 @@
     "data-align",
     "data-orientation",
     "data-radix-popper-content-wrapper",
+    "data-selected",
     "data-today",
     "data-outside",
     "data-hidden",
