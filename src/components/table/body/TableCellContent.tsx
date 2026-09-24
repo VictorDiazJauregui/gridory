@@ -1,5 +1,5 @@
 import { cn } from "../../../lib/cn";
-import { normalizeToArray } from "../../shared/row-pipeline";
+import { normalizeToArray } from "../../shared/rows/row-pipeline";
 import type { SelectTheme } from "../../shared/select-theme";
 import { InlineSelectCell } from "./InlineSelectCell";
 import type { ColumnDefinition } from "../types";

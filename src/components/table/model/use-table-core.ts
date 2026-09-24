@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import type { Table } from "@tanstack/react-table";
-import { computeColumnFilterOptions } from "../../shared/row-pipeline";
+import { computeColumnFilterOptions } from "../../shared/rows/row-pipeline";
 import { resolveTableSettings } from "../settings";
 import type { ColumnDefinition, DataTableProps } from "../types";
 import { useTablePaging } from "../pagination/use-table-paging";

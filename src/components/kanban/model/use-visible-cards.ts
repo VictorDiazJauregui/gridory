@@ -3,10 +3,10 @@ import type {
   ColumnSortingState,
   DateFilterState,
 } from "../../shared/data-model";
-import { useArchivedRows } from "../../shared/use-archived-rows";
-import { useFilteredRows } from "../../shared/use-filtered-rows";
-import { useSearchedRows } from "../../shared/use-searched-rows";
-import { useSortedRows } from "../../shared/use-sorted-rows";
+import { useArchivedRows } from "../../shared/rows/use-archived-rows";
+import { useFilteredRows } from "../../shared/rows/use-filtered-rows";
+import { useSearchedRows } from "../../shared/rows/use-searched-rows";
+import { useSortedRows } from "../../shared/rows/use-sorted-rows";
 import type { KanbanBoardView } from "../board-view";
 
 interface VisibleCardsInput<TData> {

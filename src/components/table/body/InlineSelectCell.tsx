@@ -1,6 +1,6 @@
 import type { SelectTheme } from "../../shared/select-theme";
 import { stopPropagation } from "../../shared/stop-propagation";
-import { SimpleSelect } from "../../ui/select";
+import { SimpleSelect } from "../../ui/select/select";
 import type { CellHighlight, ColumnDefinition } from "../types";
 
 interface InlineSelectCellProps<TData> {

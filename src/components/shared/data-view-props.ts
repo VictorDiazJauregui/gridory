@@ -7,7 +7,7 @@ import type {
 } from "./data-model";
 import type { SelectTheme } from "./select-theme";
 import type { HeaderSelectConfig, ToggleGroupConfig } from "./toolbar-controls";
-import type { ToolbarLayout } from "./toolbar-layout";
+import type { ToolbarLayout } from "./toolbar/toolbar-layout";
 
 export interface DataViewProps<TData> {
   searchPlaceholder?: string;

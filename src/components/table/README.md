@@ -55,22 +55,31 @@ los hooks, la lógica pura y los componentes de una misma parte de la tabla.
   `use-paged-rows.ts`, `page-range.ts`, `use-view-snapshot.ts`, `use-reset-page-on-change.ts`,
   `use-scroll-reset-on-page-change.ts`).
 
-Compartido con el kanban, en `src/components/shared/`:
+Compartido con el kanban, en `src/components/shared/`, con el mismo criterio de carpetas por área:
 
-- `toolbar/`: `Toolbar` (barra superior, la misma para tabla y kanban), `FilterMenu`,
-  `DateFilterMenu`, `DatePickerWithInput`, `DateRangePicker`, `ToolbarAiButton`,
-  `ToolbarViewSwitch`.
-- `row-pipeline.ts`: normalización de filas, búsqueda global, filtros por columna y fecha,
-  orden y vista de archivados.
-- `data-view-props.ts`: `DataViewProps`, las props comunes a tabla y kanban (toolbar, selects,
-  calendario, scroll) de las que extienden `DataTableProps` y `KanbanBoardProps`.
-- `date-filter.ts`: estado vacío del filtro de fecha, comparación y máscara de fechas.
-- `hooks.ts`: `useClickOutside`, `useActiveFilters`.
-- Estado compartido: `use-column-sorting.ts`, `use-column-filters.ts`, `use-filter-menu-anchor.ts`,
-  `use-archived-mode.ts`; etapas del pipeline como hooks (`use-searched-rows.ts`, `use-archived-rows.ts`,
-  `use-filtered-rows.ts`, `use-sorted-rows.ts`); `column-filters.ts` (estado vacío, clave del menú de fecha,
-  ajustes de calendario), `prop-defaults.ts`, `root-style.ts`, `stop-propagation.ts` y
-  `toolbar/toolbar-props.ts` (props de archivados y de paso directo al `Toolbar`).
+- Raíz: `index.ts` (barrel de la capa compartida), `data-model.ts` (tipos del modelo de datos),
+  `data-view-props.ts` (`DataViewProps`, las props comunes a tabla y kanban de las que extienden
+  `DataTableProps` y `KanbanBoardProps`), `toolbar-controls.ts`, `select-theme.ts`, `prop-defaults.ts`,
+  `root-style.ts` y `stop-propagation.ts`.
+- `controls/`: estado de orden, filtros y archivados (`use-column-sorting.ts`, `use-column-filters.ts`,
+  `use-filter-menu-anchor.ts`, `use-archived-mode.ts`, `use-click-outside.ts`, `use-active-filters.ts`),
+  `column-filters.ts` (estado vacío, clave del menú de fecha, ajustes de calendario) y `date-filter.ts`
+  (estado vacío del filtro de fecha y comparación de fechas).
+- `rows/`: `row-pipeline.ts` (normalización de filas, búsqueda global, filtros por columna y fecha, orden
+  y vista de archivados) y sus etapas como hooks (`use-searched-rows.ts`, `use-archived-rows.ts`,
+  `use-filtered-rows.ts`, `use-sorted-rows.ts`).
+- `toolbar/`: `Toolbar.tsx` (barra superior, la misma para tabla y kanban) con sus partes
+  (`ToolbarSearch.tsx`, `ToolbarClearFilters.tsx`, `ToolbarCreateButton.tsx`, `ToolbarAiButton.tsx`,
+  `ToolbarViewSwitch.tsx`, `ToolbarViewSwitchButton.tsx`), `toolbar-layout.ts` (orden de los slots) y
+  `toolbar-props.ts` (props de archivados y de paso directo al `Toolbar`).
+- `filter-menu/`: `FilterMenu.tsx` (filtro por valores) con sus secciones y `use-filter-selection.ts`.
+- `date-filter-menu/`: `DateFilterMenu.tsx` (filtro por fecha) con sus secciones,
+  `use-date-filter-draft.ts` y `date-filter-menu-settings.ts`.
+- `date-pickers/`: `DatePickerWithInput.tsx` y `DateRangePicker.tsx`, el campo con máscara y el popover
+  del calendario (`DatePickerField.tsx`, `CalendarPopover.tsx`, `use-masked-date-input.ts`,
+  `use-calendar-popover.ts`, `calendar-caption.ts`) y `date-mask.ts` (parseo y formato con máscara).
+- `menu/`: `row-action.ts` (contrato y validación de las acciones de fila), `menu-nodes.tsx` (resolución
+  de los nodos del menú) y `render-menu-nodes.tsx`.
 - `src/styles/shared.css`: estilos compartidos (`.gdy-toolbar`, `.gdy-btn`, `.gdy-input`,
   `.gdy-panel`, `.gdy-date-*`, `.gdy-view-switch`, scroll fino).
 
@@ -791,7 +800,7 @@ encabezado del mes aparece capitalizado (`Junio 2026`) y la semana inicia en
 **lunes**. Antes de v1.8.0 el calendario caía al locale `en-US` de
 react-day-picker (`June 2026`, `Su Mo Tu...`, semana iniciando en domingo).
 
-La localización vive en el wrapper compartido `src/components/ui/calendar.tsx`,
+La localización vive en el wrapper compartido `src/components/ui/calendar/calendar.tsx`,
 el mismo que usa el Kanban, por lo que el comportamiento es idéntico en ambos
 componentes.
 
@@ -952,7 +961,7 @@ defecto es cosmético/intencional.
 
 - Las 8 props son opcionales; sin ellas, filtrado/orden/paginación son idénticos a
   v1.9.0. `DateFilterState.op` se amplía a `DateFilterOp | ""` (aditivo).
-- El calendario compartido `ui/calendar.tsx` no se modifica.
+- El calendario compartido `ui/calendar/calendar.tsx` no se modifica.
 
 ---
 
@@ -981,7 +990,7 @@ retrocompatibles con v1.10.0. No hay props nuevas: aplican por defecto.
 
 El calendario no usa utilidades: `src/components/ui/styles.css` declara
 `.gdy-calendar-months` en columna y, desde 768px, en fila, así que el rango se ve
-igual en cualquier app sin depender de su Tailwind. `ui/calendar.tsx` solo asigna
+igual en cualquier app sin depender de su Tailwind. `ui/calendar/calendar.tsx` solo asigna
 los ganchos `gdy-calendar-*` y deja los estados del día en atributos
 (`data-today`, `data-selected`, `data-range-start|middle|end`).
 

@@ -11,6 +11,10 @@ const codeStyleRules = {
   'no-nested-ternary': 'error',
   'max-depth': ['error', 2],
   'max-params': ['error', 3],
+  'max-lines-per-function': [
+    'error',
+    { max: 20, skipBlankLines: true, skipComments: true },
+  ],
 }
 
 export default defineConfig([
@@ -32,21 +36,6 @@ export default defineConfig([
       // The package is not compiled with the React Compiler, and TanStack
       // Table's instance can never be memoized: the note is noise here.
       'react-hooks/incompatible-library': 'off',
-    },
-  },
-  {
-    files: [
-      'src/components/table/**/*.{ts,tsx}',
-      'src/components/kanban/**/*.{ts,tsx}',
-      'src/components/ai/**/*.{ts,tsx}',
-      'src/components/shared/*.ts',
-      'src/components/shared/toolbar/toolbar-props.ts',
-    ],
-    rules: {
-      'max-lines-per-function': [
-        'error',
-        { max: 20, skipBlankLines: true, skipComments: true },
-      ],
     },
   },
   {

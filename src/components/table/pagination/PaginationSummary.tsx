@@ -1,4 +1,4 @@
-import { SimpleSelect } from "../../ui/select";
+import { SimpleSelect } from "../../ui/select/select";
 import type { TablePaginationProps } from "./TablePagination";
 
 const formatPageSummary = ({

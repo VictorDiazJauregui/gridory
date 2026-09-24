@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { normalizeInputRows } from "../../shared/row-pipeline";
+import { normalizeInputRows } from "../../shared/rows/row-pipeline";
 import type { TableSettings } from "../settings";
 import { useFilteredTableRows } from "./use-filtered-table-rows";
 import { useGroupedRows } from "./use-grouped-rows";

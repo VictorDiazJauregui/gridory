@@ -1,5 +1,5 @@
-import { useFilteredRows } from "../../shared/use-filtered-rows";
-import { useSortedRows } from "../../shared/use-sorted-rows";
+import { useFilteredRows } from "../../shared/rows/use-filtered-rows";
+import { useSortedRows } from "../../shared/rows/use-sorted-rows";
 import type { TableSettings } from "../settings";
 import type { TableState } from "./use-table-state";
 

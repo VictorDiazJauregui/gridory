@@ -1,4 +1,4 @@
-import { normalizeToArray } from "../../shared/row-pipeline";
+import { normalizeToArray } from "../../shared/rows/row-pipeline";
 import { formatDateValue } from "./card-summary";
 import type { ColumnDefinition } from "../types";
 

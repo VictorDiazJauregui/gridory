@@ -1,4 +1,4 @@
-import { hasColumnFilter } from "../../shared/column-filters";
+import { hasColumnFilter } from "../../shared/controls/column-filters";
 import { resolveHeaderAction } from "./header-action";
 import { TableHeaderIcons } from "./TableHeaderIcons";
 import type { TableColumnProps } from "../model/use-table-core";

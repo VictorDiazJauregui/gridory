@@ -1,4 +1,4 @@
-import { normalizeToArray } from "../../shared/row-pipeline";
+import { normalizeToArray } from "../../shared/rows/row-pipeline";
 import type { FilterOption, KanbanGroupOption } from "../types";
 
 export const getGroupValue = <TData>(

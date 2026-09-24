@@ -1,5 +1,5 @@
 import type { ComponentProps } from "react";
-import type { Toolbar } from "../../shared/toolbar";
+import type { Toolbar } from "../../shared/toolbar/Toolbar";
 import type { SelectOption } from "../../shared/toolbar-controls";
 import type { KanbanBoardView } from "../board-view";
 import type { KanbanGroupOption } from "../types";

@@ -1,4 +1,4 @@
-import { FilterMenu } from "../../shared/toolbar";
+import { FilterMenu } from "../../shared/filter-menu/FilterMenu";
 import { buildSortMenuProps } from "./sort-menu-props";
 import type { TableColumnProps } from "../model/use-table-core";
 

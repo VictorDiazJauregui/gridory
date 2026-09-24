@@ -2,7 +2,7 @@ import { useReactTable } from "@tanstack/react-table";
 import "./styles.css";
 import { cn } from "../../lib/cn";
 import { resolveRootStyle } from "../shared/root-style";
-import { Toolbar } from "../shared/toolbar";
+import { Toolbar } from "../shared/toolbar/Toolbar";
 import { buildPaginationProps } from "./pagination/pagination-props";
 import type { TableSettings } from "./settings";
 import { TableScrollArea } from "./body/TableScrollArea";
@@ -65,19 +65,19 @@ export type {
   RowAction,
   RowActionPlacement,
   RowActionVariant,
-} from "../shared/row-action";
+} from "../shared/menu/row-action";
 export type {
   BuiltInActionId,
   BuiltInMenuRef,
   MenuItem,
   MenuLabel,
   MenuSeparator,
-} from "../shared/menu-actions";
+} from "../shared/menu/menu-nodes";
 export type { SelectTheme } from "../shared/select-theme";
 export type {
   ToolbarLayout,
   ToolbarSide,
-} from "../shared/toolbar-layout";
+} from "../shared/toolbar/toolbar-layout";
 export type {
   HeaderSelectConfig,
   SelectOption,

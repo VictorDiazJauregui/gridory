@@ -1,4 +1,4 @@
-import { resolveSortDirection } from "../../shared/use-column-sorting";
+import { resolveSortDirection } from "../../shared/controls/use-column-sorting";
 import type { ColumnDefinition } from "../types";
 import type { TableModel } from "../model/use-table-core";
 

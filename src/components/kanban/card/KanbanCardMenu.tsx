@@ -4,7 +4,8 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "../../ui/dropdown-menu";
-import { renderMenuNodes, resolveMenuNodes } from "../../shared/menu-actions";
+import { resolveMenuNodes } from "../../shared/menu/menu-nodes";
+import { renderMenuNodes } from "../../shared/menu/render-menu-nodes";
 import { stopPropagation } from "../../shared/stop-propagation";
 import type { RowActions } from "../types";
 

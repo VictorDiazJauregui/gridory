@@ -1,6 +1,6 @@
 import type { CSSProperties, ReactNode } from "react";
-import type { RowAction } from "./row-action";
-import type { MenuItem } from "./menu-actions";
+import type { RowAction } from "./menu/row-action";
+import type { MenuItem } from "./menu/menu-nodes";
 
 /** Scalar values a column accessor may return. */
 export type Primitive = string | number | boolean | null | undefined;
