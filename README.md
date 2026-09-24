@@ -231,9 +231,9 @@ si una crece, se subdivide. Los módulos nuevos nacen con esta estructura y con 
 | `ui/` | Primitivos sobre Radix y react-day-picker: `button.tsx`, `popover.tsx` y `dropdown-menu.tsx` en la raíz, una carpeta por primitivo con partes (`select/`, `toggle-group/`, `calendar/`) y la hoja `styles.css`. |
 | `mocks/` | Datos y configuración de la demo: `company/` (dataset y controles compartidos), `table/`, `kanban/` y `ai/` (con `workspace/`). |
 
-La demo (`src/demo/`: shell, navegación y tema) y los mocks quedan fuera del paquete y de la auditoría
-de estilos. Todas las funciones, marcado incluido, tienen como máximo veinte líneas y tres parámetros;
-`npm run lint` lo comprueba.
+La demo (`src/demo/`: shell, navegación y tema), los mocks y las pruebas de humo (`src/test/`, con Vitest
+y Testing Library sobre jsdom) quedan fuera del paquete y de la auditoría de estilos. Todas las funciones,
+marcado incluido, tienen como máximo veinte líneas y tres parámetros; `npm run lint` lo comprueba.
 
 ## Demo local
 
@@ -268,6 +268,7 @@ Sin `VITE_AI_API_KEY` el mock se muestra igual, pero no hace llamadas reales al 
 | `npm run build` | Chequeo de tipos, bundle ESM en `dist/` y declaraciones en `dist/types/`. |
 | `npm run lint` | ESLint sobre el código y los scripts, con las reglas de estilo del proyecto: funciones como `const`, sin `else` tras un `return`, sin ternarios anidados, anidación máxima de 2, hasta 3 parámetros y un máximo de 20 líneas por función (marcado incluido). |
 | `npm run typecheck` | `tsc -b` sin emitir archivos. |
+| `npm test` | Pruebas de humo de tabla, kanban y asistente (Vitest y Testing Library sobre jsdom, con el proveedor de IA simulado); `npm run test:watch` las deja en modo interactivo. |
 | `npm run audit:styles` | Tras `npm run build`: sin nombres heredados, colores literales fuera de `tokens.css` ni restos de Tailwind (`--tw-`, paquetes), tokens de componente con fallback, cada clase `gdy-*` con su regla (y viceversa) y solo ganchos `gdy-` en los módulos. |
 
 ## Documentación
