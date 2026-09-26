@@ -3,6 +3,7 @@ import { DataTableMock } from "@/components/mocks/table/DataTable.mock";
 import { KanbanBoardMock } from "@/components/mocks/kanban/KanbanBoard.mock";
 import { AIAssistantIntegratedMock } from "@/components/mocks/ai/AIAssistantIntegrated.mock";
 import { AuthFormsMock } from "@/components/mocks/auth/AuthForms.mock";
+import { ControlsMock } from "@/components/mocks/controls/Controls.mock";
 
 type ModuleItem = {
   id: string;
@@ -30,5 +31,10 @@ export const MODULES: ModuleItem[] = [
     id: "auth",
     label: "Autenticación",
     content: <AuthFormsMock />,
+  },
+  {
+    id: "controls",
+    label: "Controles",
+    content: <ControlsMock />,
   },
 ];

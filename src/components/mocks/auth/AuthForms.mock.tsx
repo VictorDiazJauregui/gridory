@@ -1,10 +1,12 @@
 import { LoginForm, SignUpForm } from "../../auth";
+import { DemoEventLog } from "../shared/DemoEventLog";
 import { EXAMPLE_OPTIONS, FORM_OPTIONS, TAKEN_EMAIL } from "./auth-demo-config";
 import { AuthDemoToggle } from "./AuthDemoToggle";
-import { AuthEventLog } from "./AuthEventLog";
 import { LOGIN_EXAMPLES, SIGN_UP_EXAMPLES } from "./auth-examples";
 import { useAuthDemo } from "./use-auth-demo";
 import type { AuthDemoState } from "./use-auth-demo";
+
+const EVENT_LOG_DESCRIPTION = "El formulario no llama a ningún backend: emite eventos.";
 
 const AuthDemoHeader = ({ demo }: { demo: AuthDemoState }) => (
   <div className="rounded-lg border bg-card p-4">
@@ -39,7 +41,7 @@ export const AuthFormsMock = () => {
         <AuthDemoHeader demo={demo} />
         <AuthDemoStage demo={demo} />
       </section>
-      <AuthEventLog events={demo.events} />
+      <DemoEventLog events={demo.events} description={EVENT_LOG_DESCRIPTION} />
     </div>
   );
 };

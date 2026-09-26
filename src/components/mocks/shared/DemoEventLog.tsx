@@ -1,13 +1,14 @@
-import type { AuthDemoEvent } from "./auth-demo-config";
+import type { DemoEvent } from "./use-demo-event-log";
 
-interface AuthEventLogProps {
-  events: AuthDemoEvent[];
+interface DemoEventLogProps {
+  events: DemoEvent[];
+  description: string;
 }
 
-export const AuthEventLog = ({ events }: AuthEventLogProps) => (
+export const DemoEventLog = ({ events, description }: DemoEventLogProps) => (
   <aside className="w-full shrink-0 rounded-lg border bg-card p-3 xl:w-80">
     <h3 className="text-sm font-semibold">Eventos emitidos</h3>
-    <p className="mt-1 text-xs text-muted-foreground">El formulario no llama a ningún backend: emite eventos.</p>
+    <p className="mt-1 text-xs text-muted-foreground">{description}</p>
     <div className="mt-3 space-y-2">
       {events.length === 0 && <p className="text-xs text-muted-foreground">Aún no hay eventos.</p>}
       {events.map((event) => (
