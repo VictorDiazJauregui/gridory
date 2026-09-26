@@ -8,6 +8,7 @@ import {
   DuplicateAuthFieldError,
   UnknownAuthFieldError,
 } from "../components/auth/validation/auth-field-errors";
+import { expectRenderError } from "./expect-render-error";
 
 const renderSignUp = (props: Partial<SignUpFormProps> = {}) => {
   const onSubmit = vi.fn();
@@ -127,20 +128,11 @@ test("fieldOrder places an extra field among the built-in ones", () => {
   expect(names).toEqual(["email", "phone", "password", "firstName", "lastName", "confirmPassword"]);
 });
 
-// React 18 re-dispatches a render error to window and logs it; both are
-// expected here, so they are kept out of the test output.
-const expectRenderError = (props: Partial<SignUpFormProps>, error: new (name: string) => Error) => {
-  const muteReport = (event: ErrorEvent) => event.preventDefault();
-  const consoleError = vi.spyOn(console, "error").mockImplementation(() => undefined);
-  window.addEventListener("error", muteReport);
-  expect(() => renderSignUp(props)).toThrow(error);
-  window.removeEventListener("error", muteReport);
-  consoleError.mockRestore();
-};
+const signUpFormWith = (props: Partial<SignUpFormProps>) => <SignUpForm onSubmit={vi.fn()} {...props} />;
 
 test("configuration mistakes throw descriptive errors", () => {
-  expectRenderError({ extraFields: [{ name: "email", label: "Otro email" }] }, DuplicateAuthFieldError);
-  expectRenderError({ fieldOrder: ["telefono"] }, UnknownAuthFieldError);
+  expectRenderError(signUpFormWith({ extraFields: [{ name: "email", label: "Otro email" }] }), DuplicateAuthFieldError);
+  expectRenderError(signUpFormWith({ fieldOrder: ["telefono"] }), UnknownAuthFieldError);
 });
 
 test("a Standard Schema can veto the submit and point at a field", async () => {
