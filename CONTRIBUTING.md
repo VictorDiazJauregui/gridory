@@ -79,8 +79,22 @@ Gridory ships plain CSS, no Tailwind and no utility classes.
 
 ## Tests
 
-Tests live in `src/test/` and run with Vitest and Testing Library on jsdom. A fix should come with a
-test that fails without it. New features need at least a smoke test of the main path.
+Tests live in `src/test/` and run with Vitest and Testing Library. A fix should come with a test that
+fails without it. New features need at least a smoke test of the main path.
+
+`npm test` runs two projects:
+
+- `unit` runs on jsdom and covers behaviour, ARIA and keyboard. Most tests belong here.
+- `browser` runs the `*.browser.test.tsx` files in headless Google Chrome, with the real stylesheets,
+  to check styles, sizes and positions: focus rings, borders, heights, where a panel opens. jsdom has
+  no layout engine, so these checks cannot run there. Keep them few and focused, because they are
+  slower.
+
+The helpers in `src/test/browser/` measure boxes and computed styles, and switch the theme and the
+screen size (desktop, iPhone 14 Pro and Pixel 7).
+
+The `browser` project uses the Google Chrome installed on your machine, the same way CI uses the one
+the GitHub runner ships, so there is no browser to download. You only need Chrome installed.
 
 ## Documentation
 
