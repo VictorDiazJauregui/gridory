@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { DataTableMock } from "@/components/mocks/table/DataTable.mock";
 import { KanbanBoardMock } from "@/components/mocks/kanban/KanbanBoard.mock";
 import { AIAssistantIntegratedMock } from "@/components/mocks/ai/AIAssistantIntegrated.mock";
+import { AuthFormsMock } from "@/components/mocks/auth/AuthForms.mock";
 
 type ModuleItem = {
   id: string;
@@ -26,13 +27,8 @@ export const MODULES: ModuleItem[] = [
     content: <AIAssistantIntegratedMock />,
   },
   {
-    id: "coming-soon",
-    label: "Próximo módulo",
-    content: (
-      <div className="p-6 text-center text-foreground">
-        <h2 className="text-xl font-semibold">Próximo módulo</h2>
-        <p className="mt-2">En este espacio se agregará más módulos de demo.</p>
-      </div>
-    ),
+    id: "auth",
+    label: "Autenticación",
+    content: <AuthFormsMock />,
   },
 ];
