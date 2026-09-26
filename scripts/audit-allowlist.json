@@ -54,7 +54,8 @@
     "data-variant",
     "data-size",
     "data-role",
-    "data-status"
+    "data-status",
+    "data-label-position"
   ],
   "runtimeAttributes": [
     "data-state",

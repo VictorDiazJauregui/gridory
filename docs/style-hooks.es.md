@@ -273,6 +273,11 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-date-range-inputs` | con estilos | — |
 | `gdy-empty` | con estilos | — |
 | `gdy-empty-sm` | con estilos | — |
+| `gdy-field` | con estilos | `[data-label-position="start"]` |
+| `gdy-field-control` | con estilos | — |
+| `gdy-field-error` | con estilos | — |
+| `gdy-field-label` | con estilos | — |
+| `gdy-field-required` | con estilos | — |
 | `gdy-icon-btn` | con estilos | — |
 | `gdy-inline-links` | con estilos | — |
 | `gdy-input` | con estilos | — |
@@ -331,6 +336,7 @@ ponen Radix o react-day-picker siguen a esas librerías.
 | `data-form` | `"login"`, `"signup"` | Gridory | sin regla por defecto |
 | `data-hidden` | presente / ausente | Radix o react-day-picker | `gdy-calendar-day` |
 | `data-highlighted` | presente / ausente | Radix o react-day-picker | `gdy-select-item` |
+| `data-label-position` | `"start"` | Gridory | `gdy-field` |
 | `data-list` | `"ordered"`, `"unordered"` | Gridory | sin regla por defecto |
 | `data-outside` | presente / ausente | Radix o react-day-picker | `gdy-calendar-day` |
 | `data-placeholder` | presente / ausente | Radix o react-day-picker | `gdy-select-trigger` |
@@ -451,6 +457,12 @@ cualquier ancestro cambia solo esa parte. Los `--gdy-select-*` también reflejan
 | `--gdy-calendar-range-bg` | `var(--gdy-muted)` | ui |
 | `--gdy-calendar-selected-bg` | `var(--gdy-primary)` | ui |
 | `--gdy-calendar-selected-fg` | `var(--gdy-primary-foreground)` | ui |
+| `--gdy-field-control-height` | `40px` | shared |
+| `--gdy-field-error-color` | `var(--gdy-destructive)` | shared |
+| `--gdy-field-label-color` | `var(--gdy-foreground)` | shared |
+| `--gdy-field-label-gap` | `6px` | shared |
+| `--gdy-field-label-width` | `auto` | shared |
+| `--gdy-field-required-color` | `var(--gdy-destructive)` | shared |
 | `--gdy-input-bg` | `var(--gdy-muted)` | shared |
 | `--gdy-input-border` | `var(--gdy-input)` | kanban, shared |
 | `--gdy-kanban-card-bg` | `var(--gdy-card)` | kanban |

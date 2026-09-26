@@ -273,6 +273,11 @@ The state selectors column lists the attributes the stylesheets combine with eac
 | `gdy-date-range-inputs` | styled | — |
 | `gdy-empty` | styled | — |
 | `gdy-empty-sm` | styled | — |
+| `gdy-field` | styled | `[data-label-position="start"]` |
+| `gdy-field-control` | styled | — |
+| `gdy-field-error` | styled | — |
+| `gdy-field-label` | styled | — |
+| `gdy-field-required` | styled | — |
 | `gdy-icon-btn` | styled | — |
 | `gdy-inline-links` | styled | — |
 | `gdy-input` | styled | — |
@@ -331,6 +336,7 @@ Radix or react-day-picker follow those libraries.
 | `data-form` | `"login"`, `"signup"` | Gridory | no default rule |
 | `data-hidden` | present / absent | Radix or react-day-picker | `gdy-calendar-day` |
 | `data-highlighted` | present / absent | Radix or react-day-picker | `gdy-select-item` |
+| `data-label-position` | `"start"` | Gridory | `gdy-field` |
 | `data-list` | `"ordered"`, `"unordered"` | Gridory | no default rule |
 | `data-outside` | present / absent | Radix or react-day-picker | `gdy-calendar-day` |
 | `data-placeholder` | present / absent | Radix or react-day-picker | `gdy-select-trigger` |
@@ -451,6 +457,12 @@ any ancestor overrides that part only. `--gdy-select-*` also mirror the `selectT
 | `--gdy-calendar-range-bg` | `var(--gdy-muted)` | ui |
 | `--gdy-calendar-selected-bg` | `var(--gdy-primary)` | ui |
 | `--gdy-calendar-selected-fg` | `var(--gdy-primary-foreground)` | ui |
+| `--gdy-field-control-height` | `40px` | shared |
+| `--gdy-field-error-color` | `var(--gdy-destructive)` | shared |
+| `--gdy-field-label-color` | `var(--gdy-foreground)` | shared |
+| `--gdy-field-label-gap` | `6px` | shared |
+| `--gdy-field-label-width` | `auto` | shared |
+| `--gdy-field-required-color` | `var(--gdy-destructive)` | shared |
 | `--gdy-input-bg` | `var(--gdy-muted)` | shared |
 | `--gdy-input-border` | `var(--gdy-input)` | kanban, shared |
 | `--gdy-kanban-card-bg` | `var(--gdy-card)` | kanban |
