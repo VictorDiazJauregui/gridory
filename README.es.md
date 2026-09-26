@@ -209,10 +209,10 @@ versión se publican en las [releases de GitHub](https://github.com/VictorDiazJa
 ## Demo local
 
 Ejecuta `npm install` y `npm run dev`, y abre `http://localhost:5173/mocks/table`, `/mocks/kanban`,
-`/mocks/ai` (tabla, kanban y asistente juntos, con un registro de eventos) o `/mocks/auth` (ejemplos
-de inicio de sesión y de registro, con un registro de eventos). Añade `?theme=dark` o
-`?theme=light` para forzar un tema. La app de demo usa Tailwind solo para sí misma; nada de eso llega
-al paquete.
+`/mocks/ai` (tabla, kanban y asistente juntos, con un registro de eventos), `/mocks/auth` (ejemplos
+de inicio de sesión y de registro, con un registro de eventos) o `/mocks/controls` (los controles de
+formulario juntos, con un registro de eventos). Añade `?theme=dark` o `?theme=light` para forzar un
+tema. La app de demo usa Tailwind solo para sí misma; nada de eso llega al paquete.
 
 Para chatear con un proveedor real, copia las variables con `cp .env.example .env.local`, define
 `VITE_AI_API_KEY` y reinicia `npm run dev`. Los valores de ejemplo apuntan a Gemini:

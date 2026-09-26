@@ -206,9 +206,10 @@ the [GitHub releases](https://github.com/VictorDiazJauregui/gridory/releases).
 ## Local demo
 
 Run `npm install` and `npm run dev`, then open `http://localhost:5173/mocks/table`, `/mocks/kanban`,
-`/mocks/ai` (table, kanban and assistant together, with an event log) or `/mocks/auth` (sign-in and
-sign-up examples, with an event log). Add `?theme=dark` or
-`?theme=light` to force a theme. The demo shell uses Tailwind for itself only; none of it ships.
+`/mocks/ai` (table, kanban and assistant together, with an event log), `/mocks/auth` (sign-in and
+sign-up examples, with an event log) or `/mocks/controls` (the form controls together, with an event
+log). Add `?theme=dark` or `?theme=light` to force a theme. The demo shell uses Tailwind for itself
+only; none of it ships.
 
 To chat with a real provider, copy the variables with `cp .env.example .env.local`, set
 `VITE_AI_API_KEY` and restart `npm run dev`. The example values target Gemini:
