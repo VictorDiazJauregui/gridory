@@ -48,6 +48,7 @@ const GROUPS = [
   { id: "kanban", match: /^gdy-kanban(?:-|$)/ },
   { id: "ai", match: /^gdy-ai(?:-|$)/ },
   { id: "auth", match: /^gdy-auth(?:-|$)/ },
+  { id: "segmented-control", match: /^gdy-segmented(?:-|$)/ },
   { id: "ui", match: /^gdy-(?:button|select|menu|popover|toggle|calendar)(?:-|$)/ },
   { id: "shared", match: /^gdy-/ },
 ];
@@ -206,6 +207,7 @@ const TEXT = {
       kanban: "Kanban",
       ai: "AI assistant",
       auth: "Auth forms",
+      "segmented-control": "Segmented control",
       ui: "Primitives",
       shared: "Shared layer and toolbar",
     },
@@ -258,6 +260,7 @@ const TEXT = {
       kanban: "Kanban",
       ai: "Asistente de IA",
       auth: "Formularios de autenticación",
+      "segmented-control": "Control segmentado",
       ui: "Primitivos",
       shared: "Capa compartida y toolbar",
     },

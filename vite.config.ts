@@ -52,6 +52,7 @@ export default defineConfig({
         kanban: path.resolve(rootDir, "src/kanban.ts"),
         ai: path.resolve(rootDir, "src/ai.ts"),
         auth: path.resolve(rootDir, "src/auth.ts"),
+        "segmented-control": path.resolve(rootDir, "src/segmented-control.ts"),
       },
       formats: ["es"],
       cssFileName: "gridory",

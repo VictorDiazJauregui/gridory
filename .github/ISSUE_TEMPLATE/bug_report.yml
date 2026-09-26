@@ -31,6 +31,7 @@ body:
         - KanbanBoard
         - AI assistant
         - Auth forms
+        - Segmented control
         - Styles and theming
         - Other
     validations:

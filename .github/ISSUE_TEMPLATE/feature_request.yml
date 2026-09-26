@@ -29,6 +29,8 @@ body:
         - DataTable
         - KanbanBoard
         - AI assistant
+        - Auth forms
+        - Segmented control
         - Styles and theming
         - New component
         - Other
