@@ -30,6 +30,7 @@ body:
         - DataTable
         - KanbanBoard
         - AI assistant
+        - Auth forms
         - Styles and theming
         - Other
     validations:

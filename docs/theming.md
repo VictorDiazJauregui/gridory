@@ -8,7 +8,7 @@ The generated catalog [style-hooks.md](style-hooks.md) lists every class, state 
 ## The stylesheet
 
 Import the compiled stylesheet once, at the entry of your app and before your own CSS. The
-JavaScript entry points do not import it for you, and the one file covers the three modules.
+JavaScript entry points do not import it for you, and the one file covers every module.
 
 ```ts
 import "gridory/styles.css";
@@ -25,15 +25,15 @@ The file contains, in this order:
 3. **Primitives**: button, popover, dropdown menu, select, toggle group and calendar.
 4. **Shared layer**: card, toolbar, buttons, inputs, filter panels and scrollbars.
 5. **Motion**: the open, close and slide animations, gated by `prefers-reduced-motion`.
-6. **Module sheets**: the assistant, the table and the kanban.
+6. **Module sheets**: the assistant, the table, the kanban and the auth forms.
 
 The reset is scoped to the `gdy-scope` class. Gridory puts it on the card of the table and the
-kanban, on the assistant panel, overlay and launcher, and on every menu, select and popover it
-renders in a portal. The scope is wrapped in `:where()`, so it adds no specificity: the reset rules
-weigh as little as plain element selectors and any component class overrides them. They set
-border-box sizing, solid zero-width borders colored with `--gdy-border`, zero margins on headings
-and paragraphs, unstyled lists and links, form controls that inherit the font, transparent buttons
-with a pointer cursor, block-level media and collapsed table borders.
+kanban, on the assistant panel, overlay and launcher, on the auth form card, and on every menu,
+select and popover it renders in a portal. The scope is wrapped in `:where()`, so it adds no
+specificity: the reset rules weigh as little as plain element selectors and any component class
+overrides them. They set border-box sizing, solid zero-width borders colored with `--gdy-border`,
+zero margins on headings and paragraphs, unstyled lists and links, form controls that inherit the
+font, transparent buttons with a pointer cursor, block-level media and collapsed table borders.
 
 Markup outside those roots is never touched. Content you render inside a component (a column
 `cell`, a `renderCard` output) sits inside the scope and gets the reset too, so give lists and
@@ -98,6 +98,7 @@ Each token bridges to the shadcn variable without the `gdy-` part (`--gdy-card` 
 | `--gdy-muted` / `--gdy-muted-foreground` | `oklch(0.97 0 0)` / `oklch(0.556 0 0)` | `oklch(0.269 0 0)` / `oklch(0.708 0 0)` |
 | `--gdy-accent` / `--gdy-accent-foreground` | `oklch(0.97 0 0)` / `oklch(0.205 0 0)` | `oklch(0.269 0 0)` / `oklch(0.985 0 0)` |
 | `--gdy-destructive` / `--gdy-destructive-foreground` | `oklch(0.577 0.245 27.325)` / `oklch(0.985 0 0)` | `oklch(0.704 0.191 22.216)` / `oklch(0.985 0 0)` |
+| `--gdy-success` | `oklch(0.527 0.154 150.069)` | `oklch(0.792 0.209 151.711)` |
 | `--gdy-border` / `--gdy-input` / `--gdy-ring` | `oklch(0.922 0 0)` / `oklch(0.922 0 0)` / `oklch(0.708 0 0)` | `oklch(1 0 0 / 10%)` / `oklch(1 0 0 / 15%)` / `oklch(0.556 0 0)` |
 | `--gdy-radius` | `0.625rem` | same as light |
 
@@ -111,6 +112,7 @@ These tokens have no shadcn counterpart:
 | `--gdy-shadow-md` | `0 8px 24px rgb(0 0 0 / 0.12)` | `0 8px 24px rgb(0 0 0 / 0.6)` | filter panels, menus, selects, popovers |
 | `--gdy-shadow-lg` | `0 25px 50px -12px rgb(0 0 0 / 0.25)` | `0 25px 50px -12px rgb(0 0 0 / 0.6)` | assistant panel |
 | `--gdy-font-mono` | `ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace` | same as light | `code`, `kbd`, `samp` and `pre` inside the scope |
+| `--gdy-google-blue` / `-green` / `-yellow` / `-red` | `#4285f4` / `#34a853` / `#fbbc05` / `#ea4335` | same as light | Google logo in the auth forms. Google's brand guidelines forbid recoloring it: leave them as they are |
 
 ## Component tokens
 
@@ -126,6 +128,7 @@ under `<body>`, so declare the tokens that style them (`--gdy-menu-*`, `--gdy-se
 | `--gdy-table-*` | `--gdy-table-head-bg` (`--gdy-muted`), `--gdy-table-border` (`--gdy-border`), `--gdy-table-row-hover-bg` (`--gdy-muted`) |
 | `--gdy-kanban-*` | `--gdy-kanban-column-bg` (`--gdy-muted`), `--gdy-kanban-card-bg` (`--gdy-card`), `--gdy-kanban-drop-outline` (`--gdy-muted-foreground`) |
 | `--gdy-ai-*` | `--gdy-ai-accent` (`--gdy-primary`), `--gdy-ai-bg` (`--gdy-background`), `--gdy-ai-user-bubble-bg` (`--gdy-ai-accent`, then `--gdy-primary`) |
+| `--gdy-auth-*` | `--gdy-auth-bg` (`--gdy-card`), `--gdy-auth-submit-bg` (`--gdy-primary`), `--gdy-auth-input-focus-border` (`--gdy-ring`), `--gdy-auth-rule-met` (`--gdy-success`) |
 | `--gdy-btn-*` | `--gdy-btn-bg` (`--gdy-muted`), `--gdy-btn-primary-bg` (`--gdy-primary`), `--gdy-btn-hover-bg` (`color-mix(in oklab, var(--gdy-foreground) 8%, var(--gdy-muted))`) |
 | `--gdy-input-*` | `--gdy-input-bg` (`--gdy-muted`), `--gdy-input-border` (`--gdy-input`) |
 | `--gdy-panel-*` | `--gdy-panel-bg` (`--gdy-popover`), `--gdy-panel-border` (`--gdy-border`), `--gdy-panel-shadow` (`--gdy-shadow-md`) |
@@ -167,6 +170,8 @@ Every element the library renders carries a `gdy-*` class meant as a stable hook
   `item`) and `gdy-calendar-*` (such as `gdy-calendar-day` and `gdy-calendar-day-button`).
 - `gdy-ai-<part>` for the assistant: `gdy-ai-button`, `gdy-ai-sidebar`, `gdy-ai-bubble`,
   `gdy-ai-action-card`, `gdy-ai-send`.
+- `gdy-auth-<part>` for the auth forms: `gdy-auth`, `gdy-auth-input`, `gdy-auth-submit`,
+  `gdy-auth-google`, `gdy-auth-rule`.
 
 The library rules follow a fixed specificity contract:
 
@@ -241,6 +246,9 @@ presence (`[data-dragging]`), not by value. The others take the values listed.
 | `data-streaming`, `data-thinking` | `gdy-ai-message` | Gridory | the reply being streamed; the row shown until the first token arrives |
 | `data-action-type` | `gdy-ai-action-card` | Gridory | `"create-row"`, `"create-card"`, `"update-row"`, `"move-card"` or `"custom"` |
 | `data-list` | `gdy-ai-md-item` | Gridory | `"ordered"` or `"unordered"` |
+| `data-form` | `gdy-auth` | Gridory | `"login"` or `"signup"` |
+| `aria-invalid`, `aria-required` | `gdy-auth-input`, `gdy-auth-select`, `gdy-auth-checkbox-input` | Gridory | an invalid field; a required field |
+| `data-status` | `gdy-auth-rule` | Gridory | `"pending"`, `"met"` or `"unmet"` password requirement |
 
 Style a state by adding the attribute to the class. The rule weighs 0-2-0, so it also beats a single
 class you pass through a prop:
@@ -292,6 +300,9 @@ Each `classNames` slot is appended to one hook: `root` to `gdy-ai-sidebar` (afte
 to `gdy-ai-input-wrapper`, `textarea` to `gdy-ai-textarea`, `chip` to each suggested message
 (`gdy-ai-chip`), and `userBubble` and `assistantBubble` to the `gdy-ai-bubble` of each role,
 including the reply being streamed. `AIChatButton` accepts `className` too, after `gdy-ai-button`.
+
+The auth forms take `className`, `width` (card width, set inline as `--gdy-auth-width`) and a
+`classNames` object with one slot per part; see [auth-forms.md](auth-forms.md#styling).
 
 Class names from props are concatenated after the hook as they come. Nothing merges or
 deduplicates them, so a class you pass never removes a library declaration; it wins only through the
