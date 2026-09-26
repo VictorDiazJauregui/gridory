@@ -26,11 +26,12 @@ El archivo contiene, en este orden:
 3. **Primitivos**: botón, popover, menú desplegable, select, grupo de toggles y calendario.
 4. **Capa compartida**: tarjeta, toolbar, botones, inputs, paneles de filtro y barras de scroll.
 5. **Animaciones**: las de apertura, cierre y deslizamiento, condicionadas a `prefers-reduced-motion`.
-6. **Hojas de los módulos**: el asistente, la tabla, el kanban y los formularios de autenticación.
+6. **Hojas de los módulos**: el asistente, la tabla, el kanban, los formularios de autenticación y el
+   control segmentado.
 
 El reset está acotado a la clase `gdy-scope`. Gridory la pone en la tarjeta de la tabla y del kanban, en el
 panel del asistente, en su overlay y en su botón de apertura, en la tarjeta de los formularios de
-autenticación, y en cada menú, select y popover que renderiza en un portal. El ámbito va envuelto en `:where()`, así que no suma especificidad: las reglas del reset pesan
+autenticación, en el control segmentado y en cada menú, select y popover que renderiza en un portal. El ámbito va envuelto en `:where()`, así que no suma especificidad: las reglas del reset pesan
 lo mismo que un selector de elemento simple y cualquier clase de componente las sobrescribe. Aplican
 `border-box` como modelo de caja, bordes sólidos de ancho cero con el color `--gdy-border`, márgenes a cero
 en encabezados y párrafos, listas y enlaces sin estilos, controles de formulario que heredan la fuente,
@@ -111,7 +112,7 @@ Estos tokens no tienen equivalente en shadcn:
 |---|---|---|---|
 | `--gdy-link` | `oklch(0.546 0.245 262.881)` | `oklch(0.707 0.165 254.624)` | botones de enlace de los paneles de filtro |
 | `--gdy-overlay` | `rgb(0 0 0 / 0.3)` | `rgb(0 0 0 / 0.6)` | fondo detrás del asistente en pantallas pequeñas |
-| `--gdy-shadow-sm` | `0 1px 2px rgb(0 0 0 / 0.12)` | `0 1px 2px rgb(0 0 0 / 0.5)` | botón activo del selector de vista e ítem de toggle |
+| `--gdy-shadow-sm` | `0 1px 2px rgb(0 0 0 / 0.12)` | `0 1px 2px rgb(0 0 0 / 0.5)` | botón activo del selector de vista, ítem de toggle e indicador del control segmentado |
 | `--gdy-shadow-md` | `0 8px 24px rgb(0 0 0 / 0.12)` | `0 8px 24px rgb(0 0 0 / 0.6)` | paneles de filtro, menús, selects y popovers |
 | `--gdy-shadow-lg` | `0 25px 50px -12px rgb(0 0 0 / 0.25)` | `0 25px 50px -12px rgb(0 0 0 / 0.6)` | panel del asistente |
 | `--gdy-font-mono` | `ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace` | igual que en claro | `code`, `kbd`, `samp` y `pre` dentro del ámbito |
@@ -132,6 +133,7 @@ que declara los tokens que les dan estilo (`--gdy-menu-*`, `--gdy-select-*`, `--
 | `--gdy-kanban-*` | `--gdy-kanban-column-bg` (`--gdy-muted`), `--gdy-kanban-card-bg` (`--gdy-card`), `--gdy-kanban-drop-outline` (`--gdy-muted-foreground`) |
 | `--gdy-ai-*` | `--gdy-ai-accent` (`--gdy-primary`), `--gdy-ai-bg` (`--gdy-background`), `--gdy-ai-user-bubble-bg` (`--gdy-ai-accent` y después `--gdy-primary`) |
 | `--gdy-auth-*` | `--gdy-auth-bg` (`--gdy-card`), `--gdy-auth-submit-bg` (`--gdy-primary`), `--gdy-auth-input-focus-border` (`--gdy-ring`), `--gdy-auth-rule-met` (`--gdy-success`) |
+| `--gdy-segmented-*` | `--gdy-segmented-bg` (`--gdy-muted`), `--gdy-segmented-indicator-bg` (`--gdy-background`), `--gdy-segmented-item-active-color` (`--gdy-foreground`), `--gdy-segmented-focus-ring` (`--gdy-ring`), `--gdy-segmented-duration` (`220ms`) |
 | `--gdy-btn-*` | `--gdy-btn-bg` (`--gdy-muted`), `--gdy-btn-primary-bg` (`--gdy-primary`), `--gdy-btn-hover-bg` (`color-mix(in oklab, var(--gdy-foreground) 8%, var(--gdy-muted))`) |
 | `--gdy-input-*` | `--gdy-input-bg` (`--gdy-muted`), `--gdy-input-border` (`--gdy-input`) |
 | `--gdy-panel-*` | `--gdy-panel-bg` (`--gdy-popover`), `--gdy-panel-border` (`--gdy-border`), `--gdy-panel-shadow` (`--gdy-shadow-md`) |
@@ -175,6 +177,8 @@ Cada elemento que renderiza la librería lleva una clase `gdy-*` pensada como ga
   `gdy-ai-action-card`, `gdy-ai-send`.
 - `gdy-auth-<part>` para los formularios de autenticación: `gdy-auth`, `gdy-auth-input`,
   `gdy-auth-submit`, `gdy-auth-google`, `gdy-auth-rule`.
+- `gdy-segmented-<part>` para el control segmentado: `gdy-segmented` (raíz),
+  `gdy-segmented-indicator`, `gdy-segmented-item`, `gdy-segmented-icon`, `gdy-segmented-label`.
 
 Las reglas de la librería siguen un contrato de especificidad fijo:
 
@@ -193,7 +197,7 @@ clase tuya, cargada después y pasada por `className`, por los nombres de clase 
 de `classNames`, gana a las reglas base y a las variantes, pero no a los estados. Para un estado, escribe su
 selector. La librería nunca depende del orden de sus propias hojas; cuando un módulo ajusta un primitivo,
 añade una segunda clase. Los únicos selectores de etiqueta dan tamaño a los iconos que pasas como `ReactNode`
-(los de las acciones de fila y los de las opciones de toggle), que llegan sin clase.
+(los de las acciones de fila, los de las opciones de toggle y los del control segmentado), que llegan sin clase.
 
 Algunas clases no tienen regla por defecto, así que puedes apuntarles sin pelearte con un estilo previo:
 `gdy-table-head`, `gdy-table-body`, `gdy-table-group-row`, `gdy-table-empty-row`,
@@ -252,6 +256,8 @@ por su presencia (`[data-dragging]`), no por su valor. El resto toma los valores
 | `data-form` | `gdy-auth` | Gridory | `"login"` o `"signup"` |
 | `aria-invalid`, `aria-required` | `gdy-auth-input`, `gdy-auth-select`, `gdy-auth-checkbox-input` | Gridory | un campo inválido; un campo obligatorio |
 | `data-status` | `gdy-auth-rule` | Gridory | requisito de contraseña `"pending"`, `"met"` o `"unmet"` |
+| `data-animated` | `gdy-segmented` | Gridory | `"true"` o `"false"`: si el indicador se desliza (la prop `animated`) |
+| `aria-checked` | `gdy-segmented-item` | Gridory | `"true"` en la opción elegida, `"false"` en las demás |
 
 Para dar estilo a un estado, añade el atributo a la clase. La regla pesa 0-2-0, así que también gana a una
 clase suelta que pases por una prop:
@@ -308,6 +314,10 @@ Los formularios de autenticación aceptan `className`, `width` (ancho de la tarj
 como `--gdy-auth-width`) y un objeto `classNames` con un slot por parte; ver
 [auth-forms.es.md](auth-forms.es.md#estilos).
 
+El control segmentado acepta `className`, en su raíz (`gdy-segmented`), y un objeto `classNames` con
+un slot por parte: `root`, `indicator`, `item`, `icon` y `label`; ver
+[segmented-control.es.md](segmented-control.es.md#estilos).
+
 Los nombres de clase que llegan por props se concatenan tras el gancho tal como vienen. Nada los fusiona ni
 quita duplicados, así que una clase que pases nunca elimina una declaración de la librería; solo gana por las
 reglas de la cascada que se explican en [Sobrescribir por clase](#sobrescribir-por-clase).
@@ -323,6 +333,10 @@ Con `prefers-reduced-motion: reduce` no se ejecuta ninguna.
 - El contenido de popovers y menús se desvanece al cerrarse (`gdy-pop-out`, 100 ms). El contenido del
   select se desmonta en cuanto se cierra, así que no tiene animación de salida.
 - El panel del asistente entra deslizándose desde el borde derecho (una transición de `transform` de 0.3 s).
+- El indicador del control segmentado se desliza hasta la opción elegida (220 ms, fijados por
+  `--gdy-segmented-duration`). Solo se animan los cambios posteriores al primer render.
+  `animated={false}` lo apaga en un control (`data-animated="false"` en `gdy-segmented`); ver
+  [segmented-control.es.md](segmented-control.es.md#animación).
 
 El spinner de "Pensando..." del asistente (`gdy-ai-thinking-icon`, keyframes `gdy-ai-spin`) gira siempre,
 porque indica progreso. Para cambiar o desactivar una animación, apunta al mismo selector desde tu CSS (lo

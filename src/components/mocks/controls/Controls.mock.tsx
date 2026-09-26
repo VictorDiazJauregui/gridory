@@ -1,8 +1,18 @@
+import type { ReactNode } from "react";
 import { DemoEventLog } from "../shared/DemoEventLog";
 import { useDemoEventLog } from "../shared/use-demo-event-log";
+import type { RecordDemoEvent } from "../shared/use-demo-event-log";
 import { ControlsScrollArea } from "./ControlsScrollArea";
 import { ControlsSection } from "./ControlsSection";
 import { CONTROLS_SECTIONS, EVENT_LOG_DESCRIPTION } from "./controls-sections";
+import { SegmentedDemo } from "./segmented/SegmentedDemo";
+
+type SectionDemo = (record: RecordDemoEvent) => ReactNode;
+
+// A section with no demo here yet shows the entry point it is waiting for.
+const SECTION_DEMOS: Partial<Record<string, SectionDemo>> = {
+  "segmented-control": (record) => <SegmentedDemo record={record} />,
+};
 
 const ControlsHeader = () => (
   <div className="rounded-lg border bg-card p-4">
@@ -14,13 +24,15 @@ const ControlsHeader = () => (
 );
 
 export const ControlsMock = () => {
-  const { events } = useDemoEventLog();
+  const { events, record } = useDemoEventLog();
   return (
     <div className="flex flex-col gap-4 xl:flex-row xl:items-start">
       <div className="min-w-0 flex-1 space-y-4">
         <ControlsHeader />
         {CONTROLS_SECTIONS.map((section) => (
-          <ControlsSection key={section.id} section={section} />
+          <ControlsSection key={section.id} section={section}>
+            {SECTION_DEMOS[section.id]?.(record)}
+          </ControlsSection>
         ))}
         <ControlsScrollArea />
       </div>

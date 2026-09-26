@@ -10,6 +10,9 @@
  * their anchor. Radix keeps the node mounted with data-state="closed" until
  * the exit animation ends, and its data-side picks the edge the surface enters
  * from. The custom properties are internal (always read with a fallback).
+ *
+ * The segmented control's indicator slides to the chosen option only while its
+ * root carries data-animated="true" (the `animated` prop, on by default).
  */
 @media (prefers-reduced-motion: no-preference) {
   .gdy-popover-content[data-state="open"],
@@ -51,6 +54,12 @@
 
   .gdy-ai-sidebar {
     transition: transform 0.3s cubic-bezier(0, 0, 0.2, 1);
+  }
+
+  .gdy-segmented:where([data-animated="true"]) > .gdy-segmented-indicator {
+    transition-property: transform, width, height;
+    transition-duration: var(--gdy-segmented-duration, 220ms);
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 

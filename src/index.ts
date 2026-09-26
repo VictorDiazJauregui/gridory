@@ -143,3 +143,11 @@ export type {
   SignUpFormTexts,
   SignUpFormValues,
 } from "./auth";
+
+export { SegmentedControl } from "./segmented-control";
+export type {
+  SegmentedControlClassNames,
+  SegmentedControlProps,
+  SegmentedIconPosition,
+  SegmentedOption,
+} from "./segmented-control";

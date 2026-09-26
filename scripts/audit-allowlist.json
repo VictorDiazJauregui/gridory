@@ -55,7 +55,8 @@
     "data-size",
     "data-role",
     "data-status",
-    "data-label-position"
+    "data-label-position",
+    "data-animated"
   ],
   "runtimeAttributes": [
     "data-state",

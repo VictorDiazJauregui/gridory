@@ -203,6 +203,16 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-auth-textarea` | con estilos | — |
 | `gdy-auth-title` | con estilos | — |
 
+### Control segmentado
+
+| Clase | Tipo | Selectores de estado |
+|---|---|---|
+| `gdy-segmented` | con estilos | `[data-animated="true"]` |
+| `gdy-segmented-icon` | con estilos | — |
+| `gdy-segmented-indicator` | con estilos | — |
+| `gdy-segmented-item` | con estilos | `[aria-checked="false"]`, `[aria-checked="true"]` |
+| `gdy-segmented-label` | con estilos | — |
+
 ### Primitivos
 
 | Clase | Tipo | Selectores de estado |
@@ -332,6 +342,7 @@ ponen Radix o react-day-picker siguen a esas librerías.
 
 | Atributo | Valores | Lo pone | Se usa con |
 |---|---|---|---|
+| `aria-checked` | `"false"`, `"true"` | Gridory | `gdy-segmented-item` |
 | `aria-disabled` | `"true"` | Radix o react-day-picker | `gdy-calendar-button-next`, `gdy-calendar-button-previous`, `gdy-listbox-option` |
 | `aria-expanded` | `"false"`, `"true"` | Gridory | `gdy-button`, `gdy-table-group-toggle` |
 | `aria-invalid` | `"true"` | Gridory | `gdy-auth-input`, `gdy-select-trigger` |
@@ -339,6 +350,7 @@ ponen Radix o react-day-picker siguen a esas librerías.
 | `aria-selected` | `"true"` | Gridory | `gdy-listbox-option` |
 | `data-action-type` | `"create-card"`, `"create-row"`, `"custom"`, `"move-card"`, `"update-row"` | Gridory | sin regla por defecto |
 | `data-active` | presente / ausente | Gridory | `gdy-listbox-option` |
+| `data-animated` | `"true"` | Gridory | `gdy-segmented` |
 | `data-checked` | presente / ausente | Gridory | `gdy-option-check` |
 | `data-clickable` | presente / ausente | Gridory | `gdy-table-row` |
 | `data-disabled` | presente / ausente | Gridory, Radix o react-day-picker | `gdy-auth-google-slot`, `gdy-calendar-day`, `gdy-menu-item`, `gdy-select-item` |
@@ -504,7 +516,25 @@ cualquier ancestro cambia solo esa parte. Los `--gdy-select-*` también reflejan
 | `--gdy-panel-shadow` | `var(--gdy-shadow-md)` | shared |
 | `--gdy-popover-bg` | `var(--gdy-popover)` | ui |
 | `--gdy-popover-fg` | `var(--gdy-popover-foreground)` | ui |
-| `--gdy-scrollbar-thumb` | `var(--gdy-input)` | shared, ui |
+| `--gdy-scrollbar-thumb` | `var(--gdy-input)` | segmented-control, shared, ui |
+| `--gdy-segmented-bg` | `var(--gdy-muted)` | segmented-control |
+| `--gdy-segmented-border` | `var(--gdy-border)` | segmented-control |
+| `--gdy-segmented-duration` | `220ms` | motion |
+| `--gdy-segmented-focus-ring` | `var(--gdy-ring)` | segmented-control |
+| `--gdy-segmented-font-size` | `0.8125rem` | segmented-control |
+| `--gdy-segmented-gap` | `4px` | segmented-control |
+| `--gdy-segmented-icon-gap` | `6px` | segmented-control |
+| `--gdy-segmented-icon-size` | `1.077em` | segmented-control |
+| `--gdy-segmented-indicator-bg` | `var(--gdy-background)` | segmented-control |
+| `--gdy-segmented-indicator-shadow` | `var(--gdy-shadow-sm)` | segmented-control |
+| `--gdy-segmented-item-active-color` | `var(--gdy-foreground)` | segmented-control |
+| `--gdy-segmented-item-color` | `var(--gdy-muted-foreground)` | segmented-control |
+| `--gdy-segmented-item-hover-bg` | `color-mix(in oklab, var(--gdy-foreground) 6%, transparent)` | segmented-control |
+| `--gdy-segmented-item-hover-color` | `var(--gdy-foreground)` | segmented-control |
+| `--gdy-segmented-item-padding` | `4px 12px` | segmented-control |
+| `--gdy-segmented-item-radius` | `7px` | segmented-control |
+| `--gdy-segmented-padding` | `4px` | segmented-control |
+| `--gdy-segmented-radius` | `9px` | segmented-control |
 | `--gdy-select-bg` | `var(--gdy-background)` | ui |
 | `--gdy-select-border` | `var(--gdy-border)` | ui |
 | `--gdy-select-content-bg` | `var(--gdy-popover)` | ui |

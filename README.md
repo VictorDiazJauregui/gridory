@@ -24,6 +24,7 @@ sign-up forms that emit events instead of mutating your data.
 | `gridory/kanban` | `KanbanBoard` and its types, plus the same shared exports. |
 | `gridory/ai` | `AIChatSidebar`, `AIChatButton`, `useAIChat`, the provider presets, the prompt builders, the default texts and the assistant types. |
 | `gridory/auth` | `LoginForm`, `SignUpForm`, their default texts and fields, the configuration errors and the auth types. |
+| `gridory/segmented-control` | `SegmentedControl` and its types. |
 | `gridory/styles.css` | The compiled stylesheet for every module, with the light and dark tokens. |
 | `gridory/tailwind-preset` | Optional Tailwind preset that maps the `--gdy-*` tokens to shadcn-style theme keys (`bg-primary`, `border-border`) for your own markup. |
 
@@ -197,6 +198,7 @@ and the full catalog in [docs/style-hooks.md](docs/style-hooks.md).
 | [Toolbar](docs/toolbar.md) | [Toolbar, filtros y acciones](docs/toolbar.es.md) | What both views share: toolbar, search, filters, archived view, view switch, row and card actions. |
 | [AI assistant](docs/ai-assistant.md) | [Asistente de IA](docs/ai-assistant.es.md) | Provider, modes, actions, memory, UI, `useAIChat` and events. |
 | [Auth forms](docs/auth-forms.md) | [Formularios de autenticación](docs/auth-forms.es.md) | `LoginForm` and `SignUpForm`: fields, validation, zod, Google, texts and styling. |
+| [Segmented control](docs/segmented-control.md) | [Control segmentado](docs/segmented-control.es.md) | `SegmentedControl`: options and value, icons, keyboard, accessibility, styling and motion. |
 | [Theming](docs/theming.md) | [Temas y estilos](docs/theming.es.md) | Tokens, light/dark theme, overrides, style contract, motion, Tailwind preset. |
 | [Style hooks](docs/style-hooks.md) | [Ganchos de estilo](docs/style-hooks.es.md) | Generated catalog of every class, state attribute and token. |
 
@@ -231,7 +233,7 @@ To chat with a real provider, copy the variables with `cp .env.example .env.loca
 ## Code structure
 
 Each module lives in `src/components/<module>/`. The root holds the public surface and contracts
-(`index.tsx`, or `index.ts` in `ai/` and `auth/`, plus `types.ts`, `constants.ts` and `styles.css`). The rest is
+(`index.tsx`, or `index.ts` in `ai/`, `auth/` and `segmented-control/`, plus `types.ts`, `constants.ts` and `styles.css`). The rest is
 split into folders by area, never by file type, with 3 to 12 files each and no barrel files inside
 them.
 
@@ -241,6 +243,7 @@ them.
 | `kanban/` | `model/`, `toolbar/`, `board/`, `card/` |
 | `ai/` | `chat/`, `completion/`, `sidebar/`, `transcript/`, `actions/` |
 | `auth/` | `config/`, `model/`, `fields/`, `password/`, `validation/`, `layout/`, `actions/` |
+| `segmented-control/` | `model/`, `parts/` |
 | `shared/` | Common contracts at the root; `controls/`, `rows/`, `toolbar/`, `filter-menu/`, `date-filter-menu/`, `date-pickers/`, `menu/` |
 | `ui/` | Primitives over Radix and react-day-picker: `select/`, `toggle-group/`, `calendar/` |
 | `mocks/` | Demo data and configuration |

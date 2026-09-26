@@ -71,6 +71,10 @@
       "types": "./dist/types/auth.d.ts",
       "import": "./dist/auth.js"
     },
+    "./segmented-control": {
+      "types": "./dist/types/segmented-control.d.ts",
+      "import": "./dist/segmented-control.js"
+    },
     "./styles.css": "./dist/gridory.css",
     "./tailwind-preset": "./tailwind-preset.js",
     "./package.json": "./package.json"
