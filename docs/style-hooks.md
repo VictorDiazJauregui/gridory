@@ -265,6 +265,7 @@ The state selectors column lists the attributes the stylesheets combine with eac
 | `gdy-btn-primary` | styled | — |
 | `gdy-btn-xs` | styled | — |
 | `gdy-card` | styled | — |
+| `gdy-country-flag` | styled | — |
 | `gdy-date-input` | styled | — |
 | `gdy-date-input-with-icon` | styled | — |
 | `gdy-date-picker-icon` | hook only | — |
@@ -469,6 +470,9 @@ any ancestor overrides that part only. `--gdy-select-*` also mirror the `selectT
 | `--gdy-calendar-range-bg` | `var(--gdy-muted)` | ui |
 | `--gdy-calendar-selected-bg` | `var(--gdy-primary)` | ui |
 | `--gdy-calendar-selected-fg` | `var(--gdy-primary-foreground)` | ui |
+| `--gdy-country-flag-outline` | `var(--gdy-border)` | shared |
+| `--gdy-country-flag-radius` | `2px` | shared |
+| `--gdy-country-flag-width` | `20px` | shared |
 | `--gdy-field-control-height` | `40px` | shared |
 | `--gdy-field-error-color` | `var(--gdy-destructive)` | shared |
 | `--gdy-field-label-color` | `var(--gdy-foreground)` | shared |

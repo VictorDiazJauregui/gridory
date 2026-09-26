@@ -1,0 +1,11 @@
+/*
+ * Same specificity contract as src/components/ui/styles.css: one class per base
+ * rule. The outline keeps white flags visible on a white surface.
+ */
+.gdy-country-flag {
+  flex-shrink: 0;
+  width: var(--gdy-country-flag-width, 20px);
+  height: auto;
+  border-radius: var(--gdy-country-flag-radius, 2px);
+  box-shadow: 0 0 0 1px var(--gdy-country-flag-outline, var(--gdy-border));
+}

@@ -265,6 +265,7 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-btn-primary` | con estilos | — |
 | `gdy-btn-xs` | con estilos | — |
 | `gdy-card` | con estilos | — |
+| `gdy-country-flag` | con estilos | — |
 | `gdy-date-input` | con estilos | — |
 | `gdy-date-input-with-icon` | con estilos | — |
 | `gdy-date-picker-icon` | solo gancho | — |
@@ -469,6 +470,9 @@ cualquier ancestro cambia solo esa parte. Los `--gdy-select-*` también reflejan
 | `--gdy-calendar-range-bg` | `var(--gdy-muted)` | ui |
 | `--gdy-calendar-selected-bg` | `var(--gdy-primary)` | ui |
 | `--gdy-calendar-selected-fg` | `var(--gdy-primary-foreground)` | ui |
+| `--gdy-country-flag-outline` | `var(--gdy-border)` | shared |
+| `--gdy-country-flag-radius` | `2px` | shared |
+| `--gdy-country-flag-width` | `20px` | shared |
 | `--gdy-field-control-height` | `40px` | shared |
 | `--gdy-field-error-color` | `var(--gdy-destructive)` | shared |
 | `--gdy-field-label-color` | `var(--gdy-foreground)` | shared |
