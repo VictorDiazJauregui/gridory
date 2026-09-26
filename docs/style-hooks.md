@@ -265,6 +265,7 @@ The state selectors column lists the attributes the stylesheets combine with eac
 | `gdy-btn-primary` | styled | — |
 | `gdy-btn-xs` | styled | — |
 | `gdy-card` | styled | — |
+| `gdy-country-flag` | styled | — |
 | `gdy-date-input` | styled | — |
 | `gdy-date-input-with-icon` | styled | — |
 | `gdy-date-picker-icon` | hook only | — |
@@ -273,12 +274,27 @@ The state selectors column lists the attributes the stylesheets combine with eac
 | `gdy-date-range-inputs` | styled | — |
 | `gdy-empty` | styled | — |
 | `gdy-empty-sm` | styled | — |
+| `gdy-field` | styled | `[data-label-position="start"]` |
+| `gdy-field-control` | styled | — |
+| `gdy-field-error` | styled | — |
+| `gdy-field-label` | styled | — |
+| `gdy-field-required` | styled | — |
+| `gdy-floating-panel` | styled | — |
 | `gdy-icon-btn` | styled | — |
 | `gdy-inline-links` | styled | — |
 | `gdy-input` | styled | — |
 | `gdy-input-sm` | styled | — |
 | `gdy-link-btn` | styled | `[aria-pressed="true"]` |
 | `gdy-link-btn-nowrap` | styled | — |
+| `gdy-listbox` | styled | — |
+| `gdy-listbox-check` | styled | — |
+| `gdy-listbox-empty` | styled | — |
+| `gdy-listbox-label` | styled | — |
+| `gdy-listbox-leading` | styled | — |
+| `gdy-listbox-option` | styled | `[aria-disabled="true"]`, `[aria-selected="true"]`, `[data-active]` |
+| `gdy-listbox-options` | styled | — |
+| `gdy-listbox-search` | styled | — |
+| `gdy-listbox-trailing` | styled | — |
 | `gdy-option-check` | styled | `[data-checked]` |
 | `gdy-option-check-icon` | hook only | — |
 | `gdy-option-item` | styled | `[data-selected]` |
@@ -316,11 +332,13 @@ Radix or react-day-picker follow those libraries.
 
 | Attribute | Values | Set by | Used with |
 |---|---|---|---|
-| `aria-disabled` | `"true"` | Radix or react-day-picker | `gdy-calendar-button-next`, `gdy-calendar-button-previous` |
+| `aria-disabled` | `"true"` | Radix or react-day-picker | `gdy-calendar-button-next`, `gdy-calendar-button-previous`, `gdy-listbox-option` |
 | `aria-expanded` | `"false"`, `"true"` | Gridory | `gdy-button`, `gdy-table-group-toggle` |
 | `aria-invalid` | `"true"` | Gridory | `gdy-auth-input`, `gdy-select-trigger` |
 | `aria-pressed` | `"true"` | Gridory | `gdy-link-btn`, `gdy-view-switch-btn` |
+| `aria-selected` | `"true"` | Gridory | `gdy-listbox-option` |
 | `data-action-type` | `"create-card"`, `"create-row"`, `"custom"`, `"move-card"`, `"update-row"` | Gridory | no default rule |
+| `data-active` | present / absent | Gridory | `gdy-listbox-option` |
 | `data-checked` | present / absent | Gridory | `gdy-option-check` |
 | `data-clickable` | present / absent | Gridory | `gdy-table-row` |
 | `data-disabled` | present / absent | Gridory, Radix or react-day-picker | `gdy-auth-google-slot`, `gdy-calendar-day`, `gdy-menu-item`, `gdy-select-item` |
@@ -331,6 +349,7 @@ Radix or react-day-picker follow those libraries.
 | `data-form` | `"login"`, `"signup"` | Gridory | no default rule |
 | `data-hidden` | present / absent | Radix or react-day-picker | `gdy-calendar-day` |
 | `data-highlighted` | present / absent | Radix or react-day-picker | `gdy-select-item` |
+| `data-label-position` | `"start"` | Gridory | `gdy-field` |
 | `data-list` | `"ordered"`, `"unordered"` | Gridory | no default rule |
 | `data-outside` | present / absent | Radix or react-day-picker | `gdy-calendar-day` |
 | `data-placeholder` | present / absent | Radix or react-day-picker | `gdy-select-trigger` |
@@ -451,6 +470,17 @@ any ancestor overrides that part only. `--gdy-select-*` also mirror the `selectT
 | `--gdy-calendar-range-bg` | `var(--gdy-muted)` | ui |
 | `--gdy-calendar-selected-bg` | `var(--gdy-primary)` | ui |
 | `--gdy-calendar-selected-fg` | `var(--gdy-primary-foreground)` | ui |
+| `--gdy-country-flag-outline` | `var(--gdy-border)` | shared |
+| `--gdy-country-flag-radius` | `2px` | shared |
+| `--gdy-country-flag-width` | `20px` | shared |
+| `--gdy-field-control-height` | `40px` | shared |
+| `--gdy-field-error-color` | `var(--gdy-destructive)` | shared |
+| `--gdy-field-label-color` | `var(--gdy-foreground)` | shared |
+| `--gdy-field-label-gap` | `6px` | shared |
+| `--gdy-field-label-width` | `auto` | shared |
+| `--gdy-field-required-color` | `var(--gdy-destructive)` | shared |
+| `--gdy-floating-panel-max-height` | `20rem` | shared |
+| `--gdy-floating-panel-min-width` | `12rem` | shared |
 | `--gdy-input-bg` | `var(--gdy-muted)` | shared |
 | `--gdy-input-border` | `var(--gdy-input)` | kanban, shared |
 | `--gdy-kanban-card-bg` | `var(--gdy-card)` | kanban |
@@ -459,10 +489,16 @@ any ancestor overrides that part only. `--gdy-select-*` also mirror the `selectT
 | `--gdy-kanban-column-border` | `var(--gdy-border)` | kanban |
 | `--gdy-kanban-drop-bg` | `color-mix(in oklab, var(--gdy-foreground) 6%, var(--gdy-muted))` | kanban |
 | `--gdy-kanban-drop-outline` | `var(--gdy-muted-foreground)` | kanban |
+| `--gdy-listbox-check-color` | `var(--gdy-primary)` | shared |
+| `--gdy-listbox-max-height` | `16rem` | shared |
+| `--gdy-listbox-option-hover-bg` | `var(--gdy-option-hover-bg, var(--gdy-accent))` | shared |
+| `--gdy-listbox-option-hover-text` | `var(--gdy-accent-foreground)` | shared |
+| `--gdy-listbox-option-selected-bg` | `transparent` | shared |
+| `--gdy-listbox-option-text` | `inherit` | shared |
 | `--gdy-menu-bg` | `var(--gdy-popover)` | ui |
 | `--gdy-menu-fg` | `var(--gdy-popover-foreground)` | ui |
 | `--gdy-menu-item-hover-bg` | `var(--gdy-accent)` | ui |
-| `--gdy-option-hover-bg` | `color-mix(in oklab, var(--gdy-foreground) 6%, var(--gdy-muted))` | shared |
+| `--gdy-option-hover-bg` | `color-mix(in oklab, var(--gdy-foreground) 6%, var(--gdy-muted))`, `var(--gdy-accent)` | shared |
 | `--gdy-panel-bg` | `var(--gdy-popover)` | shared |
 | `--gdy-panel-border` | `var(--gdy-border)` | shared |
 | `--gdy-panel-shadow` | `var(--gdy-shadow-md)` | shared |

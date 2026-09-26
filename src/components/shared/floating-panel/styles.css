@@ -1,0 +1,15 @@
+/* Floating panel: two classes (0-2-0) so it beats the fixed width, padding and
+   gap of .gdy-popover-content by specificity, never by stylesheet order. Radix
+   fills --radix-popover-trigger-width with the anchor's width, so the panel is
+   as wide as the whole field. The available height keeps it on screen even
+   inside a scrolled container. */
+.gdy-popover-content.gdy-floating-panel {
+  gap: 0;
+  width: max(var(--radix-popover-trigger-width), var(--gdy-floating-panel-min-width, 12rem));
+  max-height: min(
+    var(--gdy-floating-panel-max-height, 20rem),
+    var(--radix-popover-content-available-height)
+  );
+  padding: 0;
+  overflow: hidden;
+}

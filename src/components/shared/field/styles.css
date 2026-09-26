@@ -1,0 +1,56 @@
+/* One class per base rule and the label position inside :where(), as in
+   src/components/ui/styles.css, so a class the host loads later still wins. */
+.gdy-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gdy-field-label-gap, 6px);
+  min-inline-size: 0;
+}
+
+.gdy-field-label {
+  min-inline-size: 0;
+  color: var(--gdy-field-label-color, var(--gdy-foreground));
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+}
+
+.gdy-field-required {
+  margin-inline-start: 3px;
+  color: var(--gdy-field-required-color, var(--gdy-destructive));
+}
+
+.gdy-field-control {
+  min-inline-size: 0;
+}
+
+/* The field can render outside a gdy-scope root, where no reset zeroes the
+   paragraph margin. */
+.gdy-field-error {
+  min-inline-size: 0;
+  margin: 0;
+  color: var(--gdy-field-error-color, var(--gdy-destructive));
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+/* A label beside the control needs more air than one above it; deriving the
+   column gap from the same token keeps a single knob for the field rhythm. */
+.gdy-field:where([data-label-position="start"]) {
+  display: grid;
+  grid-template-columns: var(--gdy-field-label-width, auto) minmax(0, 1fr);
+  align-items: start;
+  column-gap: calc(2 * var(--gdy-field-label-gap, 6px));
+  row-gap: var(--gdy-field-label-gap, 6px);
+}
+
+/* Keeps the label aligned with the control whether or not an error shows. */
+:where(.gdy-field[data-label-position="start"]) > .gdy-field-label {
+  display: flex;
+  align-items: center;
+  min-block-size: var(--gdy-field-control-height, 40px);
+}
+
+:where(.gdy-field[data-label-position="start"]) > :is(.gdy-field-control, .gdy-field-error) {
+  grid-column: 2;
+}
