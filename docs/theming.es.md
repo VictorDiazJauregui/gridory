@@ -9,7 +9,7 @@ estado y los tokens.
 ## La hoja de estilos
 
 Importa la hoja de estilos compilada una sola vez, en la entrada de tu app y antes de tu propio CSS. Los
-puntos de entrada de JavaScript no la importan por ti, y un único archivo cubre los tres módulos.
+puntos de entrada de JavaScript no la importan por ti, y un único archivo cubre todos los módulos.
 
 ```ts
 import "gridory/styles.css";
@@ -26,11 +26,11 @@ El archivo contiene, en este orden:
 3. **Primitivos**: botón, popover, menú desplegable, select, grupo de toggles y calendario.
 4. **Capa compartida**: tarjeta, toolbar, botones, inputs, paneles de filtro y barras de scroll.
 5. **Animaciones**: las de apertura, cierre y deslizamiento, condicionadas a `prefers-reduced-motion`.
-6. **Hojas de los módulos**: el asistente, la tabla y el kanban.
+6. **Hojas de los módulos**: el asistente, la tabla, el kanban y los formularios de autenticación.
 
 El reset está acotado a la clase `gdy-scope`. Gridory la pone en la tarjeta de la tabla y del kanban, en el
-panel del asistente, en su overlay y en su botón de apertura, y en cada menú, select y popover que renderiza
-en un portal. El ámbito va envuelto en `:where()`, así que no suma especificidad: las reglas del reset pesan
+panel del asistente, en su overlay y en su botón de apertura, en la tarjeta de los formularios de
+autenticación, y en cada menú, select y popover que renderiza en un portal. El ámbito va envuelto en `:where()`, así que no suma especificidad: las reglas del reset pesan
 lo mismo que un selector de elemento simple y cualquier clase de componente las sobrescribe. Aplican
 `border-box` como modelo de caja, bordes sólidos de ancho cero con el color `--gdy-border`, márgenes a cero
 en encabezados y párrafos, listas y enlaces sin estilos, controles de formulario que heredan la fuente,
@@ -101,6 +101,7 @@ Cada token hace de puente con la variable de shadcn que se llama igual sin la pa
 | `--gdy-muted` / `--gdy-muted-foreground` | `oklch(0.97 0 0)` / `oklch(0.556 0 0)` | `oklch(0.269 0 0)` / `oklch(0.708 0 0)` |
 | `--gdy-accent` / `--gdy-accent-foreground` | `oklch(0.97 0 0)` / `oklch(0.205 0 0)` | `oklch(0.269 0 0)` / `oklch(0.985 0 0)` |
 | `--gdy-destructive` / `--gdy-destructive-foreground` | `oklch(0.577 0.245 27.325)` / `oklch(0.985 0 0)` | `oklch(0.704 0.191 22.216)` / `oklch(0.985 0 0)` |
+| `--gdy-success` | `oklch(0.527 0.154 150.069)` | `oklch(0.792 0.209 151.711)` |
 | `--gdy-border` / `--gdy-input` / `--gdy-ring` | `oklch(0.922 0 0)` / `oklch(0.922 0 0)` / `oklch(0.708 0 0)` | `oklch(1 0 0 / 10%)` / `oklch(1 0 0 / 15%)` / `oklch(0.556 0 0)` |
 | `--gdy-radius` | `0.625rem` | igual que en claro |
 
@@ -114,6 +115,7 @@ Estos tokens no tienen equivalente en shadcn:
 | `--gdy-shadow-md` | `0 8px 24px rgb(0 0 0 / 0.12)` | `0 8px 24px rgb(0 0 0 / 0.6)` | paneles de filtro, menús, selects y popovers |
 | `--gdy-shadow-lg` | `0 25px 50px -12px rgb(0 0 0 / 0.25)` | `0 25px 50px -12px rgb(0 0 0 / 0.6)` | panel del asistente |
 | `--gdy-font-mono` | `ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace` | igual que en claro | `code`, `kbd`, `samp` y `pre` dentro del ámbito |
+| `--gdy-google-blue` / `-green` / `-yellow` / `-red` | `#4285f4` / `#34a853` / `#fbbc05` / `#ea4335` | igual que en claro | Logo de Google en los formularios de autenticación. Las guías de marca de Google prohíben recolorearlo: déjalos como están |
 
 ## Tokens de componente
 
@@ -129,6 +131,7 @@ que declara los tokens que les dan estilo (`--gdy-menu-*`, `--gdy-select-*`, `--
 | `--gdy-table-*` | `--gdy-table-head-bg` (`--gdy-muted`), `--gdy-table-border` (`--gdy-border`), `--gdy-table-row-hover-bg` (`--gdy-muted`) |
 | `--gdy-kanban-*` | `--gdy-kanban-column-bg` (`--gdy-muted`), `--gdy-kanban-card-bg` (`--gdy-card`), `--gdy-kanban-drop-outline` (`--gdy-muted-foreground`) |
 | `--gdy-ai-*` | `--gdy-ai-accent` (`--gdy-primary`), `--gdy-ai-bg` (`--gdy-background`), `--gdy-ai-user-bubble-bg` (`--gdy-ai-accent` y después `--gdy-primary`) |
+| `--gdy-auth-*` | `--gdy-auth-bg` (`--gdy-card`), `--gdy-auth-submit-bg` (`--gdy-primary`), `--gdy-auth-input-focus-border` (`--gdy-ring`), `--gdy-auth-rule-met` (`--gdy-success`) |
 | `--gdy-btn-*` | `--gdy-btn-bg` (`--gdy-muted`), `--gdy-btn-primary-bg` (`--gdy-primary`), `--gdy-btn-hover-bg` (`color-mix(in oklab, var(--gdy-foreground) 8%, var(--gdy-muted))`) |
 | `--gdy-input-*` | `--gdy-input-bg` (`--gdy-muted`), `--gdy-input-border` (`--gdy-input`) |
 | `--gdy-panel-*` | `--gdy-panel-bg` (`--gdy-popover`), `--gdy-panel-border` (`--gdy-border`), `--gdy-panel-shadow` (`--gdy-shadow-md`) |
@@ -170,6 +173,8 @@ Cada elemento que renderiza la librería lleva una clase `gdy-*` pensada como ga
   `item`) y `gdy-calendar-*` (por ejemplo `gdy-calendar-day` y `gdy-calendar-day-button`).
 - `gdy-ai-<part>` para el asistente: `gdy-ai-button`, `gdy-ai-sidebar`, `gdy-ai-bubble`,
   `gdy-ai-action-card`, `gdy-ai-send`.
+- `gdy-auth-<part>` para los formularios de autenticación: `gdy-auth`, `gdy-auth-input`,
+  `gdy-auth-submit`, `gdy-auth-google`, `gdy-auth-rule`.
 
 Las reglas de la librería siguen un contrato de especificidad fijo:
 
@@ -244,6 +249,9 @@ por su presencia (`[data-dragging]`), no por su valor. El resto toma los valores
 | `data-streaming`, `data-thinking` | `gdy-ai-message` | Gridory | la respuesta que llega en streaming; la fila visible hasta que llega el primer token |
 | `data-action-type` | `gdy-ai-action-card` | Gridory | `"create-row"`, `"create-card"`, `"update-row"`, `"move-card"` o `"custom"` |
 | `data-list` | `gdy-ai-md-item` | Gridory | `"ordered"` o `"unordered"` |
+| `data-form` | `gdy-auth` | Gridory | `"login"` o `"signup"` |
+| `aria-invalid`, `aria-required` | `gdy-auth-input`, `gdy-auth-select`, `gdy-auth-checkbox-input` | Gridory | un campo inválido; un campo obligatorio |
+| `data-status` | `gdy-auth-rule` | Gridory | requisito de contraseña `"pending"`, `"met"` o `"unmet"` |
 
 Para dar estilo a un estado, añade el atributo a la clase. La regla pesa 0-2-0, así que también gana a una
 clase suelta que pases por una prop:
@@ -295,6 +303,10 @@ Cada slot de `classNames` se añade a un gancho: `root` a `gdy-ai-sidebar` (desp
 `gdy-ai-input-wrapper`, `textarea` a `gdy-ai-textarea`, `chip` a cada mensaje sugerido (`gdy-ai-chip`), y
 `userBubble` y `assistantBubble` al `gdy-ai-bubble` de cada rol, incluida la respuesta en streaming.
 `AIChatButton` también acepta `className`, que va después de `gdy-ai-button`.
+
+Los formularios de autenticación aceptan `className`, `width` (ancho de la tarjeta, fijado en línea
+como `--gdy-auth-width`) y un objeto `classNames` con un slot por parte; ver
+[auth-forms.es.md](auth-forms.es.md#estilos).
 
 Los nombres de clase que llegan por props se concatenan tras el gancho tal como vienen. Nada los fusiona ni
 quita duplicados, así que una clase que pases nunca elimina una declaración de la librería; solo gana por las

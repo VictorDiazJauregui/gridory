@@ -32,7 +32,7 @@ npm run dev
 ```
 
 The demo runs at `http://localhost:5173` with one page per module (`/mocks/table`, `/mocks/kanban`,
-`/mocks/ai`). Add `?theme=dark` to check the dark theme. To try the assistant against a real provider,
+`/mocks/ai`, `/mocks/auth`). Add `?theme=dark` to check the dark theme. To try the assistant against a real provider,
 copy `.env.example` to `.env.local` and fill in your key.
 
 ## Before opening a pull request

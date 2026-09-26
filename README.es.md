@@ -2,8 +2,9 @@
 
 [English](README.md) · [Español](README.es.md)
 
-Componentes de React para aplicaciones con muchos datos: una tabla, un tablero kanban y un asistente
-de IA que emiten eventos en lugar de modificar tus datos.
+Componentes de React para aplicaciones con muchos datos: una tabla, un tablero kanban, un asistente
+de IA y formularios de inicio de sesión y de registro que emiten eventos en lugar de modificar tus
+datos.
 
 > Repositorio privado, versión 1.0.0. La publicación en npm está pendiente; mientras tanto, el
 > paquete se consume desde este repositorio.
@@ -23,6 +24,7 @@ de IA que emiten eventos en lugar de modificar tus datos.
 | `gridory/table` | `DataTable` y sus tipos, más los exports compartidos del modelo de datos, la toolbar y las acciones de fila. |
 | `gridory/kanban` | `KanbanBoard` y sus tipos, más los mismos exports compartidos. |
 | `gridory/ai` | `AIChatSidebar`, `AIChatButton`, `useAIChat`, los presets de proveedor, los constructores de prompts, los textos por defecto y los tipos del asistente. |
+| `gridory/auth` | `LoginForm`, `SignUpForm`, sus textos y campos por defecto, los errores de configuración y los tipos de autenticación. |
 | `gridory/styles.css` | La hoja de estilos compilada de todos los módulos, con los tokens del tema claro y del oscuro. |
 | `gridory/tailwind-preset` | Preset opcional de Tailwind que mapea los tokens `--gdy-*` a claves de tema al estilo de shadcn (`bg-primary`, `border-border`) para usarlas en tu propio markup. |
 
@@ -154,6 +156,26 @@ export const LeadsAssistant = ({ apiKey }: { apiKey: string }) => {
 Las llamadas al proveedor salen del navegador con esa API key. Usa una key restringida o apunta
 `baseURL` a un proxy que controles. Guía: [docs/ai-assistant.es.md](docs/ai-assistant.es.md).
 
+### Formularios de autenticación
+
+```tsx
+import { LoginForm } from "gridory/auth";
+
+const signIn = (values: { email: string; password: string }) =>
+  fetch("/api/login", { method: "POST", body: JSON.stringify(values) });
+
+export const SignIn = () => (
+  <LoginForm
+    onSubmit={signIn}
+    forgotPassword={{ href: "/recuperar" }}
+    signUpLink={{ href: "/registro" }}
+  />
+);
+```
+
+`SignUpForm` suma los campos de nombre, los requisitos de contraseña y tus propios campos. Guía:
+[docs/auth-forms.es.md](docs/auth-forms.es.md).
+
 ## Temas y estilos
 
 Los colores, el radio de los bordes y las sombras salen de los tokens `--gdy-*` de
@@ -177,6 +199,7 @@ y el catálogo completo en [docs/style-hooks.es.md](docs/style-hooks.es.md).
 | [Kanban](docs/kanban.md) | [Kanban](docs/kanban.es.md) | `KanbanBoard`: campos, grupos, drag and drop, renderizado de tarjetas, eventos. |
 | [Toolbar](docs/toolbar.md) | [Toolbar, filtros y acciones](docs/toolbar.es.md) | Lo que comparten las dos vistas: toolbar, búsqueda, filtros, vista de archivados, cambio de vista, acciones de fila y de tarjeta. |
 | [AI assistant](docs/ai-assistant.md) | [Asistente de IA](docs/ai-assistant.es.md) | Proveedor, modos, acciones, memoria, interfaz, `useAIChat` y eventos. |
+| [Auth forms](docs/auth-forms.md) | [Formularios de autenticación](docs/auth-forms.es.md) | `LoginForm` y `SignUpForm`: campos, validación, zod, Google, textos y estilos. |
 | [Theming](docs/theming.md) | [Temas y estilos](docs/theming.es.md) | Tokens, tema claro/oscuro, sobrescrituras, contrato de estilos, animaciones, preset de Tailwind. |
 | [Style hooks](docs/style-hooks.md) | [Ganchos de estilo](docs/style-hooks.es.md) | Catálogo generado de todas las clases, atributos de estado y tokens. |
 
@@ -185,8 +208,9 @@ versión se publican en las [releases de GitHub](https://github.com/VictorDiazJa
 
 ## Demo local
 
-Ejecuta `npm install` y `npm run dev`, y abre `http://localhost:5173/mocks/table`, `/mocks/kanban`
-o `/mocks/ai` (tabla, kanban y asistente juntos, con un registro de eventos). Añade `?theme=dark` o
+Ejecuta `npm install` y `npm run dev`, y abre `http://localhost:5173/mocks/table`, `/mocks/kanban`,
+`/mocks/ai` (tabla, kanban y asistente juntos, con un registro de eventos) o `/mocks/auth` (ejemplos
+de inicio de sesión y de registro, con un registro de eventos). Añade `?theme=dark` o
 `?theme=light` para forzar un tema. La app de demo usa Tailwind solo para sí misma; nada de eso llega
 al paquete.
 
@@ -210,7 +234,7 @@ Para chatear con un proveedor real, copia las variables con `cp .env.example .en
 ## Estructura del código
 
 Cada módulo vive en `src/components/<module>/`. La raíz contiene la superficie pública y los
-contratos (`index.tsx`, o `index.ts` en `ai/`, más `types.ts`, `constants.ts` y `styles.css`). El
+contratos (`index.tsx`, o `index.ts` en `ai/` y `auth/`, más `types.ts`, `constants.ts` y `styles.css`). El
 resto se reparte en carpetas por área, nunca por tipo de archivo, con entre 3 y 12 archivos cada una
 y sin barrel files dentro.
 
@@ -219,6 +243,7 @@ y sin barrel files dentro.
 | `table/` | `model/`, `header/`, `body/`, `pagination/` |
 | `kanban/` | `model/`, `toolbar/`, `board/`, `card/` |
 | `ai/` | `chat/`, `completion/`, `sidebar/`, `transcript/`, `actions/` |
+| `auth/` | `config/`, `model/`, `fields/`, `password/`, `validation/`, `layout/`, `actions/` |
 | `shared/` | Contratos comunes en la raíz; `controls/`, `rows/`, `toolbar/`, `filter-menu/`, `date-filter-menu/`, `date-pickers/`, `menu/` |
 | `ui/` | Primitivos sobre Radix y react-day-picker: `select/`, `toggle-group/`, `calendar/` |
 | `mocks/` | Datos y configuración de la demo |

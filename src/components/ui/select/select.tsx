@@ -10,6 +10,11 @@ export interface SimpleSelectOption {
   label: string;
 }
 
+export type SelectTriggerAttributes = Pick<
+  React.ComponentProps<"button">,
+  "id" | "aria-invalid" | "aria-required" | "aria-describedby"
+>;
+
 export interface SimpleSelectProps {
   options: SimpleSelectOption[];
   value: string;
@@ -18,6 +23,7 @@ export interface SimpleSelectProps {
   ariaLabel?: string;
   triggerClassName?: string;
   triggerStyle?: React.CSSProperties;
+  triggerAttributes?: SelectTriggerAttributes;
   disabled?: boolean;
   theme?: SelectTheme;
 }
@@ -33,7 +39,7 @@ const SimpleSelect = ({
   const hasValue = options.some((option) => option.value === value);
   return (
     <Select
-      value={hasValue ? value : undefined}
+      value={hasValue ? value : ""}
       onValueChange={onValueChange}
       disabled={disabled}
     >

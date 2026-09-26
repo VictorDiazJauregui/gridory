@@ -51,6 +51,7 @@ export default defineConfig({
         table: path.resolve(rootDir, "src/table.ts"),
         kanban: path.resolve(rootDir, "src/kanban.ts"),
         ai: path.resolve(rootDir, "src/ai.ts"),
+        auth: path.resolve(rootDir, "src/auth.ts"),
       },
       formats: ["es"],
       cssFileName: "gridory",

@@ -53,7 +53,8 @@
   "variantAttributes": [
     "data-variant",
     "data-size",
-    "data-role"
+    "data-role",
+    "data-status"
   ],
   "runtimeAttributes": [
     "data-state",

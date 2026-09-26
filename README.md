@@ -2,8 +2,8 @@
 
 [English](README.md) · [Español](README.es.md)
 
-React components for data-heavy apps: a table, a kanban board and an AI assistant that emit events
-instead of mutating your data.
+React components for data-heavy apps: a table, a kanban board, an AI assistant and sign-in and
+sign-up forms that emit events instead of mutating your data.
 
 > Private repository, version 1.0.0. Publication on npm is pending; until then the package is
 > consumed from this repository.
@@ -23,6 +23,7 @@ instead of mutating your data.
 | `gridory/table` | `DataTable` and its types, plus the shared data-model, toolbar and row-action exports. |
 | `gridory/kanban` | `KanbanBoard` and its types, plus the same shared exports. |
 | `gridory/ai` | `AIChatSidebar`, `AIChatButton`, `useAIChat`, the provider presets, the prompt builders, the default texts and the assistant types. |
+| `gridory/auth` | `LoginForm`, `SignUpForm`, their default texts and fields, the configuration errors and the auth types. |
 | `gridory/styles.css` | The compiled stylesheet for every module, with the light and dark tokens. |
 | `gridory/tailwind-preset` | Optional Tailwind preset that maps the `--gdy-*` tokens to shadcn-style theme keys (`bg-primary`, `border-border`) for your own markup. |
 
@@ -153,6 +154,26 @@ export const LeadsAssistant = ({ apiKey }: { apiKey: string }) => {
 The provider is called from the browser with that key, so use a restricted key or point `baseURL`
 at a proxy you control. Guide: [docs/ai-assistant.md](docs/ai-assistant.md).
 
+### Auth forms
+
+```tsx
+import { LoginForm } from "gridory/auth";
+
+const signIn = (values: { email: string; password: string }) =>
+  fetch("/api/login", { method: "POST", body: JSON.stringify(values) });
+
+export const SignIn = () => (
+  <LoginForm
+    onSubmit={signIn}
+    forgotPassword={{ href: "/recover" }}
+    signUpLink={{ href: "/register" }}
+  />
+);
+```
+
+`SignUpForm` adds name fields, password requirements and your own fields. Guide:
+[docs/auth-forms.md](docs/auth-forms.md).
+
 ## Theming
 
 Colors, radius and shadows come from `--gdy-*` tokens in `gridory/styles.css`. Light is the
@@ -175,6 +196,7 @@ and the full catalog in [docs/style-hooks.md](docs/style-hooks.md).
 | [Kanban](docs/kanban.md) | [Kanban](docs/kanban.es.md) | `KanbanBoard`: fields, groups, drag and drop, card rendering, events. |
 | [Toolbar](docs/toolbar.md) | [Toolbar, filtros y acciones](docs/toolbar.es.md) | What both views share: toolbar, search, filters, archived view, view switch, row and card actions. |
 | [AI assistant](docs/ai-assistant.md) | [Asistente de IA](docs/ai-assistant.es.md) | Provider, modes, actions, memory, UI, `useAIChat` and events. |
+| [Auth forms](docs/auth-forms.md) | [Formularios de autenticación](docs/auth-forms.es.md) | `LoginForm` and `SignUpForm`: fields, validation, zod, Google, texts and styling. |
 | [Theming](docs/theming.md) | [Temas y estilos](docs/theming.es.md) | Tokens, light/dark theme, overrides, style contract, motion, Tailwind preset. |
 | [Style hooks](docs/style-hooks.md) | [Ganchos de estilo](docs/style-hooks.es.md) | Generated catalog of every class, state attribute and token. |
 
@@ -183,8 +205,9 @@ the [GitHub releases](https://github.com/VictorDiazJauregui/gridory/releases).
 
 ## Local demo
 
-Run `npm install` and `npm run dev`, then open `http://localhost:5173/mocks/table`, `/mocks/kanban`
-or `/mocks/ai` (table, kanban and assistant together, with an event log). Add `?theme=dark` or
+Run `npm install` and `npm run dev`, then open `http://localhost:5173/mocks/table`, `/mocks/kanban`,
+`/mocks/ai` (table, kanban and assistant together, with an event log) or `/mocks/auth` (sign-in and
+sign-up examples, with an event log). Add `?theme=dark` or
 `?theme=light` to force a theme. The demo shell uses Tailwind for itself only; none of it ships.
 
 To chat with a real provider, copy the variables with `cp .env.example .env.local`, set
@@ -207,7 +230,7 @@ To chat with a real provider, copy the variables with `cp .env.example .env.loca
 ## Code structure
 
 Each module lives in `src/components/<module>/`. The root holds the public surface and contracts
-(`index.tsx`, or `index.ts` in `ai/`, plus `types.ts`, `constants.ts` and `styles.css`). The rest is
+(`index.tsx`, or `index.ts` in `ai/` and `auth/`, plus `types.ts`, `constants.ts` and `styles.css`). The rest is
 split into folders by area, never by file type, with 3 to 12 files each and no barrel files inside
 them.
 
@@ -216,6 +239,7 @@ them.
 | `table/` | `model/`, `header/`, `body/`, `pagination/` |
 | `kanban/` | `model/`, `toolbar/`, `board/`, `card/` |
 | `ai/` | `chat/`, `completion/`, `sidebar/`, `transcript/`, `actions/` |
+| `auth/` | `config/`, `model/`, `fields/`, `password/`, `validation/`, `layout/`, `actions/` |
 | `shared/` | Common contracts at the root; `controls/`, `rows/`, `toolbar/`, `filter-menu/`, `date-filter-menu/`, `date-pickers/`, `menu/` |
 | `ui/` | Primitives over Radix and react-day-picker: `select/`, `toggle-group/`, `calendar/` |
 | `mocks/` | Demo data and configuration |
