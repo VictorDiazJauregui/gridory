@@ -1,0 +1,129 @@
+/*
+ * Same specificity contract as src/components/ui/styles.css: one class per
+ * base rule and the states as attribute selectors (0-2-0). The rules declare
+ * their own box model, list reset and typography, so the list renders the
+ * same with or without a gdy-scope ancestor.
+ */
+
+/* Shrinks inside a panel with a maximum height, so only the options scroll. */
+.gdy-listbox {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Focus stays in this input while the list is open, so it paints no ring
+   around itself; the transparent outline still shows in forced colors. */
+.gdy-listbox-search {
+  box-sizing: border-box;
+  flex: none;
+  display: block;
+  width: 100%;
+  height: 40px;
+  margin: 0;
+  padding: 0 12px;
+  border: 0;
+  border-bottom: 1px solid var(--gdy-border);
+  border-radius: 0;
+  background-color: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 0.875rem;
+  outline: 2px solid transparent;
+  outline-offset: -2px;
+}
+
+.gdy-listbox-search::placeholder {
+  color: var(--gdy-muted-foreground);
+}
+
+.gdy-listbox-options {
+  box-sizing: border-box;
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: var(--gdy-listbox-max-height, 16rem);
+  margin: 0;
+  padding: 4px;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.gdy-listbox-options:empty {
+  padding: 0;
+}
+
+.gdy-listbox-option {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  padding: 6px 8px;
+  border-radius: calc(var(--gdy-radius) - 2px);
+  color: var(--gdy-listbox-option-text, inherit);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.gdy-listbox-option[aria-selected="true"] {
+  font-weight: 500;
+  background-color: var(--gdy-listbox-option-selected-bg, transparent);
+}
+
+.gdy-listbox-option[data-active] {
+  background-color: var(
+    --gdy-listbox-option-hover-bg,
+    var(--gdy-option-hover-bg, var(--gdy-accent))
+  );
+  color: var(--gdy-listbox-option-hover-text, var(--gdy-accent-foreground));
+}
+
+.gdy-listbox-option[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* The slot keeps its width when the option is not selected, so the text
+   never shifts when the check appears. */
+.gdy-listbox-check {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  color: var(--gdy-listbox-check-color, var(--gdy-primary));
+}
+
+.gdy-listbox-leading {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+}
+
+.gdy-listbox-label {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gdy-listbox-trailing {
+  flex: none;
+  color: var(--gdy-muted-foreground);
+}
+
+.gdy-listbox-empty {
+  margin: 0;
+  padding: 12px 8px;
+  color: var(--gdy-muted-foreground);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.gdy-listbox-empty:empty {
+  padding: 0;
+}
