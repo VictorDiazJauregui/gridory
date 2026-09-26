@@ -1,12 +1,6 @@
 export type AuthDemoForm = "login" | "signup";
 export type AuthDemoExample = "basic" | "complete" | "custom";
 
-export interface AuthDemoEvent {
-  id: number;
-  type: string;
-  payload?: unknown;
-}
-
 export interface DemoOption<TValue extends string> {
   value: TValue;
   label: string;
