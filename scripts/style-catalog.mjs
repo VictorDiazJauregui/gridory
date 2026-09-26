@@ -33,6 +33,8 @@ const EMITTED_LITERAL_VALUE = /\b(data-[a-z0-9-]+)="([^"]+)"/g;
 // their values are read from the union type so the catalog follows the API.
 const TYPED_ATTRIBUTE_VALUES = {
   "data-action-type": { file: "src/components/ai/types.ts", type: "AIActionType" },
+  "data-form": { file: "src/components/auth/types.ts", type: "AuthFormKind" },
+  "data-status": { file: "src/components/auth/types.ts", type: "AuthPasswordRuleStatus" },
 };
 const IGNORED_ATTRIBUTES = new Set([
   "data-slot",
@@ -45,6 +47,7 @@ const GROUPS = [
   { id: "table", match: /^gdy-table(?:-|$)/ },
   { id: "kanban", match: /^gdy-kanban(?:-|$)/ },
   { id: "ai", match: /^gdy-ai(?:-|$)/ },
+  { id: "auth", match: /^gdy-auth(?:-|$)/ },
   { id: "ui", match: /^gdy-(?:button|select|menu|popover|toggle|calendar)(?:-|$)/ },
   { id: "shared", match: /^gdy-/ },
 ];
@@ -202,6 +205,7 @@ const TEXT = {
       table: "Table",
       kanban: "Kanban",
       ai: "AI assistant",
+      auth: "Auth forms",
       ui: "Primitives",
       shared: "Shared layer and toolbar",
     },
@@ -253,6 +257,7 @@ const TEXT = {
       table: "Tabla",
       kanban: "Kanban",
       ai: "Asistente de IA",
+      auth: "Formularios de autenticación",
       ui: "Primitivos",
       shared: "Capa compartida y toolbar",
     },

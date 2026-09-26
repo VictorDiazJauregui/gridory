@@ -2,7 +2,7 @@
   "name": "gridory",
   "version": "1.0.0",
   "private": true,
-  "description": "React components for data-heavy apps: table, kanban and AI assistant that emit events instead of mutating your data.",
+  "description": "React components for data-heavy apps: table, kanban, AI assistant and auth forms that emit events instead of mutating your data.",
   "keywords": [
     "react",
     "react-components",
@@ -21,7 +21,10 @@
     "radix-ui",
     "tanstack-table",
     "admin-dashboard",
-    "back-office"
+    "back-office",
+    "login-form",
+    "signup-form",
+    "auth-forms"
   ],
   "license": "MIT",
   "author": "Victor Díaz Jáuregui (https://github.com/VictorDiazJauregui)",
@@ -63,6 +66,10 @@
     "./ai": {
       "types": "./dist/types/ai.d.ts",
       "import": "./dist/ai.js"
+    },
+    "./auth": {
+      "types": "./dist/types/auth.d.ts",
+      "import": "./dist/auth.js"
     },
     "./styles.css": "./dist/gridory.css",
     "./tailwind-preset": "./tailwind-preset.js",

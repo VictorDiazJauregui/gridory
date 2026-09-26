@@ -161,6 +161,48 @@ The state selectors column lists the attributes the stylesheets combine with eac
 | `gdy-ai-thinking-label` | styled | — |
 | `gdy-ai-title` | styled | — |
 
+### Auth forms
+
+| Class | Kind | State selectors |
+|---|---|---|
+| `gdy-auth` | styled | — |
+| `gdy-auth-addon` | styled | — |
+| `gdy-auth-alert` | styled | — |
+| `gdy-auth-checkbox` | styled | — |
+| `gdy-auth-checkbox-input` | styled | — |
+| `gdy-auth-checkbox-label` | styled | — |
+| `gdy-auth-divider` | styled | — |
+| `gdy-auth-error` | styled | — |
+| `gdy-auth-field` | styled | — |
+| `gdy-auth-fields` | styled | — |
+| `gdy-auth-footer` | styled | — |
+| `gdy-auth-forgot` | styled | — |
+| `gdy-auth-form` | styled | — |
+| `gdy-auth-google` | styled | — |
+| `gdy-auth-google-logo` | styled | — |
+| `gdy-auth-google-overlay` | styled | — |
+| `gdy-auth-google-slot` | styled | `[data-disabled]` |
+| `gdy-auth-header` | styled | — |
+| `gdy-auth-input` | styled | `[aria-invalid="true"]` |
+| `gdy-auth-label` | styled | — |
+| `gdy-auth-link` | styled | — |
+| `gdy-auth-name-row` | styled | — |
+| `gdy-auth-password` | styled | — |
+| `gdy-auth-password-icon` | styled | — |
+| `gdy-auth-password-toggle` | styled | — |
+| `gdy-auth-required` | styled | — |
+| `gdy-auth-rule` | styled | `[data-status="met"]`, `[data-status="unmet"]` |
+| `gdy-auth-rule-icon` | styled | — |
+| `gdy-auth-rules` | styled | — |
+| `gdy-auth-rules-list` | styled | — |
+| `gdy-auth-rules-title` | styled | — |
+| `gdy-auth-select` | styled | — |
+| `gdy-auth-spinner` | styled | — |
+| `gdy-auth-submit` | styled | — |
+| `gdy-auth-subtitle` | styled | — |
+| `gdy-auth-textarea` | styled | — |
+| `gdy-auth-title` | styled | — |
+
 ### Primitives
 
 | Class | Kind | State selectors |
@@ -205,7 +247,7 @@ The state selectors column lists the attributes the stylesheets combine with eac
 | `gdy-select-item-text` | hook only | — |
 | `gdy-select-scroll-button` | styled | — |
 | `gdy-select-scroll-icon` | styled | — |
-| `gdy-select-trigger` | styled | `[data-placeholder]`, `[data-state="open"]` |
+| `gdy-select-trigger` | styled | `[aria-invalid="true"]`, `[data-placeholder]`, `[data-state="open"]` |
 | `gdy-select-value` | hook only | — |
 | `gdy-select-viewport` | styled | — |
 | `gdy-toggle-group` | styled | — |
@@ -276,15 +318,17 @@ Radix or react-day-picker follow those libraries.
 |---|---|---|---|
 | `aria-disabled` | `"true"` | Radix or react-day-picker | `gdy-calendar-button-next`, `gdy-calendar-button-previous` |
 | `aria-expanded` | `"false"`, `"true"` | Gridory | `gdy-button`, `gdy-table-group-toggle` |
+| `aria-invalid` | `"true"` | Gridory | `gdy-auth-input`, `gdy-select-trigger` |
 | `aria-pressed` | `"true"` | Gridory | `gdy-link-btn`, `gdy-view-switch-btn` |
 | `data-action-type` | `"create-card"`, `"create-row"`, `"custom"`, `"move-card"`, `"update-row"` | Gridory | no default rule |
 | `data-checked` | present / absent | Gridory | `gdy-option-check` |
 | `data-clickable` | present / absent | Gridory | `gdy-table-row` |
-| `data-disabled` | present / absent | Radix or react-day-picker | `gdy-calendar-day`, `gdy-menu-item`, `gdy-select-item` |
+| `data-disabled` | present / absent | Gridory, Radix or react-day-picker | `gdy-auth-google-slot`, `gdy-calendar-day`, `gdy-menu-item`, `gdy-select-item` |
 | `data-dragging` | present / absent | Gridory | `gdy-kanban-card` |
 | `data-drop-target` | present / absent | Gridory | `gdy-kanban-column` |
 | `data-empty` | present / absent | Gridory | `gdy-ai-body` |
 | `data-filtered` | present / absent | Gridory | `gdy-kanban-filter-trigger` |
+| `data-form` | `"login"`, `"signup"` | Gridory | no default rule |
 | `data-hidden` | present / absent | Radix or react-day-picker | `gdy-calendar-day` |
 | `data-highlighted` | present / absent | Radix or react-day-picker | `gdy-select-item` |
 | `data-list` | `"ordered"`, `"unordered"` | Gridory | no default rule |
@@ -299,6 +343,7 @@ Radix or react-day-picker follow those libraries.
 | `data-side` | `"bottom"`, `"left"`, `"right"`, `"top"` | Radix or react-day-picker | `gdy-menu-content`, `gdy-popover-content`, `gdy-select-content` |
 | `data-size` | `"default"`, `"icon"`, `"icon-lg"`, `"icon-sm"`, `"icon-xs"`, `"lg"`, `"sm"`, `"xs"` | Gridory | `gdy-button` |
 | `data-state` | `"checked"`, `"closed"`, `"on"`, `"open"` | Gridory, Radix or react-day-picker | `gdy-ai-sidebar`, `gdy-menu-content`, `gdy-popover-content`, `gdy-select-content`, `gdy-select-item`, `gdy-select-trigger`, `gdy-toggle-item` |
+| `data-status` | `"met"`, `"pending"`, `"unmet"` | Gridory | `gdy-auth-rule` |
 | `data-streaming` | present / absent | Gridory | no default rule |
 | `data-thinking` | present / absent | Gridory | no default rule |
 | `data-today` | present / absent | Radix or react-day-picker | `gdy-calendar-day` |
@@ -327,6 +372,7 @@ bridge column first, when your app defines it.
 | `--gdy-accent-foreground` | `--accent-foreground` | `oklch(0.205 0 0)` | `oklch(0.985 0 0)` |
 | `--gdy-destructive` | `--destructive` | `oklch(0.577 0.245 27.325)` | `oklch(0.704 0.191 22.216)` |
 | `--gdy-destructive-foreground` | `--destructive-foreground` | `oklch(0.985 0 0)` | `oklch(0.985 0 0)` |
+| `--gdy-success` | `--success` | `oklch(0.527 0.154 150.069)` | `oklch(0.792 0.209 151.711)` |
 | `--gdy-border` | `--border` | `oklch(0.922 0 0)` | `oklch(1 0 0 / 10%)` |
 | `--gdy-input` | `--input` | `oklch(0.922 0 0)` | `oklch(1 0 0 / 15%)` |
 | `--gdy-ring` | `--ring` | `oklch(0.708 0 0)` | `oklch(0.556 0 0)` |
@@ -337,6 +383,10 @@ bridge column first, when your app defines it.
 | `--gdy-shadow-md` | — | `0 8px 24px rgb(0 0 0 / 0.12)` | `0 8px 24px rgb(0 0 0 / 0.6)` |
 | `--gdy-shadow-lg` | — | `0 25px 50px -12px rgb(0 0 0 / 0.25)` | `0 25px 50px -12px rgb(0 0 0 / 0.6)` |
 | `--gdy-font-mono` | — | `ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace` | `ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace` |
+| `--gdy-google-blue` | — | `#4285f4` | `#4285f4` |
+| `--gdy-google-green` | — | `#34a853` | `#34a853` |
+| `--gdy-google-yellow` | — | `#fbbc05` | `#fbbc05` |
+| `--gdy-google-red` | — | `#ea4335` | `#ea4335` |
 
 ## Component tokens
 
@@ -352,6 +402,47 @@ any ancestor overrides that part only. `--gdy-select-*` also mirror the `selectT
 | `--gdy-ai-bg` | `var(--gdy-background)` | ai |
 | `--gdy-ai-user-bubble-bg` | `var(--gdy-ai-accent, var(--gdy-primary))` | ai |
 | `--gdy-ai-user-bubble-fg` | `var(--gdy-ai-accent-fg, var(--gdy-primary-foreground))` | ai |
+| `--gdy-auth-bg` | `var(--gdy-card)` | auth |
+| `--gdy-auth-border` | `var(--gdy-border)` | auth |
+| `--gdy-auth-button-height` | `40px` | auth |
+| `--gdy-auth-button-radius` | `var(--gdy-radius)` | auth |
+| `--gdy-auth-checkbox` | `var(--gdy-primary)` | auth |
+| `--gdy-auth-divider` | `var(--gdy-border)` | auth |
+| `--gdy-auth-divider-gap` | `12px` | auth |
+| `--gdy-auth-error` | `var(--gdy-destructive)` | auth |
+| `--gdy-auth-fg` | `var(--gdy-card-foreground)` | auth |
+| `--gdy-auth-field-gap` | `14px` | auth |
+| `--gdy-auth-gap` | `16px` | auth |
+| `--gdy-auth-google-bg` | `var(--gdy-background)` | auth |
+| `--gdy-auth-google-border` | `var(--gdy-border)` | auth |
+| `--gdy-auth-google-fg` | `var(--gdy-foreground)` | auth |
+| `--gdy-auth-google-hover-bg` | `var(--gdy-muted)` | auth |
+| `--gdy-auth-google-hover-border` | `var(--gdy-ring)` | auth |
+| `--gdy-auth-google-hover-fg` | `var(--gdy-foreground)` | auth |
+| `--gdy-auth-header-gap` | `4px` | auth |
+| `--gdy-auth-input-bg` | `var(--gdy-background)` | auth |
+| `--gdy-auth-input-border` | `var(--gdy-input)` | auth |
+| `--gdy-auth-input-fg` | `var(--gdy-foreground)` | auth |
+| `--gdy-auth-input-focus-border` | `var(--gdy-ring)` | auth |
+| `--gdy-auth-input-height` | `40px` | auth |
+| `--gdy-auth-input-radius` | `var(--gdy-radius)` | auth |
+| `--gdy-auth-label` | `inherit` | auth |
+| `--gdy-auth-label-gap` | `6px` | auth |
+| `--gdy-auth-link` | `var(--gdy-link)` | auth |
+| `--gdy-auth-muted` | `var(--gdy-muted-foreground)` | auth |
+| `--gdy-auth-padding` | `24px` | auth |
+| `--gdy-auth-radius` | `calc(var(--gdy-radius) + 2px)` | auth |
+| `--gdy-auth-required` | `var(--gdy-destructive)` | auth |
+| `--gdy-auth-rule-met` | `var(--gdy-success)` | auth |
+| `--gdy-auth-rule-pending` | `var(--gdy-muted-foreground)` | auth |
+| `--gdy-auth-rule-unmet` | `var(--gdy-destructive)` | auth |
+| `--gdy-auth-shadow` | `var(--gdy-shadow-sm)` | auth |
+| `--gdy-auth-submit-bg` | `var(--gdy-primary)` | auth |
+| `--gdy-auth-submit-fg` | `var(--gdy-primary-foreground)` | auth |
+| `--gdy-auth-submit-focus` | `var(--gdy-ring)` | auth |
+| `--gdy-auth-submit-hover-bg` | `color-mix(in oklab, var(--gdy-auth-submit-bg, var(--gdy-primary)) 85%, transparent)` | auth |
+| `--gdy-auth-title` | `inherit` | auth |
+| `--gdy-auth-width` | `448px` | auth |
 | `--gdy-btn-bg` | `var(--gdy-muted)` | shared |
 | `--gdy-btn-fg` | `var(--gdy-foreground)` | shared |
 | `--gdy-btn-hover-bg` | `color-mix(in oklab, var(--gdy-foreground) 8%, var(--gdy-muted))` | shared |

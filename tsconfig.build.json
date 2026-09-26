@@ -13,9 +13,11 @@
     "src/table.ts",
     "src/kanban.ts",
     "src/ai.ts",
+    "src/auth.ts",
     "src/components/table/**/*",
     "src/components/kanban/**/*",
     "src/components/ai/**/*",
+    "src/components/auth/**/*",
     "src/components/shared/**/*",
     "src/components/ui/**/*",
     "src/lib/cn.ts"
