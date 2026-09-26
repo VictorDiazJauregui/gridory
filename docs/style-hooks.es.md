@@ -278,6 +278,7 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-field-error` | con estilos | — |
 | `gdy-field-label` | con estilos | — |
 | `gdy-field-required` | con estilos | — |
+| `gdy-floating-panel` | con estilos | — |
 | `gdy-icon-btn` | con estilos | — |
 | `gdy-inline-links` | con estilos | — |
 | `gdy-input` | con estilos | — |
@@ -463,6 +464,8 @@ cualquier ancestro cambia solo esa parte. Los `--gdy-select-*` también reflejan
 | `--gdy-field-label-gap` | `6px` | shared |
 | `--gdy-field-label-width` | `auto` | shared |
 | `--gdy-field-required-color` | `var(--gdy-destructive)` | shared |
+| `--gdy-floating-panel-max-height` | `20rem` | shared |
+| `--gdy-floating-panel-min-width` | `12rem` | shared |
 | `--gdy-input-bg` | `var(--gdy-muted)` | shared |
 | `--gdy-input-border` | `var(--gdy-input)` | kanban, shared |
 | `--gdy-kanban-card-bg` | `var(--gdy-card)` | kanban |

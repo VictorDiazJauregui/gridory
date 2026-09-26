@@ -278,6 +278,7 @@ The state selectors column lists the attributes the stylesheets combine with eac
 | `gdy-field-error` | styled | — |
 | `gdy-field-label` | styled | — |
 | `gdy-field-required` | styled | — |
+| `gdy-floating-panel` | styled | — |
 | `gdy-icon-btn` | styled | — |
 | `gdy-inline-links` | styled | — |
 | `gdy-input` | styled | — |
@@ -463,6 +464,8 @@ any ancestor overrides that part only. `--gdy-select-*` also mirror the `selectT
 | `--gdy-field-label-gap` | `6px` | shared |
 | `--gdy-field-label-width` | `auto` | shared |
 | `--gdy-field-required-color` | `var(--gdy-destructive)` | shared |
+| `--gdy-floating-panel-max-height` | `20rem` | shared |
+| `--gdy-floating-panel-min-width` | `12rem` | shared |
 | `--gdy-input-bg` | `var(--gdy-muted)` | shared |
 | `--gdy-input-border` | `var(--gdy-input)` | kanban, shared |
 | `--gdy-kanban-card-bg` | `var(--gdy-card)` | kanban |

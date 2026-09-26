@@ -8,4 +8,5 @@
 @import "../components/ui/styles.css";
 @import "./shared.css";
 @import "../components/shared/field/styles.css";
+@import "../components/shared/floating-panel/styles.css";
 @import "./motion.css";
