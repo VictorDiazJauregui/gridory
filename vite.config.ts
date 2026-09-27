@@ -53,6 +53,7 @@ export default defineConfig({
         ai: path.resolve(rootDir, "src/ai.ts"),
         auth: path.resolve(rootDir, "src/auth.ts"),
         "segmented-control": path.resolve(rootDir, "src/segmented-control.ts"),
+        "country-select": path.resolve(rootDir, "src/country-select.ts"),
       },
       formats: ["es"],
       cssFileName: "gridory",

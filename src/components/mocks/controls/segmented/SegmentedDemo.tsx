@@ -1,5 +1,5 @@
 import { ControlledCalendarExample } from "./ControlledCalendarExample";
-import type { RecordingExampleProps } from "./record-value-change";
+import type { RecordingExampleProps } from "../record-value-change";
 import { CustomTokensExample, IconEndExample, IconsExample, NoAnimationExample } from "./UncontrolledExamples";
 
 export const SegmentedDemo = ({ record }: RecordingExampleProps) => (

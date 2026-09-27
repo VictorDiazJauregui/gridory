@@ -25,11 +25,12 @@ The file contains, in this order:
 3. **Primitives**: button, popover, dropdown menu, select, toggle group and calendar.
 4. **Shared layer**: card, toolbar, buttons, inputs, filter panels and scrollbars.
 5. **Motion**: the open, close and slide animations, gated by `prefers-reduced-motion`.
-6. **Module sheets**: the assistant, the table, the kanban, the auth forms and the segmented control.
+6. **Module sheets**: the assistant, the table, the kanban, the auth forms, the segmented control
+   and the country select.
 
 The reset is scoped to the `gdy-scope` class. Gridory puts it on the card of the table and the
 kanban, on the assistant panel, overlay and launcher, on the auth form card, on the segmented
-control, and on every menu, select and popover it renders in a portal. The scope is wrapped in `:where()`, so it adds no
+control, on the country select field, and on every menu, select and popover it renders in a portal. The scope is wrapped in `:where()`, so it adds no
 specificity: the reset rules weigh as little as plain element selectors and any component class
 overrides them. They set border-box sizing, solid zero-width borders colored with `--gdy-border`,
 zero margins on headings and paragraphs, unstyled lists and links, form controls that inherit the
@@ -121,7 +122,9 @@ token, as in `background: var(--gdy-table-head-bg, var(--gdy-muted))`. Because n
 them, an override on any ancestor applies: `:root` for the whole app, `.dark` for the dark theme,
 or a wrapper class for one screen. Menus, selects, popovers and the calendar render in portals
 under `<body>`, so declare the tokens that style them (`--gdy-menu-*`, `--gdy-select-*`,
-`--gdy-popover-*`, `--gdy-calendar-*`) on `:root` or `.dark`.
+`--gdy-popover-*`, `--gdy-calendar-*`) on `:root` or `.dark`. The same goes for the country select
+panel: `--gdy-country-select-panel-min-width`, `--gdy-country-select-option-*` and
+`--gdy-country-select-check-color`.
 
 | Family | Examples (fallback) |
 |---|---|
@@ -130,6 +133,7 @@ under `<body>`, so declare the tokens that style them (`--gdy-menu-*`, `--gdy-se
 | `--gdy-ai-*` | `--gdy-ai-accent` (`--gdy-primary`), `--gdy-ai-bg` (`--gdy-background`), `--gdy-ai-user-bubble-bg` (`--gdy-ai-accent`, then `--gdy-primary`) |
 | `--gdy-auth-*` | `--gdy-auth-bg` (`--gdy-card`), `--gdy-auth-submit-bg` (`--gdy-primary`), `--gdy-auth-input-focus-border` (`--gdy-ring`), `--gdy-auth-rule-met` (`--gdy-success`) |
 | `--gdy-segmented-*` | `--gdy-segmented-bg` (`--gdy-muted`), `--gdy-segmented-indicator-bg` (`--gdy-background`), `--gdy-segmented-item-active-color` (`--gdy-foreground`), `--gdy-segmented-focus-ring` (`--gdy-ring`), `--gdy-segmented-duration` (`220ms`) |
+| `--gdy-country-select-*` | `--gdy-country-select-width` (`240px`), `--gdy-country-select-border` (`--gdy-input`), `--gdy-country-select-focus-ring` (`--gdy-ring`), `--gdy-country-select-option-hover-bg` (`--gdy-listbox-option-hover-bg`, then `--gdy-accent`), `--gdy-country-select-chip-bg` (`--gdy-muted`) |
 | `--gdy-btn-*` | `--gdy-btn-bg` (`--gdy-muted`), `--gdy-btn-primary-bg` (`--gdy-primary`), `--gdy-btn-hover-bg` (`color-mix(in oklab, var(--gdy-foreground) 8%, var(--gdy-muted))`) |
 | `--gdy-input-*` | `--gdy-input-bg` (`--gdy-muted`), `--gdy-input-border` (`--gdy-input`) |
 | `--gdy-panel-*` | `--gdy-panel-bg` (`--gdy-popover`), `--gdy-panel-border` (`--gdy-border`), `--gdy-panel-shadow` (`--gdy-shadow-md`) |
@@ -175,6 +179,9 @@ Every element the library renders carries a `gdy-*` class meant as a stable hook
   `gdy-auth-google`, `gdy-auth-rule`.
 - `gdy-segmented-<part>` for the segmented control: `gdy-segmented` (root),
   `gdy-segmented-indicator`, `gdy-segmented-item`, `gdy-segmented-icon`, `gdy-segmented-label`.
+- `gdy-country-select-<part>` for the country select: `gdy-country-select` (root),
+  `gdy-country-select-trigger`, `gdy-country-select-value`, `gdy-country-select-chip`,
+  `gdy-country-select-panel`. Its flags keep the shared `gdy-country-flag`.
 
 The library rules follow a fixed specificity contract:
 
@@ -254,6 +261,9 @@ presence (`[data-dragging]`), not by value. The others take the values listed.
 | `data-status` | `gdy-auth-rule` | Gridory | `"pending"`, `"met"` or `"unmet"` password requirement |
 | `data-animated` | `gdy-segmented` | Gridory | `"true"` or `"false"`: whether the indicator slides (the `animated` prop) |
 | `aria-checked` | `gdy-segmented-item` | Gridory | `"true"` on the chosen option, `"false"` on the others |
+| `aria-expanded`, `aria-invalid` | `gdy-country-select-trigger` | Gridory | `"true"` while the list is open, `"false"` otherwise; `"true"` with an error |
+| `data-placeholder` | `gdy-country-select-value` | Gridory | no country chosen |
+| `hidden` | `gdy-country-select-chip`, `gdy-country-select-more` | Gridory | a chip that does not fit; the "+N" badge while every chip fits |
 
 Style a state by adding the attribute to the class. The rule weighs 0-2-0, so it also beats a single
 class you pass through a prop:
@@ -312,6 +322,12 @@ The auth forms take `className`, `width` (card width, set inline as `--gdy-auth-
 The segmented control takes `className`, on its root (`gdy-segmented`), and a `classNames` object
 with one slot per part: `root`, `indicator`, `item`, `icon` and `label`; see
 [segmented-control.md](segmented-control.md#styling).
+
+The country select takes `className`, on its root (`gdy-country-select`), a `classNames` object
+with the slots `root`, `trigger`, `value`, `clear`, `chips`, `chip` and `panel`, and `width`
+(field width, set inline as `--gdy-country-select-width`; a number means pixels). Its
+`thinScrollbars` (default `true`) and `scrollbarColor` work as in the table and the kanban, on the
+list inside its panel; see [country-select.md](country-select.md#styling).
 
 Class names from props are concatenated after the hook as they come. Nothing merges or
 deduplicates them, so a class you pass never removes a library declaration; it wins only through the
