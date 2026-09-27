@@ -27,6 +27,7 @@ sign-up forms that emit events instead of mutating your data.
 | `gridory/segmented-control` | `SegmentedControl` and its types. |
 | `gridory/country-select` | `CountrySelect`, its types and `isCountryCode`. |
 | `gridory/phone-input` | `PhoneInput`, its types and default texts. |
+| `gridory/sidebar` | `SidebarLayout`, `Sidebar` and its parts, `useSidebar`, the default texts and the sidebar types. |
 | `gridory/styles.css` | The compiled stylesheet for every module, with the light and dark tokens. |
 | `gridory/tailwind-preset` | Optional Tailwind preset that maps the `--gdy-*` tokens to shadcn-style theme keys (`bg-primary`, `border-border`) for your own markup. |
 
@@ -203,6 +204,7 @@ and the full catalog in [docs/style-hooks.md](docs/style-hooks.md).
 | [Segmented control](docs/segmented-control.md) | [Control segmentado](docs/segmented-control.es.md) | `SegmentedControl`: options and value, icons, keyboard, accessibility, styling and motion. |
 | [Country select](docs/country-select.md) | [Selector de país](docs/country-select.es.md) | `CountrySelect`: single and multiple selection, search, flags, width, errors, keyboard, accessibility, styling and texts. |
 | [Phone input](docs/phone-input.md) | [Teléfono con prefijo](docs/phone-input.es.md) | `PhoneInput`: value and dial code, allowed characters, label, required, errors, auth forms, keyboard, accessibility, styling and texts. |
+| [Sidebar](docs/sidebar.md) | [Menú lateral](docs/sidebar.es.md) | `Sidebar`: layout and parts, hover and pinned modes, mobile drawer, custom blocks, keyboard, accessibility, styling and texts. |
 | [Theming](docs/theming.md) | [Temas y estilos](docs/theming.es.md) | Tokens, light/dark theme, overrides, style contract, motion, Tailwind preset. |
 | [Style hooks](docs/style-hooks.md) | [Ganchos de estilo](docs/style-hooks.es.md) | Generated catalog of every class, state attribute and token. |
 
@@ -213,8 +215,8 @@ the [GitHub releases](https://github.com/VictorDiazJauregui/gridory/releases).
 
 Run `npm install` and `npm run dev`, then open `http://localhost:5173/mocks/table`, `/mocks/kanban`,
 `/mocks/ai` (table, kanban and assistant together, with an event log), `/mocks/auth` (sign-in and
-sign-up examples, with an event log) or `/mocks/controls` (the form controls together, with an event
-log). Add `?theme=dark` or `?theme=light` to force a theme. The demo shell uses Tailwind for itself
+sign-up examples, with an event log), `/mocks/controls` (the form controls together, with an event
+log) or `/mocks/sidebar` (the sidebar in its modes, with an event log). Add `?theme=dark` or `?theme=light` to force a theme. The demo shell uses Tailwind for itself
 only; none of it ships.
 
 To chat with a real provider, copy the variables with `cp .env.example .env.local`, set
@@ -237,7 +239,7 @@ To chat with a real provider, copy the variables with `cp .env.example .env.loca
 ## Code structure
 
 Each module lives in `src/components/<module>/`. The root holds the public surface and contracts
-(`index.tsx`, or `index.ts` in `ai/`, `auth/`, `segmented-control/`, `country-select/` and `phone-input/`, plus `types.ts`, `constants.ts` and `styles.css`). The rest is
+(`index.tsx`, or `index.ts` in `ai/`, `auth/`, `segmented-control/`, `country-select/`, `phone-input/` and `sidebar/`, plus `types.ts`, `constants.ts` and `styles.css`). The rest is
 split into folders by area, never by file type, with 3 to 12 files each and no barrel files inside
 them.
 
@@ -250,6 +252,7 @@ them.
 | `segmented-control/` | `model/`, `parts/` |
 | `country-select/` | `model/`, `parts/`, `validation/` |
 | `phone-input/` | `model/`, `parts/` |
+| `sidebar/` | `model/`, `parts/`, `desktop/`, `mobile/` |
 | `shared/` | Common contracts at the root; `controls/`, `rows/`, `toolbar/`, `filter-menu/`, `date-filter-menu/`, `date-pickers/`, `menu/` |
 | `ui/` | Primitives over Radix and react-day-picker: `select/`, `toggle-group/`, `calendar/` |
 | `mocks/` | Demo data and configuration |

@@ -51,6 +51,7 @@ const GROUPS = [
   { id: "segmented-control", match: /^gdy-segmented(?:-|$)/ },
   { id: "country-select", match: /^gdy-country-select(?:-|$)/ },
   { id: "phone-input", match: /^gdy-phone-input(?:-|$)/ },
+  { id: "sidebar", match: /^gdy-sidebar(?:-|$)/ },
   { id: "ui", match: /^gdy-(?:button|select|menu|popover|toggle|calendar)(?:-|$)/ },
   { id: "shared", match: /^gdy-/ },
 ];
@@ -212,6 +213,7 @@ const TEXT = {
       "segmented-control": "Segmented control",
       "country-select": "Country select",
       "phone-input": "Phone input",
+      sidebar: "Sidebar",
       ui: "Primitives",
       shared: "Shared layer and toolbar",
     },
@@ -267,6 +269,7 @@ const TEXT = {
       "segmented-control": "Control segmentado",
       "country-select": "Selector de país",
       "phone-input": "Teléfono con prefijo",
+      sidebar: "Menú lateral",
       ui: "Primitivos",
       shared: "Capa compartida y toolbar",
     },

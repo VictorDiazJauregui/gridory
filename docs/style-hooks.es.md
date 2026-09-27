@@ -245,6 +245,33 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-phone-input-panel` | con estilos | — |
 | `gdy-phone-input-prefix` | con estilos | `[aria-expanded="true"]` |
 
+### Menú lateral
+
+| Clase | Tipo | Selectores de estado |
+|---|---|---|
+| `gdy-sidebar` | con estilos | `[data-animated="true"]`, `[data-hover-expand="false"]`, `[data-hover-expand="true"]`, `[data-pinned="false"]`, `[data-pinned="true"]`, `[data-state="collapsed"]`, `[data-state="expanded"]` |
+| `gdy-sidebar-content` | con estilos | — |
+| `gdy-sidebar-drawer` | con estilos | `[data-state="closed"]`, `[data-state="open"]` |
+| `gdy-sidebar-drawer-close` | con estilos | — |
+| `gdy-sidebar-footer` | con estilos | — |
+| `gdy-sidebar-header` | con estilos | — |
+| `gdy-sidebar-item` | con estilos | `[aria-current="page"]` |
+| `gdy-sidebar-item-icon` | con estilos | — |
+| `gdy-sidebar-item-label` | con estilos | — |
+| `gdy-sidebar-layout` | con estilos | `[data-mobile="true"]` |
+| `gdy-sidebar-logo` | con estilos | `[data-compact="true"]` |
+| `gdy-sidebar-logo-compact` | con estilos | — |
+| `gdy-sidebar-logo-full` | con estilos | — |
+| `gdy-sidebar-menu-button` | con estilos | — |
+| `gdy-sidebar-mobile-bar` | con estilos | — |
+| `gdy-sidebar-mobile-end` | con estilos | — |
+| `gdy-sidebar-mobile-logo` | con estilos | — |
+| `gdy-sidebar-overlay` | con estilos | `[data-state="closed"]`, `[data-state="open"]` |
+| `gdy-sidebar-panel` | con estilos | — |
+| `gdy-sidebar-pin` | con estilos | — |
+| `gdy-sidebar-separator` | con estilos | — |
+| `gdy-sidebar-tooltip` | con estilos | — |
+
 ### Primitivos
 
 | Clase | Tipo | Selectores de estado |
@@ -375,6 +402,7 @@ ponen Radix o react-day-picker siguen a esas librerías.
 | Atributo | Valores | Lo pone | Se usa con |
 |---|---|---|---|
 | `aria-checked` | `"false"`, `"true"` | Gridory | `gdy-segmented-item` |
+| `aria-current` | `"page"` | Gridory | `gdy-sidebar-item` |
 | `aria-disabled` | `"true"` | Radix o react-day-picker | `gdy-calendar-button-next`, `gdy-calendar-button-previous`, `gdy-listbox-option` |
 | `aria-expanded` | `"false"`, `"true"` | Gridory | `gdy-button`, `gdy-country-select-trigger`, `gdy-phone-input-prefix`, `gdy-table-group-toggle` |
 | `aria-invalid` | `"true"` | Gridory | `gdy-auth-input`, `gdy-country-select-trigger`, `gdy-select-trigger` |
@@ -382,9 +410,10 @@ ponen Radix o react-day-picker siguen a esas librerías.
 | `aria-selected` | `"true"` | Gridory | `gdy-listbox-option` |
 | `data-action-type` | `"create-card"`, `"create-row"`, `"custom"`, `"move-card"`, `"update-row"` | Gridory | sin regla por defecto |
 | `data-active` | presente / ausente | Gridory | `gdy-listbox-option` |
-| `data-animated` | `"true"` | Gridory | `gdy-segmented` |
+| `data-animated` | `"true"` | Gridory | `gdy-segmented`, `gdy-sidebar` |
 | `data-checked` | presente / ausente | Gridory | `gdy-option-check` |
 | `data-clickable` | presente / ausente | Gridory | `gdy-table-row` |
+| `data-compact` | `"true"` | Gridory | `gdy-sidebar-logo` |
 | `data-disabled` | presente / ausente | Gridory, Radix o react-day-picker | `gdy-auth-google-slot`, `gdy-calendar-day`, `gdy-menu-item`, `gdy-select-item` |
 | `data-dragging` | presente / ausente | Gridory | `gdy-kanban-card` |
 | `data-drop-target` | presente / ausente | Gridory | `gdy-kanban-column` |
@@ -393,11 +422,14 @@ ponen Radix o react-day-picker siguen a esas librerías.
 | `data-form` | `"login"`, `"signup"` | Gridory | sin regla por defecto |
 | `data-hidden` | presente / ausente | Radix o react-day-picker | `gdy-calendar-day` |
 | `data-highlighted` | presente / ausente | Radix o react-day-picker | `gdy-select-item` |
+| `data-hover-expand` | `"false"`, `"true"` | Gridory | `gdy-sidebar` |
 | `data-invalid` | presente / ausente | Gridory | `gdy-phone-input` |
 | `data-label-position` | `"start"` | Gridory | `gdy-field` |
 | `data-list` | `"ordered"`, `"unordered"` | Gridory | sin regla por defecto |
+| `data-mobile` | `"true"` | Gridory | `gdy-sidebar-layout` |
 | `data-multiple` | presente / ausente | Gridory | `gdy-country-select` |
 | `data-outside` | presente / ausente | Radix o react-day-picker | `gdy-calendar-day` |
+| `data-pinned` | `"false"`, `"true"` | Gridory | `gdy-sidebar` |
 | `data-placeholder` | presente / ausente | Gridory, Radix o react-day-picker | `gdy-country-select-value`, `gdy-phone-input-dial-code`, `gdy-select-trigger` |
 | `data-range-end` | presente / ausente | Gridory | `gdy-calendar-day`, `gdy-calendar-day-button` |
 | `data-range-middle` | presente / ausente | Gridory | `gdy-calendar-day`, `gdy-calendar-day-button` |
@@ -407,7 +439,7 @@ ponen Radix o react-day-picker siguen a esas librerías.
 | `data-selected-single` | presente / ausente | Gridory | `gdy-calendar-day-button` |
 | `data-side` | `"bottom"`, `"left"`, `"right"`, `"top"` | Radix o react-day-picker | `gdy-menu-content`, `gdy-popover-content`, `gdy-select-content` |
 | `data-size` | `"default"`, `"icon"`, `"icon-lg"`, `"icon-sm"`, `"icon-xs"`, `"lg"`, `"sm"`, `"xs"` | Gridory | `gdy-button` |
-| `data-state` | `"checked"`, `"closed"`, `"on"`, `"open"` | Gridory, Radix o react-day-picker | `gdy-ai-sidebar`, `gdy-menu-content`, `gdy-popover-content`, `gdy-select-content`, `gdy-select-item`, `gdy-select-trigger`, `gdy-toggle-item` |
+| `data-state` | `"checked"`, `"closed"`, `"collapsed"`, `"expanded"`, `"on"`, `"open"` | Gridory, Radix o react-day-picker | `gdy-ai-sidebar`, `gdy-menu-content`, `gdy-popover-content`, `gdy-select-content`, `gdy-select-item`, `gdy-select-trigger`, `gdy-sidebar`, `gdy-sidebar-drawer`, `gdy-sidebar-overlay`, `gdy-toggle-item` |
 | `data-status` | `"met"`, `"pending"`, `"unmet"` | Gridory | `gdy-auth-rule` |
 | `data-streaming` | presente / ausente | Gridory | sin regla por defecto |
 | `data-thinking` | presente / ausente | Gridory | sin regla por defecto |
@@ -584,7 +616,7 @@ cualquier ancestro cambia solo esa parte. Los `--gdy-select-*` también reflejan
 | `--gdy-phone-input-width` | `280px` | phone-input |
 | `--gdy-popover-bg` | `var(--gdy-popover)` | ui |
 | `--gdy-popover-fg` | `var(--gdy-popover-foreground)` | ui |
-| `--gdy-scrollbar-thumb` | `var(--gdy-input)` | segmented-control, shared, ui |
+| `--gdy-scrollbar-thumb` | `var(--gdy-input)` | segmented-control, shared, sidebar, ui |
 | `--gdy-segmented-bg` | `var(--gdy-muted)` | segmented-control |
 | `--gdy-segmented-border` | `var(--gdy-border)` | segmented-control |
 | `--gdy-segmented-duration` | `220ms` | motion |
@@ -614,6 +646,40 @@ cualquier ancestro cambia solo esa parte. Los `--gdy-select-*` también reflejan
 | `--gdy-select-radius` | `calc(var(--gdy-radius) - 2px)` | ui |
 | `--gdy-select-text` | `var(--gdy-foreground)` | ui |
 | `--gdy-select-trigger-hover-bg` | `var(--gdy-muted)` | ui |
+| `--gdy-sidebar-bg` | `var(--gdy-card)` | sidebar |
+| `--gdy-sidebar-border` | `var(--gdy-border)` | sidebar |
+| `--gdy-sidebar-drawer-width` | `min(280px, 85vw)` | sidebar |
+| `--gdy-sidebar-drawer-z` | `50` | sidebar |
+| `--gdy-sidebar-duration` | `200ms` | motion |
+| `--gdy-sidebar-fg` | `var(--gdy-card-foreground)` | sidebar |
+| `--gdy-sidebar-focus-ring` | `var(--gdy-ring)` | sidebar |
+| `--gdy-sidebar-font-size` | `0.875rem` | sidebar |
+| `--gdy-sidebar-header-height` | `64px` | sidebar |
+| `--gdy-sidebar-height` | `100dvh` | sidebar |
+| `--gdy-sidebar-icon-size` | `20px` | sidebar |
+| `--gdy-sidebar-item-active-bg` | `var(--gdy-primary)` | sidebar |
+| `--gdy-sidebar-item-active-fg` | `var(--gdy-primary-foreground)` | sidebar |
+| `--gdy-sidebar-item-color` | `inherit` | sidebar |
+| `--gdy-sidebar-item-gap` | `12px` | sidebar |
+| `--gdy-sidebar-item-height` | `40px` | sidebar |
+| `--gdy-sidebar-item-hover-bg` | `var(--gdy-muted)` | sidebar |
+| `--gdy-sidebar-item-radius` | `calc(var(--gdy-radius) - 2px)` | sidebar |
+| `--gdy-sidebar-item-spacing` | `4px` | sidebar |
+| `--gdy-sidebar-logo-mark-size` | `32px` | sidebar |
+| `--gdy-sidebar-mobile-bar-height` | `56px` | sidebar |
+| `--gdy-sidebar-overlay-bg` | `var(--gdy-overlay)` | sidebar |
+| `--gdy-sidebar-overlay-shadow` | `var(--gdy-shadow-lg)` | sidebar |
+| `--gdy-sidebar-padding` | `12px` | sidebar |
+| `--gdy-sidebar-pin-color` | `var(--gdy-muted-foreground)` | sidebar |
+| `--gdy-sidebar-rail-width` | `80px` | sidebar |
+| `--gdy-sidebar-scrollbar-thumb` | `var(--gdy-scrollbar-thumb, var(--gdy-input))` | sidebar |
+| `--gdy-sidebar-separator-color` | `var(--gdy-border)` | sidebar |
+| `--gdy-sidebar-separator-margin` | `8px` | sidebar |
+| `--gdy-sidebar-tooltip-bg` | `var(--gdy-foreground)` | sidebar |
+| `--gdy-sidebar-tooltip-fg` | `var(--gdy-background)` | sidebar |
+| `--gdy-sidebar-tooltip-z` | `60` | sidebar |
+| `--gdy-sidebar-width` | `280px` | sidebar |
+| `--gdy-sidebar-z` | `40` | sidebar |
 | `--gdy-table-border` | `var(--gdy-border)` | table |
 | `--gdy-table-group-bg` | `var(--gdy-accent)` | table |
 | `--gdy-table-head-bg` | `var(--gdy-muted)` | table |

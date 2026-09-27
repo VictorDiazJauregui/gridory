@@ -1,0 +1,369 @@
+/*
+ * Sidebar. Component tokens (`--gdy-sidebar-*`) are read with a fallback to the
+ * base tokens and never declared here; the width transition and the drawer's
+ * slide live in src/styles/motion.css with the rest of the library's motion.
+ *
+ * States are attributes: data-state (collapsed or expanded), data-pinned,
+ * data-hover-expand and data-mobile on the root, aria-current on the items.
+ *
+ * Nothing moves when the width changes: the icon column sits at the same x in
+ * both states (the item's start padding centres it in the rail), every row keeps
+ * its height, and labels only fade, clipped by the panel.
+ */
+
+/* The layout only arranges the sidebar and the page; it is not a gdy-scope, so
+   the library reset never reaches the app's own content. */
+.gdy-sidebar-layout {
+  display: flex;
+  width: 100%;
+}
+
+.gdy-sidebar-layout[data-mobile="true"] {
+  flex-direction: column;
+}
+
+.gdy-sidebar-layout > :not(.gdy-sidebar):not(.gdy-sidebar-mobile-bar) {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* The rail takes its place in the flow (the page never needs a margin for it)
+   and is exactly as tall as the screen: only its middle zone scrolls. */
+.gdy-sidebar {
+  position: sticky;
+  top: 0;
+  z-index: var(--gdy-sidebar-z, 40);
+  flex-shrink: 0;
+  align-self: flex-start;
+  width: var(--gdy-sidebar-rail-width, 80px);
+  height: var(--gdy-sidebar-height, 100dvh);
+}
+
+.gdy-sidebar[data-pinned="true"] {
+  width: var(--gdy-sidebar-width, 280px);
+}
+
+.gdy-sidebar-panel {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  display: flex;
+  flex-direction: column;
+  width: var(--gdy-sidebar-rail-width, 80px);
+  overflow: hidden;
+  border-inline-end: 1px solid var(--gdy-sidebar-border, var(--gdy-border));
+  background-color: var(--gdy-sidebar-bg, var(--gdy-card));
+  color: var(--gdy-sidebar-fg, var(--gdy-card-foreground));
+}
+
+.gdy-sidebar[data-state="expanded"] > .gdy-sidebar-panel {
+  width: var(--gdy-sidebar-width, 280px);
+}
+
+/* Expanded by hover it covers the page, so a shadow tells it apart. */
+.gdy-sidebar[data-state="expanded"][data-pinned="false"] > .gdy-sidebar-panel {
+  box-shadow: var(--gdy-sidebar-overlay-shadow, var(--gdy-shadow-lg));
+}
+
+.gdy-sidebar-header,
+.gdy-sidebar-footer {
+  display: flex;
+  flex-shrink: 0;
+  padding: var(--gdy-sidebar-padding, 12px);
+}
+
+.gdy-sidebar-header {
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: var(--gdy-sidebar-header-height, 64px);
+  border-bottom: 1px solid var(--gdy-sidebar-border, var(--gdy-border));
+}
+
+.gdy-sidebar-footer {
+  flex-direction: column;
+  gap: var(--gdy-sidebar-item-spacing, 4px);
+  border-top: 1px solid var(--gdy-sidebar-border, var(--gdy-border));
+}
+
+.gdy-sidebar-content {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--gdy-sidebar-item-spacing, 4px);
+  min-height: 0;
+  padding: var(--gdy-sidebar-padding, 12px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  /* Reaching the end of the list never hands the wheel over to the page. */
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gdy-sidebar-scrollbar-thumb, var(--gdy-scrollbar-thumb, var(--gdy-input))) transparent;
+}
+
+.gdy-sidebar-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.gdy-sidebar-content::-webkit-scrollbar-thumb {
+  border-radius: 9999px;
+  background-color: var(--gdy-sidebar-scrollbar-thumb, var(--gdy-scrollbar-thumb, var(--gdy-input)));
+}
+
+/* The start padding puts the icon's centre on the rail's centre, whatever the
+   rail width, the zone padding or the icon size tokens say. */
+.gdy-sidebar-item {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--gdy-sidebar-item-gap, 12px);
+  width: 100%;
+  min-height: var(--gdy-sidebar-item-height, 40px);
+  padding-block: 8px;
+  padding-inline-start: calc(
+    (var(--gdy-sidebar-rail-width, 80px) - 2 * var(--gdy-sidebar-padding, 12px) - var(--gdy-sidebar-icon-size, 20px)) / 2
+  );
+  padding-inline-end: 12px;
+  overflow: hidden;
+  border-radius: var(--gdy-sidebar-item-radius, calc(var(--gdy-radius) - 2px));
+  color: var(--gdy-sidebar-item-color, inherit);
+  font-size: var(--gdy-sidebar-font-size, 0.875rem);
+  font-weight: 500;
+  text-align: start;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.gdy-sidebar-item:hover {
+  background-color: var(--gdy-sidebar-item-hover-bg, var(--gdy-muted));
+}
+
+.gdy-sidebar-item[aria-current="page"] {
+  background-color: var(--gdy-sidebar-item-active-bg, var(--gdy-primary));
+  color: var(--gdy-sidebar-item-active-fg, var(--gdy-primary-foreground));
+}
+
+/* Drawn inside the item, so the scrolling zone never clips it. The transparent
+   outline shows only in forced colors mode, which drops box-shadow. */
+.gdy-sidebar-item:focus-visible,
+.gdy-sidebar-pin:focus-visible,
+.gdy-sidebar-menu-button:focus-visible,
+.gdy-sidebar-drawer-close:focus-visible {
+  outline: 2px solid transparent;
+  outline-offset: -2px;
+  box-shadow: inset 0 0 0 2px var(--gdy-sidebar-focus-ring, var(--gdy-ring));
+}
+
+.gdy-sidebar-item-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: var(--gdy-sidebar-icon-size, 20px);
+  height: var(--gdy-sidebar-icon-size, 20px);
+}
+
+.gdy-sidebar-item-icon > svg,
+.gdy-sidebar-pin > svg,
+.gdy-sidebar-menu-button > svg,
+.gdy-sidebar-drawer-close > svg {
+  width: 100%;
+  height: 100%;
+}
+
+.gdy-sidebar-item-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gdy-sidebar[data-state="collapsed"] .gdy-sidebar-item-label {
+  opacity: 0;
+}
+
+.gdy-sidebar-separator {
+  flex-shrink: 0;
+  height: 1px;
+  margin-block: var(--gdy-sidebar-separator-margin, 8px);
+  background-color: var(--gdy-sidebar-separator-color, var(--gdy-border));
+}
+
+/* Both layers start where a mark of --gdy-sidebar-logo-mark-size is centred
+   on the rail: a full logo that opens with the same mark does not jump. */
+.gdy-sidebar-logo {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  min-width: 0;
+  height: 40px;
+  padding-inline-start: calc(
+    (var(--gdy-sidebar-rail-width, 80px) - 2 * var(--gdy-sidebar-padding, 12px) - var(--gdy-sidebar-logo-mark-size, 32px)) / 2
+  );
+  overflow: hidden;
+}
+
+.gdy-sidebar-logo-full,
+.gdy-sidebar-logo-compact {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.gdy-sidebar-logo-compact {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  padding-inline-start: inherit;
+  opacity: 0;
+}
+
+.gdy-sidebar[data-state="collapsed"] .gdy-sidebar-logo[data-compact="true"] > .gdy-sidebar-logo-full {
+  opacity: 0;
+}
+
+.gdy-sidebar[data-state="collapsed"] .gdy-sidebar-logo[data-compact="true"] > .gdy-sidebar-logo-compact {
+  opacity: 1;
+}
+
+.gdy-sidebar-pin {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 8px;
+  border-radius: var(--gdy-sidebar-item-radius, calc(var(--gdy-radius) - 2px));
+  color: var(--gdy-sidebar-pin-color, var(--gdy-muted-foreground));
+  cursor: pointer;
+}
+
+.gdy-sidebar-pin:hover {
+  background-color: var(--gdy-sidebar-item-hover-bg, var(--gdy-muted));
+  color: var(--gdy-sidebar-fg, var(--gdy-card-foreground));
+}
+
+/* In the footer it lines up with the icon column of the items. */
+.gdy-sidebar-footer > .gdy-sidebar-pin {
+  margin-inline-start: calc((var(--gdy-sidebar-rail-width, 80px) - 2 * var(--gdy-sidebar-padding, 12px) - 32px) / 2);
+}
+
+/* Collapsed with hover expansion, the button waits out of the flow: it stays
+   focusable, and focusing it expands the panel, which brings it back. */
+.gdy-sidebar[data-state="collapsed"][data-hover-expand="true"] .gdy-sidebar-pin {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Collapsed without hover expansion, the header button is the way to expand:
+   it takes the header's place instead of the logo. */
+.gdy-sidebar[data-state="collapsed"][data-hover-expand="false"] .gdy-sidebar-header:has(> .gdy-sidebar-pin) {
+  justify-content: center;
+}
+
+.gdy-sidebar[data-state="collapsed"][data-hover-expand="false"] .gdy-sidebar-header:has(> .gdy-sidebar-pin) > .gdy-sidebar-logo {
+  display: none;
+}
+
+.gdy-sidebar-tooltip {
+  z-index: var(--gdy-sidebar-tooltip-z, 60);
+  padding: 4px 8px;
+  border-radius: calc(var(--gdy-radius) - 4px);
+  background-color: var(--gdy-sidebar-tooltip-bg, var(--gdy-foreground));
+  color: var(--gdy-sidebar-tooltip-fg, var(--gdy-background));
+  font-size: 0.75rem;
+  font-weight: 500;
+  box-shadow: var(--gdy-shadow-md);
+}
+
+/* Mobile: a bar in the flow (sticky, so the page needs no top padding) and the
+   same zones in a drawer, always expanded. */
+.gdy-sidebar-mobile-bar {
+  position: sticky;
+  top: 0;
+  z-index: var(--gdy-sidebar-z, 40);
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 8px;
+  height: var(--gdy-sidebar-mobile-bar-height, 56px);
+  padding-inline: 6px 12px;
+  border-bottom: 1px solid var(--gdy-sidebar-border, var(--gdy-border));
+  background-color: var(--gdy-sidebar-bg, var(--gdy-card));
+  color: var(--gdy-sidebar-fg, var(--gdy-card-foreground));
+}
+
+/* 44 × 44 is the comfortable touch target. */
+.gdy-sidebar-menu-button,
+.gdy-sidebar-drawer-close {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 11px;
+  border-radius: var(--gdy-sidebar-item-radius, calc(var(--gdy-radius) - 2px));
+  color: inherit;
+  cursor: pointer;
+}
+
+.gdy-sidebar-menu-button:hover,
+.gdy-sidebar-drawer-close:hover {
+  background-color: var(--gdy-sidebar-item-hover-bg, var(--gdy-muted));
+}
+
+.gdy-sidebar-mobile-logo {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.gdy-sidebar-mobile-end {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  margin-inline-start: auto;
+}
+
+.gdy-sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--gdy-sidebar-drawer-z, 50);
+  background-color: var(--gdy-sidebar-overlay-bg, var(--gdy-overlay));
+}
+
+/* Narrower than the screen, so the page still shows behind it: without that
+   hint a full-width drawer reads as a new page. */
+.gdy-sidebar-drawer {
+  position: fixed;
+  inset-block: 0;
+  inset-inline-start: 0;
+  z-index: var(--gdy-sidebar-drawer-z, 50);
+  display: flex;
+  flex-direction: column;
+  width: var(--gdy-sidebar-drawer-width, min(280px, 85vw));
+  background-color: var(--gdy-sidebar-bg, var(--gdy-card));
+  color: var(--gdy-sidebar-fg, var(--gdy-card-foreground));
+  box-shadow: var(--gdy-shadow-lg);
+}
+
+.gdy-sidebar-drawer:focus {
+  outline: none;
+}
+
+.gdy-sidebar-drawer-close {
+  position: absolute;
+  top: 10px;
+  inset-inline-end: 8px;
+}
+
+.gdy-sidebar-drawer .gdy-sidebar-header {
+  padding-inline-end: 56px;
+}

@@ -55,6 +55,7 @@ export default defineConfig({
         "segmented-control": path.resolve(rootDir, "src/segmented-control.ts"),
         "country-select": path.resolve(rootDir, "src/country-select.ts"),
         "phone-input": path.resolve(rootDir, "src/phone-input.ts"),
+        sidebar: path.resolve(rootDir, "src/sidebar.ts"),
       },
       formats: ["es"],
       cssFileName: "gridory",

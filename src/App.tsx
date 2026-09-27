@@ -1,12 +1,17 @@
-import { DemoSidebar } from "./demo/DemoSidebar";
+import { DemoMenu } from "./demo/DemoMenu";
+import { useDemoPinned } from "./demo/use-demo-pinned";
 import { useDemoRoute } from "./demo/use-demo-route";
+import { SidebarLayout } from "./sidebar";
 
 const App = () => {
   const { selectedModuleId, selectedModule, setRoute } = useDemoRoute();
+  const { pinned, setPinned } = useDemoPinned();
   return (
-    <div className="min-h-screen flex bg-background text-foreground">
-      <DemoSidebar selectedModuleId={selectedModuleId} onSelect={setRoute} />
-      <main className="flex-1 p-4 w-full h-full">{selectedModule.content}</main>
+    <div className="min-h-screen bg-background text-foreground">
+      <SidebarLayout pinned={pinned} onPinnedChange={setPinned}>
+        <DemoMenu selectedModuleId={selectedModuleId} onSelect={setRoute} />
+        <main className="p-4">{selectedModule.content}</main>
+      </SidebarLayout>
     </div>
   );
 };

@@ -56,7 +56,10 @@
     "data-role",
     "data-status",
     "data-label-position",
-    "data-animated"
+    "data-animated",
+    "data-pinned",
+    "data-hover-expand",
+    "data-compact"
   ],
   "runtimeAttributes": [
     "data-state",

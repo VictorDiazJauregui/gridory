@@ -33,6 +33,7 @@ body:
         - Segmented control
         - Country select
         - Phone input
+        - Sidebar
         - Styles and theming
         - New component
         - Other

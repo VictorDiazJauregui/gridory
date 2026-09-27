@@ -12,7 +12,9 @@
  * from. The custom properties are internal (always read with a fallback).
  *
  * The segmented control's indicator slides to the chosen option only while its
- * root carries data-animated="true" (the `animated` prop, on by default).
+ * root carries data-animated="true" (the `animated` prop, on by default). The
+ * sidebar's width follows the same attribute; its mobile drawer slides in from
+ * the start edge and its overlay fades.
  */
 @media (prefers-reduced-motion: no-preference) {
   .gdy-popover-content[data-state="open"],
@@ -60,6 +62,57 @@
     transition-property: transform, width, height;
     transition-duration: var(--gdy-segmented-duration, 220ms);
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Only the width moves (never "all": a theme switch would animate every
+     colour), and labels fade at the same pace as the box. */
+  .gdy-sidebar:where([data-animated="true"]),
+  .gdy-sidebar:where([data-animated="true"]) > .gdy-sidebar-panel {
+    transition: width var(--gdy-sidebar-duration, 200ms) ease-in-out;
+  }
+
+  .gdy-sidebar:where([data-animated="true"]) :is(.gdy-sidebar-item-label, .gdy-sidebar-logo-full, .gdy-sidebar-logo-compact, .gdy-sidebar-pin) {
+    transition: opacity var(--gdy-sidebar-duration, 200ms) ease-in-out;
+  }
+
+  .gdy-sidebar-drawer[data-state="open"] {
+    animation: gdy-sidebar-drawer-in var(--gdy-sidebar-duration, 200ms) ease-out;
+  }
+
+  .gdy-sidebar-drawer[data-state="closed"] {
+    animation: gdy-sidebar-drawer-out var(--gdy-sidebar-duration, 200ms) ease-in;
+  }
+
+  .gdy-sidebar-overlay[data-state="open"] {
+    animation: gdy-fade-in var(--gdy-sidebar-duration, 200ms) ease-out;
+  }
+
+  .gdy-sidebar-overlay[data-state="closed"] {
+    animation: gdy-fade-out var(--gdy-sidebar-duration, 200ms) ease-in;
+  }
+}
+
+@keyframes gdy-sidebar-drawer-in {
+  from {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes gdy-sidebar-drawer-out {
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes gdy-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes gdy-fade-out {
+  to {
+    opacity: 0;
   }
 }
 
