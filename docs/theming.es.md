@@ -27,11 +27,11 @@ El archivo contiene, en este orden:
 4. **Capa compartida**: tarjeta, toolbar, botones, inputs, paneles de filtro y barras de scroll.
 5. **Animaciones**: las de apertura, cierre y deslizamiento, condicionadas a `prefers-reduced-motion`.
 6. **Hojas de los módulos**: el asistente, la tabla, el kanban, los formularios de autenticación, el
-   control segmentado y el selector de país.
+   control segmentado, el selector de país y el teléfono con prefijo.
 
 El reset está acotado a la clase `gdy-scope`. Gridory la pone en la tarjeta de la tabla y del kanban, en el
 panel del asistente, en su overlay y en su botón de apertura, en la tarjeta de los formularios de
-autenticación, en el control segmentado, en el campo del selector de país y en cada menú, select y popover
+autenticación, en el control segmentado, en el campo del selector de país, en la caja del teléfono con prefijo y en cada menú, select y popover
 que renderiza en un portal. El ámbito va envuelto en `:where()`, así que no suma especificidad: las reglas del reset pesan
 lo mismo que un selector de elemento simple y cualquier clase de componente las sobrescribe. Aplican
 `border-box` como modelo de caja, bordes sólidos de ancho cero con el color `--gdy-border`, márgenes a cero
@@ -128,7 +128,8 @@ pantalla. Los menús, los selects, los popovers y el calendario se renderizan en
 que declara los tokens que les dan estilo (`--gdy-menu-*`, `--gdy-select-*`, `--gdy-popover-*`,
 `--gdy-calendar-*`) en `:root` o en `.dark`. Lo mismo vale para el panel del selector de país:
 `--gdy-country-select-panel-min-width`, `--gdy-country-select-option-*` y
-`--gdy-country-select-check-color`.
+`--gdy-country-select-check-color`, y para el panel del teléfono: `--gdy-phone-input-panel-min-width`,
+`--gdy-phone-input-option-*` y `--gdy-phone-input-check-color`.
 
 | Familia | Ejemplos (fallback) |
 |---|---|
@@ -138,6 +139,7 @@ que declara los tokens que les dan estilo (`--gdy-menu-*`, `--gdy-select-*`, `--
 | `--gdy-auth-*` | `--gdy-auth-bg` (`--gdy-card`), `--gdy-auth-submit-bg` (`--gdy-primary`), `--gdy-auth-input-focus-border` (`--gdy-ring`), `--gdy-auth-rule-met` (`--gdy-success`) |
 | `--gdy-segmented-*` | `--gdy-segmented-bg` (`--gdy-muted`), `--gdy-segmented-indicator-bg` (`--gdy-background`), `--gdy-segmented-item-active-color` (`--gdy-foreground`), `--gdy-segmented-focus-ring` (`--gdy-ring`), `--gdy-segmented-duration` (`220ms`) |
 | `--gdy-country-select-*` | `--gdy-country-select-width` (`240px`), `--gdy-country-select-border` (`--gdy-input`), `--gdy-country-select-focus-ring` (`--gdy-ring`), `--gdy-country-select-option-hover-bg` (`--gdy-listbox-option-hover-bg` y después `--gdy-accent`), `--gdy-country-select-chip-bg` (`--gdy-muted`) |
+| `--gdy-phone-input-*` | `--gdy-phone-input-width` (`280px`), `--gdy-phone-input-height` (`--gdy-field-control-height`, y luego `40px`), `--gdy-phone-input-border` (`--gdy-input`), `--gdy-phone-input-focus-ring` (`--gdy-ring`), `--gdy-phone-input-gap` (`8px`) |
 | `--gdy-btn-*` | `--gdy-btn-bg` (`--gdy-muted`), `--gdy-btn-primary-bg` (`--gdy-primary`), `--gdy-btn-hover-bg` (`color-mix(in oklab, var(--gdy-foreground) 8%, var(--gdy-muted))`) |
 | `--gdy-input-*` | `--gdy-input-bg` (`--gdy-muted`), `--gdy-input-border` (`--gdy-input`) |
 | `--gdy-panel-*` | `--gdy-panel-bg` (`--gdy-popover`), `--gdy-panel-border` (`--gdy-border`), `--gdy-panel-shadow` (`--gdy-shadow-md`) |
@@ -186,6 +188,9 @@ Cada elemento que renderiza la librería lleva una clase `gdy-*` pensada como ga
 - `gdy-country-select-<part>` para el selector de país: `gdy-country-select` (raíz),
   `gdy-country-select-trigger`, `gdy-country-select-value`, `gdy-country-select-chip`,
   `gdy-country-select-panel`. Sus banderas conservan el `gdy-country-flag` compartido.
+- `gdy-phone-input-<part>` para el teléfono con prefijo: `gdy-phone-input` (raíz),
+  `gdy-phone-input-prefix`, `gdy-phone-input-dial-code`, `gdy-phone-input-number`,
+  `gdy-phone-input-panel`. Dentro de los formularios de auth su raíz lleva además `gdy-auth-phone`.
 
 Las reglas de la librería siguen un contrato de especificidad fijo:
 
@@ -268,6 +273,9 @@ por su presencia (`[data-dragging]`), no por su valor. El resto toma los valores
 | `aria-expanded`, `aria-invalid` | `gdy-country-select-trigger` | Gridory | `"true"` mientras la lista está abierta, `"false"` si no; `"true"` con un error |
 | `data-placeholder` | `gdy-country-select-value` | Gridory | no hay ningún país elegido |
 | `hidden` | `gdy-country-select-chip`, `gdy-country-select-more` | Gridory | un chip que no entra; el distintivo "+N" mientras entran todos los chips |
+| `data-invalid` | `gdy-phone-input` | Gridory | presente con un error |
+| `aria-expanded` | `gdy-phone-input-prefix` | Gridory | `"true"` mientras la lista de prefijos está abierta |
+| `data-placeholder` | `gdy-phone-input-dial-code` | Gridory | no hay ningún país elegido |
 
 Para dar estilo a un estado, añade el atributo a la clase. La regla pesa 0-2-0, así que también gana a una
 clase suelta que pases por una prop:
@@ -333,6 +341,11 @@ los slots `root`, `trigger`, `value`, `clear`, `chips`, `chip` y `panel`, y `wid
 fijado en línea como `--gdy-country-select-width`; un número son píxeles). Sus `thinScrollbars` (por
 defecto `true`) y `scrollbarColor` funcionan como en la tabla y el kanban, sobre la lista de su panel;
 ver [country-select.es.md](country-select.es.md#estilos).
+
+El teléfono con prefijo acepta `className`, en su raíz (`gdy-phone-input`), un objeto `classNames` con
+los slots `root`, `prefix`, `number` y `panel`, y `width` (fijado en línea como
+`--gdy-phone-input-width`). `thinScrollbars` y `scrollbarColor` funcionan como en el selector de país;
+ver [phone-input.es.md](phone-input.es.md#estilos).
 
 Los nombres de clase que llegan por props se concatenan tras el gancho tal como vienen. Nada los fusiona ni
 quita duplicados, así que una clase que pases nunca elimina una declaración de la librería; solo gana por las

@@ -123,7 +123,7 @@ es su clave en los valores enviados, y un `label`:
 
 ```tsx
 extraFields={[
-  { name: "phone", label: "Teléfono", type: "tel", autoComplete: "tel" },
+  { name: "phone", label: "Teléfono", type: "tel" },
   { name: "teamSize", label: "Tamaño del equipo", type: "number" },
   {
     name: "role",
@@ -140,7 +140,8 @@ extraFields={[
 
 | `type` | Control | Valor | Mensaje de obligatorio |
 |---|---|---|---|
-| `"text"` (por defecto), `"tel"`, `"url"`, `"number"` | `<input>` de ese tipo | `string` | Derivado del label |
+| `"text"` (por defecto), `"url"`, `"number"` | `<input>` de ese tipo | `string` | Derivado del label |
+| `"tel"` | El campo de teléfono: selector de prefijo más número (ver [phone-input.es.md](phone-input.es.md)) | `AuthPhoneValue`: `{ country: CountryCode \| null; number: string }` | Derivado del label |
 | `"email"` | `<input type="email">`, validado como email | `string` | Derivado del label |
 | `"textarea"` | `<textarea>` | `string` | Derivado del label |
 | `"select"` | El select de Gridory, con `options` | `string` (el `value` de la opción) | `texts.selectRequired` |
@@ -148,6 +149,16 @@ extraFields={[
 
 `AuthExtraField` también acepta `required`, `placeholder`, `requiredMessage`, `autoComplete` y
 `validate`. Un `name` repetido, o igual al de un campo base, lanza `DuplicateAuthFieldError`.
+
+Un campo `tel` emite el país por su código ISO y el número, recortado, así `+1` nunca confunde a
+Canadá con EE. UU. El número solo guarda dígitos, espacios, guiones y `+`, escritos o pegados. Cuenta
+como vacío mientras el número esté en blanco, y un número sin país falla con
+`texts.phoneCountryRequired`, aunque el campo sea opcional. Un string en `defaultValues` sigue
+funcionando: pasa a ser el número, sin país. Su `autoComplete` es siempre `tel-national`, porque el
+país va en el prefijo.
+
+> Desde esta versión un campo `tel` emite `{ country, number }` en vez de un `string`. Si tu código lo
+> lee como texto, lee `values.phone.number` y, si lo necesitas, el prefijo de `values.phone.country`.
 
 ### Orden de los campos
 
@@ -301,6 +312,7 @@ defecto se exportan como `DEFAULT_LOGIN_TEXTS` y `DEFAULT_SIGN_UP_TEXTS`, y los 
 | `invalidEmail` | `"Ingresa un email válido"` | igual | Email mal formado. |
 | `checkboxRequired` | `"Debes marcar esta casilla para continuar"` | igual | Checkbox obligatorio sin marcar. |
 | `selectRequired` | `"Selecciona una opción"` | igual | Select obligatorio vacío. |
+| `phoneCountryRequired` | `"Elige el prefijo de tu país"` | igual | Teléfono con número y sin país. |
 | `forgotPassword` | `"¿Olvidaste tu contraseña?"` | — | Enlace de recuperación. |
 | `signUpPrompt` / `signUpLink` | `"¿No tienes cuenta?"` / `"Regístrate aquí"` | — | Pie del login. |
 | `signInPrompt` / `signInLink` | — | `"¿Ya tienes una cuenta?"` / `"Inicia sesión"` | Pie del registro. |
@@ -464,7 +476,9 @@ raíz y `classNames` agrega tus clases a cada parte:
 - `LoginFormValues`: `{ email: string; password: string }` más tus campos adicionales.
 - `SignUpFormValues`: `{ email; password; firstName?; lastName?; confirmPassword? }` más tus campos
   adicionales.
-- `AuthFormValues`: `Record<string, string | boolean>`.
+- `AuthFormValues`: `Record<string, AuthFieldValue>`, donde `AuthFieldValue` es
+  `string | boolean | AuthPhoneValue`.
+- `AuthPhoneValue`: `{ country: CountryCode | null; number: string }`, el valor de un campo `tel`.
 - `AuthExtraField`, `AuthExtraFieldType`, `AuthFieldOption`, `AuthFieldConfig`,
   `AuthFieldValidator`: campos.
 - `AuthPasswordRules`, `AuthPasswordPattern`, `AuthPasswordRuleStatus`: requisitos de la
