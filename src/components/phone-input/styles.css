@@ -1,0 +1,146 @@
+/*
+ * Phone input. Component tokens (`--gdy-phone-input-*`) are read with a
+ * fallback to the base tokens and never declared here. States are attributes:
+ * data-invalid on the box, aria-expanded on the prefix and data-placeholder on
+ * the dial code while no country is chosen.
+ */
+
+/* One column that prefers the width token but may shrink to 0, so the field
+   never pushes a narrow container wider, as a fixed width would on a phone. */
+.gdy-phone-input-frame {
+  display: grid;
+  grid-template-columns: minmax(0, var(--gdy-phone-input-width, 280px));
+}
+
+/* One piece: the box holds the border, the background and the focus, and both
+   parts stretch to its height. The border never changes its width, so
+   focusing a part never makes the field jump. Squeezed below the width of its
+   prefix, the box clips its parts instead of letting them spill past its edge;
+   the focus ring is its own inset shadow, so it is never clipped. */
+.gdy-phone-input {
+  display: flex;
+  overflow: hidden;
+  align-items: stretch;
+  gap: var(--gdy-phone-input-gap, 8px);
+  min-inline-size: 0;
+  block-size: var(--gdy-phone-input-height, var(--gdy-field-control-height, 40px));
+  border: 1px solid var(--gdy-phone-input-border, var(--gdy-input));
+  border-radius: var(--gdy-phone-input-radius, var(--gdy-radius));
+  background-color: var(--gdy-phone-input-bg, var(--gdy-background));
+  color: var(--gdy-phone-input-color, var(--gdy-foreground));
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+/* The ring is drawn inside the border, never around it; the transparent
+   outline shows only in forced colors mode, which drops box-shadow. */
+.gdy-phone-input:focus-within {
+  border-color: var(--gdy-phone-input-focus-ring, var(--gdy-ring));
+  outline: 2px solid transparent;
+  outline-offset: -2px;
+  box-shadow: inset 0 0 0 1px var(--gdy-phone-input-focus-ring, var(--gdy-ring));
+}
+
+.gdy-phone-input[data-invalid] {
+  border-color: var(--gdy-phone-input-error-color, var(--gdy-destructive));
+}
+
+.gdy-phone-input[data-invalid]:focus-within {
+  box-shadow: inset 0 0 0 1px var(--gdy-phone-input-error-color, var(--gdy-destructive));
+}
+
+/* No border and no background of its own: the space and the chevron are the
+   only separation from the number, in both themes. */
+.gdy-phone-input-prefix {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  padding-inline: 12px 0;
+  border-radius: var(--gdy-phone-input-radius, var(--gdy-radius));
+  background-color: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* The box already shows the focus ring; this tells which part holds it. */
+.gdy-phone-input-prefix:focus-visible {
+  outline: none;
+  color: var(--gdy-phone-input-prefix-focus-color, var(--gdy-ring));
+}
+
+.gdy-phone-input-dial-code {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.gdy-phone-input-dial-code[data-placeholder] {
+  color: var(--gdy-phone-input-placeholder-color, var(--gdy-muted-foreground));
+}
+
+.gdy-phone-input-chevron {
+  flex: none;
+  inline-size: 16px;
+  block-size: 16px;
+  color: var(--gdy-phone-input-placeholder-color, var(--gdy-muted-foreground));
+}
+
+.gdy-phone-input-prefix[aria-expanded="true"] .gdy-phone-input-chevron {
+  transform: rotate(180deg);
+}
+
+/* min-inline-size: 0 lets the number shrink with the box instead of spilling
+   past its right edge in narrow fields. */
+.gdy-phone-input-number {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  padding-inline: 0 12px;
+  border: 0;
+  background-color: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+.gdy-phone-input-number:focus-visible {
+  outline: none;
+}
+
+.gdy-phone-input-number::placeholder {
+  color: var(--gdy-phone-input-placeholder-color, var(--gdy-muted-foreground));
+}
+
+/* Three classes so it beats the panel width of .gdy-popover-content.gdy-floating-panel
+   by specificity, never by stylesheet order. Never narrower than the field. */
+.gdy-popover-content.gdy-floating-panel.gdy-phone-input-panel {
+  width: max(var(--radix-popover-trigger-width), var(--gdy-phone-input-panel-min-width, 280px));
+}
+
+/* The list reads the phone input tokens first, so this control can be painted
+   apart from other lists without declaring their tokens. */
+.gdy-phone-input-panel .gdy-listbox-option[aria-selected="true"] {
+  background-color: var(--gdy-phone-input-option-selected-bg, var(--gdy-listbox-option-selected-bg, transparent));
+}
+
+.gdy-phone-input-panel .gdy-listbox-option[data-active] {
+  background-color: var(
+    --gdy-phone-input-option-hover-bg,
+    var(--gdy-listbox-option-hover-bg, var(--gdy-option-hover-bg, var(--gdy-accent)))
+  );
+  color: var(
+    --gdy-phone-input-option-hover-color,
+    var(--gdy-listbox-option-hover-text, var(--gdy-accent-foreground))
+  );
+}
+
+.gdy-phone-input-panel .gdy-listbox-check {
+  color: var(--gdy-phone-input-check-color, var(--gdy-listbox-check-color, var(--gdy-primary)));
+}
+
+/* Forced colors mode drops the active option's background, the only mark of
+   where the arrows are. */
+@media (forced-colors: active) {
+  .gdy-phone-input-panel .gdy-listbox-option[data-active] {
+    outline: 2px solid transparent;
+    outline-offset: -2px;
+  }
+}
