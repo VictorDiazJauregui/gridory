@@ -26,12 +26,13 @@ El archivo contiene, en este orden:
 3. **Primitivos**: botón, popover, menú desplegable, select, grupo de toggles y calendario.
 4. **Capa compartida**: tarjeta, toolbar, botones, inputs, paneles de filtro y barras de scroll.
 5. **Animaciones**: las de apertura, cierre y deslizamiento, condicionadas a `prefers-reduced-motion`.
-6. **Hojas de los módulos**: el asistente, la tabla, el kanban, los formularios de autenticación y el
-   control segmentado.
+6. **Hojas de los módulos**: el asistente, la tabla, el kanban, los formularios de autenticación, el
+   control segmentado y el selector de país.
 
 El reset está acotado a la clase `gdy-scope`. Gridory la pone en la tarjeta de la tabla y del kanban, en el
 panel del asistente, en su overlay y en su botón de apertura, en la tarjeta de los formularios de
-autenticación, en el control segmentado y en cada menú, select y popover que renderiza en un portal. El ámbito va envuelto en `:where()`, así que no suma especificidad: las reglas del reset pesan
+autenticación, en el control segmentado, en el campo del selector de país y en cada menú, select y popover
+que renderiza en un portal. El ámbito va envuelto en `:where()`, así que no suma especificidad: las reglas del reset pesan
 lo mismo que un selector de elemento simple y cualquier clase de componente las sobrescribe. Aplican
 `border-box` como modelo de caja, bordes sólidos de ancho cero con el color `--gdy-border`, márgenes a cero
 en encabezados y párrafos, listas y enlaces sin estilos, controles de formulario que heredan la fuente,
@@ -125,7 +126,9 @@ en `background: var(--gdy-table-head-bg, var(--gdy-muted))`. Como nada los decla
 cualquier ancestro: `:root` para toda la app, `.dark` para el tema oscuro o una clase contenedora para una sola
 pantalla. Los menús, los selects, los popovers y el calendario se renderizan en portales bajo `<body>`, así
 que declara los tokens que les dan estilo (`--gdy-menu-*`, `--gdy-select-*`, `--gdy-popover-*`,
-`--gdy-calendar-*`) en `:root` o en `.dark`.
+`--gdy-calendar-*`) en `:root` o en `.dark`. Lo mismo vale para el panel del selector de país:
+`--gdy-country-select-panel-min-width`, `--gdy-country-select-option-*` y
+`--gdy-country-select-check-color`.
 
 | Familia | Ejemplos (fallback) |
 |---|---|
@@ -134,6 +137,7 @@ que declara los tokens que les dan estilo (`--gdy-menu-*`, `--gdy-select-*`, `--
 | `--gdy-ai-*` | `--gdy-ai-accent` (`--gdy-primary`), `--gdy-ai-bg` (`--gdy-background`), `--gdy-ai-user-bubble-bg` (`--gdy-ai-accent` y después `--gdy-primary`) |
 | `--gdy-auth-*` | `--gdy-auth-bg` (`--gdy-card`), `--gdy-auth-submit-bg` (`--gdy-primary`), `--gdy-auth-input-focus-border` (`--gdy-ring`), `--gdy-auth-rule-met` (`--gdy-success`) |
 | `--gdy-segmented-*` | `--gdy-segmented-bg` (`--gdy-muted`), `--gdy-segmented-indicator-bg` (`--gdy-background`), `--gdy-segmented-item-active-color` (`--gdy-foreground`), `--gdy-segmented-focus-ring` (`--gdy-ring`), `--gdy-segmented-duration` (`220ms`) |
+| `--gdy-country-select-*` | `--gdy-country-select-width` (`240px`), `--gdy-country-select-border` (`--gdy-input`), `--gdy-country-select-focus-ring` (`--gdy-ring`), `--gdy-country-select-option-hover-bg` (`--gdy-listbox-option-hover-bg` y después `--gdy-accent`), `--gdy-country-select-chip-bg` (`--gdy-muted`) |
 | `--gdy-btn-*` | `--gdy-btn-bg` (`--gdy-muted`), `--gdy-btn-primary-bg` (`--gdy-primary`), `--gdy-btn-hover-bg` (`color-mix(in oklab, var(--gdy-foreground) 8%, var(--gdy-muted))`) |
 | `--gdy-input-*` | `--gdy-input-bg` (`--gdy-muted`), `--gdy-input-border` (`--gdy-input`) |
 | `--gdy-panel-*` | `--gdy-panel-bg` (`--gdy-popover`), `--gdy-panel-border` (`--gdy-border`), `--gdy-panel-shadow` (`--gdy-shadow-md`) |
@@ -179,6 +183,9 @@ Cada elemento que renderiza la librería lleva una clase `gdy-*` pensada como ga
   `gdy-auth-submit`, `gdy-auth-google`, `gdy-auth-rule`.
 - `gdy-segmented-<part>` para el control segmentado: `gdy-segmented` (raíz),
   `gdy-segmented-indicator`, `gdy-segmented-item`, `gdy-segmented-icon`, `gdy-segmented-label`.
+- `gdy-country-select-<part>` para el selector de país: `gdy-country-select` (raíz),
+  `gdy-country-select-trigger`, `gdy-country-select-value`, `gdy-country-select-chip`,
+  `gdy-country-select-panel`. Sus banderas conservan el `gdy-country-flag` compartido.
 
 Las reglas de la librería siguen un contrato de especificidad fijo:
 
@@ -258,6 +265,9 @@ por su presencia (`[data-dragging]`), no por su valor. El resto toma los valores
 | `data-status` | `gdy-auth-rule` | Gridory | requisito de contraseña `"pending"`, `"met"` o `"unmet"` |
 | `data-animated` | `gdy-segmented` | Gridory | `"true"` o `"false"`: si el indicador se desliza (la prop `animated`) |
 | `aria-checked` | `gdy-segmented-item` | Gridory | `"true"` en la opción elegida, `"false"` en las demás |
+| `aria-expanded`, `aria-invalid` | `gdy-country-select-trigger` | Gridory | `"true"` mientras la lista está abierta, `"false"` si no; `"true"` con un error |
+| `data-placeholder` | `gdy-country-select-value` | Gridory | no hay ningún país elegido |
+| `hidden` | `gdy-country-select-chip`, `gdy-country-select-more` | Gridory | un chip que no entra; el distintivo "+N" mientras entran todos los chips |
 
 Para dar estilo a un estado, añade el atributo a la clase. La regla pesa 0-2-0, así que también gana a una
 clase suelta que pases por una prop:
@@ -317,6 +327,12 @@ como `--gdy-auth-width`) y un objeto `classNames` con un slot por parte; ver
 El control segmentado acepta `className`, en su raíz (`gdy-segmented`), y un objeto `classNames` con
 un slot por parte: `root`, `indicator`, `item`, `icon` y `label`; ver
 [segmented-control.es.md](segmented-control.es.md#estilos).
+
+El selector de país acepta `className`, en su raíz (`gdy-country-select`), un objeto `classNames` con
+los slots `root`, `trigger`, `value`, `clear`, `chips`, `chip` y `panel`, y `width` (ancho del campo,
+fijado en línea como `--gdy-country-select-width`; un número son píxeles). Sus `thinScrollbars` (por
+defecto `true`) y `scrollbarColor` funcionan como en la tabla y el kanban, sobre la lista de su panel;
+ver [country-select.es.md](country-select.es.md#estilos).
 
 Los nombres de clase que llegan por props se concatenan tras el gancho tal como vienen. Nada los fusiona ni
 quita duplicados, así que una clase que pases nunca elimina una declaración de la librería; solo gana por las
