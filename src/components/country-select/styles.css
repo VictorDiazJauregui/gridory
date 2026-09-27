@@ -1,0 +1,318 @@
+/*
+ * Country select. Component tokens (`--gdy-country-select-*`) are read with a
+ * fallback to the base tokens and never declared here. States are attributes:
+ * aria-expanded and aria-invalid on the combobox, data-placeholder on an empty
+ * value, data-multiple on the box in multiple mode and hidden on the chips
+ * that do not fit.
+ */
+
+/* Same height, border, radius and background as the auth inputs, so both live
+   in one form. The width token is written inline by the width prop; the box
+   never overflows a narrower container and truncates instead. isolation keeps
+   the chips' z-index inside the box, so a sticky header of the app still
+   covers them. */
+/* One column that prefers the width token but may shrink to 0: flex and grid
+   ancestors size the field to 240px when there is room, and never get pushed
+   wider than their container by it, as a fixed width would do on a phone. */
+.gdy-country-select-frame {
+  display: grid;
+  grid-template-columns: minmax(0, var(--gdy-country-select-width, 240px));
+}
+
+.gdy-country-select {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-inline-size: 0;
+  block-size: var(--gdy-country-select-height, var(--gdy-field-control-height, 40px));
+  padding-inline-end: 10px;
+  border: 1px solid var(--gdy-country-select-border, var(--gdy-input));
+  border-radius: var(--gdy-country-select-radius, var(--gdy-radius));
+  background-color: var(--gdy-country-select-bg, var(--gdy-background));
+  color: var(--gdy-country-select-color, var(--gdy-foreground));
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.gdy-country-select-trigger {
+  display: flex;
+  flex: 1 1 auto;
+  align-self: stretch;
+  align-items: center;
+  gap: 8px;
+  min-inline-size: 0;
+  padding-inline: 12px 0;
+  background-color: transparent;
+  text-align: start;
+  cursor: pointer;
+}
+
+/* The box draws the focus ring, so the combobox paints none of its own. */
+.gdy-country-select-trigger:focus-visible {
+  outline: none;
+}
+
+/* Stretched over the whole box: a click anywhere but the clear button opens
+   the list, and the focus ring and the error border cover the full field.
+   It sits on the box border, so the ring is drawn inside and the box never
+   grows; the transparent outline shows only in forced colors mode, which
+   drops box-shadow. */
+.gdy-country-select-trigger::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border: 1px solid transparent;
+  border-radius: var(--gdy-country-select-radius, var(--gdy-radius));
+}
+
+.gdy-country-select-trigger[aria-invalid="true"]::before {
+  border-color: var(--gdy-country-select-error-color, var(--gdy-destructive));
+}
+
+.gdy-country-select-trigger:focus-visible::before {
+  border-color: var(--gdy-country-select-focus-ring, var(--gdy-ring));
+  outline: 2px solid transparent;
+  outline-offset: -2px;
+  box-shadow: inset 0 0 0 1px var(--gdy-country-select-focus-ring, var(--gdy-ring));
+}
+
+.gdy-country-select-trigger[aria-invalid="true"]:focus-visible::before {
+  border-color: var(--gdy-country-select-error-color, var(--gdy-destructive));
+  box-shadow: inset 0 0 0 1px var(--gdy-country-select-error-color, var(--gdy-destructive));
+}
+
+.gdy-country-select-value {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gdy-country-select-value[data-placeholder] {
+  color: var(--gdy-country-select-placeholder-color, var(--gdy-muted-foreground));
+}
+
+/* Positioned, so it paints above the stretched combobox and takes its own clicks. */
+.gdy-country-select-clear {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: 24px;
+  block-size: 24px;
+  border-radius: calc(var(--gdy-country-select-radius, var(--gdy-radius)) - 2px);
+  background-color: transparent;
+  color: var(--gdy-country-select-placeholder-color, var(--gdy-muted-foreground));
+  cursor: pointer;
+}
+
+.gdy-country-select-clear:focus-visible {
+  outline: 2px solid transparent;
+  outline-offset: -2px;
+  box-shadow: inset 0 0 0 2px var(--gdy-country-select-focus-ring, var(--gdy-ring));
+}
+
+/* Clicks go through it to the combobox underneath. The auto margin keeps it
+   at the end when nothing else is in the row (multiple mode, empty). */
+.gdy-country-select-chevron {
+  display: inline-flex;
+  flex: none;
+  margin-inline-start: auto;
+  inline-size: 16px;
+  block-size: 16px;
+  color: var(--gdy-country-select-placeholder-color, var(--gdy-muted-foreground));
+  pointer-events: none;
+}
+
+.gdy-country-select-chevron svg {
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+.gdy-country-select-trigger[aria-expanded="true"] ~ .gdy-country-select-chevron {
+  transform: rotate(180deg);
+}
+
+/* In multiple mode the combobox covers the whole box behind the chips, which
+   take the row in its place: a click on an empty spot or on a chip opens the
+   list, and only the chips' remove buttons take their own clicks. */
+.gdy-country-select[data-multiple] > .gdy-country-select-trigger {
+  position: absolute;
+  inset: 0;
+  padding-inline-end: 36px;
+}
+
+/* Read by screen readers only: the chips already show the selection. */
+.gdy-country-select-summary {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* The row never wraps: the chips that do not fit get the hidden attribute and
+   the "+N" badge counts them. */
+.gdy-country-select-chips {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  margin-inline-start: 6px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* flex-shrink: 0 keeps every chip at its own width even when the row overflows:
+   useVisibleChipCount measures those widths to decide which chips fit. */
+.gdy-country-select-chip {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 4px;
+  max-width: var(--gdy-country-select-chip-max-width, 8rem);
+  height: 1.5rem;
+  padding-inline-start: 6px;
+  border-radius: calc(var(--gdy-country-select-radius, var(--gdy-radius)) - 4px);
+  background-color: var(--gdy-country-select-chip-bg, var(--gdy-muted));
+  color: var(--gdy-country-select-chip-color, var(--gdy-foreground));
+  font-size: 0.75rem;
+  line-height: 1rem;
+  white-space: nowrap;
+}
+
+.gdy-country-select-chip-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* As tall as the chip and 24px wide, the minimum pointer target size. */
+.gdy-country-select-chip-remove {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 100%;
+  border-radius: inherit;
+  background-color: transparent;
+  color: inherit;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+/* The transparent outline shows only in forced colors mode, which drops
+   box-shadow; both sit inside the button, so the chip never grows. */
+.gdy-country-select-chip-remove:focus-visible {
+  outline: 2px solid transparent;
+  outline-offset: -2px;
+  box-shadow: inset 0 0 0 2px var(--gdy-country-select-focus-ring, var(--gdy-ring));
+}
+
+.gdy-country-select-more {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  height: 1.5rem;
+  padding-inline: 6px;
+  border-radius: calc(var(--gdy-country-select-radius, var(--gdy-radius)) - 4px);
+  background-color: var(--gdy-country-select-chip-bg, var(--gdy-muted));
+  color: var(--gdy-country-select-chip-color, var(--gdy-foreground));
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* The display of the two rules above would otherwise win over the hidden attribute. */
+.gdy-country-select-chip[hidden],
+.gdy-country-select-more[hidden] {
+  display: none;
+}
+
+/* Empty, the status has no box but stays in the page: a live region hidden with
+   display: none would not announce the message when it appears. */
+.gdy-country-select-status {
+  flex: none;
+  color: var(--gdy-muted-foreground);
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.gdy-country-select-status:not(:empty) {
+  padding: 6px 8px;
+  border-top: 1px solid var(--gdy-border);
+}
+
+/* Hover only where a pointer can hover: on a phone the color would stick
+   after a tap. Inside :where(), so a class from the app still wins. */
+@media (hover: hover) {
+  .gdy-country-select:where(:hover) {
+    background-color: var(
+      --gdy-country-select-hover-bg,
+      color-mix(in oklab, var(--gdy-foreground) 4%, var(--gdy-country-select-bg, var(--gdy-background)))
+    );
+  }
+
+  .gdy-country-select-chip-remove:where(:hover) {
+    background-color: color-mix(in oklab, var(--gdy-country-select-chip-color, var(--gdy-foreground)) 10%, transparent);
+  }
+
+  .gdy-country-select-clear:where(:hover) {
+    color: var(--gdy-country-select-color, var(--gdy-foreground));
+  }
+}
+
+/* Three classes so it beats the panel width of .gdy-popover-content.gdy-floating-panel
+   by specificity, never by stylesheet order. Never narrower than the field. */
+.gdy-popover-content.gdy-floating-panel.gdy-country-select-panel {
+  width: max(var(--radix-popover-trigger-width), var(--gdy-country-select-panel-min-width, 240px));
+}
+
+/* The list reads the country select tokens first, so this control can be
+   painted apart from other lists without declaring their tokens. */
+.gdy-country-select-panel .gdy-listbox-option[aria-selected="true"] {
+  background-color: var(--gdy-country-select-option-selected-bg, var(--gdy-listbox-option-selected-bg, transparent));
+}
+
+.gdy-country-select-panel .gdy-listbox-option[data-active] {
+  background-color: var(
+    --gdy-country-select-option-hover-bg,
+    var(--gdy-listbox-option-hover-bg, var(--gdy-option-hover-bg, var(--gdy-accent)))
+  );
+  color: var(
+    --gdy-country-select-option-hover-color,
+    var(--gdy-listbox-option-hover-text, var(--gdy-accent-foreground))
+  );
+}
+
+.gdy-country-select-panel .gdy-listbox-check {
+  color: var(--gdy-country-select-check-color, var(--gdy-listbox-check-color, var(--gdy-primary)));
+}
+
+/* Forced colors mode drops two backgrounds: the active option's, the only mark
+   of where the arrows are, and the chips', their only edge. */
+@media (forced-colors: active) {
+  .gdy-country-select-panel .gdy-listbox-option[data-active] {
+    outline: 2px solid transparent;
+    outline-offset: -2px;
+  }
+
+  .gdy-country-select-chip,
+  .gdy-country-select-more {
+    border: 1px solid;
+  }
+}

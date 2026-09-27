@@ -27,5 +27,7 @@ dist-ssr
 assets
 .playwright-mcp
 .playwright-mcp/*
+# Capturas que deja Vitest cuando falla un test de navegador
+.vitest
 # Notas de release: se redactan en local y se suben con `gh release create --notes-file`
 docs/releases

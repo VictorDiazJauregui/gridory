@@ -161,6 +161,117 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-ai-thinking-label` | con estilos | — |
 | `gdy-ai-title` | con estilos | — |
 
+### Formularios de autenticación
+
+| Clase | Tipo | Selectores de estado |
+|---|---|---|
+| `gdy-auth` | con estilos | — |
+| `gdy-auth-addon` | con estilos | — |
+| `gdy-auth-alert` | con estilos | — |
+| `gdy-auth-checkbox` | con estilos | — |
+| `gdy-auth-checkbox-input` | con estilos | — |
+| `gdy-auth-checkbox-label` | con estilos | — |
+| `gdy-auth-divider` | con estilos | — |
+| `gdy-auth-error` | con estilos | — |
+| `gdy-auth-field` | con estilos | — |
+| `gdy-auth-fields` | con estilos | — |
+| `gdy-auth-footer` | con estilos | — |
+| `gdy-auth-forgot` | con estilos | — |
+| `gdy-auth-form` | con estilos | — |
+| `gdy-auth-google` | con estilos | — |
+| `gdy-auth-google-logo` | con estilos | — |
+| `gdy-auth-google-overlay` | con estilos | — |
+| `gdy-auth-google-slot` | con estilos | `[data-disabled]` |
+| `gdy-auth-header` | con estilos | — |
+| `gdy-auth-input` | con estilos | `[aria-invalid="true"]` |
+| `gdy-auth-label` | con estilos | — |
+| `gdy-auth-link` | con estilos | — |
+| `gdy-auth-name-row` | con estilos | — |
+| `gdy-auth-password` | con estilos | — |
+| `gdy-auth-password-icon` | con estilos | — |
+| `gdy-auth-password-toggle` | con estilos | — |
+| `gdy-auth-phone` | con estilos | — |
+| `gdy-auth-required` | con estilos | — |
+| `gdy-auth-rule` | con estilos | `[data-status="met"]`, `[data-status="unmet"]` |
+| `gdy-auth-rule-icon` | con estilos | — |
+| `gdy-auth-rules` | con estilos | — |
+| `gdy-auth-rules-list` | con estilos | — |
+| `gdy-auth-rules-title` | con estilos | — |
+| `gdy-auth-select` | con estilos | — |
+| `gdy-auth-spinner` | con estilos | — |
+| `gdy-auth-submit` | con estilos | — |
+| `gdy-auth-subtitle` | con estilos | — |
+| `gdy-auth-textarea` | con estilos | — |
+| `gdy-auth-title` | con estilos | — |
+
+### Control segmentado
+
+| Clase | Tipo | Selectores de estado |
+|---|---|---|
+| `gdy-segmented` | con estilos | `[data-animated="true"]` |
+| `gdy-segmented-icon` | con estilos | — |
+| `gdy-segmented-indicator` | con estilos | — |
+| `gdy-segmented-item` | con estilos | `[aria-checked="false"]`, `[aria-checked="true"]` |
+| `gdy-segmented-label` | con estilos | — |
+
+### Selector de país
+
+| Clase | Tipo | Selectores de estado |
+|---|---|---|
+| `gdy-country-select` | con estilos | `[data-multiple]` |
+| `gdy-country-select-chevron` | con estilos | — |
+| `gdy-country-select-chip` | con estilos | — |
+| `gdy-country-select-chip-label` | con estilos | — |
+| `gdy-country-select-chip-remove` | con estilos | — |
+| `gdy-country-select-chips` | con estilos | — |
+| `gdy-country-select-clear` | con estilos | — |
+| `gdy-country-select-frame` | con estilos | — |
+| `gdy-country-select-more` | con estilos | — |
+| `gdy-country-select-panel` | con estilos | — |
+| `gdy-country-select-status` | con estilos | — |
+| `gdy-country-select-summary` | con estilos | — |
+| `gdy-country-select-trigger` | con estilos | `[aria-expanded="true"]`, `[aria-invalid="true"]` |
+| `gdy-country-select-value` | con estilos | `[data-placeholder]` |
+
+### Teléfono con prefijo
+
+| Clase | Tipo | Selectores de estado |
+|---|---|---|
+| `gdy-phone-input` | con estilos | `[data-invalid]` |
+| `gdy-phone-input-chevron` | con estilos | — |
+| `gdy-phone-input-dial-code` | con estilos | `[data-placeholder]` |
+| `gdy-phone-input-frame` | con estilos | — |
+| `gdy-phone-input-number` | con estilos | — |
+| `gdy-phone-input-panel` | con estilos | — |
+| `gdy-phone-input-prefix` | con estilos | `[aria-expanded="true"]` |
+
+### Menú lateral
+
+| Clase | Tipo | Selectores de estado |
+|---|---|---|
+| `gdy-sidebar` | con estilos | `[data-animated="true"]`, `[data-hover-expand="false"]`, `[data-hover-expand="true"]`, `[data-pinned="false"]`, `[data-pinned="true"]`, `[data-state="collapsed"]`, `[data-state="expanded"]` |
+| `gdy-sidebar-content` | con estilos | — |
+| `gdy-sidebar-drawer` | con estilos | `[data-state="closed"]`, `[data-state="open"]` |
+| `gdy-sidebar-drawer-close` | con estilos | — |
+| `gdy-sidebar-footer` | con estilos | — |
+| `gdy-sidebar-header` | con estilos | — |
+| `gdy-sidebar-item` | con estilos | `[aria-current="page"]` |
+| `gdy-sidebar-item-icon` | con estilos | — |
+| `gdy-sidebar-item-label` | con estilos | — |
+| `gdy-sidebar-layout` | con estilos | `[data-mobile="true"]` |
+| `gdy-sidebar-logo` | con estilos | `[data-compact="true"]` |
+| `gdy-sidebar-logo-compact` | con estilos | — |
+| `gdy-sidebar-logo-full` | con estilos | — |
+| `gdy-sidebar-menu-button` | con estilos | — |
+| `gdy-sidebar-mobile-bar` | con estilos | — |
+| `gdy-sidebar-mobile-end` | con estilos | — |
+| `gdy-sidebar-mobile-logo` | con estilos | — |
+| `gdy-sidebar-overlay` | con estilos | `[data-state="closed"]`, `[data-state="open"]` |
+| `gdy-sidebar-panel` | con estilos | — |
+| `gdy-sidebar-pin` | con estilos | — |
+| `gdy-sidebar-separator` | con estilos | — |
+| `gdy-sidebar-tooltip` | con estilos | — |
+
 ### Primitivos
 
 | Clase | Tipo | Selectores de estado |
@@ -205,7 +316,7 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-select-item-text` | solo gancho | — |
 | `gdy-select-scroll-button` | con estilos | — |
 | `gdy-select-scroll-icon` | con estilos | — |
-| `gdy-select-trigger` | con estilos | `[data-placeholder]`, `[data-state="open"]` |
+| `gdy-select-trigger` | con estilos | `[aria-invalid="true"]`, `[data-placeholder]`, `[data-state="open"]` |
 | `gdy-select-value` | solo gancho | — |
 | `gdy-select-viewport` | con estilos | — |
 | `gdy-toggle-group` | con estilos | — |
@@ -223,6 +334,7 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-btn-primary` | con estilos | — |
 | `gdy-btn-xs` | con estilos | — |
 | `gdy-card` | con estilos | — |
+| `gdy-country-flag` | con estilos | — |
 | `gdy-date-input` | con estilos | — |
 | `gdy-date-input-with-icon` | con estilos | — |
 | `gdy-date-picker-icon` | solo gancho | — |
@@ -231,12 +343,27 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-date-range-inputs` | con estilos | — |
 | `gdy-empty` | con estilos | — |
 | `gdy-empty-sm` | con estilos | — |
+| `gdy-field` | con estilos | `[data-label-position="start"]` |
+| `gdy-field-control` | con estilos | — |
+| `gdy-field-error` | con estilos | — |
+| `gdy-field-label` | con estilos | — |
+| `gdy-field-required` | con estilos | — |
+| `gdy-floating-panel` | con estilos | — |
 | `gdy-icon-btn` | con estilos | — |
 | `gdy-inline-links` | con estilos | — |
 | `gdy-input` | con estilos | — |
 | `gdy-input-sm` | con estilos | — |
 | `gdy-link-btn` | con estilos | `[aria-pressed="true"]` |
 | `gdy-link-btn-nowrap` | con estilos | — |
+| `gdy-listbox` | con estilos | — |
+| `gdy-listbox-check` | con estilos | — |
+| `gdy-listbox-empty` | con estilos | — |
+| `gdy-listbox-label` | con estilos | — |
+| `gdy-listbox-leading` | con estilos | — |
+| `gdy-listbox-option` | con estilos | `[aria-disabled="true"]`, `[aria-selected="true"]`, `[data-active]` |
+| `gdy-listbox-options` | con estilos | — |
+| `gdy-listbox-search` | con estilos | — |
+| `gdy-listbox-trailing` | con estilos | — |
 | `gdy-option-check` | con estilos | `[data-checked]` |
 | `gdy-option-check-icon` | solo gancho | — |
 | `gdy-option-item` | con estilos | `[data-selected]` |
@@ -274,22 +401,36 @@ ponen Radix o react-day-picker siguen a esas librerías.
 
 | Atributo | Valores | Lo pone | Se usa con |
 |---|---|---|---|
-| `aria-disabled` | `"true"` | Radix o react-day-picker | `gdy-calendar-button-next`, `gdy-calendar-button-previous` |
-| `aria-expanded` | `"false"`, `"true"` | Gridory | `gdy-button`, `gdy-table-group-toggle` |
+| `aria-checked` | `"false"`, `"true"` | Gridory | `gdy-segmented-item` |
+| `aria-current` | `"page"` | Gridory | `gdy-sidebar-item` |
+| `aria-disabled` | `"true"` | Radix o react-day-picker | `gdy-calendar-button-next`, `gdy-calendar-button-previous`, `gdy-listbox-option` |
+| `aria-expanded` | `"false"`, `"true"` | Gridory | `gdy-button`, `gdy-country-select-trigger`, `gdy-phone-input-prefix`, `gdy-table-group-toggle` |
+| `aria-invalid` | `"true"` | Gridory | `gdy-auth-input`, `gdy-country-select-trigger`, `gdy-select-trigger` |
 | `aria-pressed` | `"true"` | Gridory | `gdy-link-btn`, `gdy-view-switch-btn` |
+| `aria-selected` | `"true"` | Gridory | `gdy-listbox-option` |
 | `data-action-type` | `"create-card"`, `"create-row"`, `"custom"`, `"move-card"`, `"update-row"` | Gridory | sin regla por defecto |
+| `data-active` | presente / ausente | Gridory | `gdy-listbox-option` |
+| `data-animated` | `"true"` | Gridory | `gdy-segmented`, `gdy-sidebar` |
 | `data-checked` | presente / ausente | Gridory | `gdy-option-check` |
 | `data-clickable` | presente / ausente | Gridory | `gdy-table-row` |
-| `data-disabled` | presente / ausente | Radix o react-day-picker | `gdy-calendar-day`, `gdy-menu-item`, `gdy-select-item` |
+| `data-compact` | `"true"` | Gridory | `gdy-sidebar-logo` |
+| `data-disabled` | presente / ausente | Gridory, Radix o react-day-picker | `gdy-auth-google-slot`, `gdy-calendar-day`, `gdy-menu-item`, `gdy-select-item` |
 | `data-dragging` | presente / ausente | Gridory | `gdy-kanban-card` |
 | `data-drop-target` | presente / ausente | Gridory | `gdy-kanban-column` |
 | `data-empty` | presente / ausente | Gridory | `gdy-ai-body` |
 | `data-filtered` | presente / ausente | Gridory | `gdy-kanban-filter-trigger` |
+| `data-form` | `"login"`, `"signup"` | Gridory | sin regla por defecto |
 | `data-hidden` | presente / ausente | Radix o react-day-picker | `gdy-calendar-day` |
 | `data-highlighted` | presente / ausente | Radix o react-day-picker | `gdy-select-item` |
+| `data-hover-expand` | `"false"`, `"true"` | Gridory | `gdy-sidebar` |
+| `data-invalid` | presente / ausente | Gridory | `gdy-phone-input` |
+| `data-label-position` | `"start"` | Gridory | `gdy-field` |
 | `data-list` | `"ordered"`, `"unordered"` | Gridory | sin regla por defecto |
+| `data-mobile` | `"true"` | Gridory | `gdy-sidebar-layout` |
+| `data-multiple` | presente / ausente | Gridory | `gdy-country-select` |
 | `data-outside` | presente / ausente | Radix o react-day-picker | `gdy-calendar-day` |
-| `data-placeholder` | presente / ausente | Radix o react-day-picker | `gdy-select-trigger` |
+| `data-pinned` | `"false"`, `"true"` | Gridory | `gdy-sidebar` |
+| `data-placeholder` | presente / ausente | Gridory, Radix o react-day-picker | `gdy-country-select-value`, `gdy-phone-input-dial-code`, `gdy-select-trigger` |
 | `data-range-end` | presente / ausente | Gridory | `gdy-calendar-day`, `gdy-calendar-day-button` |
 | `data-range-middle` | presente / ausente | Gridory | `gdy-calendar-day`, `gdy-calendar-day-button` |
 | `data-range-start` | presente / ausente | Gridory | `gdy-calendar-day`, `gdy-calendar-day-button` |
@@ -298,7 +439,8 @@ ponen Radix o react-day-picker siguen a esas librerías.
 | `data-selected-single` | presente / ausente | Gridory | `gdy-calendar-day-button` |
 | `data-side` | `"bottom"`, `"left"`, `"right"`, `"top"` | Radix o react-day-picker | `gdy-menu-content`, `gdy-popover-content`, `gdy-select-content` |
 | `data-size` | `"default"`, `"icon"`, `"icon-lg"`, `"icon-sm"`, `"icon-xs"`, `"lg"`, `"sm"`, `"xs"` | Gridory | `gdy-button` |
-| `data-state` | `"checked"`, `"closed"`, `"on"`, `"open"` | Gridory, Radix o react-day-picker | `gdy-ai-sidebar`, `gdy-menu-content`, `gdy-popover-content`, `gdy-select-content`, `gdy-select-item`, `gdy-select-trigger`, `gdy-toggle-item` |
+| `data-state` | `"checked"`, `"closed"`, `"collapsed"`, `"expanded"`, `"on"`, `"open"` | Gridory, Radix o react-day-picker | `gdy-ai-sidebar`, `gdy-menu-content`, `gdy-popover-content`, `gdy-select-content`, `gdy-select-item`, `gdy-select-trigger`, `gdy-sidebar`, `gdy-sidebar-drawer`, `gdy-sidebar-overlay`, `gdy-toggle-item` |
+| `data-status` | `"met"`, `"pending"`, `"unmet"` | Gridory | `gdy-auth-rule` |
 | `data-streaming` | presente / ausente | Gridory | sin regla por defecto |
 | `data-thinking` | presente / ausente | Gridory | sin regla por defecto |
 | `data-today` | presente / ausente | Radix o react-day-picker | `gdy-calendar-day` |
@@ -327,6 +469,7 @@ de la columna puente, si tu app la define.
 | `--gdy-accent-foreground` | `--accent-foreground` | `oklch(0.205 0 0)` | `oklch(0.985 0 0)` |
 | `--gdy-destructive` | `--destructive` | `oklch(0.577 0.245 27.325)` | `oklch(0.704 0.191 22.216)` |
 | `--gdy-destructive-foreground` | `--destructive-foreground` | `oklch(0.985 0 0)` | `oklch(0.985 0 0)` |
+| `--gdy-success` | `--success` | `oklch(0.527 0.154 150.069)` | `oklch(0.792 0.209 151.711)` |
 | `--gdy-border` | `--border` | `oklch(0.922 0 0)` | `oklch(1 0 0 / 10%)` |
 | `--gdy-input` | `--input` | `oklch(0.922 0 0)` | `oklch(1 0 0 / 15%)` |
 | `--gdy-ring` | `--ring` | `oklch(0.708 0 0)` | `oklch(0.556 0 0)` |
@@ -337,6 +480,10 @@ de la columna puente, si tu app la define.
 | `--gdy-shadow-md` | — | `0 8px 24px rgb(0 0 0 / 0.12)` | `0 8px 24px rgb(0 0 0 / 0.6)` |
 | `--gdy-shadow-lg` | — | `0 25px 50px -12px rgb(0 0 0 / 0.25)` | `0 25px 50px -12px rgb(0 0 0 / 0.6)` |
 | `--gdy-font-mono` | — | `ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace` | `ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace` |
+| `--gdy-google-blue` | — | `#4285f4` | `#4285f4` |
+| `--gdy-google-green` | — | `#34a853` | `#34a853` |
+| `--gdy-google-yellow` | — | `#fbbc05` | `#fbbc05` |
+| `--gdy-google-red` | — | `#ea4335` | `#ea4335` |
 
 ## Tokens de componente
 
@@ -352,6 +499,47 @@ cualquier ancestro cambia solo esa parte. Los `--gdy-select-*` también reflejan
 | `--gdy-ai-bg` | `var(--gdy-background)` | ai |
 | `--gdy-ai-user-bubble-bg` | `var(--gdy-ai-accent, var(--gdy-primary))` | ai |
 | `--gdy-ai-user-bubble-fg` | `var(--gdy-ai-accent-fg, var(--gdy-primary-foreground))` | ai |
+| `--gdy-auth-bg` | `var(--gdy-card)` | auth |
+| `--gdy-auth-border` | `var(--gdy-border)` | auth |
+| `--gdy-auth-button-height` | `40px` | auth |
+| `--gdy-auth-button-radius` | `var(--gdy-radius)` | auth |
+| `--gdy-auth-checkbox` | `var(--gdy-primary)` | auth |
+| `--gdy-auth-divider` | `var(--gdy-border)` | auth |
+| `--gdy-auth-divider-gap` | `12px` | auth |
+| `--gdy-auth-error` | `var(--gdy-destructive)` | auth |
+| `--gdy-auth-fg` | `var(--gdy-card-foreground)` | auth |
+| `--gdy-auth-field-gap` | `14px` | auth |
+| `--gdy-auth-gap` | `16px` | auth |
+| `--gdy-auth-google-bg` | `var(--gdy-background)` | auth |
+| `--gdy-auth-google-border` | `var(--gdy-border)` | auth |
+| `--gdy-auth-google-fg` | `var(--gdy-foreground)` | auth |
+| `--gdy-auth-google-hover-bg` | `var(--gdy-muted)` | auth |
+| `--gdy-auth-google-hover-border` | `var(--gdy-ring)` | auth |
+| `--gdy-auth-google-hover-fg` | `var(--gdy-foreground)` | auth |
+| `--gdy-auth-header-gap` | `4px` | auth |
+| `--gdy-auth-input-bg` | `var(--gdy-background)` | auth |
+| `--gdy-auth-input-border` | `var(--gdy-input)` | auth |
+| `--gdy-auth-input-fg` | `var(--gdy-foreground)` | auth |
+| `--gdy-auth-input-focus-border` | `var(--gdy-ring)` | auth |
+| `--gdy-auth-input-height` | `40px` | auth |
+| `--gdy-auth-input-radius` | `var(--gdy-radius)` | auth |
+| `--gdy-auth-label` | `inherit` | auth |
+| `--gdy-auth-label-gap` | `6px` | auth |
+| `--gdy-auth-link` | `var(--gdy-link)` | auth |
+| `--gdy-auth-muted` | `var(--gdy-muted-foreground)` | auth |
+| `--gdy-auth-padding` | `24px` | auth |
+| `--gdy-auth-radius` | `calc(var(--gdy-radius) + 2px)` | auth |
+| `--gdy-auth-required` | `var(--gdy-destructive)` | auth |
+| `--gdy-auth-rule-met` | `var(--gdy-success)` | auth |
+| `--gdy-auth-rule-pending` | `var(--gdy-muted-foreground)` | auth |
+| `--gdy-auth-rule-unmet` | `var(--gdy-destructive)` | auth |
+| `--gdy-auth-shadow` | `var(--gdy-shadow-sm)` | auth |
+| `--gdy-auth-submit-bg` | `var(--gdy-primary)` | auth |
+| `--gdy-auth-submit-fg` | `var(--gdy-primary-foreground)` | auth |
+| `--gdy-auth-submit-focus` | `var(--gdy-ring)` | auth |
+| `--gdy-auth-submit-hover-bg` | `color-mix(in oklab, var(--gdy-auth-submit-bg, var(--gdy-primary)) 85%, transparent)` | auth |
+| `--gdy-auth-title` | `inherit` | auth |
+| `--gdy-auth-width` | `448px` | auth |
 | `--gdy-btn-bg` | `var(--gdy-muted)` | shared |
 | `--gdy-btn-fg` | `var(--gdy-foreground)` | shared |
 | `--gdy-btn-hover-bg` | `color-mix(in oklab, var(--gdy-foreground) 8%, var(--gdy-muted))` | shared |
@@ -360,6 +548,35 @@ cualquier ancestro cambia solo esa parte. Los `--gdy-select-*` también reflejan
 | `--gdy-calendar-range-bg` | `var(--gdy-muted)` | ui |
 | `--gdy-calendar-selected-bg` | `var(--gdy-primary)` | ui |
 | `--gdy-calendar-selected-fg` | `var(--gdy-primary-foreground)` | ui |
+| `--gdy-country-flag-outline` | `var(--gdy-border)` | shared |
+| `--gdy-country-flag-radius` | `2px` | shared |
+| `--gdy-country-flag-width` | `20px` | shared |
+| `--gdy-country-select-bg` | `var(--gdy-background)` | country-select |
+| `--gdy-country-select-border` | `var(--gdy-input)` | country-select |
+| `--gdy-country-select-check-color` | `var(--gdy-listbox-check-color, var(--gdy-primary))` | country-select |
+| `--gdy-country-select-chip-bg` | `var(--gdy-muted)` | country-select |
+| `--gdy-country-select-chip-color` | `var(--gdy-foreground)` | country-select |
+| `--gdy-country-select-chip-max-width` | `8rem` | country-select |
+| `--gdy-country-select-color` | `var(--gdy-foreground)` | country-select |
+| `--gdy-country-select-error-color` | `var(--gdy-destructive)` | country-select |
+| `--gdy-country-select-focus-ring` | `var(--gdy-ring)` | country-select |
+| `--gdy-country-select-height` | `var(--gdy-field-control-height, 40px)` | country-select |
+| `--gdy-country-select-hover-bg` | `color-mix(in oklab, var(--gdy-foreground) 4%, var(--gdy-country-select-bg, var(--gdy-background)))` | country-select |
+| `--gdy-country-select-option-hover-bg` | `var(--gdy-listbox-option-hover-bg, var(--gdy-option-hover-bg, var(--gdy-accent)))` | country-select |
+| `--gdy-country-select-option-hover-color` | `var(--gdy-listbox-option-hover-text, var(--gdy-accent-foreground))` | country-select |
+| `--gdy-country-select-option-selected-bg` | `var(--gdy-listbox-option-selected-bg, transparent)` | country-select |
+| `--gdy-country-select-panel-min-width` | `240px` | country-select |
+| `--gdy-country-select-placeholder-color` | `var(--gdy-muted-foreground)` | country-select |
+| `--gdy-country-select-radius` | `var(--gdy-radius)` | country-select |
+| `--gdy-country-select-width` | `240px` | country-select |
+| `--gdy-field-control-height` | `40px` | country-select, phone-input, shared |
+| `--gdy-field-error-color` | `var(--gdy-destructive)` | shared |
+| `--gdy-field-label-color` | `var(--gdy-foreground)` | shared |
+| `--gdy-field-label-gap` | `6px` | shared |
+| `--gdy-field-label-width` | `auto` | shared |
+| `--gdy-field-required-color` | `var(--gdy-destructive)` | shared |
+| `--gdy-floating-panel-max-height` | `20rem` | shared |
+| `--gdy-floating-panel-min-width` | `12rem` | shared |
 | `--gdy-input-bg` | `var(--gdy-muted)` | shared |
 | `--gdy-input-border` | `var(--gdy-input)` | kanban, shared |
 | `--gdy-kanban-card-bg` | `var(--gdy-card)` | kanban |
@@ -368,16 +585,56 @@ cualquier ancestro cambia solo esa parte. Los `--gdy-select-*` también reflejan
 | `--gdy-kanban-column-border` | `var(--gdy-border)` | kanban |
 | `--gdy-kanban-drop-bg` | `color-mix(in oklab, var(--gdy-foreground) 6%, var(--gdy-muted))` | kanban |
 | `--gdy-kanban-drop-outline` | `var(--gdy-muted-foreground)` | kanban |
+| `--gdy-listbox-check-color` | `var(--gdy-primary)` | country-select, phone-input, shared |
+| `--gdy-listbox-max-height` | `16rem` | shared |
+| `--gdy-listbox-option-hover-bg` | `var(--gdy-option-hover-bg, var(--gdy-accent))` | country-select, phone-input, shared |
+| `--gdy-listbox-option-hover-text` | `var(--gdy-accent-foreground)` | country-select, phone-input, shared |
+| `--gdy-listbox-option-selected-bg` | `transparent` | country-select, phone-input, shared |
+| `--gdy-listbox-option-text` | `inherit` | shared |
 | `--gdy-menu-bg` | `var(--gdy-popover)` | ui |
 | `--gdy-menu-fg` | `var(--gdy-popover-foreground)` | ui |
 | `--gdy-menu-item-hover-bg` | `var(--gdy-accent)` | ui |
-| `--gdy-option-hover-bg` | `color-mix(in oklab, var(--gdy-foreground) 6%, var(--gdy-muted))` | shared |
+| `--gdy-option-hover-bg` | `color-mix(in oklab, var(--gdy-foreground) 6%, var(--gdy-muted))`, `var(--gdy-accent)` | country-select, phone-input, shared |
 | `--gdy-panel-bg` | `var(--gdy-popover)` | shared |
 | `--gdy-panel-border` | `var(--gdy-border)` | shared |
 | `--gdy-panel-shadow` | `var(--gdy-shadow-md)` | shared |
+| `--gdy-phone-input-bg` | `var(--gdy-background)` | phone-input |
+| `--gdy-phone-input-border` | `var(--gdy-input)` | phone-input |
+| `--gdy-phone-input-check-color` | `var(--gdy-listbox-check-color, var(--gdy-primary))` | phone-input |
+| `--gdy-phone-input-color` | `var(--gdy-foreground)` | phone-input |
+| `--gdy-phone-input-error-color` | `var(--gdy-destructive)` | phone-input |
+| `--gdy-phone-input-focus-ring` | `var(--gdy-ring)` | phone-input |
+| `--gdy-phone-input-gap` | `8px` | phone-input |
+| `--gdy-phone-input-height` | `var(--gdy-field-control-height, 40px)` | phone-input |
+| `--gdy-phone-input-option-hover-bg` | `var(--gdy-listbox-option-hover-bg, var(--gdy-option-hover-bg, var(--gdy-accent)))` | phone-input |
+| `--gdy-phone-input-option-hover-color` | `var(--gdy-listbox-option-hover-text, var(--gdy-accent-foreground))` | phone-input |
+| `--gdy-phone-input-option-selected-bg` | `var(--gdy-listbox-option-selected-bg, transparent)` | phone-input |
+| `--gdy-phone-input-panel-min-width` | `280px` | phone-input |
+| `--gdy-phone-input-placeholder-color` | `var(--gdy-muted-foreground)` | phone-input |
+| `--gdy-phone-input-prefix-focus-color` | `var(--gdy-ring)` | phone-input |
+| `--gdy-phone-input-radius` | `var(--gdy-radius)` | phone-input |
+| `--gdy-phone-input-width` | `280px` | phone-input |
 | `--gdy-popover-bg` | `var(--gdy-popover)` | ui |
 | `--gdy-popover-fg` | `var(--gdy-popover-foreground)` | ui |
-| `--gdy-scrollbar-thumb` | `var(--gdy-input)` | shared, ui |
+| `--gdy-scrollbar-thumb` | `var(--gdy-input)` | segmented-control, shared, sidebar, ui |
+| `--gdy-segmented-bg` | `var(--gdy-muted)` | segmented-control |
+| `--gdy-segmented-border` | `var(--gdy-border)` | segmented-control |
+| `--gdy-segmented-duration` | `220ms` | motion |
+| `--gdy-segmented-focus-ring` | `var(--gdy-ring)` | segmented-control |
+| `--gdy-segmented-font-size` | `0.8125rem` | segmented-control |
+| `--gdy-segmented-gap` | `4px` | segmented-control |
+| `--gdy-segmented-icon-gap` | `6px` | segmented-control |
+| `--gdy-segmented-icon-size` | `1.077em` | segmented-control |
+| `--gdy-segmented-indicator-bg` | `var(--gdy-background)` | segmented-control |
+| `--gdy-segmented-indicator-shadow` | `var(--gdy-shadow-sm)` | segmented-control |
+| `--gdy-segmented-item-active-color` | `var(--gdy-foreground)` | segmented-control |
+| `--gdy-segmented-item-color` | `var(--gdy-muted-foreground)` | segmented-control |
+| `--gdy-segmented-item-hover-bg` | `color-mix(in oklab, var(--gdy-foreground) 6%, transparent)` | segmented-control |
+| `--gdy-segmented-item-hover-color` | `var(--gdy-foreground)` | segmented-control |
+| `--gdy-segmented-item-padding` | `4px 12px` | segmented-control |
+| `--gdy-segmented-item-radius` | `7px` | segmented-control |
+| `--gdy-segmented-padding` | `4px` | segmented-control |
+| `--gdy-segmented-radius` | `9px` | segmented-control |
 | `--gdy-select-bg` | `var(--gdy-background)` | ui |
 | `--gdy-select-border` | `var(--gdy-border)` | ui |
 | `--gdy-select-content-bg` | `var(--gdy-popover)` | ui |
@@ -389,6 +646,40 @@ cualquier ancestro cambia solo esa parte. Los `--gdy-select-*` también reflejan
 | `--gdy-select-radius` | `calc(var(--gdy-radius) - 2px)` | ui |
 | `--gdy-select-text` | `var(--gdy-foreground)` | ui |
 | `--gdy-select-trigger-hover-bg` | `var(--gdy-muted)` | ui |
+| `--gdy-sidebar-bg` | `var(--gdy-card)` | sidebar |
+| `--gdy-sidebar-border` | `var(--gdy-border)` | sidebar |
+| `--gdy-sidebar-drawer-width` | `min(280px, 85vw)` | sidebar |
+| `--gdy-sidebar-drawer-z` | `50` | sidebar |
+| `--gdy-sidebar-duration` | `200ms` | motion |
+| `--gdy-sidebar-fg` | `var(--gdy-card-foreground)` | sidebar |
+| `--gdy-sidebar-focus-ring` | `var(--gdy-ring)` | sidebar |
+| `--gdy-sidebar-font-size` | `0.875rem` | sidebar |
+| `--gdy-sidebar-header-height` | `64px` | sidebar |
+| `--gdy-sidebar-height` | `100dvh` | sidebar |
+| `--gdy-sidebar-icon-size` | `20px` | sidebar |
+| `--gdy-sidebar-item-active-bg` | `var(--gdy-primary)` | sidebar |
+| `--gdy-sidebar-item-active-fg` | `var(--gdy-primary-foreground)` | sidebar |
+| `--gdy-sidebar-item-color` | `inherit` | sidebar |
+| `--gdy-sidebar-item-gap` | `12px` | sidebar |
+| `--gdy-sidebar-item-height` | `40px` | sidebar |
+| `--gdy-sidebar-item-hover-bg` | `var(--gdy-muted)` | sidebar |
+| `--gdy-sidebar-item-radius` | `calc(var(--gdy-radius) - 2px)` | sidebar |
+| `--gdy-sidebar-item-spacing` | `4px` | sidebar |
+| `--gdy-sidebar-logo-mark-size` | `32px` | sidebar |
+| `--gdy-sidebar-mobile-bar-height` | `56px` | sidebar |
+| `--gdy-sidebar-overlay-bg` | `var(--gdy-overlay)` | sidebar |
+| `--gdy-sidebar-overlay-shadow` | `var(--gdy-shadow-lg)` | sidebar |
+| `--gdy-sidebar-padding` | `12px` | sidebar |
+| `--gdy-sidebar-pin-color` | `var(--gdy-muted-foreground)` | sidebar |
+| `--gdy-sidebar-rail-width` | `80px` | sidebar |
+| `--gdy-sidebar-scrollbar-thumb` | `var(--gdy-scrollbar-thumb, var(--gdy-input))` | sidebar |
+| `--gdy-sidebar-separator-color` | `var(--gdy-border)` | sidebar |
+| `--gdy-sidebar-separator-margin` | `8px` | sidebar |
+| `--gdy-sidebar-tooltip-bg` | `var(--gdy-foreground)` | sidebar |
+| `--gdy-sidebar-tooltip-fg` | `var(--gdy-background)` | sidebar |
+| `--gdy-sidebar-tooltip-z` | `60` | sidebar |
+| `--gdy-sidebar-width` | `280px` | sidebar |
+| `--gdy-sidebar-z` | `40` | sidebar |
 | `--gdy-table-border` | `var(--gdy-border)` | table |
 | `--gdy-table-group-bg` | `var(--gdy-accent)` | table |
 | `--gdy-table-head-bg` | `var(--gdy-muted)` | table |

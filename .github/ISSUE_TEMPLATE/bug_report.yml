@@ -30,6 +30,11 @@ body:
         - DataTable
         - KanbanBoard
         - AI assistant
+        - Auth forms
+        - Segmented control
+        - Country select
+        - Phone input
+        - Sidebar
         - Styles and theming
         - Other
     validations:

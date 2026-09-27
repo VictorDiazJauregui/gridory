@@ -3,7 +3,7 @@
   "compilerOptions": {
     "noEmit": false,
     "declaration": true,
-    "declarationMap": true,
+    "declarationMap": false,
     "emitDeclarationOnly": true,
     "outDir": "./dist/types",
     "rootDir": "./src"
@@ -13,9 +13,19 @@
     "src/table.ts",
     "src/kanban.ts",
     "src/ai.ts",
+    "src/auth.ts",
+    "src/segmented-control.ts",
+    "src/country-select.ts",
+    "src/phone-input.ts",
+    "src/sidebar.ts",
     "src/components/table/**/*",
     "src/components/kanban/**/*",
     "src/components/ai/**/*",
+    "src/components/auth/**/*",
+    "src/components/segmented-control/**/*",
+    "src/components/country-select/**/*",
+    "src/components/phone-input/**/*",
+    "src/components/sidebar/**/*",
     "src/components/shared/**/*",
     "src/components/ui/**/*",
     "src/lib/cn.ts"

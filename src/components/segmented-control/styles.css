@@ -1,0 +1,116 @@
+/*
+ * Segmented control. Component tokens (`--gdy-segmented-*`) are read with a
+ * fallback to the base tokens and never declared here; the indicator's slide
+ * lives in src/styles/motion.css with the rest of the library's motion.
+ *
+ * States are attributes: aria-checked on the options and data-animated on the
+ * root. Focus is drawn inside the option, so the root can clip its overflow
+ * without cutting the ring and nothing around the control moves.
+ */
+
+/* When the options do not fit, the root scrolls them sideways itself: they
+   never shrink or wrap, and the page never scrolls sideways because of them.
+   isolation keeps the options' z-index inside the control, so a sticky header
+   of the app still covers them. The indicator variables are internal: the
+   component writes them inline, these are only the values before it measures. */
+.gdy-segmented {
+  --gdy-segmented-indicator-x: 0px;
+  --gdy-segmented-indicator-y: 0px;
+  --gdy-segmented-indicator-width: 0px;
+  --gdy-segmented-indicator-height: 0px;
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gdy-segmented-gap, 4px);
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: var(--gdy-segmented-padding, 4px);
+  border: 1px solid var(--gdy-segmented-border, var(--gdy-border));
+  border-radius: var(--gdy-segmented-radius, 9px);
+  background-color: var(--gdy-segmented-bg, var(--gdy-muted));
+  font-size: var(--gdy-segmented-font-size, 0.8125rem);
+  /* Follows the font size token and lands on whole pixels at 13px (20px). */
+  line-height: calc(1em + 7px);
+  scrollbar-width: thin;
+  scrollbar-color: var(--gdy-scrollbar-thumb, var(--gdy-input)) transparent;
+}
+
+/* Placed with physical top/left because the option offsets it copies are
+   physical too, in either writing direction. */
+.gdy-segmented-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--gdy-segmented-indicator-width, 0px);
+  height: var(--gdy-segmented-indicator-height, 0px);
+  border-radius: var(--gdy-segmented-item-radius, 7px);
+  background-color: var(--gdy-segmented-indicator-bg, var(--gdy-background));
+  box-shadow: var(--gdy-segmented-indicator-shadow, var(--gdy-shadow-sm));
+  transform: translate(var(--gdy-segmented-indicator-x, 0px), var(--gdy-segmented-indicator-y, 0px));
+  pointer-events: none;
+}
+
+.gdy-segmented-item {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--gdy-segmented-icon-gap, 6px);
+  padding: var(--gdy-segmented-item-padding, 4px 12px);
+  border-radius: var(--gdy-segmented-item-radius, 7px);
+  color: var(--gdy-segmented-item-color, var(--gdy-muted-foreground));
+  font-weight: 500;
+}
+
+.gdy-segmented-item[aria-checked="true"] {
+  color: var(--gdy-segmented-item-active-color, var(--gdy-foreground));
+}
+
+/* The transparent outline shows only in forced colors mode, which drops
+   box-shadow; both sit inside the option, so its box never grows. */
+.gdy-segmented-item:focus-visible {
+  outline: 2px solid transparent;
+  outline-offset: -2px;
+  box-shadow: inset 0 0 0 2px var(--gdy-segmented-focus-ring, var(--gdy-ring));
+}
+
+/* In em, so the icon follows the text when the font size token changes. */
+.gdy-segmented-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  width: var(--gdy-segmented-icon-size, 1.077em);
+  height: var(--gdy-segmented-icon-size, 1.077em);
+}
+
+/* Icons arrive from the app (SegmentedOption.icon) without a class. */
+.gdy-segmented-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.gdy-segmented-label {
+  white-space: nowrap;
+}
+
+/* Hover only where a pointer can hover: on a phone the color would stick to
+   the last option tapped. The chosen option keeps the indicator's look. */
+@media (hover: hover) {
+  .gdy-segmented-item:where([aria-checked="false"]):hover {
+    background-color: var(
+      --gdy-segmented-item-hover-bg,
+      color-mix(in oklab, var(--gdy-foreground) 6%, transparent)
+    );
+    color: var(--gdy-segmented-item-hover-color, var(--gdy-foreground));
+  }
+}
+
+/* Forced colors mode drops the indicator's background, the only mark of the
+   chosen option: a border in the forced text color keeps it visible. */
+@media (forced-colors: active) {
+  .gdy-segmented-indicator {
+    border: 2px solid;
+  }
+}

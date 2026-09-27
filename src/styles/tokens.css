@@ -35,6 +35,7 @@
   --gdy-accent-foreground: var(--accent-foreground, oklch(0.205 0 0));
   --gdy-destructive: var(--destructive, oklch(0.577 0.245 27.325));
   --gdy-destructive-foreground: var(--destructive-foreground, oklch(0.985 0 0));
+  --gdy-success: var(--success, oklch(0.527 0.154 150.069));
   --gdy-border: var(--border, oklch(0.922 0 0));
   --gdy-input: var(--input, oklch(0.922 0 0));
   --gdy-ring: var(--ring, oklch(0.708 0 0));
@@ -49,6 +50,13 @@
   --gdy-font-mono:
     ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
     "Courier New", monospace;
+
+  /* Google's mark keeps its colors in both themes: the brand guidelines forbid
+     recoloring it, so these are the only tokens not meant to be overridden. */
+  --gdy-google-blue: #4285f4;
+  --gdy-google-green: #34a853;
+  --gdy-google-yellow: #fbbc05;
+  --gdy-google-red: #ea4335;
 }
 
 :where(.dark, [data-theme="dark"]) {
@@ -68,6 +76,7 @@
   --gdy-accent-foreground: var(--accent-foreground, oklch(0.985 0 0));
   --gdy-destructive: var(--destructive, oklch(0.704 0.191 22.216));
   --gdy-destructive-foreground: var(--destructive-foreground, oklch(0.985 0 0));
+  --gdy-success: var(--success, oklch(0.792 0.209 151.711));
   --gdy-border: var(--border, oklch(1 0 0 / 10%));
   --gdy-input: var(--input, oklch(1 0 0 / 15%));
   --gdy-ring: var(--ring, oklch(0.556 0 0));

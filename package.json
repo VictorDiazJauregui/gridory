@@ -1,27 +1,19 @@
 {
   "name": "gridory",
   "version": "1.0.0",
-  "private": true,
-  "description": "React components for data-heavy apps: table, kanban and AI assistant that emit events instead of mutating your data.",
+  "description": "React + TypeScript components for data-heavy apps. They emit events; your app keeps the data.",
   "keywords": [
     "react",
+    "typescript",
     "react-components",
     "component-library",
     "ui-components",
-    "design-system",
     "data-table",
-    "datatable",
     "datagrid",
     "kanban",
-    "kanban-board",
-    "drag-and-drop",
     "ai-assistant",
-    "ai-chat",
-    "typescript",
-    "radix-ui",
-    "tanstack-table",
-    "admin-dashboard",
-    "back-office"
+    "forms",
+    "sidebar"
   ],
   "license": "MIT",
   "author": "Victor Díaz Jáuregui (https://github.com/VictorDiazJauregui)",
@@ -64,6 +56,26 @@
       "types": "./dist/types/ai.d.ts",
       "import": "./dist/ai.js"
     },
+    "./auth": {
+      "types": "./dist/types/auth.d.ts",
+      "import": "./dist/auth.js"
+    },
+    "./segmented-control": {
+      "types": "./dist/types/segmented-control.d.ts",
+      "import": "./dist/segmented-control.js"
+    },
+    "./country-select": {
+      "types": "./dist/types/country-select.d.ts",
+      "import": "./dist/country-select.js"
+    },
+    "./phone-input": {
+      "types": "./dist/types/phone-input.d.ts",
+      "import": "./dist/phone-input.js"
+    },
+    "./sidebar": {
+      "types": "./dist/types/sidebar.d.ts",
+      "import": "./dist/sidebar.js"
+    },
     "./styles.css": "./dist/gridory.css",
     "./tailwind-preset": "./tailwind-preset.js",
     "./package.json": "./package.json"
@@ -83,14 +95,19 @@
     "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
+    "openai": "^6.3.0",
     "react": "^18.2.0 || ^19.0.0",
     "react-dom": "^18.2.0 || ^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "openai": {
+      "optional": true
+    }
   },
   "dependencies": {
     "@tanstack/react-table": "^8.21.3",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.577.0",
-    "openai": "^6.3.0",
     "radix-ui": "^1.4.3",
     "react-day-picker": "^9.14.0"
   },
@@ -105,12 +122,15 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.0",
+    "@vitest/browser-playwright": "^5.0.1",
     "autoprefixer": "^10.4.27",
     "eslint": "^9.39.4",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.4.0",
     "jsdom": "^30.1.1",
+    "openai": "^6.3.0",
+    "playwright": "^1.63.0",
     "postcss": "^8.5.8",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

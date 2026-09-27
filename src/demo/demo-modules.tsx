@@ -1,11 +1,16 @@
 import type { ReactNode } from "react";
+import { Bot, KeyRound, PanelLeft, SlidersHorizontal, SquareKanban, Table2 } from "lucide-react";
 import { DataTableMock } from "@/components/mocks/table/DataTable.mock";
 import { KanbanBoardMock } from "@/components/mocks/kanban/KanbanBoard.mock";
 import { AIAssistantIntegratedMock } from "@/components/mocks/ai/AIAssistantIntegrated.mock";
+import { AuthFormsMock } from "@/components/mocks/auth/AuthForms.mock";
+import { ControlsMock } from "@/components/mocks/controls/Controls.mock";
+import { SidebarMock } from "@/components/mocks/sidebar/Sidebar.mock";
 
 type ModuleItem = {
   id: string;
   label: string;
+  icon: ReactNode;
   content: ReactNode;
 };
 
@@ -13,26 +18,37 @@ export const MODULES: ModuleItem[] = [
   {
     id: "table",
     label: "Tabla",
+    icon: <Table2 />,
     content: <DataTableMock />,
   },
   {
     id: "kanban",
     label: "Kanban",
+    icon: <SquareKanban />,
     content: <KanbanBoardMock />,
   },
   {
     id: "ai",
     label: "Asistente IA",
+    icon: <Bot />,
     content: <AIAssistantIntegratedMock />,
   },
   {
-    id: "coming-soon",
-    label: "Próximo módulo",
-    content: (
-      <div className="p-6 text-center text-foreground">
-        <h2 className="text-xl font-semibold">Próximo módulo</h2>
-        <p className="mt-2">En este espacio se agregará más módulos de demo.</p>
-      </div>
-    ),
+    id: "auth",
+    label: "Autenticación",
+    icon: <KeyRound />,
+    content: <AuthFormsMock />,
+  },
+  {
+    id: "controls",
+    label: "Controles",
+    icon: <SlidersHorizontal />,
+    content: <ControlsMock />,
+  },
+  {
+    id: "sidebar",
+    label: "Menú lateral",
+    icon: <PanelLeft />,
+    content: <SidebarMock />,
   },
 ];
