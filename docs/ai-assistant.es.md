@@ -12,6 +12,12 @@ tarjetas de un tablero y proponer cambios que el usuario confirma antes de que l
 import { AIChatButton, AIChatSidebar, useAIChat } from "gridory/ai";
 ```
 
+El asistente necesita el SDK `openai`, una peer dependency opcional que instalas junto a Gridory:
+
+```bash
+npm install openai
+```
+
 | Export | Para qué sirve |
 |---|---|
 | `AIChatSidebar`, `AIChatButton` | El panel de chat y un botón para abrirlo desde tu propia toolbar. |
@@ -19,16 +25,17 @@ import { AIChatButton, AIChatSidebar, useAIChat } from "gridory/ai";
 | `AI_PROVIDER_PRESETS`, `resolveProviderConfig`, `DEFAULT_PROVIDER_CONFIG` | Presets de proveedor. |
 | `buildChatbotSystemPrompt`, `buildTableSystemPrompt`, `buildKanbanSystemPrompt`, `resolveSystemPrompt`, `buildToolDefinitions` | Los prompts y los esquemas de tools que envía el panel. |
 | `DEFAULT_TEXTS`, `DEFAULT_SUGGESTED_MESSAGES_DATA`, `DEFAULT_SUGGESTED_MESSAGES_CHATBOT`, `DEFAULT_EMPTY_STATE_DATA`, `DEFAULT_EMPTY_STATE_CHATBOT`, `DEFAULT_MEMORY_CONFIG` | Textos integrados y valores por defecto. |
-| `createAIClient`, `streamChatCompletion`, `applyHistoryStrategy`, `isContextLengthError` | El cliente de bajo nivel que usa el hook. No se reexporta desde la entrada raíz `gridory`. |
+| `createAIClient`, `streamChatCompletion`, `applyHistoryStrategy`, `isContextLengthError` | El cliente de bajo nivel que usa el hook. |
 
-Los tipos `AI*` que aparecen en esta página también se exportan, y la entrada raíz `gridory` reexporta
-todo lo demás. Importa `gridory/styles.css` una sola vez, antes de cualquier regla que la sobrescriba
+Los tipos `AI*` que aparecen en esta página también se exportan. El asistente solo está disponible en
+`gridory/ai`: la entrada raíz `gridory` no lo incluye, así que una app sin asistente no necesita
+`openai`. Importa `gridory/styles.css` una sola vez, antes de cualquier regla que la sobrescriba
 (consulta [theming.es.md](theming.es.md)).
 
 ## Cómo funciona
 
-El panel llama a tu endpoint directamente desde el navegador con el SDK `openai` (una dependencia de
-la librería), creado con `dangerouslyAllowBrowser: true`. Las respuestas llegan en streaming, token a
+El panel llama a tu endpoint directamente desde el navegador con el SDK `openai` (la peer dependency
+opcional de arriba), creado con `dangerouslyAllowBrowser: true`. Las respuestas llegan en streaming, token a
 token. En los modos `table` y `kanban`, la petición también lleva definiciones de tools generadas a
 partir de tus campos. Cuando el modelo llama a una tool, el panel muestra una tarjeta de acción
 pendiente, y el componente solo llama a `onAction` cuando el usuario la confirma. La librería nunca

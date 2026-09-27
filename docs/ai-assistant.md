@@ -12,6 +12,12 @@ propose changes that the user confirms before your app receives them.
 import { AIChatButton, AIChatSidebar, useAIChat } from "gridory/ai";
 ```
 
+The assistant needs the `openai` SDK, an optional peer dependency that you install next to Gridory:
+
+```bash
+npm install openai
+```
+
 | Export | Purpose |
 |---|---|
 | `AIChatSidebar`, `AIChatButton` | The chat panel, and a button to open it from your own toolbar. |
@@ -19,15 +25,16 @@ import { AIChatButton, AIChatSidebar, useAIChat } from "gridory/ai";
 | `AI_PROVIDER_PRESETS`, `resolveProviderConfig`, `DEFAULT_PROVIDER_CONFIG` | Provider presets. |
 | `buildChatbotSystemPrompt`, `buildTableSystemPrompt`, `buildKanbanSystemPrompt`, `resolveSystemPrompt`, `buildToolDefinitions` | The prompts and tool schemas the panel sends. |
 | `DEFAULT_TEXTS`, `DEFAULT_SUGGESTED_MESSAGES_DATA`, `DEFAULT_SUGGESTED_MESSAGES_CHATBOT`, `DEFAULT_EMPTY_STATE_DATA`, `DEFAULT_EMPTY_STATE_CHATBOT`, `DEFAULT_MEMORY_CONFIG` | Built-in texts and defaults. |
-| `createAIClient`, `streamChatCompletion`, `applyHistoryStrategy`, `isContextLengthError` | The low-level client the hook uses. Not re-exported from the root `gridory` entry. |
+| `createAIClient`, `streamChatCompletion`, `applyHistoryStrategy`, `isContextLengthError` | The low-level client the hook uses. |
 
-The `AI*` types used on this page are exported too, and the root `gridory` entry re-exports the
-rest. Import `gridory/styles.css` once, before any override (see [theming.md](theming.md)).
+The `AI*` types used on this page are exported too. The assistant is only available from
+`gridory/ai`: the root `gridory` entry leaves it out, so an app without the assistant does not need
+`openai`. Import `gridory/styles.css` once, before any override (see [theming.md](theming.md)).
 
 ## How it works
 
-The panel calls your endpoint directly from the browser through the `openai` SDK (a dependency of
-the library), created with `dangerouslyAllowBrowser: true`. Replies stream in token by token. In the
+The panel calls your endpoint directly from the browser through the `openai` SDK (the optional peer
+dependency above), created with `dangerouslyAllowBrowser: true`. Replies stream in token by token. In the
 `table` and `kanban` modes the request also carries tool definitions built from your fields. When
 the model calls a tool, the panel shows a pending action card, and only when the user confirms it
 does the component call `onAction`. The library never mutates or persists your data.
