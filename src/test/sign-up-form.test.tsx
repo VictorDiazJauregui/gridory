@@ -25,6 +25,12 @@ const fillCredentials = async (user: ReturnType<typeof userEvent.setup>, passwor
   await user.type(input(/^Confirmar contraseña/), password);
 };
 
+const choosePeruPrefix = async (user: ReturnType<typeof userEvent.setup>) => {
+  await user.click(screen.getByRole("combobox", { name: /^Prefijo/ }));
+  await user.type(await screen.findByRole("combobox", { name: "Buscar prefijo" }), "peru");
+  await user.click(screen.getByRole("option", { name: /^Perú/ }));
+};
+
 const EXTRA_FIELDS: AuthExtraField[] = [
   { name: "phone", label: "Teléfono", type: "tel" },
   { name: "about", label: "Sobre ti", type: "textarea" },
@@ -104,6 +110,7 @@ test("extra fields of every kind are emitted flat next to the credentials", asyn
   const { onSubmit, user } = renderSignUp(WITHOUT_NAMES);
   await fillCredentials(user);
   await user.type(input(/^Teléfono/), "999 111 222");
+  await choosePeruPrefix(user);
   await user.click(screen.getByRole("combobox", { name: /^Rol/ }));
   await user.click(await screen.findByRole("option", { name: "Desarrollo" }));
   await user.click(input(/^Acepto los términos/));
@@ -112,7 +119,7 @@ test("extra fields of every kind are emitted flat next to the credentials", asyn
     email: "ana@empresa.com",
     password: "Clave-123",
     confirmPassword: "Clave-123",
-    phone: "999 111 222",
+    phone: { country: "PE", number: "999 111 222" },
     about: "",
     role: "dev",
     terms: true,
