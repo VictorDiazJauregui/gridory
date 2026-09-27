@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { SegmentedControl } from "../../../segmented-control";
-import { recordValueChange } from "./record-value-change";
-import type { RecordingExampleProps } from "./record-value-change";
-import { SegmentedExample } from "./SegmentedExample";
+import { recordValueChange } from "../record-value-change";
+import type { RecordingExampleProps } from "../record-value-change";
+import { ControlExample } from "../ControlExample";
 import { CALENDAR_VIEW_OPTIONS } from "./segmented-options";
 
 const TITLE = "Sin iconos (controlado)";
@@ -17,9 +17,9 @@ export const ControlledCalendarExample = ({ record }: RecordingExampleProps) => 
     recordValueChange(record, TITLE)(value);
   };
   return (
-    <SegmentedExample title={TITLE}>
+    <ControlExample title={TITLE}>
       <SegmentedControl options={CALENDAR_VIEW_OPTIONS} value={view} onValueChange={changeView} aria-label="Vista del calendario" />
       <p className="text-xs text-muted-foreground">Valor actual: {findCalendarViewLabel(view)}</p>
-    </SegmentedExample>
+    </ControlExample>
   );
 };

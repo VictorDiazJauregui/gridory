@@ -5,6 +5,8 @@ import type { RecordDemoEvent } from "../shared/use-demo-event-log";
 import { ControlsScrollArea } from "./ControlsScrollArea";
 import { ControlsSection } from "./ControlsSection";
 import { CONTROLS_SECTIONS, EVENT_LOG_DESCRIPTION } from "./controls-sections";
+import { CountryDemo } from "./country/CountryDemo";
+import { ScrollAreaCountryExample } from "./country/ScrollAreaCountryExample";
 import { SegmentedDemo } from "./segmented/SegmentedDemo";
 
 type SectionDemo = (record: RecordDemoEvent) => ReactNode;
@@ -12,6 +14,7 @@ type SectionDemo = (record: RecordDemoEvent) => ReactNode;
 // A section with no demo here yet shows the entry point it is waiting for.
 const SECTION_DEMOS: Partial<Record<string, SectionDemo>> = {
   "segmented-control": (record) => <SegmentedDemo record={record} />,
+  "country-select": (record) => <CountryDemo record={record} />,
 };
 
 const ControlsHeader = () => (
@@ -34,7 +37,9 @@ export const ControlsMock = () => {
             {SECTION_DEMOS[section.id]?.(record)}
           </ControlsSection>
         ))}
-        <ControlsScrollArea />
+        <ControlsScrollArea>
+          <ScrollAreaCountryExample record={record} />
+        </ControlsScrollArea>
       </div>
       <DemoEventLog events={events} description={EVENT_LOG_DESCRIPTION} />
     </div>

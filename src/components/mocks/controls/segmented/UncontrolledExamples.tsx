@@ -1,7 +1,7 @@
 import { SegmentedControl } from "../../../segmented-control";
-import { recordValueChange } from "./record-value-change";
-import type { RecordingExampleProps } from "./record-value-change";
-import { SegmentedExample } from "./SegmentedExample";
+import { recordValueChange } from "../record-value-change";
+import type { RecordingExampleProps } from "../record-value-change";
+import { ControlExample } from "../ControlExample";
 import { CALENDAR_VIEW_OPTIONS, COMPANY_VIEW_OPTIONS, CUSTOM_SEGMENTED_TOKENS } from "./segmented-options";
 
 const ICONS_TITLE = "Con iconos";
@@ -10,18 +10,18 @@ const NO_ANIMATION_TITLE = "Sin animación";
 const CUSTOM_TOKENS_TITLE = "Personalizado (solo tokens)";
 
 export const IconsExample = ({ record }: RecordingExampleProps) => (
-  <SegmentedExample title={ICONS_TITLE}>
+  <ControlExample title={ICONS_TITLE}>
     <SegmentedControl
       options={COMPANY_VIEW_OPTIONS}
       defaultValue="companies"
       onValueChange={recordValueChange(record, ICONS_TITLE)}
       aria-label="Vista de empresa"
     />
-  </SegmentedExample>
+  </ControlExample>
 );
 
 export const IconEndExample = ({ record }: RecordingExampleProps) => (
-  <SegmentedExample title={ICON_END_TITLE} titleId="segmented-icon-end-title">
+  <ControlExample title={ICON_END_TITLE} titleId="segmented-icon-end-title">
     <SegmentedControl
       options={COMPANY_VIEW_OPTIONS}
       defaultValue="companies"
@@ -29,11 +29,11 @@ export const IconEndExample = ({ record }: RecordingExampleProps) => (
       onValueChange={recordValueChange(record, ICON_END_TITLE)}
       aria-labelledby="segmented-icon-end-title"
     />
-  </SegmentedExample>
+  </ControlExample>
 );
 
 export const NoAnimationExample = ({ record }: RecordingExampleProps) => (
-  <SegmentedExample title={NO_ANIMATION_TITLE} titleId="segmented-no-animation-title">
+  <ControlExample title={NO_ANIMATION_TITLE} titleId="segmented-no-animation-title">
     <SegmentedControl
       options={CALENDAR_VIEW_OPTIONS}
       defaultValue="month"
@@ -41,11 +41,11 @@ export const NoAnimationExample = ({ record }: RecordingExampleProps) => (
       onValueChange={recordValueChange(record, NO_ANIMATION_TITLE)}
       aria-labelledby="segmented-no-animation-title"
     />
-  </SegmentedExample>
+  </ControlExample>
 );
 
 export const CustomTokensExample = ({ record }: RecordingExampleProps) => (
-  <SegmentedExample title={CUSTOM_TOKENS_TITLE} titleId="segmented-custom-tokens-title">
+  <ControlExample title={CUSTOM_TOKENS_TITLE} titleId="segmented-custom-tokens-title">
     <div className="min-w-0" style={CUSTOM_SEGMENTED_TOKENS}>
       <SegmentedControl
         options={COMPANY_VIEW_OPTIONS}
@@ -54,5 +54,5 @@ export const CustomTokensExample = ({ record }: RecordingExampleProps) => (
         aria-labelledby="segmented-custom-tokens-title"
       />
     </div>
-  </SegmentedExample>
+  </ControlExample>
 );
