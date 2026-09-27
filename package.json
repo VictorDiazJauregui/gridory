@@ -83,6 +83,10 @@
       "types": "./dist/types/phone-input.d.ts",
       "import": "./dist/phone-input.js"
     },
+    "./sidebar": {
+      "types": "./dist/types/sidebar.d.ts",
+      "import": "./dist/sidebar.js"
+    },
     "./styles.css": "./dist/gridory.css",
     "./tailwind-preset": "./tailwind-preset.js",
     "./package.json": "./package.json"

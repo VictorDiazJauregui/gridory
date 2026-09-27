@@ -179,3 +179,30 @@ export type {
   PhoneInputTexts,
   PhoneInputValue,
 } from "./phone-input";
+
+export {
+  DEFAULT_SIDEBAR_TEXTS,
+  MissingSidebarLayoutError,
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarItem,
+  SidebarLayout,
+  SidebarLogo,
+  SidebarPinButton,
+  SidebarSeparator,
+  useSidebar,
+} from "./sidebar";
+export type {
+  SidebarClassNames,
+  SidebarItemProps,
+  SidebarLayoutProps,
+  SidebarLogoProps,
+  SidebarPinButtonProps,
+  SidebarProps,
+  SidebarSeparatorProps,
+  SidebarState,
+  SidebarTexts,
+  SidebarZoneProps,
+} from "./sidebar";
