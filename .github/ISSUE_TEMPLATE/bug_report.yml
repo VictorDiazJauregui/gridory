@@ -32,6 +32,7 @@ body:
         - AI assistant
         - Auth forms
         - Segmented control
+        - Country select
         - Styles and theming
         - Other
     validations:

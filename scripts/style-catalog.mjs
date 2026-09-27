@@ -49,6 +49,7 @@ const GROUPS = [
   { id: "ai", match: /^gdy-ai(?:-|$)/ },
   { id: "auth", match: /^gdy-auth(?:-|$)/ },
   { id: "segmented-control", match: /^gdy-segmented(?:-|$)/ },
+  { id: "country-select", match: /^gdy-country-select(?:-|$)/ },
   { id: "ui", match: /^gdy-(?:button|select|menu|popover|toggle|calendar)(?:-|$)/ },
   { id: "shared", match: /^gdy-/ },
 ];
@@ -208,6 +209,7 @@ const TEXT = {
       ai: "AI assistant",
       auth: "Auth forms",
       "segmented-control": "Segmented control",
+      "country-select": "Country select",
       ui: "Primitives",
       shared: "Shared layer and toolbar",
     },
@@ -261,6 +263,7 @@ const TEXT = {
       ai: "Asistente de IA",
       auth: "Formularios de autenticación",
       "segmented-control": "Control segmentado",
+      "country-select": "Selector de país",
       ui: "Primitivos",
       shared: "Capa compartida y toolbar",
     },

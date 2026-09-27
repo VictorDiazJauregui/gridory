@@ -75,6 +75,10 @@
       "types": "./dist/types/segmented-control.d.ts",
       "import": "./dist/segmented-control.js"
     },
+    "./country-select": {
+      "types": "./dist/types/country-select.d.ts",
+      "import": "./dist/country-select.js"
+    },
     "./styles.css": "./dist/gridory.css",
     "./tailwind-preset": "./tailwind-preset.js",
     "./package.json": "./package.json"

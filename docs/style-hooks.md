@@ -213,6 +213,25 @@ The state selectors column lists the attributes the stylesheets combine with eac
 | `gdy-segmented-item` | styled | `[aria-checked="false"]`, `[aria-checked="true"]` |
 | `gdy-segmented-label` | styled | — |
 
+### Country select
+
+| Class | Kind | State selectors |
+|---|---|---|
+| `gdy-country-select` | styled | `[data-multiple]` |
+| `gdy-country-select-chevron` | styled | — |
+| `gdy-country-select-chip` | styled | — |
+| `gdy-country-select-chip-label` | styled | — |
+| `gdy-country-select-chip-remove` | styled | — |
+| `gdy-country-select-chips` | styled | — |
+| `gdy-country-select-clear` | styled | — |
+| `gdy-country-select-frame` | styled | — |
+| `gdy-country-select-more` | styled | — |
+| `gdy-country-select-panel` | styled | — |
+| `gdy-country-select-status` | styled | — |
+| `gdy-country-select-summary` | styled | — |
+| `gdy-country-select-trigger` | styled | `[aria-expanded="true"]`, `[aria-invalid="true"]` |
+| `gdy-country-select-value` | styled | `[data-placeholder]` |
+
 ### Primitives
 
 | Class | Kind | State selectors |
@@ -344,8 +363,8 @@ Radix or react-day-picker follow those libraries.
 |---|---|---|---|
 | `aria-checked` | `"false"`, `"true"` | Gridory | `gdy-segmented-item` |
 | `aria-disabled` | `"true"` | Radix or react-day-picker | `gdy-calendar-button-next`, `gdy-calendar-button-previous`, `gdy-listbox-option` |
-| `aria-expanded` | `"false"`, `"true"` | Gridory | `gdy-button`, `gdy-table-group-toggle` |
-| `aria-invalid` | `"true"` | Gridory | `gdy-auth-input`, `gdy-select-trigger` |
+| `aria-expanded` | `"false"`, `"true"` | Gridory | `gdy-button`, `gdy-country-select-trigger`, `gdy-table-group-toggle` |
+| `aria-invalid` | `"true"` | Gridory | `gdy-auth-input`, `gdy-country-select-trigger`, `gdy-select-trigger` |
 | `aria-pressed` | `"true"` | Gridory | `gdy-link-btn`, `gdy-view-switch-btn` |
 | `aria-selected` | `"true"` | Gridory | `gdy-listbox-option` |
 | `data-action-type` | `"create-card"`, `"create-row"`, `"custom"`, `"move-card"`, `"update-row"` | Gridory | no default rule |
@@ -363,8 +382,9 @@ Radix or react-day-picker follow those libraries.
 | `data-highlighted` | present / absent | Radix or react-day-picker | `gdy-select-item` |
 | `data-label-position` | `"start"` | Gridory | `gdy-field` |
 | `data-list` | `"ordered"`, `"unordered"` | Gridory | no default rule |
+| `data-multiple` | present / absent | Gridory | `gdy-country-select` |
 | `data-outside` | present / absent | Radix or react-day-picker | `gdy-calendar-day` |
-| `data-placeholder` | present / absent | Radix or react-day-picker | `gdy-select-trigger` |
+| `data-placeholder` | present / absent | Gridory, Radix or react-day-picker | `gdy-country-select-value`, `gdy-select-trigger` |
 | `data-range-end` | present / absent | Gridory | `gdy-calendar-day`, `gdy-calendar-day-button` |
 | `data-range-middle` | present / absent | Gridory | `gdy-calendar-day`, `gdy-calendar-day-button` |
 | `data-range-start` | present / absent | Gridory | `gdy-calendar-day`, `gdy-calendar-day-button` |
@@ -485,7 +505,25 @@ any ancestor overrides that part only. `--gdy-select-*` also mirror the `selectT
 | `--gdy-country-flag-outline` | `var(--gdy-border)` | shared |
 | `--gdy-country-flag-radius` | `2px` | shared |
 | `--gdy-country-flag-width` | `20px` | shared |
-| `--gdy-field-control-height` | `40px` | shared |
+| `--gdy-country-select-bg` | `var(--gdy-background)` | country-select |
+| `--gdy-country-select-border` | `var(--gdy-input)` | country-select |
+| `--gdy-country-select-check-color` | `var(--gdy-listbox-check-color, var(--gdy-primary))` | country-select |
+| `--gdy-country-select-chip-bg` | `var(--gdy-muted)` | country-select |
+| `--gdy-country-select-chip-color` | `var(--gdy-foreground)` | country-select |
+| `--gdy-country-select-chip-max-width` | `8rem` | country-select |
+| `--gdy-country-select-color` | `var(--gdy-foreground)` | country-select |
+| `--gdy-country-select-error-color` | `var(--gdy-destructive)` | country-select |
+| `--gdy-country-select-focus-ring` | `var(--gdy-ring)` | country-select |
+| `--gdy-country-select-height` | `var(--gdy-field-control-height, 40px)` | country-select |
+| `--gdy-country-select-hover-bg` | `color-mix(in oklab, var(--gdy-foreground) 4%, var(--gdy-country-select-bg, var(--gdy-background)))` | country-select |
+| `--gdy-country-select-option-hover-bg` | `var(--gdy-listbox-option-hover-bg, var(--gdy-option-hover-bg, var(--gdy-accent)))` | country-select |
+| `--gdy-country-select-option-hover-color` | `var(--gdy-listbox-option-hover-text, var(--gdy-accent-foreground))` | country-select |
+| `--gdy-country-select-option-selected-bg` | `var(--gdy-listbox-option-selected-bg, transparent)` | country-select |
+| `--gdy-country-select-panel-min-width` | `240px` | country-select |
+| `--gdy-country-select-placeholder-color` | `var(--gdy-muted-foreground)` | country-select |
+| `--gdy-country-select-radius` | `var(--gdy-radius)` | country-select |
+| `--gdy-country-select-width` | `240px` | country-select |
+| `--gdy-field-control-height` | `40px` | country-select, shared |
 | `--gdy-field-error-color` | `var(--gdy-destructive)` | shared |
 | `--gdy-field-label-color` | `var(--gdy-foreground)` | shared |
 | `--gdy-field-label-gap` | `6px` | shared |
@@ -501,16 +539,16 @@ any ancestor overrides that part only. `--gdy-select-*` also mirror the `selectT
 | `--gdy-kanban-column-border` | `var(--gdy-border)` | kanban |
 | `--gdy-kanban-drop-bg` | `color-mix(in oklab, var(--gdy-foreground) 6%, var(--gdy-muted))` | kanban |
 | `--gdy-kanban-drop-outline` | `var(--gdy-muted-foreground)` | kanban |
-| `--gdy-listbox-check-color` | `var(--gdy-primary)` | shared |
+| `--gdy-listbox-check-color` | `var(--gdy-primary)` | country-select, shared |
 | `--gdy-listbox-max-height` | `16rem` | shared |
-| `--gdy-listbox-option-hover-bg` | `var(--gdy-option-hover-bg, var(--gdy-accent))` | shared |
-| `--gdy-listbox-option-hover-text` | `var(--gdy-accent-foreground)` | shared |
-| `--gdy-listbox-option-selected-bg` | `transparent` | shared |
+| `--gdy-listbox-option-hover-bg` | `var(--gdy-option-hover-bg, var(--gdy-accent))` | country-select, shared |
+| `--gdy-listbox-option-hover-text` | `var(--gdy-accent-foreground)` | country-select, shared |
+| `--gdy-listbox-option-selected-bg` | `transparent` | country-select, shared |
 | `--gdy-listbox-option-text` | `inherit` | shared |
 | `--gdy-menu-bg` | `var(--gdy-popover)` | ui |
 | `--gdy-menu-fg` | `var(--gdy-popover-foreground)` | ui |
 | `--gdy-menu-item-hover-bg` | `var(--gdy-accent)` | ui |
-| `--gdy-option-hover-bg` | `color-mix(in oklab, var(--gdy-foreground) 6%, var(--gdy-muted))`, `var(--gdy-accent)` | shared |
+| `--gdy-option-hover-bg` | `color-mix(in oklab, var(--gdy-foreground) 6%, var(--gdy-muted))`, `var(--gdy-accent)` | country-select, shared |
 | `--gdy-panel-bg` | `var(--gdy-popover)` | shared |
 | `--gdy-panel-border` | `var(--gdy-border)` | shared |
 | `--gdy-panel-shadow` | `var(--gdy-shadow-md)` | shared |
