@@ -27,6 +27,7 @@ datos.
 | `gridory/auth` | `LoginForm`, `SignUpForm`, sus textos y campos por defecto, los errores de configuración y los tipos de autenticación. |
 | `gridory/segmented-control` | `SegmentedControl` y sus tipos. |
 | `gridory/country-select` | `CountrySelect`, sus tipos e `isCountryCode`. |
+| `gridory/phone-input` | `PhoneInput`, sus tipos y sus textos por defecto. |
 | `gridory/styles.css` | La hoja de estilos compilada de todos los módulos, con los tokens del tema claro y del oscuro. |
 | `gridory/tailwind-preset` | Preset opcional de Tailwind que mapea los tokens `--gdy-*` a claves de tema al estilo de shadcn (`bg-primary`, `border-border`) para usarlas en tu propio markup. |
 
@@ -204,6 +205,7 @@ y el catálogo completo en [docs/style-hooks.es.md](docs/style-hooks.es.md).
 | [Auth forms](docs/auth-forms.md) | [Formularios de autenticación](docs/auth-forms.es.md) | `LoginForm` y `SignUpForm`: campos, validación, zod, Google, textos y estilos. |
 | [Segmented control](docs/segmented-control.md) | [Control segmentado](docs/segmented-control.es.md) | `SegmentedControl`: opciones y valor, iconos, teclado, accesibilidad, estilos y animación. |
 | [Country select](docs/country-select.md) | [Selector de país](docs/country-select.es.md) | `CountrySelect`: selección simple y múltiple, búsqueda, banderas, ancho, errores, teclado, accesibilidad, estilos y textos. |
+| [Phone input](docs/phone-input.md) | [Teléfono con prefijo](docs/phone-input.es.md) | `PhoneInput`: valor y prefijo, caracteres admitidos, label, obligatorio, errores, formularios de auth, teclado, accesibilidad, estilos y textos. |
 | [Theming](docs/theming.md) | [Temas y estilos](docs/theming.es.md) | Tokens, tema claro/oscuro, sobrescrituras, contrato de estilos, animaciones, preset de Tailwind. |
 | [Style hooks](docs/style-hooks.md) | [Ganchos de estilo](docs/style-hooks.es.md) | Catálogo generado de todas las clases, atributos de estado y tokens. |
 
@@ -238,7 +240,7 @@ Para chatear con un proveedor real, copia las variables con `cp .env.example .en
 ## Estructura del código
 
 Cada módulo vive en `src/components/<module>/`. La raíz contiene la superficie pública y los
-contratos (`index.tsx`, o `index.ts` en `ai/`, `auth/`, `segmented-control/` y `country-select/`, más `types.ts`, `constants.ts` y `styles.css`). El
+contratos (`index.tsx`, o `index.ts` en `ai/`, `auth/`, `segmented-control/`, `country-select/` y `phone-input/`, más `types.ts`, `constants.ts` y `styles.css`). El
 resto se reparte en carpetas por área, nunca por tipo de archivo, con entre 3 y 12 archivos cada una
 y sin barrel files dentro.
 
@@ -250,6 +252,7 @@ y sin barrel files dentro.
 | `auth/` | `config/`, `model/`, `fields/`, `password/`, `validation/`, `layout/`, `actions/` |
 | `segmented-control/` | `model/`, `parts/` |
 | `country-select/` | `model/`, `parts/`, `validation/` |
+| `phone-input/` | `model/`, `parts/` |
 | `shared/` | Contratos comunes en la raíz; `controls/`, `rows/`, `toolbar/`, `filter-menu/`, `date-filter-menu/`, `date-pickers/`, `menu/` |
 | `ui/` | Primitivos sobre Radix y react-day-picker: `select/`, `toggle-group/`, `calendar/` |
 | `mocks/` | Datos y configuración de la demo |

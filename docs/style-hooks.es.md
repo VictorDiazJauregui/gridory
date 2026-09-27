@@ -190,6 +190,7 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-auth-password` | con estilos | — |
 | `gdy-auth-password-icon` | con estilos | — |
 | `gdy-auth-password-toggle` | con estilos | — |
+| `gdy-auth-phone` | con estilos | — |
 | `gdy-auth-required` | con estilos | — |
 | `gdy-auth-rule` | con estilos | `[data-status="met"]`, `[data-status="unmet"]` |
 | `gdy-auth-rule-icon` | con estilos | — |
@@ -231,6 +232,18 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-country-select-summary` | con estilos | — |
 | `gdy-country-select-trigger` | con estilos | `[aria-expanded="true"]`, `[aria-invalid="true"]` |
 | `gdy-country-select-value` | con estilos | `[data-placeholder]` |
+
+### Teléfono con prefijo
+
+| Clase | Tipo | Selectores de estado |
+|---|---|---|
+| `gdy-phone-input` | con estilos | `[data-invalid]` |
+| `gdy-phone-input-chevron` | con estilos | — |
+| `gdy-phone-input-dial-code` | con estilos | `[data-placeholder]` |
+| `gdy-phone-input-frame` | con estilos | — |
+| `gdy-phone-input-number` | con estilos | — |
+| `gdy-phone-input-panel` | con estilos | — |
+| `gdy-phone-input-prefix` | con estilos | `[aria-expanded="true"]` |
 
 ### Primitivos
 
@@ -363,7 +376,7 @@ ponen Radix o react-day-picker siguen a esas librerías.
 |---|---|---|---|
 | `aria-checked` | `"false"`, `"true"` | Gridory | `gdy-segmented-item` |
 | `aria-disabled` | `"true"` | Radix o react-day-picker | `gdy-calendar-button-next`, `gdy-calendar-button-previous`, `gdy-listbox-option` |
-| `aria-expanded` | `"false"`, `"true"` | Gridory | `gdy-button`, `gdy-country-select-trigger`, `gdy-table-group-toggle` |
+| `aria-expanded` | `"false"`, `"true"` | Gridory | `gdy-button`, `gdy-country-select-trigger`, `gdy-phone-input-prefix`, `gdy-table-group-toggle` |
 | `aria-invalid` | `"true"` | Gridory | `gdy-auth-input`, `gdy-country-select-trigger`, `gdy-select-trigger` |
 | `aria-pressed` | `"true"` | Gridory | `gdy-link-btn`, `gdy-view-switch-btn` |
 | `aria-selected` | `"true"` | Gridory | `gdy-listbox-option` |
@@ -380,11 +393,12 @@ ponen Radix o react-day-picker siguen a esas librerías.
 | `data-form` | `"login"`, `"signup"` | Gridory | sin regla por defecto |
 | `data-hidden` | presente / ausente | Radix o react-day-picker | `gdy-calendar-day` |
 | `data-highlighted` | presente / ausente | Radix o react-day-picker | `gdy-select-item` |
+| `data-invalid` | presente / ausente | Gridory | `gdy-phone-input` |
 | `data-label-position` | `"start"` | Gridory | `gdy-field` |
 | `data-list` | `"ordered"`, `"unordered"` | Gridory | sin regla por defecto |
 | `data-multiple` | presente / ausente | Gridory | `gdy-country-select` |
 | `data-outside` | presente / ausente | Radix o react-day-picker | `gdy-calendar-day` |
-| `data-placeholder` | presente / ausente | Gridory, Radix o react-day-picker | `gdy-country-select-value`, `gdy-select-trigger` |
+| `data-placeholder` | presente / ausente | Gridory, Radix o react-day-picker | `gdy-country-select-value`, `gdy-phone-input-dial-code`, `gdy-select-trigger` |
 | `data-range-end` | presente / ausente | Gridory | `gdy-calendar-day`, `gdy-calendar-day-button` |
 | `data-range-middle` | presente / ausente | Gridory | `gdy-calendar-day`, `gdy-calendar-day-button` |
 | `data-range-start` | presente / ausente | Gridory | `gdy-calendar-day`, `gdy-calendar-day-button` |
@@ -523,7 +537,7 @@ cualquier ancestro cambia solo esa parte. Los `--gdy-select-*` también reflejan
 | `--gdy-country-select-placeholder-color` | `var(--gdy-muted-foreground)` | country-select |
 | `--gdy-country-select-radius` | `var(--gdy-radius)` | country-select |
 | `--gdy-country-select-width` | `240px` | country-select |
-| `--gdy-field-control-height` | `40px` | country-select, shared |
+| `--gdy-field-control-height` | `40px` | country-select, phone-input, shared |
 | `--gdy-field-error-color` | `var(--gdy-destructive)` | shared |
 | `--gdy-field-label-color` | `var(--gdy-foreground)` | shared |
 | `--gdy-field-label-gap` | `6px` | shared |
@@ -539,19 +553,35 @@ cualquier ancestro cambia solo esa parte. Los `--gdy-select-*` también reflejan
 | `--gdy-kanban-column-border` | `var(--gdy-border)` | kanban |
 | `--gdy-kanban-drop-bg` | `color-mix(in oklab, var(--gdy-foreground) 6%, var(--gdy-muted))` | kanban |
 | `--gdy-kanban-drop-outline` | `var(--gdy-muted-foreground)` | kanban |
-| `--gdy-listbox-check-color` | `var(--gdy-primary)` | country-select, shared |
+| `--gdy-listbox-check-color` | `var(--gdy-primary)` | country-select, phone-input, shared |
 | `--gdy-listbox-max-height` | `16rem` | shared |
-| `--gdy-listbox-option-hover-bg` | `var(--gdy-option-hover-bg, var(--gdy-accent))` | country-select, shared |
-| `--gdy-listbox-option-hover-text` | `var(--gdy-accent-foreground)` | country-select, shared |
-| `--gdy-listbox-option-selected-bg` | `transparent` | country-select, shared |
+| `--gdy-listbox-option-hover-bg` | `var(--gdy-option-hover-bg, var(--gdy-accent))` | country-select, phone-input, shared |
+| `--gdy-listbox-option-hover-text` | `var(--gdy-accent-foreground)` | country-select, phone-input, shared |
+| `--gdy-listbox-option-selected-bg` | `transparent` | country-select, phone-input, shared |
 | `--gdy-listbox-option-text` | `inherit` | shared |
 | `--gdy-menu-bg` | `var(--gdy-popover)` | ui |
 | `--gdy-menu-fg` | `var(--gdy-popover-foreground)` | ui |
 | `--gdy-menu-item-hover-bg` | `var(--gdy-accent)` | ui |
-| `--gdy-option-hover-bg` | `color-mix(in oklab, var(--gdy-foreground) 6%, var(--gdy-muted))`, `var(--gdy-accent)` | country-select, shared |
+| `--gdy-option-hover-bg` | `color-mix(in oklab, var(--gdy-foreground) 6%, var(--gdy-muted))`, `var(--gdy-accent)` | country-select, phone-input, shared |
 | `--gdy-panel-bg` | `var(--gdy-popover)` | shared |
 | `--gdy-panel-border` | `var(--gdy-border)` | shared |
 | `--gdy-panel-shadow` | `var(--gdy-shadow-md)` | shared |
+| `--gdy-phone-input-bg` | `var(--gdy-background)` | phone-input |
+| `--gdy-phone-input-border` | `var(--gdy-input)` | phone-input |
+| `--gdy-phone-input-check-color` | `var(--gdy-listbox-check-color, var(--gdy-primary))` | phone-input |
+| `--gdy-phone-input-color` | `var(--gdy-foreground)` | phone-input |
+| `--gdy-phone-input-error-color` | `var(--gdy-destructive)` | phone-input |
+| `--gdy-phone-input-focus-ring` | `var(--gdy-ring)` | phone-input |
+| `--gdy-phone-input-gap` | `8px` | phone-input |
+| `--gdy-phone-input-height` | `var(--gdy-field-control-height, 40px)` | phone-input |
+| `--gdy-phone-input-option-hover-bg` | `var(--gdy-listbox-option-hover-bg, var(--gdy-option-hover-bg, var(--gdy-accent)))` | phone-input |
+| `--gdy-phone-input-option-hover-color` | `var(--gdy-listbox-option-hover-text, var(--gdy-accent-foreground))` | phone-input |
+| `--gdy-phone-input-option-selected-bg` | `var(--gdy-listbox-option-selected-bg, transparent)` | phone-input |
+| `--gdy-phone-input-panel-min-width` | `280px` | phone-input |
+| `--gdy-phone-input-placeholder-color` | `var(--gdy-muted-foreground)` | phone-input |
+| `--gdy-phone-input-prefix-focus-color` | `var(--gdy-ring)` | phone-input |
+| `--gdy-phone-input-radius` | `var(--gdy-radius)` | phone-input |
+| `--gdy-phone-input-width` | `280px` | phone-input |
 | `--gdy-popover-bg` | `var(--gdy-popover)` | ui |
 | `--gdy-popover-fg` | `var(--gdy-popover-foreground)` | ui |
 | `--gdy-scrollbar-thumb` | `var(--gdy-input)` | segmented-control, shared, ui |

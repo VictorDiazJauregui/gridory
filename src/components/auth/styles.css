@@ -126,6 +126,33 @@
   box-shadow: inset 0 0 0 1px var(--gdy-auth-error, var(--gdy-destructive));
 }
 
+/* The phone field takes the whole row and reads the auth input tokens, so it
+   looks like the inputs around it. Two classes beat the phone's own box. */
+.gdy-auth-field .gdy-phone-input-frame {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.gdy-phone-input.gdy-auth-phone {
+  block-size: var(--gdy-auth-input-height, 40px);
+  border-color: var(--gdy-auth-input-border, var(--gdy-input));
+  border-radius: var(--gdy-auth-input-radius, var(--gdy-radius));
+  background-color: var(--gdy-auth-input-bg, var(--gdy-background));
+  color: var(--gdy-auth-input-fg, var(--gdy-foreground));
+}
+
+.gdy-phone-input.gdy-auth-phone:focus-within {
+  border-color: var(--gdy-auth-input-focus-border, var(--gdy-ring));
+  box-shadow: inset 0 0 0 1px var(--gdy-auth-input-focus-border, var(--gdy-ring));
+}
+
+.gdy-phone-input.gdy-auth-phone[data-invalid] {
+  border-color: var(--gdy-auth-error, var(--gdy-destructive));
+}
+
+.gdy-phone-input.gdy-auth-phone[data-invalid]:focus-within {
+  box-shadow: inset 0 0 0 1px var(--gdy-auth-error, var(--gdy-destructive));
+}
+
 .gdy-auth-password {
   position: relative;
 }

@@ -6,6 +6,7 @@ import type {
   AuthFieldValidator,
 } from "../types";
 import { emailRule, requiredRule } from "../validation/field-rules";
+import { phoneCountryRule } from "../validation/phone-rules";
 import { resolveRequiredMessage } from "./required-message";
 import type { RequiredMessageTexts } from "./required-message";
 import type { AuthRule, ResolvedAuthField } from "./resolved-field";
@@ -24,11 +25,12 @@ export interface AuthFieldSpec {
 }
 
 export type FieldRuleTexts = RequiredMessageTexts &
-  Required<Pick<AuthCommonTexts, "invalidEmail">>;
+  Required<Pick<AuthCommonTexts, "invalidEmail" | "phoneCountryRequired">>;
 
 const buildRules = (spec: AuthFieldSpec, texts: FieldRuleTexts): AuthRule[] => [
   ...(spec.required ? [requiredRule(resolveRequiredMessage(spec, texts))] : []),
   ...(spec.type === "email" ? [emailRule(texts.invalidEmail)] : []),
+  ...(spec.type === "tel" ? [phoneCountryRule(texts.phoneCountryRequired)] : []),
   ...(spec.extraRules ?? []),
   ...(spec.validate ? [spec.validate] : []),
 ];

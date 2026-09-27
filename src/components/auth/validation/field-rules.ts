@@ -1,10 +1,12 @@
 import type { AuthFieldValue } from "../types";
 import type { AuthRule } from "../config/resolved-field";
+import { isPhoneValue } from "../model/phone-field-value";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+$/;
 
 export const isEmptyValue = (value: AuthFieldValue | undefined): boolean => {
   if (typeof value === "boolean") return !value;
+  if (isPhoneValue(value)) return value.number.trim() === "";
   return (value ?? "").trim() === "";
 };
 

@@ -14,7 +14,7 @@ const googleProps = (demo: AuthDemoState) => ({
 });
 
 const EXTRA_FIELDS: AuthExtraField[] = [
-  { name: "phone", label: "Teléfono", type: "tel", placeholder: "+51 999 111 222", autoComplete: "tel" },
+  { name: "phone", label: "Teléfono", type: "tel", placeholder: "999 111 222" },
   { name: "teamSize", label: "Tamaño del equipo", type: "number", placeholder: "10" },
   {
     name: "role",

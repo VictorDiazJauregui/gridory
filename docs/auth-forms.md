@@ -122,7 +122,7 @@ in the submitted values, and a `label`:
 
 ```tsx
 extraFields={[
-  { name: "phone", label: "Phone", type: "tel", autoComplete: "tel" },
+  { name: "phone", label: "Phone", type: "tel" },
   { name: "teamSize", label: "Team size", type: "number" },
   {
     name: "role",
@@ -139,7 +139,8 @@ extraFields={[
 
 | `type` | Control | Value | Required message |
 |---|---|---|---|
-| `"text"` (default), `"tel"`, `"url"`, `"number"` | `<input>` of that type | `string` | Derived from the label |
+| `"text"` (default), `"url"`, `"number"` | `<input>` of that type | `string` | Derived from the label |
+| `"tel"` | The phone input: dial code picker plus number (see [phone-input.md](phone-input.md)) | `AuthPhoneValue`: `{ country: CountryCode \| null; number: string }` | Derived from the label |
 | `"email"` | `<input type="email">`, validated as an email | `string` | Derived from the label |
 | `"textarea"` | `<textarea>` | `string` | Derived from the label |
 | `"select"` | The Gridory select, with `options` | `string` (the option `value`) | `texts.selectRequired` |
@@ -147,6 +148,17 @@ extraFields={[
 
 `AuthExtraField` also takes `required`, `placeholder`, `requiredMessage`, `autoComplete` and
 `validate`. A `name` used twice, or equal to a built-in field, throws `DuplicateAuthFieldError`.
+
+A `tel` field emits the country by its ISO code and the number, trimmed, so `+1` never mixes up
+Canada and the United States. The number keeps only digits, spaces, hyphens and `+`, typed or
+pasted. It counts as empty while the number is blank, and a number without a country fails with
+`texts.phoneCountryRequired`, even when the field is optional. A string in `defaultValues` still
+works: it becomes the number, with no country. Its `autoComplete` is always `tel-national`, because
+the country goes in the prefix.
+
+> Since this version a `tel` field emits `{ country, number }` instead of a `string`. If your code
+> reads it as text, read `values.phone.number` and, when you need it, the dial code of
+> `values.phone.country`.
 
 ### Field order
 
@@ -299,6 +311,7 @@ as `DEFAULT_LOGIN_TEXTS` and `DEFAULT_SIGN_UP_TEXTS`, and the built-in fields as
 | `invalidEmail` | `"Ingresa un email válido"` | same | Malformed email. |
 | `checkboxRequired` | `"Debes marcar esta casilla para continuar"` | same | Required checkbox left unchecked. |
 | `selectRequired` | `"Selecciona una opción"` | same | Required select left empty. |
+| `phoneCountryRequired` | `"Elige el prefijo de tu país"` | same | Phone number without a country. |
 | `forgotPassword` | `"¿Olvidaste tu contraseña?"` | — | Forgot-password link. |
 | `signUpPrompt` / `signUpLink` | `"¿No tienes cuenta?"` / `"Regístrate aquí"` | — | Login footer. |
 | `signInPrompt` / `signInLink` | — | `"¿Ya tienes una cuenta?"` / `"Inicia sesión"` | Sign-up footer. |
@@ -461,7 +474,9 @@ root and `classNames` adds your classes to each part:
 - `LoginFormValues`: `{ email: string; password: string }` plus your extra fields.
 - `SignUpFormValues`: `{ email; password; firstName?; lastName?; confirmPassword? }` plus your extra
   fields.
-- `AuthFormValues`: `Record<string, string | boolean>`.
+- `AuthFormValues`: `Record<string, AuthFieldValue>`, where `AuthFieldValue` is
+  `string | boolean | AuthPhoneValue`.
+- `AuthPhoneValue`: `{ country: CountryCode | null; number: string }`, the value of a `tel` field.
 - `AuthExtraField`, `AuthExtraFieldType`, `AuthFieldOption`, `AuthFieldConfig`,
   `AuthFieldValidator`: fields.
 - `AuthPasswordRules`, `AuthPasswordPattern`, `AuthPasswordRuleStatus`: password requirements.

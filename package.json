@@ -79,6 +79,10 @@
       "types": "./dist/types/country-select.d.ts",
       "import": "./dist/country-select.js"
     },
+    "./phone-input": {
+      "types": "./dist/types/phone-input.d.ts",
+      "import": "./dist/phone-input.js"
+    },
     "./styles.css": "./dist/gridory.css",
     "./tailwind-preset": "./tailwind-preset.js",
     "./package.json": "./package.json"

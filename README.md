@@ -26,6 +26,7 @@ sign-up forms that emit events instead of mutating your data.
 | `gridory/auth` | `LoginForm`, `SignUpForm`, their default texts and fields, the configuration errors and the auth types. |
 | `gridory/segmented-control` | `SegmentedControl` and its types. |
 | `gridory/country-select` | `CountrySelect`, its types and `isCountryCode`. |
+| `gridory/phone-input` | `PhoneInput`, its types and default texts. |
 | `gridory/styles.css` | The compiled stylesheet for every module, with the light and dark tokens. |
 | `gridory/tailwind-preset` | Optional Tailwind preset that maps the `--gdy-*` tokens to shadcn-style theme keys (`bg-primary`, `border-border`) for your own markup. |
 
@@ -201,6 +202,7 @@ and the full catalog in [docs/style-hooks.md](docs/style-hooks.md).
 | [Auth forms](docs/auth-forms.md) | [Formularios de autenticación](docs/auth-forms.es.md) | `LoginForm` and `SignUpForm`: fields, validation, zod, Google, texts and styling. |
 | [Segmented control](docs/segmented-control.md) | [Control segmentado](docs/segmented-control.es.md) | `SegmentedControl`: options and value, icons, keyboard, accessibility, styling and motion. |
 | [Country select](docs/country-select.md) | [Selector de país](docs/country-select.es.md) | `CountrySelect`: single and multiple selection, search, flags, width, errors, keyboard, accessibility, styling and texts. |
+| [Phone input](docs/phone-input.md) | [Teléfono con prefijo](docs/phone-input.es.md) | `PhoneInput`: value and dial code, allowed characters, label, required, errors, auth forms, keyboard, accessibility, styling and texts. |
 | [Theming](docs/theming.md) | [Temas y estilos](docs/theming.es.md) | Tokens, light/dark theme, overrides, style contract, motion, Tailwind preset. |
 | [Style hooks](docs/style-hooks.md) | [Ganchos de estilo](docs/style-hooks.es.md) | Generated catalog of every class, state attribute and token. |
 
@@ -235,7 +237,7 @@ To chat with a real provider, copy the variables with `cp .env.example .env.loca
 ## Code structure
 
 Each module lives in `src/components/<module>/`. The root holds the public surface and contracts
-(`index.tsx`, or `index.ts` in `ai/`, `auth/`, `segmented-control/` and `country-select/`, plus `types.ts`, `constants.ts` and `styles.css`). The rest is
+(`index.tsx`, or `index.ts` in `ai/`, `auth/`, `segmented-control/`, `country-select/` and `phone-input/`, plus `types.ts`, `constants.ts` and `styles.css`). The rest is
 split into folders by area, never by file type, with 3 to 12 files each and no barrel files inside
 them.
 
@@ -247,6 +249,7 @@ them.
 | `auth/` | `config/`, `model/`, `fields/`, `password/`, `validation/`, `layout/`, `actions/` |
 | `segmented-control/` | `model/`, `parts/` |
 | `country-select/` | `model/`, `parts/`, `validation/` |
+| `phone-input/` | `model/`, `parts/` |
 | `shared/` | Common contracts at the root; `controls/`, `rows/`, `toolbar/`, `filter-menu/`, `date-filter-menu/`, `date-pickers/`, `menu/` |
 | `ui/` | Primitives over Radix and react-day-picker: `select/`, `toggle-group/`, `calendar/` |
 | `mocks/` | Demo data and configuration |

@@ -1,6 +1,9 @@
 import type { MouseEvent, ReactNode } from "react";
+import type { PhoneInputValue } from "../phone-input/types";
 
-export type AuthFieldValue = string | boolean;
+/** Value of a `tel` field: the country by its ISO code, so +1 tells Canada from the United States, and the number. */
+export type AuthPhoneValue = PhoneInputValue;
+export type AuthFieldValue = string | boolean | AuthPhoneValue;
 export type AuthFormValues = Record<string, AuthFieldValue>;
 export type AuthFieldErrors = Record<string, string>;
 
@@ -139,6 +142,8 @@ export interface AuthCommonTexts {
   invalidEmail?: string;
   checkboxRequired?: string;
   selectRequired?: string;
+  /** Error of a `tel` field with a number but no country chosen. */
+  phoneCountryRequired?: string;
 }
 
 export interface LoginFormTexts extends AuthCommonTexts {

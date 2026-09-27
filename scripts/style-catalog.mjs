@@ -50,6 +50,7 @@ const GROUPS = [
   { id: "auth", match: /^gdy-auth(?:-|$)/ },
   { id: "segmented-control", match: /^gdy-segmented(?:-|$)/ },
   { id: "country-select", match: /^gdy-country-select(?:-|$)/ },
+  { id: "phone-input", match: /^gdy-phone-input(?:-|$)/ },
   { id: "ui", match: /^gdy-(?:button|select|menu|popover|toggle|calendar)(?:-|$)/ },
   { id: "shared", match: /^gdy-/ },
 ];
@@ -210,6 +211,7 @@ const TEXT = {
       auth: "Auth forms",
       "segmented-control": "Segmented control",
       "country-select": "Country select",
+      "phone-input": "Phone input",
       ui: "Primitives",
       shared: "Shared layer and toolbar",
     },
@@ -264,6 +266,7 @@ const TEXT = {
       auth: "Formularios de autenticación",
       "segmented-control": "Control segmentado",
       "country-select": "Selector de país",
+      "phone-input": "Teléfono con prefijo",
       ui: "Primitivos",
       shared: "Capa compartida y toolbar",
     },
