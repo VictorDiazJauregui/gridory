@@ -62,44 +62,6 @@ export type {
   ToolbarSide,
 } from "./components/shared";
 
-export { AIChatSidebar, AIChatButton, useAIChat } from "./ai";
-export {
-  AI_PROVIDER_PRESETS,
-  buildChatbotSystemPrompt,
-  buildKanbanSystemPrompt,
-  buildTableSystemPrompt,
-  buildToolDefinitions,
-  DEFAULT_EMPTY_STATE_CHATBOT,
-  DEFAULT_EMPTY_STATE_DATA,
-  DEFAULT_MEMORY_CONFIG,
-  DEFAULT_PROVIDER_CONFIG,
-  DEFAULT_SUGGESTED_MESSAGES_CHATBOT,
-  DEFAULT_SUGGESTED_MESSAGES_DATA,
-  DEFAULT_TEXTS,
-  resolveProviderConfig,
-  resolveSystemPrompt,
-} from "./ai";
-export type {
-  AIActionEvent,
-  AIActionType,
-  AIChatClassNames,
-  AIChatMessage,
-  AIChatMode,
-  AIChatSidebarProps,
-  AIDataSchema,
-  AIEmptyState,
-  AIFieldDescriptor,
-  AIFieldOption,
-  AIFieldType,
-  AIHistoryStrategy,
-  AIMemoryConfig,
-  AIPendingAction,
-  AIProviderConfig,
-  AIProviderPreset,
-  AISuggestedMessage,
-  AITextOverrides,
-} from "./ai";
-
 export {
   DEFAULT_LOGIN_FIELDS,
   DEFAULT_LOGIN_TEXTS,
