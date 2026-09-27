@@ -31,6 +31,7 @@ export type {
   AuthPasswordPattern,
   AuthPasswordRules,
   AuthPasswordRuleStatus,
+  AuthPhoneValue,
   AuthSchemaIssue,
   AuthSchemaResult,
   AuthStandardSchema,

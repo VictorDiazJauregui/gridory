@@ -19,6 +19,7 @@ const COMMON_TEXTS: RequiredTexts<
   invalidEmail: "Ingresa un email válido",
   checkboxRequired: "Debes marcar esta casilla para continuar",
   selectRequired: "Selecciona una opción",
+  phoneCountryRequired: "Elige el prefijo de tu país",
 };
 
 export const DEFAULT_LOGIN_TEXTS: RequiredTexts<LoginFormTexts> = {
