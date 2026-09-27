@@ -7,6 +7,8 @@ import { ControlsSection } from "./ControlsSection";
 import { CONTROLS_SECTIONS, EVENT_LOG_DESCRIPTION } from "./controls-sections";
 import { CountryDemo } from "./country/CountryDemo";
 import { ScrollAreaCountryExample } from "./country/ScrollAreaCountryExample";
+import { PhoneDemo } from "./phone/PhoneDemo";
+import { ScrollAreaPhoneExample } from "./phone/ScrollAreaPhoneExample";
 import { SegmentedDemo } from "./segmented/SegmentedDemo";
 
 type SectionDemo = (record: RecordDemoEvent) => ReactNode;
@@ -15,6 +17,7 @@ type SectionDemo = (record: RecordDemoEvent) => ReactNode;
 const SECTION_DEMOS: Partial<Record<string, SectionDemo>> = {
   "segmented-control": (record) => <SegmentedDemo record={record} />,
   "country-select": (record) => <CountryDemo record={record} />,
+  "phone-input": (record) => <PhoneDemo record={record} />,
 };
 
 const ControlsHeader = () => (
@@ -39,6 +42,7 @@ export const ControlsMock = () => {
         ))}
         <ControlsScrollArea>
           <ScrollAreaCountryExample record={record} />
+          <ScrollAreaPhoneExample record={record} />
         </ControlsScrollArea>
       </div>
       <DemoEventLog events={events} description={EVENT_LOG_DESCRIPTION} />
