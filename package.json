@@ -1,30 +1,19 @@
 {
   "name": "gridory",
   "version": "1.0.0",
-  "private": true,
-  "description": "React components for data-heavy apps: table, kanban, AI assistant and auth forms that emit events instead of mutating your data.",
+  "description": "React + TypeScript components for data-heavy apps. They emit events; your app keeps the data.",
   "keywords": [
     "react",
+    "typescript",
     "react-components",
     "component-library",
     "ui-components",
-    "design-system",
     "data-table",
-    "datatable",
     "datagrid",
     "kanban",
-    "kanban-board",
-    "drag-and-drop",
     "ai-assistant",
-    "ai-chat",
-    "typescript",
-    "radix-ui",
-    "tanstack-table",
-    "admin-dashboard",
-    "back-office",
-    "login-form",
-    "signup-form",
-    "auth-forms"
+    "forms",
+    "sidebar"
   ],
   "license": "MIT",
   "author": "Victor Díaz Jáuregui (https://github.com/VictorDiazJauregui)",
@@ -106,14 +95,19 @@
     "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
+    "openai": "^6.3.0",
     "react": "^18.2.0 || ^19.0.0",
     "react-dom": "^18.2.0 || ^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "openai": {
+      "optional": true
+    }
   },
   "dependencies": {
     "@tanstack/react-table": "^8.21.3",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.577.0",
-    "openai": "^6.3.0",
     "radix-ui": "^1.4.3",
     "react-day-picker": "^9.14.0"
   },
@@ -135,6 +129,7 @@
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.4.0",
     "jsdom": "^30.1.1",
+    "openai": "^6.3.0",
     "playwright": "^1.63.0",
     "postcss": "^8.5.8",
     "react": "^18.2.0",
