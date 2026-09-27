@@ -33,6 +33,7 @@ body:
         - Auth forms
         - Segmented control
         - Country select
+        - Phone input
         - Styles and theming
         - Other
     validations:

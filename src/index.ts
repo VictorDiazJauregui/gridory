@@ -169,3 +169,13 @@ export type {
   MultipleCountrySelectProps,
   SingleCountrySelectProps,
 } from "./country-select";
+
+export { DEFAULT_PHONE_INPUT_LABEL, DEFAULT_PHONE_INPUT_TEXTS, PhoneInput } from "./phone-input";
+export type {
+  PhoneInputClassNames,
+  PhoneInputNaming,
+  PhoneInputProps,
+  PhoneInputSettings,
+  PhoneInputTexts,
+  PhoneInputValue,
+} from "./phone-input";
