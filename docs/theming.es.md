@@ -129,7 +129,9 @@ que declara los tokens que les dan estilo (`--gdy-menu-*`, `--gdy-select-*`, `--
 `--gdy-calendar-*`) en `:root` o en `.dark`. Lo mismo vale para el panel del selector de país:
 `--gdy-country-select-panel-min-width`, `--gdy-country-select-option-*` y
 `--gdy-country-select-check-color`, y para el panel del teléfono: `--gdy-phone-input-panel-min-width`,
-`--gdy-phone-input-option-*` y `--gdy-phone-input-check-color`.
+`--gdy-phone-input-option-*` y `--gdy-phone-input-check-color`. El cajón móvil del menú lateral y sus
+tooltips también son portales: declara los tokens `--gdy-sidebar-*` en `:root` o en `.dark` cuando
+tengan que alcanzarlos.
 
 | Familia | Ejemplos (fallback) |
 |---|---|
@@ -140,6 +142,7 @@ que declara los tokens que les dan estilo (`--gdy-menu-*`, `--gdy-select-*`, `--
 | `--gdy-segmented-*` | `--gdy-segmented-bg` (`--gdy-muted`), `--gdy-segmented-indicator-bg` (`--gdy-background`), `--gdy-segmented-item-active-color` (`--gdy-foreground`), `--gdy-segmented-focus-ring` (`--gdy-ring`), `--gdy-segmented-duration` (`220ms`) |
 | `--gdy-country-select-*` | `--gdy-country-select-width` (`240px`), `--gdy-country-select-border` (`--gdy-input`), `--gdy-country-select-focus-ring` (`--gdy-ring`), `--gdy-country-select-option-hover-bg` (`--gdy-listbox-option-hover-bg` y después `--gdy-accent`), `--gdy-country-select-chip-bg` (`--gdy-muted`) |
 | `--gdy-phone-input-*` | `--gdy-phone-input-width` (`280px`), `--gdy-phone-input-height` (`--gdy-field-control-height`, y luego `40px`), `--gdy-phone-input-border` (`--gdy-input`), `--gdy-phone-input-focus-ring` (`--gdy-ring`), `--gdy-phone-input-gap` (`8px`) |
+| `--gdy-sidebar-*` | `--gdy-sidebar-width` (`280px`), `--gdy-sidebar-rail-width` (`80px`), `--gdy-sidebar-height` (`100dvh`), `--gdy-sidebar-bg` (`--gdy-card`), `--gdy-sidebar-item-active-bg` (`--gdy-primary`), `--gdy-sidebar-separator-color` (`--gdy-border`), `--gdy-sidebar-duration` (`200ms`) |
 | `--gdy-btn-*` | `--gdy-btn-bg` (`--gdy-muted`), `--gdy-btn-primary-bg` (`--gdy-primary`), `--gdy-btn-hover-bg` (`color-mix(in oklab, var(--gdy-foreground) 8%, var(--gdy-muted))`) |
 | `--gdy-input-*` | `--gdy-input-bg` (`--gdy-muted`), `--gdy-input-border` (`--gdy-input`) |
 | `--gdy-panel-*` | `--gdy-panel-bg` (`--gdy-popover`), `--gdy-panel-border` (`--gdy-border`), `--gdy-panel-shadow` (`--gdy-shadow-md`) |
@@ -191,6 +194,10 @@ Cada elemento que renderiza la librería lleva una clase `gdy-*` pensada como ga
 - `gdy-phone-input-<part>` para el teléfono con prefijo: `gdy-phone-input` (raíz),
   `gdy-phone-input-prefix`, `gdy-phone-input-dial-code`, `gdy-phone-input-number`,
   `gdy-phone-input-panel`. Dentro de los formularios de auth su raíz lleva además `gdy-auth-phone`.
+- `gdy-sidebar-<part>` para el menú lateral: `gdy-sidebar-layout`, `gdy-sidebar` (el raíl),
+  `gdy-sidebar-panel`, `gdy-sidebar-header`, `gdy-sidebar-content`, `gdy-sidebar-footer`,
+  `gdy-sidebar-item`, `gdy-sidebar-separator`, `gdy-sidebar-pin`, y en celular
+  `gdy-sidebar-mobile-bar` y `gdy-sidebar-drawer`.
 
 Las reglas de la librería siguen un contrato de especificidad fijo:
 
@@ -276,6 +283,10 @@ por su presencia (`[data-dragging]`), no por su valor. El resto toma los valores
 | `data-invalid` | `gdy-phone-input` | Gridory | presente con un error |
 | `aria-expanded` | `gdy-phone-input-prefix` | Gridory | `"true"` mientras la lista de prefijos está abierta |
 | `data-placeholder` | `gdy-phone-input-dial-code` | Gridory | no hay ningún país elegido |
+| `data-state` | `gdy-sidebar` | Gridory | `"collapsed"` (raíl de iconos) o `"expanded"` |
+| `data-pinned`, `data-hover-expand`, `data-animated` | `gdy-sidebar` | Gridory | `"true"` o `"false"`: fijado, despliegue por hover activo, ancho animado |
+| `data-mobile` | `gdy-sidebar-layout` | Gridory | `"true"` por debajo del corte de celular |
+| `aria-current` | `gdy-sidebar-item` | Gridory | `"page"` en el ítem activo |
 
 Para dar estilo a un estado, añade el atributo a la clase. La regla pesa 0-2-0, así que también gana a una
 clase suelta que pases por una prop:
@@ -347,6 +358,10 @@ los slots `root`, `prefix`, `number` y `panel`, y `width` (fijado en línea como
 `--gdy-phone-input-width`). `thinScrollbars` y `scrollbarColor` funcionan como en el selector de país;
 ver [phone-input.es.md](phone-input.es.md#estilos).
 
+El menú lateral acepta `className` en `SidebarLayout` y en cada zona, y en `Sidebar` un objeto
+`classNames` con los slots `root`, `panel`, `mobileBar` y `drawer`; ver
+[sidebar.es.md](sidebar.es.md#estilos).
+
 Los nombres de clase que llegan por props se concatenan tras el gancho tal como vienen. Nada los fusiona ni
 quita duplicados, así que una clase que pases nunca elimina una declaración de la librería; solo gana por las
 reglas de la cascada que se explican en [Sobrescribir por clase](#sobrescribir-por-clase).
@@ -366,6 +381,10 @@ Con `prefers-reduced-motion: reduce` no se ejecuta ninguna.
   `--gdy-segmented-duration`). Solo se animan los cambios posteriores al primer render.
   `animated={false}` lo apaga en un control (`data-animated="false"` en `gdy-segmented`); ver
   [segmented-control.es.md](segmented-control.es.md#animación).
+- El menú lateral solo cambia su ancho (200 ms, fijados por `--gdy-sidebar-duration`) y desvanece los
+  rótulos al mismo ritmo; `animated={false}` en `SidebarLayout` lo apaga. Su cajón móvil entra
+  deslizándose desde el borde inicial y el velo aparece con un fundido (`gdy-sidebar-drawer-in`,
+  `gdy-fade-in`).
 
 El spinner de "Pensando..." del asistente (`gdy-ai-thinking-icon`, keyframes `gdy-ai-spin`) gira siempre,
 porque indica progreso. Para cambiar o desactivar una animación, apunta al mismo selector desde tu CSS (lo

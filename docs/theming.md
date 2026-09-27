@@ -125,7 +125,9 @@ under `<body>`, so declare the tokens that style them (`--gdy-menu-*`, `--gdy-se
 `--gdy-popover-*`, `--gdy-calendar-*`) on `:root` or `.dark`. The same goes for the country select
 panel: `--gdy-country-select-panel-min-width`, `--gdy-country-select-option-*` and
 `--gdy-country-select-check-color`, and for the phone input panel: `--gdy-phone-input-panel-min-width`,
-`--gdy-phone-input-option-*` and `--gdy-phone-input-check-color`.
+`--gdy-phone-input-option-*` and `--gdy-phone-input-check-color`. The sidebar's mobile drawer and its
+tooltips are portals too: set the `--gdy-sidebar-*` tokens on `:root` or `.dark` when they must reach
+them.
 
 | Family | Examples (fallback) |
 |---|---|
@@ -136,6 +138,7 @@ panel: `--gdy-country-select-panel-min-width`, `--gdy-country-select-option-*` a
 | `--gdy-segmented-*` | `--gdy-segmented-bg` (`--gdy-muted`), `--gdy-segmented-indicator-bg` (`--gdy-background`), `--gdy-segmented-item-active-color` (`--gdy-foreground`), `--gdy-segmented-focus-ring` (`--gdy-ring`), `--gdy-segmented-duration` (`220ms`) |
 | `--gdy-country-select-*` | `--gdy-country-select-width` (`240px`), `--gdy-country-select-border` (`--gdy-input`), `--gdy-country-select-focus-ring` (`--gdy-ring`), `--gdy-country-select-option-hover-bg` (`--gdy-listbox-option-hover-bg`, then `--gdy-accent`), `--gdy-country-select-chip-bg` (`--gdy-muted`) |
 | `--gdy-phone-input-*` | `--gdy-phone-input-width` (`280px`), `--gdy-phone-input-height` (`--gdy-field-control-height`, then `40px`), `--gdy-phone-input-border` (`--gdy-input`), `--gdy-phone-input-focus-ring` (`--gdy-ring`), `--gdy-phone-input-gap` (`8px`) |
+| `--gdy-sidebar-*` | `--gdy-sidebar-width` (`280px`), `--gdy-sidebar-rail-width` (`80px`), `--gdy-sidebar-height` (`100dvh`), `--gdy-sidebar-bg` (`--gdy-card`), `--gdy-sidebar-item-active-bg` (`--gdy-primary`), `--gdy-sidebar-separator-color` (`--gdy-border`), `--gdy-sidebar-duration` (`200ms`) |
 | `--gdy-btn-*` | `--gdy-btn-bg` (`--gdy-muted`), `--gdy-btn-primary-bg` (`--gdy-primary`), `--gdy-btn-hover-bg` (`color-mix(in oklab, var(--gdy-foreground) 8%, var(--gdy-muted))`) |
 | `--gdy-input-*` | `--gdy-input-bg` (`--gdy-muted`), `--gdy-input-border` (`--gdy-input`) |
 | `--gdy-panel-*` | `--gdy-panel-bg` (`--gdy-popover`), `--gdy-panel-border` (`--gdy-border`), `--gdy-panel-shadow` (`--gdy-shadow-md`) |
@@ -187,6 +190,10 @@ Every element the library renders carries a `gdy-*` class meant as a stable hook
 - `gdy-phone-input-<part>` for the phone input: `gdy-phone-input` (root), `gdy-phone-input-prefix`,
   `gdy-phone-input-dial-code`, `gdy-phone-input-number`, `gdy-phone-input-panel`. Inside the auth
   forms its root also carries `gdy-auth-phone`.
+- `gdy-sidebar-<part>` for the sidebar: `gdy-sidebar-layout`, `gdy-sidebar` (the rail),
+  `gdy-sidebar-panel`, `gdy-sidebar-header`, `gdy-sidebar-content`, `gdy-sidebar-footer`,
+  `gdy-sidebar-item`, `gdy-sidebar-separator`, `gdy-sidebar-pin`, and on mobile
+  `gdy-sidebar-mobile-bar` and `gdy-sidebar-drawer`.
 
 The library rules follow a fixed specificity contract:
 
@@ -272,6 +279,10 @@ presence (`[data-dragging]`), not by value. The others take the values listed.
 | `data-invalid` | `gdy-phone-input` | Gridory | present with an error |
 | `aria-expanded` | `gdy-phone-input-prefix` | Gridory | `"true"` while the list of dial codes is open |
 | `data-placeholder` | `gdy-phone-input-dial-code` | Gridory | no country chosen |
+| `data-state` | `gdy-sidebar` | Gridory | `"collapsed"` (icon rail) or `"expanded"` |
+| `data-pinned`, `data-hover-expand`, `data-animated` | `gdy-sidebar` | Gridory | `"true"` or `"false"`: pinned, hover expansion on, width animated |
+| `data-mobile` | `gdy-sidebar-layout` | Gridory | `"true"` below the mobile breakpoint |
+| `aria-current` | `gdy-sidebar-item` | Gridory | `"page"` on the active item |
 
 Style a state by adding the attribute to the class. The rule weighs 0-2-0, so it also beats a single
 class you pass through a prop:
@@ -342,6 +353,10 @@ slots `root`, `prefix`, `number` and `panel`, and `width` (set inline as `--gdy-
 `thinScrollbars` and `scrollbarColor` work as in the country select; see
 [phone-input.md](phone-input.md#styling).
 
+The sidebar takes `className` on `SidebarLayout` and on every zone, and on `Sidebar` a `classNames`
+object with the slots `root`, `panel`, `mobileBar` and `drawer`; see
+[sidebar.md](sidebar.md#styling).
+
 Class names from props are concatenated after the hook as they come. Nothing merges or
 deduplicates them, so a class you pass never removes a library declaration; it wins only through the
 cascade rules in [Overriding by class](#overriding-by-class).
@@ -361,6 +376,9 @@ With `prefers-reduced-motion: reduce` none of them runs.
   `--gdy-segmented-duration`). Only changes after the first render are animated. `animated={false}`
   switches it off for one control (`data-animated="false"` on `gdy-segmented`); see
   [segmented-control.md](segmented-control.md#motion).
+- The sidebar changes only its width (200 ms, set by `--gdy-sidebar-duration`) and fades its labels
+  at the same pace; `animated={false}` on `SidebarLayout` switches it off. Its mobile drawer slides
+  in from the start edge and its overlay fades (`gdy-sidebar-drawer-in`, `gdy-fade-in`).
 
 The "thinking" spinner of the assistant (`gdy-ai-thinking-icon`, keyframes `gdy-ai-spin`) always
 runs, because it reports progress. To change or switch off an animation, target the same selector
