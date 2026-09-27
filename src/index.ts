@@ -151,3 +151,21 @@ export type {
   SegmentedIconPosition,
   SegmentedOption,
 } from "./segmented-control";
+
+export {
+  CountrySelect,
+  DEFAULT_COUNTRY_SELECT_LABEL,
+  DEFAULT_COUNTRY_SELECT_TEXTS,
+  InvalidSelectionRangeError,
+  isCountryCode,
+} from "./country-select";
+export type {
+  CountryCode,
+  CountrySelectClassNames,
+  CountrySelectNaming,
+  CountrySelectProps,
+  CountrySelectTexts,
+  FlagUrlResolver,
+  MultipleCountrySelectProps,
+  SingleCountrySelectProps,
+} from "./country-select";
