@@ -272,6 +272,141 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-sidebar-separator` | con estilos | — |
 | `gdy-sidebar-tooltip` | con estilos | — |
 
+### Editor Markdown
+
+| Clase | Tipo | Selectores de estado |
+|---|---|---|
+| `gdy-md-alert` | con estilos | `[data-variant="error"]`, `[data-variant="important"]`, `[data-variant="success"]`, `[data-variant="warning"]` |
+| `gdy-md-alert-option` | solo gancho | — |
+| `gdy-md-alert-option-error` | con estilos | — |
+| `gdy-md-alert-option-important` | con estilos | — |
+| `gdy-md-alert-option-info` | con estilos | — |
+| `gdy-md-alert-option-success` | con estilos | — |
+| `gdy-md-alert-option-warning` | con estilos | — |
+| `gdy-md-alert-title` | con estilos | — |
+| `gdy-md-body` | con estilos | — |
+| `gdy-md-code-language` | con estilos | — |
+| `gdy-md-confirm-dialog` | con estilos | — |
+| `gdy-md-diagram` | con estilos | `[data-diagram-state="error"]`, `[data-diagram-state="loading"]`, `[data-diagram-state="ready"]` |
+| `gdy-md-diagram-canvas` | con estilos | — |
+| `gdy-md-diagram-dialog` | con estilos | — |
+| `gdy-md-diagram-dialog-canvas` | con estilos | — |
+| `gdy-md-diagram-dialog-close` | con estilos | — |
+| `gdy-md-diagram-dialog-frame` | con estilos | — |
+| `gdy-md-diagram-editor` | con estilos | — |
+| `gdy-md-diagram-editor-preview` | con estilos | — |
+| `gdy-md-diagram-error` | con estilos | — |
+| `gdy-md-diagram-error-message` | con estilos | — |
+| `gdy-md-diagram-error-title` | con estilos | — |
+| `gdy-md-diagram-expand` | con estilos | — |
+| `gdy-md-diagram-source` | con estilos | — |
+| `gdy-md-diagram-status` | con estilos | — |
+| `gdy-md-dialog` | con estilos | — |
+| `gdy-md-dialog-actions` | con estilos | — |
+| `gdy-md-dialog-body` | con estilos | — |
+| `gdy-md-dialog-choice` | con estilos | — |
+| `gdy-md-dialog-close` | con estilos | — |
+| `gdy-md-dialog-description` | con estilos | — |
+| `gdy-md-dialog-fields` | con estilos | — |
+| `gdy-md-dialog-header` | con estilos | — |
+| `gdy-md-dialog-hint` | con estilos | — |
+| `gdy-md-dialog-option` | con estilos | — |
+| `gdy-md-dialog-overlay` | con estilos | — |
+| `gdy-md-dialog-textarea` | con estilos | — |
+| `gdy-md-dialog-title` | con estilos | — |
+| `gdy-md-editor` | con estilos | `[data-fullscreen]` |
+| `gdy-md-entity-character` | con estilos | — |
+| `gdy-md-entity-code` | con estilos | — |
+| `gdy-md-entity-grid` | con estilos | — |
+| `gdy-md-footnote-backref` | con estilos | — |
+| `gdy-md-footnote-ref` | con estilos | — |
+| `gdy-md-footnotes` | con estilos | — |
+| `gdy-md-guide-description` | con estilos | — |
+| `gdy-md-guide-dialog` | con estilos | — |
+| `gdy-md-guide-example` | con estilos | — |
+| `gdy-md-guide-panel` | con estilos | — |
+| `gdy-md-guide-rendered` | con estilos | — |
+| `gdy-md-guide-section` | con estilos | — |
+| `gdy-md-guide-shortcut` | con estilos | — |
+| `gdy-md-guide-source` | con estilos | — |
+| `gdy-md-guide-title` | con estilos | — |
+| `gdy-md-guide-tool` | con estilos | — |
+| `gdy-md-guide-tools` | con estilos | — |
+| `gdy-md-header` | con estilos | — |
+| `gdy-md-heading-option` | con estilos | — |
+| `gdy-md-heading-option-1` | con estilos | — |
+| `gdy-md-heading-option-2` | con estilos | — |
+| `gdy-md-heading-option-3` | con estilos | — |
+| `gdy-md-heading-option-4` | con estilos | — |
+| `gdy-md-heading-option-5` | con estilos | — |
+| `gdy-md-heading-option-6` | con estilos | — |
+| `gdy-md-image-file` | con estilos | — |
+| `gdy-md-image-file-input` | con estilos | — |
+| `gdy-md-image-file-name` | con estilos | — |
+| `gdy-md-image-preview` | con estilos | — |
+| `gdy-md-image-tab` | con estilos | `[data-state="active"]` |
+| `gdy-md-image-tab-list` | con estilos | — |
+| `gdy-md-image-tabs` | con estilos | — |
+| `gdy-md-math` | con estilos | `[data-math-state="error"]`, `[data-math-state="loading"]` |
+| `gdy-md-math-block` | con estilos | — |
+| `gdy-md-math-error` | con estilos | — |
+| `gdy-md-math-source` | con estilos | — |
+| `gdy-md-menu-shortcut` | con estilos | — |
+| `gdy-md-menu-submenu-icon` | con estilos | — |
+| `gdy-md-outline` | con estilos | — |
+| `gdy-md-outline-empty` | con estilos | — |
+| `gdy-md-outline-item` | con estilos | — |
+| `gdy-md-outline-link` | con estilos | `[aria-current="location"]` |
+| `gdy-md-outline-list` | con estilos | — |
+| `gdy-md-outline-title` | con estilos | — |
+| `gdy-md-overflow-menu` | con estilos | — |
+| `gdy-md-panels` | con estilos | `[data-view="split"]` |
+| `gdy-md-picker` | con estilos | — |
+| `gdy-md-picker-cell` | con estilos | — |
+| `gdy-md-picker-dialog` | con estilos | — |
+| `gdy-md-picker-grid` | con estilos | — |
+| `gdy-md-picker-panel` | con estilos | — |
+| `gdy-md-picker-search` | con estilos | — |
+| `gdy-md-picker-status` | con estilos | — |
+| `gdy-md-picker-tab` | con estilos | `[data-state="active"]` |
+| `gdy-md-picker-tab-icon` | con estilos | — |
+| `gdy-md-picker-tab-list` | con estilos | — |
+| `gdy-md-picker-tabs` | con estilos | — |
+| `gdy-md-preview` | con estilos | — |
+| `gdy-md-preview-panel` | con estilos | — |
+| `gdy-md-source` | con estilos | — |
+| `gdy-md-source-code` | con estilos | — |
+| `gdy-md-source-emphasis` | con estilos | — |
+| `gdy-md-source-heading` | con estilos | — |
+| `gdy-md-source-link` | con estilos | — |
+| `gdy-md-source-mark` | con estilos | — |
+| `gdy-md-source-panel` | con estilos | — |
+| `gdy-md-source-quote` | con estilos | — |
+| `gdy-md-source-strikethrough` | con estilos | — |
+| `gdy-md-source-strong` | con estilos | — |
+| `gdy-md-table-preview` | con estilos | `[data-alignment="center"]`, `[data-alignment="right"]` |
+| `gdy-md-table-preview-cell` | con estilos | `[data-header]` |
+| `gdy-md-table-preview-grid` | con estilos | — |
+| `gdy-md-table-preview-line` | con estilos | — |
+| `gdy-md-table-scroll` | con estilos | — |
+| `gdy-md-table-size` | con estilos | — |
+| `gdy-md-task-checkbox` | con estilos | — |
+| `gdy-md-task-item` | con estilos | — |
+| `gdy-md-tool` | con estilos | `[aria-pressed="true"]`, `[data-menu]`, `[data-state="open"]` |
+| `gdy-md-tool-chevron` | con estilos | — |
+| `gdy-md-tool-icon` | con estilos | — |
+| `gdy-md-toolbar` | con estilos | — |
+| `gdy-md-toolbar-group` | con estilos | — |
+| `gdy-md-toolbar-measure` | con estilos | — |
+| `gdy-md-toolbar-more` | con estilos | — |
+| `gdy-md-toolbar-separator` | con estilos | — |
+| `gdy-md-tooltip` | con estilos | — |
+| `gdy-md-tooltip-shortcut` | con estilos | — |
+| `gdy-md-view-icon` | con estilos | — |
+| `gdy-md-view-option` | con estilos | `[aria-pressed="true"]` |
+| `gdy-md-view-switch` | con estilos | — |
+| `gdy-md-viewer` | solo gancho | — |
+
 ### Primitivos
 
 | Clase | Tipo | Selectores de estado |
@@ -402,30 +537,40 @@ ponen Radix o react-day-picker siguen a esas librerías.
 | Atributo | Valores | Lo pone | Se usa con |
 |---|---|---|---|
 | `aria-checked` | `"false"`, `"true"` | Gridory | `gdy-segmented-item` |
-| `aria-current` | `"page"` | Gridory | `gdy-sidebar-item` |
+| `aria-current` | `"location"`, `"page"` | Gridory | `gdy-md-outline-link`, `gdy-sidebar-item` |
 | `aria-disabled` | `"true"` | Radix o react-day-picker | `gdy-calendar-button-next`, `gdy-calendar-button-previous`, `gdy-listbox-option` |
 | `aria-expanded` | `"false"`, `"true"` | Gridory | `gdy-button`, `gdy-country-select-trigger`, `gdy-phone-input-prefix`, `gdy-table-group-toggle` |
 | `aria-invalid` | `"true"` | Gridory | `gdy-auth-input`, `gdy-country-select-trigger`, `gdy-select-trigger` |
-| `aria-pressed` | `"true"` | Gridory | `gdy-link-btn`, `gdy-view-switch-btn` |
+| `aria-pressed` | `"true"` | Gridory | `gdy-link-btn`, `gdy-md-tool`, `gdy-md-view-option`, `gdy-view-switch-btn` |
 | `aria-selected` | `"true"` | Gridory | `gdy-listbox-option` |
 | `data-action-type` | `"create-card"`, `"create-row"`, `"custom"`, `"move-card"`, `"update-row"` | Gridory | sin regla por defecto |
 | `data-active` | presente / ausente | Gridory | `gdy-listbox-option` |
+| `data-alignment` | `"center"`, `"right"` | Gridory | `gdy-md-table-preview` |
 | `data-animated` | `"true"` | Gridory | `gdy-segmented`, `gdy-sidebar` |
 | `data-checked` | presente / ausente | Gridory | `gdy-option-check` |
 | `data-clickable` | presente / ausente | Gridory | `gdy-table-row` |
 | `data-compact` | `"true"` | Gridory | `gdy-sidebar-logo` |
+| `data-diagram-state` | `"error"`, `"loading"`, `"ready"` | Gridory | `gdy-md-diagram` |
 | `data-disabled` | presente / ausente | Gridory, Radix o react-day-picker | `gdy-auth-google-slot`, `gdy-calendar-day`, `gdy-menu-item`, `gdy-select-item` |
 | `data-dragging` | presente / ausente | Gridory | `gdy-kanban-card` |
 | `data-drop-target` | presente / ausente | Gridory | `gdy-kanban-column` |
 | `data-empty` | presente / ausente | Gridory | `gdy-ai-body` |
 | `data-filtered` | presente / ausente | Gridory | `gdy-kanban-filter-trigger` |
 | `data-form` | `"login"`, `"signup"` | Gridory | sin regla por defecto |
+| `data-fullscreen` | presente / ausente | Gridory | `gdy-md-editor` |
+| `data-header` | presente / ausente | Gridory | `gdy-md-table-preview-cell` |
 | `data-hidden` | presente / ausente | Radix o react-day-picker | `gdy-calendar-day` |
 | `data-highlighted` | presente / ausente | Radix o react-day-picker | `gdy-select-item` |
 | `data-hover-expand` | `"false"`, `"true"` | Gridory | `gdy-sidebar` |
 | `data-invalid` | presente / ausente | Gridory | `gdy-phone-input` |
 | `data-label-position` | `"start"` | Gridory | `gdy-field` |
+| `data-language` | `"mermaid"` | Gridory | sin regla por defecto |
 | `data-list` | `"ordered"`, `"unordered"` | Gridory | sin regla por defecto |
+| `data-math` | `"${tokens[index].markup === DISPLAY_MARKER ? "`, `"display"` | Gridory | sin regla por defecto |
+| `data-math-state` | `"error"`, `"loading"` | Gridory | `gdy-md-math` |
+| `data-measure-group` | presente / ausente | Gridory | sin regla por defecto |
+| `data-measure-overflow` | presente / ausente | Gridory | sin regla por defecto |
+| `data-menu` | presente / ausente | Gridory | `gdy-md-tool` |
 | `data-mobile` | `"true"` | Gridory | `gdy-sidebar-layout` |
 | `data-multiple` | presente / ausente | Gridory | `gdy-country-select` |
 | `data-outside` | presente / ausente | Radix o react-day-picker | `gdy-calendar-day` |
@@ -439,12 +584,14 @@ ponen Radix o react-day-picker siguen a esas librerías.
 | `data-selected-single` | presente / ausente | Gridory | `gdy-calendar-day-button` |
 | `data-side` | `"bottom"`, `"left"`, `"right"`, `"top"` | Radix o react-day-picker | `gdy-menu-content`, `gdy-popover-content`, `gdy-select-content` |
 | `data-size` | `"default"`, `"icon"`, `"icon-lg"`, `"icon-sm"`, `"icon-xs"`, `"lg"`, `"sm"`, `"xs"` | Gridory | `gdy-button` |
-| `data-state` | `"checked"`, `"closed"`, `"collapsed"`, `"expanded"`, `"on"`, `"open"` | Gridory, Radix o react-day-picker | `gdy-ai-sidebar`, `gdy-menu-content`, `gdy-popover-content`, `gdy-select-content`, `gdy-select-item`, `gdy-select-trigger`, `gdy-sidebar`, `gdy-sidebar-drawer`, `gdy-sidebar-overlay`, `gdy-toggle-item` |
+| `data-state` | `"active"`, `"checked"`, `"closed"`, `"collapsed"`, `"expanded"`, `"on"`, `"open"` | Gridory, Radix o react-day-picker | `gdy-ai-sidebar`, `gdy-md-image-tab`, `gdy-md-picker-tab`, `gdy-md-tool`, `gdy-menu-content`, `gdy-popover-content`, `gdy-select-content`, `gdy-select-item`, `gdy-select-trigger`, `gdy-sidebar`, `gdy-sidebar-drawer`, `gdy-sidebar-overlay`, `gdy-toggle-item` |
 | `data-status` | `"met"`, `"pending"`, `"unmet"` | Gridory | `gdy-auth-rule` |
 | `data-streaming` | presente / ausente | Gridory | sin regla por defecto |
 | `data-thinking` | presente / ausente | Gridory | sin regla por defecto |
 | `data-today` | presente / ausente | Radix o react-day-picker | `gdy-calendar-day` |
-| `data-variant` | `"default"`, `"destructive"`, `"ghost"`, `"link"`, `"outline"`, `"secondary"` | Gridory | `gdy-button`, `gdy-menu-item` |
+| `data-toolbar-placement` | presente / ausente | Gridory | sin regla por defecto |
+| `data-variant` | `"default"`, `"destructive"`, `"error"`, `"ghost"`, `"important"`, `"link"`, `"outline"`, `"secondary"`, `"success"`, `"warning"` | Gridory | `gdy-button`, `gdy-md-alert`, `gdy-menu-item` |
+| `data-view` | `"split"` | Gridory | `gdy-md-panels` |
 
 ## Tokens base
 
@@ -470,6 +617,7 @@ de la columna puente, si tu app la define.
 | `--gdy-destructive` | `--destructive` | `oklch(0.577 0.245 27.325)` | `oklch(0.704 0.191 22.216)` |
 | `--gdy-destructive-foreground` | `--destructive-foreground` | `oklch(0.985 0 0)` | `oklch(0.985 0 0)` |
 | `--gdy-success` | `--success` | `oklch(0.527 0.154 150.069)` | `oklch(0.792 0.209 151.711)` |
+| `--gdy-warning` | `--warning` | `oklch(0.666 0.179 58.318)` | `oklch(0.828 0.189 84.429)` |
 | `--gdy-border` | `--border` | `oklch(0.922 0 0)` | `oklch(1 0 0 / 10%)` |
 | `--gdy-input` | `--input` | `oklch(0.922 0 0)` | `oklch(1 0 0 / 15%)` |
 | `--gdy-ring` | `--ring` | `oklch(0.708 0 0)` | `oklch(0.556 0 0)` |
@@ -572,7 +720,7 @@ cualquier ancestro cambia solo esa parte. Los `--gdy-select-*` también reflejan
 | `--gdy-field-control-height` | `40px` | country-select, phone-input, shared |
 | `--gdy-field-error-color` | `var(--gdy-destructive)` | shared |
 | `--gdy-field-label-color` | `var(--gdy-foreground)` | shared |
-| `--gdy-field-label-gap` | `6px` | shared |
+| `--gdy-field-label-gap` | `6px` | markdown-editor, shared |
 | `--gdy-field-label-width` | `auto` | shared |
 | `--gdy-field-required-color` | `var(--gdy-destructive)` | shared |
 | `--gdy-floating-panel-max-height` | `20rem` | shared |
@@ -591,6 +739,121 @@ cualquier ancestro cambia solo esa parte. Los `--gdy-select-*` también reflejan
 | `--gdy-listbox-option-hover-text` | `var(--gdy-accent-foreground)` | country-select, phone-input, shared |
 | `--gdy-listbox-option-selected-bg` | `transparent` | country-select, phone-input, shared |
 | `--gdy-listbox-option-text` | `inherit` | shared |
+| `--gdy-md-alert-error` | `var(--gdy-destructive)` | markdown-editor |
+| `--gdy-md-alert-error-text` | `color-mix(in oklab, var(--gdy-md-alert-error, var(--gdy-destructive)) 62%, var(--gdy-md-preview-foreground, var(--gdy-foreground)))` | markdown-editor |
+| `--gdy-md-alert-important` | `color-mix(in oklch, var(--gdy-link) 70%, var(--gdy-destructive))` | markdown-editor |
+| `--gdy-md-alert-important-text` | `color-mix(in oklab, var(--gdy-md-alert-important, color-mix(in oklch, var(--gdy-link) 70%, var(--gdy-destructive))) 62%, var(--gdy-md-preview-foreground, var(--gdy-foreground)))` | markdown-editor |
+| `--gdy-md-alert-info` | `var(--gdy-link)` | markdown-editor |
+| `--gdy-md-alert-info-text` | `color-mix(in oklab, var(--gdy-md-alert-info, var(--gdy-link)) 62%, var(--gdy-md-preview-foreground, var(--gdy-foreground)))` | markdown-editor |
+| `--gdy-md-alert-success` | `var(--gdy-success)` | markdown-editor |
+| `--gdy-md-alert-success-text` | `color-mix(in oklab, var(--gdy-md-alert-success, var(--gdy-success)) 62%, var(--gdy-md-preview-foreground, var(--gdy-foreground)))` | markdown-editor |
+| `--gdy-md-alert-tint` | `8%` | markdown-editor |
+| `--gdy-md-alert-warning` | `var(--gdy-warning)` | markdown-editor |
+| `--gdy-md-alert-warning-text` | `color-mix(in oklab, var(--gdy-md-alert-warning, var(--gdy-warning)) 62%, var(--gdy-md-preview-foreground, var(--gdy-foreground)))` | markdown-editor |
+| `--gdy-md-block-gap` | `0.875rem` | markdown-editor |
+| `--gdy-md-border` | `var(--gdy-border)` | markdown-editor |
+| `--gdy-md-code-background` | `var(--gdy-muted)` | markdown-editor |
+| `--gdy-md-code-comment` | `var(--gdy-muted-foreground)` | markdown-editor |
+| `--gdy-md-code-deletion` | `color-mix(in oklab, var(--gdy-destructive) 62%, var(--gdy-md-preview-foreground, var(--gdy-foreground)))` | markdown-editor |
+| `--gdy-md-code-font-family` | `var(--gdy-font-mono)` | markdown-editor |
+| `--gdy-md-code-font-size` | `0.8125rem` | markdown-editor |
+| `--gdy-md-code-foreground` | `inherit` | markdown-editor |
+| `--gdy-md-code-keyword` | `var(--gdy-link)` | markdown-editor |
+| `--gdy-md-code-number` | `color-mix(in oklab, var(--gdy-warning) 62%, var(--gdy-md-preview-foreground, var(--gdy-foreground)))` | markdown-editor |
+| `--gdy-md-code-radius` | `calc(var(--gdy-radius) - 2px)` | markdown-editor |
+| `--gdy-md-code-string` | `color-mix(in oklab, var(--gdy-success) 62%, var(--gdy-md-preview-foreground, var(--gdy-foreground)))` | markdown-editor |
+| `--gdy-md-code-title` | `color-mix(in oklab, var(--gdy-destructive) 62%, var(--gdy-md-preview-foreground, var(--gdy-foreground)))` | markdown-editor |
+| `--gdy-md-code-type` | `var(--gdy-primary)` | markdown-editor |
+| `--gdy-md-diagram-background` | `var(--gdy-background)` | markdown-editor |
+| `--gdy-md-diagram-dialog-width` | `90rem` | markdown-editor |
+| `--gdy-md-diagram-editor-height` | `16rem` | markdown-editor |
+| `--gdy-md-diagram-editor-width` | `60rem` | markdown-editor |
+| `--gdy-md-diagram-error-background` | `var(--gdy-muted)` | markdown-editor |
+| `--gdy-md-diagram-frame` | `var(--gdy-md-border, var(--gdy-border))` | markdown-editor |
+| `--gdy-md-diagram-min-height` | `8rem` | markdown-editor |
+| `--gdy-md-dialog-accent` | `var(--gdy-primary)` | markdown-editor |
+| `--gdy-md-dialog-background` | `var(--gdy-popover)` | markdown-editor |
+| `--gdy-md-dialog-overlay` | `var(--gdy-overlay)` | markdown-editor |
+| `--gdy-md-dialog-radius` | `var(--gdy-radius)` | markdown-editor |
+| `--gdy-md-dialog-width` | `32rem` | markdown-editor |
+| `--gdy-md-dialog-z` | `55` | markdown-editor |
+| `--gdy-md-divider` | `var(--gdy-md-border, var(--gdy-border))` | markdown-editor |
+| `--gdy-md-divider-width` | `1px` | markdown-editor |
+| `--gdy-md-editor-background` | `var(--gdy-background)` | markdown-editor |
+| `--gdy-md-editor-height` | `32rem` | markdown-editor |
+| `--gdy-md-editor-radius` | `var(--gdy-radius)` | markdown-editor |
+| `--gdy-md-entity-columns` | `4` | markdown-editor |
+| `--gdy-md-fullscreen-z` | `45` | markdown-editor |
+| `--gdy-md-guide-source-background` | `var(--gdy-muted)` | markdown-editor |
+| `--gdy-md-guide-tool-background` | `var(--gdy-muted)` | markdown-editor |
+| `--gdy-md-guide-width` | `56rem` | markdown-editor |
+| `--gdy-md-header-background` | `var(--gdy-card)` | markdown-editor |
+| `--gdy-md-heading-color` | `var(--gdy-foreground)` | markdown-editor |
+| `--gdy-md-heading-font-family` | `inherit` | markdown-editor |
+| `--gdy-md-heading-font-weight` | `600` | markdown-editor |
+| `--gdy-md-heading-gap` | `1.5rem` | markdown-editor |
+| `--gdy-md-heading-scroll-margin` | `1rem` | markdown-editor |
+| `--gdy-md-image-preview-background` | `var(--gdy-muted)` | markdown-editor |
+| `--gdy-md-image-radius` | `calc(var(--gdy-radius) - 2px)` | markdown-editor |
+| `--gdy-md-inline-code-background` | `var(--gdy-md-code-background, var(--gdy-muted))` | markdown-editor |
+| `--gdy-md-inline-code-foreground` | `inherit` | markdown-editor |
+| `--gdy-md-link` | `var(--gdy-link)` | markdown-editor |
+| `--gdy-md-muted` | `var(--gdy-muted-foreground)` | markdown-editor |
+| `--gdy-md-outline-active` | `var(--gdy-primary)` | markdown-editor |
+| `--gdy-md-outline-active-foreground` | `var(--gdy-foreground)` | markdown-editor |
+| `--gdy-md-outline-background` | `var(--gdy-md-editor-background, var(--gdy-background))` | markdown-editor |
+| `--gdy-md-outline-foreground` | `var(--gdy-muted-foreground)` | markdown-editor |
+| `--gdy-md-outline-hover` | `var(--gdy-accent)` | markdown-editor |
+| `--gdy-md-outline-indent` | `0.75rem` | markdown-editor |
+| `--gdy-md-outline-width` | `14rem` | markdown-editor |
+| `--gdy-md-picker-cell-hover` | `var(--gdy-accent)` | markdown-editor |
+| `--gdy-md-picker-cell-size` | `2.25rem` | markdown-editor |
+| `--gdy-md-picker-columns` | `8` | markdown-editor |
+| `--gdy-md-picker-emoji-size` | `1.375rem` | markdown-editor |
+| `--gdy-md-picker-height` | `20rem` | markdown-editor |
+| `--gdy-md-picker-width` | `26rem` | markdown-editor |
+| `--gdy-md-preview-background` | `transparent` | markdown-editor |
+| `--gdy-md-preview-font-family` | `inherit` | markdown-editor |
+| `--gdy-md-preview-font-size` | `0.9375rem` | markdown-editor |
+| `--gdy-md-preview-foreground` | `var(--gdy-foreground)` | markdown-editor |
+| `--gdy-md-preview-line-height` | `1.7` | markdown-editor |
+| `--gdy-md-preview-padding` | `0.75rem 1.25rem` | markdown-editor |
+| `--gdy-md-preview-panel-background` | `transparent` | markdown-editor |
+| `--gdy-md-quote-border` | `var(--gdy-border)` | markdown-editor |
+| `--gdy-md-quote-border-width` | `4px` | markdown-editor |
+| `--gdy-md-quote-foreground` | `var(--gdy-muted-foreground)` | markdown-editor |
+| `--gdy-md-scrollbar-size` | `8px` | markdown-editor |
+| `--gdy-md-scrollbar-thumb` | `var(--gdy-scrollbar-thumb, var(--gdy-input))` | markdown-editor |
+| `--gdy-md-scrollbar-width` | `thin` | markdown-editor |
+| `--gdy-md-source-code` | `var(--gdy-foreground)` | markdown-editor |
+| `--gdy-md-source-code-background` | `var(--gdy-muted)` | markdown-editor |
+| `--gdy-md-source-heading` | `var(--gdy-foreground)` | markdown-editor |
+| `--gdy-md-source-link` | `var(--gdy-link)` | markdown-editor |
+| `--gdy-md-source-mark` | `var(--gdy-muted-foreground)` | markdown-editor |
+| `--gdy-md-source-min-height` | `12rem` | markdown-editor |
+| `--gdy-md-source-quote` | `var(--gdy-muted-foreground)` | markdown-editor |
+| `--gdy-md-table-border` | `var(--gdy-md-border, var(--gdy-border))` | markdown-editor |
+| `--gdy-md-table-cell-padding` | `0.5rem 0.75rem` | markdown-editor |
+| `--gdy-md-table-header-background` | `var(--gdy-muted)` | markdown-editor |
+| `--gdy-md-table-preview-cell` | `var(--gdy-muted)` | markdown-editor |
+| `--gdy-md-table-preview-header` | `var(--gdy-accent)` | markdown-editor |
+| `--gdy-md-table-preview-line` | `var(--gdy-muted-foreground)` | markdown-editor |
+| `--gdy-md-table-stripe` | `transparent` | markdown-editor |
+| `--gdy-md-task-checkbox` | `var(--gdy-primary)` | markdown-editor |
+| `--gdy-md-tool-active-background` | `var(--gdy-accent)` | markdown-editor |
+| `--gdy-md-tool-active-foreground` | `var(--gdy-foreground)` | markdown-editor |
+| `--gdy-md-tool-foreground` | `var(--gdy-muted-foreground)` | markdown-editor |
+| `--gdy-md-tool-hover-background` | `var(--gdy-accent)` | markdown-editor |
+| `--gdy-md-tool-hover-foreground` | `var(--gdy-foreground)` | markdown-editor |
+| `--gdy-md-tool-icon-size` | `1rem` | markdown-editor |
+| `--gdy-md-tool-size` | `2rem` | markdown-editor |
+| `--gdy-md-toolbar-separator` | `var(--gdy-border)` | markdown-editor |
+| `--gdy-md-tooltip-background` | `var(--gdy-foreground)` | markdown-editor |
+| `--gdy-md-tooltip-foreground` | `var(--gdy-background)` | markdown-editor |
+| `--gdy-md-view-option-active-background` | `var(--gdy-background)` | markdown-editor |
+| `--gdy-md-view-option-active-foreground` | `var(--gdy-foreground)` | markdown-editor |
+| `--gdy-md-view-option-foreground` | `var(--gdy-muted-foreground)` | markdown-editor |
+| `--gdy-md-view-switch-background` | `var(--gdy-muted)` | markdown-editor |
 | `--gdy-menu-bg` | `var(--gdy-popover)` | ui |
 | `--gdy-menu-fg` | `var(--gdy-popover-foreground)` | ui |
 | `--gdy-menu-item-hover-bg` | `var(--gdy-accent)` | ui |
@@ -616,7 +879,7 @@ cualquier ancestro cambia solo esa parte. Los `--gdy-select-*` también reflejan
 | `--gdy-phone-input-width` | `280px` | phone-input |
 | `--gdy-popover-bg` | `var(--gdy-popover)` | ui |
 | `--gdy-popover-fg` | `var(--gdy-popover-foreground)` | ui |
-| `--gdy-scrollbar-thumb` | `var(--gdy-input)` | segmented-control, shared, sidebar, ui |
+| `--gdy-scrollbar-thumb` | `var(--gdy-input)` | markdown-editor, segmented-control, shared, sidebar, ui |
 | `--gdy-segmented-bg` | `var(--gdy-muted)` | segmented-control |
 | `--gdy-segmented-border` | `var(--gdy-border)` | segmented-control |
 | `--gdy-segmented-duration` | `220ms` | motion |
