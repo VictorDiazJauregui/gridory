@@ -35,6 +35,7 @@ body:
         - Country select
         - Phone input
         - Sidebar
+        - Markdown editor
         - Styles and theming
         - Other
     validations:

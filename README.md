@@ -85,6 +85,17 @@ you use it.
 |---|---|---|
 | `SidebarLayout` and `Sidebar`: a side menu with hover and pinned modes and a mobile drawer. | `gridory/sidebar` | [Sidebar](docs/sidebar.md) |
 
+### Content
+
+| Component | Import | Guide |
+|---|---|---|
+| `MarkdownEditor`: write Markdown with a live, sanitized HTML preview, a configurable toolbar and a syntax guide. | `gridory/markdown-editor` | [Markdown editor](docs/markdown-editor.md) |
+
+Diagrams and formulas use `mermaid` and `katex`, optional peer dependencies: install them only if you
+use them, and pass `mermaidDiagrams` from `gridory/markdown-editor/mermaid` or `katexFormulas` from
+`gridory/markdown-editor/katex`. Each one downloads only when a document shows its first diagram or
+formula.
+
 Everything except the AI assistant is also exported from `gridory`.
 
 ## Theming
