@@ -48,7 +48,9 @@
     "gdy-ai-end",
     "gdy-ai-md-item-text",
     "gdy-ai-md-paragraph",
-    "gdy-ai-md-text"
+    "gdy-ai-md-text",
+    "gdy-md-viewer",
+    "gdy-md-alert-option"
   ],
   "variantAttributes": [
     "data-variant",
@@ -59,7 +61,11 @@
     "data-animated",
     "data-pinned",
     "data-hover-expand",
-    "data-compact"
+    "data-compact",
+    "data-view",
+    "data-alignment",
+    "data-diagram-state",
+    "data-math-state"
   ],
   "runtimeAttributes": [
     "data-state",

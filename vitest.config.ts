@@ -10,6 +10,20 @@ const BROWSER_TESTS = "src/test/**/*.browser.test.{ts,tsx}";
 // contributor downloads a browser.
 const installedChrome = playwright({ launchOptions: { channel: "chrome" } });
 
+const LAZY_EDITOR_DEPENDENCIES = [
+  "@codemirror/commands",
+  "@codemirror/language",
+  "@codemirror/search",
+  "@codemirror/state",
+  "@codemirror/view",
+  "@lezer/highlight",
+  "@lezer/markdown",
+  "highlight.js/lib/core",
+  "highlight.js/lib/languages/*",
+  "katex",
+  "mermaid",
+];
+
 export default mergeConfig(
   viteConfig,
   defineConfig({
@@ -28,6 +42,7 @@ export default mergeConfig(
         },
         {
           extends: true,
+          optimizeDeps: { include: LAZY_EDITOR_DEPENDENCIES },
           test: {
             name: "browser",
             setupFiles: ["src/test/browser/setup.ts"],

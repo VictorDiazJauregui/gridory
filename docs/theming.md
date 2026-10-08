@@ -100,6 +100,7 @@ Each token bridges to the shadcn variable without the `gdy-` part (`--gdy-card` 
 | `--gdy-accent` / `--gdy-accent-foreground` | `oklch(0.97 0 0)` / `oklch(0.205 0 0)` | `oklch(0.269 0 0)` / `oklch(0.985 0 0)` |
 | `--gdy-destructive` / `--gdy-destructive-foreground` | `oklch(0.577 0.245 27.325)` / `oklch(0.985 0 0)` | `oklch(0.704 0.191 22.216)` / `oklch(0.985 0 0)` |
 | `--gdy-success` | `oklch(0.527 0.154 150.069)` | `oklch(0.792 0.209 151.711)` |
+| `--gdy-warning` | `oklch(0.666 0.179 58.318)` | `oklch(0.828 0.189 84.429)` |
 | `--gdy-border` / `--gdy-input` / `--gdy-ring` | `oklch(0.922 0 0)` / `oklch(0.922 0 0)` / `oklch(0.708 0 0)` | `oklch(1 0 0 / 10%)` / `oklch(1 0 0 / 15%)` / `oklch(0.556 0 0)` |
 | `--gdy-radius` | `0.625rem` | same as light |
 
@@ -150,6 +151,7 @@ them.
 | `--gdy-popover-*` | `--gdy-popover-bg` (`--gdy-popover`), `--gdy-popover-fg` (`--gdy-popover-foreground`) |
 | `--gdy-toggle-*` | `--gdy-toggle-bg` (`color-mix(in oklab, var(--gdy-muted) 50%, transparent)`), `--gdy-toggle-active-bg` (`--gdy-background`) |
 | `--gdy-calendar-*` | `--gdy-calendar-selected-bg` (`--gdy-primary`), `--gdy-calendar-selected-fg` (`--gdy-primary-foreground`), `--gdy-calendar-range-bg` (`--gdy-muted`) |
+| `--gdy-md-*` | `--gdy-md-editor-background` (`--gdy-background`), `--gdy-md-border` (`--gdy-border`), `--gdy-md-preview-font-size` (`0.9375rem`), `--gdy-md-alert-warning` (`--gdy-warning`), `--gdy-md-scrollbar-size` (`8px`) — full list in [Markdown editor tokens](#markdown-editor-tokens) |
 
 The exhaustive list, with every fallback, is in [style-hooks.md](style-hooks.md#component-tokens).
 An override for both themes, plus one scoped to a single screen:
@@ -167,6 +169,200 @@ An override for both themes, plus one scoped to a single screen:
   --gdy-table-row-hover-bg: color-mix(in oklab, var(--gdy-primary) 8%, transparent);
 }
 ```
+
+### Markdown editor tokens
+
+Every value of the Markdown editor reads a `--gdy-md-*` token with a fallback, so none of them has
+to be declared. Its dialogs, menus and the full-size diagram render in portals under `<body>`:
+declare the tokens that style them on `:root` or `.dark`. Alert and code colors fall back to a mix of
+the base color and the text color, which keeps them at WCAG AA contrast in both themes; a token you
+set is used as is. The colors of Mermaid diagrams are read from `--gdy-md-diagram-*` when a diagram
+draws, and drawn again when the theme changes.
+
+#### Frame, header and scrollbars
+
+| Token | Fallback |
+|---|---|
+| `--gdy-md-border` | `var(--gdy-border)` |
+| `--gdy-md-divider` | `var(--gdy-md-border, var(--gdy-border))` |
+| `--gdy-md-divider-width` | `1px` |
+| `--gdy-md-editor-background` | `var(--gdy-background)` |
+| `--gdy-md-editor-height` | `32rem` |
+| `--gdy-md-editor-radius` | `var(--gdy-radius)` |
+| `--gdy-md-fullscreen-z` | `45` |
+| `--gdy-md-header-background` | `var(--gdy-card)` |
+| `--gdy-md-scrollbar-size` | `8px` |
+| `--gdy-md-scrollbar-thumb` | `var(--gdy-scrollbar-thumb, var(--gdy-input))` |
+| `--gdy-md-scrollbar-width` | `thin` |
+
+#### Toolbar and view switch
+
+| Token | Fallback |
+|---|---|
+| `--gdy-md-tool-active-background` | `var(--gdy-accent)` |
+| `--gdy-md-tool-active-foreground` | `var(--gdy-foreground)` |
+| `--gdy-md-tool-foreground` | `var(--gdy-muted-foreground)` |
+| `--gdy-md-tool-hover-background` | `var(--gdy-accent)` |
+| `--gdy-md-tool-hover-foreground` | `var(--gdy-foreground)` |
+| `--gdy-md-tool-icon-size` | `1rem` |
+| `--gdy-md-tool-size` | `2rem` |
+| `--gdy-md-toolbar-separator` | `var(--gdy-border)` |
+| `--gdy-md-tooltip-background` | `var(--gdy-foreground)` |
+| `--gdy-md-tooltip-foreground` | `var(--gdy-background)` |
+| `--gdy-md-view-option-active-background` | `var(--gdy-background)` |
+| `--gdy-md-view-option-active-foreground` | `var(--gdy-foreground)` |
+| `--gdy-md-view-option-foreground` | `var(--gdy-muted-foreground)` |
+| `--gdy-md-view-switch-background` | `var(--gdy-muted)` |
+
+#### Writing area (CodeMirror)
+
+| Token | Fallback |
+|---|---|
+| `--gdy-md-panel-background` | `var(--gdy-card)` |
+| `--gdy-md-panel-button` | `var(--gdy-secondary)` |
+| `--gdy-md-panel-foreground` | `var(--gdy-foreground)` |
+| `--gdy-md-search-match` | `color-mix(in oklab, var(--gdy-warning) 28%, transparent)` |
+| `--gdy-md-search-match-active` | `color-mix(in oklab, var(--gdy-warning) 55%, transparent)` |
+| `--gdy-md-source-background` | `var(--gdy-md-editor-background, var(--gdy-background))` |
+| `--gdy-md-source-caret` | `var(--gdy-foreground)` |
+| `--gdy-md-source-code` | `var(--gdy-foreground)` |
+| `--gdy-md-source-code-background` | `var(--gdy-muted)` |
+| `--gdy-md-source-font-family` | `var(--gdy-font-mono)` |
+| `--gdy-md-source-font-size` | `0.875rem` |
+| `--gdy-md-source-foreground` | `var(--gdy-foreground)` |
+| `--gdy-md-source-heading` | `var(--gdy-foreground)` |
+| `--gdy-md-source-line-height` | `1.65` |
+| `--gdy-md-source-link` | `var(--gdy-link)` |
+| `--gdy-md-source-mark` | `var(--gdy-muted-foreground)` |
+| `--gdy-md-source-min-height` | `12rem` |
+| `--gdy-md-source-padding` | `0.75rem 1rem` |
+| `--gdy-md-source-placeholder` | `var(--gdy-muted-foreground)` |
+| `--gdy-md-source-quote` | `var(--gdy-muted-foreground)` |
+| `--gdy-md-source-selection` | `color-mix(in oklab, var(--gdy-primary) 22%, transparent)` |
+
+#### Preview typography
+
+| Token | Fallback |
+|---|---|
+| `--gdy-md-block-gap` | `0.875rem` |
+| `--gdy-md-heading-color` | `var(--gdy-foreground)` |
+| `--gdy-md-heading-font-family` | `inherit` |
+| `--gdy-md-heading-font-weight` | `600` |
+| `--gdy-md-heading-gap` | `1.5rem` |
+| `--gdy-md-heading-scroll-margin` | `1rem` |
+| `--gdy-md-image-preview-background` | `var(--gdy-muted)` |
+| `--gdy-md-image-radius` | `calc(var(--gdy-radius) - 2px)` |
+| `--gdy-md-link` | `var(--gdy-link)` |
+| `--gdy-md-muted` | `var(--gdy-muted-foreground)` |
+| `--gdy-md-preview-background` | `transparent` |
+| `--gdy-md-preview-font-family` | `inherit` |
+| `--gdy-md-preview-font-size` | `0.9375rem` |
+| `--gdy-md-preview-foreground` | `var(--gdy-foreground)` |
+| `--gdy-md-preview-line-height` | `1.7` |
+| `--gdy-md-preview-padding` | `0.75rem 1.25rem` |
+| `--gdy-md-preview-panel-background` | `transparent` |
+| `--gdy-md-quote-border` | `var(--gdy-border)` |
+| `--gdy-md-quote-border-width` | `4px` |
+| `--gdy-md-quote-foreground` | `var(--gdy-muted-foreground)` |
+| `--gdy-md-task-checkbox` | `var(--gdy-primary)` |
+
+#### Code and highlighting
+
+| Token | Fallback |
+|---|---|
+| `--gdy-md-code-background` | `var(--gdy-muted)` |
+| `--gdy-md-code-comment` | `var(--gdy-muted-foreground)` |
+| `--gdy-md-code-deletion` | `color-mix(in oklab, var(--gdy-destructive) 62%, var(--gdy-md-preview-foreground, var(--gdy-foreground)))` |
+| `--gdy-md-code-font-family` | `var(--gdy-font-mono)` |
+| `--gdy-md-code-font-size` | `0.8125rem` |
+| `--gdy-md-code-foreground` | `inherit` |
+| `--gdy-md-code-keyword` | `var(--gdy-link)` |
+| `--gdy-md-code-number` | `color-mix(in oklab, var(--gdy-warning) 62%, var(--gdy-md-preview-foreground, var(--gdy-foreground)))` |
+| `--gdy-md-code-radius` | `calc(var(--gdy-radius) - 2px)` |
+| `--gdy-md-code-string` | `color-mix(in oklab, var(--gdy-success) 62%, var(--gdy-md-preview-foreground, var(--gdy-foreground)))` |
+| `--gdy-md-code-title` | `color-mix(in oklab, var(--gdy-destructive) 62%, var(--gdy-md-preview-foreground, var(--gdy-foreground)))` |
+| `--gdy-md-code-type` | `var(--gdy-primary)` |
+| `--gdy-md-inline-code-background` | `var(--gdy-md-code-background, var(--gdy-muted))` |
+| `--gdy-md-inline-code-foreground` | `inherit` |
+
+#### Tables
+
+| Token | Fallback |
+|---|---|
+| `--gdy-md-table-border` | `var(--gdy-md-border, var(--gdy-border))` |
+| `--gdy-md-table-cell-padding` | `0.5rem 0.75rem` |
+| `--gdy-md-table-header-background` | `var(--gdy-muted)` |
+| `--gdy-md-table-stripe` | `transparent` |
+
+#### Alerts
+
+| Token | Fallback |
+|---|---|
+| `--gdy-md-alert-error` | `var(--gdy-destructive)` |
+| `--gdy-md-alert-error-text` | `color-mix(in oklab, var(--gdy-md-alert-error, var(--gdy-destructive)) 62%, var(--gdy-md-preview-foreground, var(--gdy-foreground)))` |
+| `--gdy-md-alert-important` | `color-mix(in oklch, var(--gdy-link) 70%, var(--gdy-destructive))` |
+| `--gdy-md-alert-important-text` | `color-mix(in oklab, var(--gdy-md-alert-important, color-mix(in oklch, var(--gdy-link) 70%, var(--gdy-destructive))) 62%, var(--gdy-md-preview-foreground, var(--gdy-foreground)))` |
+| `--gdy-md-alert-info` | `var(--gdy-link)` |
+| `--gdy-md-alert-info-text` | `color-mix(in oklab, var(--gdy-md-alert-info, var(--gdy-link)) 62%, var(--gdy-md-preview-foreground, var(--gdy-foreground)))` |
+| `--gdy-md-alert-success` | `var(--gdy-success)` |
+| `--gdy-md-alert-success-text` | `color-mix(in oklab, var(--gdy-md-alert-success, var(--gdy-success)) 62%, var(--gdy-md-preview-foreground, var(--gdy-foreground)))` |
+| `--gdy-md-alert-tint` | `8%` |
+| `--gdy-md-alert-warning` | `var(--gdy-warning)` |
+| `--gdy-md-alert-warning-text` | `color-mix(in oklab, var(--gdy-md-alert-warning, var(--gdy-warning)) 62%, var(--gdy-md-preview-foreground, var(--gdy-foreground)))` |
+
+#### Dialogs, pickers and guide
+
+| Token | Fallback |
+|---|---|
+| `--gdy-md-dialog-accent` | `var(--gdy-primary)` |
+| `--gdy-md-dialog-background` | `var(--gdy-popover)` |
+| `--gdy-md-dialog-overlay` | `var(--gdy-overlay)` |
+| `--gdy-md-dialog-radius` | `var(--gdy-radius)` |
+| `--gdy-md-dialog-width` | `32rem` |
+| `--gdy-md-dialog-z` | `55` |
+| `--gdy-md-entity-columns` | `4` |
+| `--gdy-md-guide-source-background` | `var(--gdy-muted)` |
+| `--gdy-md-guide-tool-background` | `var(--gdy-muted)` |
+| `--gdy-md-guide-width` | `56rem` |
+| `--gdy-md-picker-cell-hover` | `var(--gdy-accent)` |
+| `--gdy-md-picker-cell-size` | `2.25rem` |
+| `--gdy-md-picker-columns` | `8` |
+| `--gdy-md-picker-emoji-size` | `1.375rem` |
+| `--gdy-md-picker-height` | `20rem` |
+| `--gdy-md-picker-width` | `26rem` |
+| `--gdy-md-table-preview-cell` | `var(--gdy-muted)` |
+| `--gdy-md-table-preview-header` | `var(--gdy-accent)` |
+| `--gdy-md-table-preview-line` | `var(--gdy-muted-foreground)` |
+
+#### Outline
+
+| Token | Fallback |
+|---|---|
+| `--gdy-md-outline-active` | `var(--gdy-primary)` |
+| `--gdy-md-outline-active-foreground` | `var(--gdy-foreground)` |
+| `--gdy-md-outline-background` | `var(--gdy-md-editor-background, var(--gdy-background))` |
+| `--gdy-md-outline-foreground` | `var(--gdy-muted-foreground)` |
+| `--gdy-md-outline-hover` | `var(--gdy-accent)` |
+| `--gdy-md-outline-indent` | `0.75rem` |
+| `--gdy-md-outline-width` | `14rem` |
+
+#### Diagrams and formulas
+
+| Token | Fallback |
+|---|---|
+| `--gdy-md-diagram-accent` | `var(--gdy-accent)` |
+| `--gdy-md-diagram-active` | `var(--gdy-primary)` |
+| `--gdy-md-diagram-background` | `var(--gdy-background)` |
+| `--gdy-md-diagram-border` | `var(--gdy-ring)` |
+| `--gdy-md-diagram-dialog-width` | `90rem` |
+| `--gdy-md-diagram-editor-height` | `16rem` |
+| `--gdy-md-diagram-editor-width` | `60rem` |
+| `--gdy-md-diagram-error-background` | `var(--gdy-muted)` |
+| `--gdy-md-diagram-frame` | `var(--gdy-md-border, var(--gdy-border))` |
+| `--gdy-md-diagram-line` | `var(--gdy-muted-foreground)` |
+| `--gdy-md-diagram-min-height` | `8rem` |
+| `--gdy-md-diagram-node` | `var(--gdy-muted)` |
+| `--gdy-md-diagram-text` | `var(--gdy-foreground)` |
 
 ## Overriding by class
 

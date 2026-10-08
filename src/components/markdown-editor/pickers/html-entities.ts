@@ -1,0 +1,46 @@
+export interface HtmlEntityEntry {
+  entity: string;
+  character: string;
+  name: string;
+}
+
+export const HTML_ENTITIES: readonly HtmlEntityEntry[] = [
+  { entity: "&copy;", character: "©", name: "Copyright" },
+  { entity: "&reg;", character: "®", name: "Marca registrada" },
+  { entity: "&trade;", character: "™", name: "Marca comercial" },
+  { entity: "&euro;", character: "€", name: "Euro" },
+  { entity: "&pound;", character: "£", name: "Libra" },
+  { entity: "&yen;", character: "¥", name: "Yen" },
+  { entity: "&cent;", character: "¢", name: "Centavo" },
+  { entity: "&deg;", character: "°", name: "Grado" },
+  { entity: "&plusmn;", character: "±", name: "Más o menos" },
+  { entity: "&times;", character: "×", name: "Multiplicación" },
+  { entity: "&divide;", character: "÷", name: "División" },
+  { entity: "&frac12;", character: "½", name: "Un medio" },
+  { entity: "&frac14;", character: "¼", name: "Un cuarto" },
+  { entity: "&frac34;", character: "¾", name: "Tres cuartos" },
+  { entity: "&ne;", character: "≠", name: "Distinto" },
+  { entity: "&asymp;", character: "≈", name: "Aproximadamente" },
+  { entity: "&le;", character: "≤", name: "Menor o igual" },
+  { entity: "&ge;", character: "≥", name: "Mayor o igual" },
+  { entity: "&infin;", character: "∞", name: "Infinito" },
+  { entity: "&rarr;", character: "→", name: "Flecha a la derecha" },
+  { entity: "&larr;", character: "←", name: "Flecha a la izquierda" },
+  { entity: "&uarr;", character: "↑", name: "Flecha arriba" },
+  { entity: "&darr;", character: "↓", name: "Flecha abajo" },
+  { entity: "&harr;", character: "↔", name: "Flecha doble" },
+  { entity: "&rArr;", character: "⇒", name: "Implica" },
+  { entity: "&laquo;", character: "«", name: "Comilla angular de apertura" },
+  { entity: "&raquo;", character: "»", name: "Comilla angular de cierre" },
+  { entity: "&hellip;", character: "…", name: "Puntos suspensivos" },
+  { entity: "&ndash;", character: "–", name: "Guion corto" },
+  { entity: "&mdash;", character: "—", name: "Raya" },
+  { entity: "&bull;", character: "•", name: "Viñeta" },
+  { entity: "&middot;", character: "·", name: "Punto medio" },
+  { entity: "&sect;", character: "§", name: "Sección" },
+  { entity: "&para;", character: "¶", name: "Párrafo" },
+  { entity: "&iexcl;", character: "¡", name: "Exclamación de apertura" },
+  { entity: "&iquest;", character: "¿", name: "Interrogación de apertura" },
+  { entity: "&check;", character: "✓", name: "Tilde" },
+  { entity: "&nbsp;", character: "⍽", name: "Espacio sin corte" },
+];

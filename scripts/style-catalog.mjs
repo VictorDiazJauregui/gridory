@@ -52,6 +52,7 @@ const GROUPS = [
   { id: "country-select", match: /^gdy-country-select(?:-|$)/ },
   { id: "phone-input", match: /^gdy-phone-input(?:-|$)/ },
   { id: "sidebar", match: /^gdy-sidebar(?:-|$)/ },
+  { id: "markdown-editor", match: /^gdy-md(?:-|$)/ },
   { id: "ui", match: /^gdy-(?:button|select|menu|popover|toggle|calendar)(?:-|$)/ },
   { id: "shared", match: /^gdy-/ },
 ];
@@ -214,6 +215,7 @@ const TEXT = {
       "country-select": "Country select",
       "phone-input": "Phone input",
       sidebar: "Sidebar",
+      "markdown-editor": "Markdown editor",
       ui: "Primitives",
       shared: "Shared layer and toolbar",
     },
@@ -270,6 +272,7 @@ const TEXT = {
       "country-select": "Selector de país",
       "phone-input": "Teléfono con prefijo",
       sidebar: "Menú lateral",
+      "markdown-editor": "Editor Markdown",
       ui: "Primitivos",
       shared: "Capa compartida y toolbar",
     },
