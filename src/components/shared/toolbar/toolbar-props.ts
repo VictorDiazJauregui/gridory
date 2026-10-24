@@ -32,6 +32,7 @@ export const pickToolbarPassThrough = <TData>({
   toggleGroups,
   headerSelectors,
   toolbarLayout,
+  toolbarSlots,
   selectTheme,
 }: DataViewProps<TData>) => ({
   viewSwitch,
@@ -39,5 +40,6 @@ export const pickToolbarPassThrough = <TData>({
   toggleGroups,
   headerSelectors,
   toolbarLayout,
+  toolbarSlots,
   selectTheme,
 });
