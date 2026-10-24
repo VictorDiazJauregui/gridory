@@ -87,3 +87,22 @@
     font-family: 'Geist Variable', sans-serif;
   }
 }
+/* Table demo: one column painted through its data-column-id hook. */
+.gdy-table-head-cell[data-column-id="amount"],
+.gdy-table-cell[data-column-id="amount"] {
+  text-align: right;
+  background: color-mix(in oklch, var(--gdy-primary) 5%, transparent);
+}
+
+.gdy-table-cell[data-column-id="amount"] {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Table demo: archived rows marked through getRowAttributes, dimmed from a demo token. */
+:root {
+  --demo-archived-row-opacity: 0.55;
+}
+
+.gdy-table-row[data-archived] {
+  opacity: var(--demo-archived-row-opacity);
+}

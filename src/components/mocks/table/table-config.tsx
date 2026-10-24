@@ -12,6 +12,7 @@ import {
 } from "../company/company-columns";
 import type { MockCompanyRow } from "../company/company-rows";
 import type { MockRowsUpdater } from "../company/row-updates";
+import { buildAmountColumn } from "./company-amounts";
 
 const TABLE_COLUMN_OPTIONS = { appsWidth: 220, statusSearchable: false };
 
@@ -73,14 +74,26 @@ const withFormattedCreatedAt = (
   cell: (row) => row.createdAt.split("-").reverse().join("/"),
 });
 
+const decorateColumn = (column: MockCompanyColumn, setRows: MockRowsUpdater) => {
+  if (column.id === "status") return withInlineStatus(column, setRows);
+  if (column.id === "createdAt") return withFormattedCreatedAt(column);
+  return column;
+};
+
+const insertAmountColumn = (columns: MockCompanyColumn[]) => {
+  const afterCountry = columns.findIndex((column) => column.id === "country") + 1;
+  return [...columns.slice(0, afterCountry), buildAmountColumn(), ...columns.slice(afterCountry)];
+};
+
 export const buildTableColumns = (
   setRows: MockRowsUpdater,
-): MockCompanyColumn[] =>
-  buildCompanyColumns(TABLE_COLUMN_OPTIONS).map((column) => {
-    if (column.id === "status") return withInlineStatus(column, setRows);
-    if (column.id === "createdAt") return withFormattedCreatedAt(column);
-    return column;
-  });
+  withAmount: boolean,
+): MockCompanyColumn[] => {
+  const columns = buildCompanyColumns(TABLE_COLUMN_OPTIONS).map((column) =>
+    decorateColumn(column, setRows),
+  );
+  return withAmount ? insertAmountColumn(columns) : columns;
+};
 
 const TABLE_MENU_ACTIONS: MenuItem<MockCompanyRow>[] = [
   { kind: "label", id: "group-quick", label: "Acciones rápidas" },
