@@ -199,8 +199,9 @@ copia interna y llama a `onCardMove` con un `KanbanMoveEvent<TData>`:
 
 Soltar una tarjeta en su propia columna no hace nada. El tablero no cambia los datos que le pasaste:
 guarda `updatedCard` en tu estado, como en el ejemplo rápido, o el movimiento se pierde la próxima vez
-que cambie `data`. Durante el arrastre, la tarjeta lleva `data-dragging` y la columna que está bajo el
-puntero lleva `data-drop-target`.
+que cambie `data`. Mientras el arrastre está activo, cada tarjeta lleva `data-draggable`, que es lo que
+le da el cursor `grab`. Durante el arrastre, la tarjeta lleva `data-dragging` y la columna que está bajo
+el puntero lleva `data-drop-target`.
 
 ### Clic en la tarjeta
 
@@ -213,8 +214,8 @@ lo disparen.
 ### Búsqueda
 
 El buscador de la toolbar (`searchPlaceholder`, por defecto `"Buscar cards..."`) deja las tarjetas en
-las que algún campo buscable contiene el texto, sin distinguir mayúsculas de minúsculas, sobre los
-valores que devuelve `accessor`. El buscador está documentado en [toolbar.es.md](toolbar.es.md).
+las que algún campo buscable contiene el texto, sin distinguir mayúsculas ni acentos (`peru` encuentra
+`Perú`), sobre los valores que devuelve `accessor`. El buscador está documentado en [toolbar.es.md](toolbar.es.md).
 
 ### Filtros
 
@@ -324,7 +325,7 @@ tarjeta visible, el viewport contiene un único elemento `gdy-empty` con `emptyM
 | `gdy-kanban-column-title` | Título de la columna. | — |
 | `gdy-kanban-column-count` | Contador de tarjetas. | — |
 | `gdy-kanban-column-body` | Lista de tarjetas con scroll; `gdy-kanban-empty-col` es su placeholder `"Sin cards"`. | — |
-| `gdy-kanban-card` | Tarjeta (`article`). | `data-dragging` mientras se arrastra. |
+| `gdy-kanban-card` | Tarjeta (`article`). | `data-draggable` mientras se puede arrastrar; `data-dragging` mientras se arrastra. |
 | `gdy-kanban-card-title` | Título de la tarjeta por defecto; `gdy-kanban-card-subtitle` es su subtítulo. | — |
 | `gdy-kanban-tag` | Etiqueta de grupo de la tarjeta por defecto. | — |
 | `gdy-kanban-card-value` | Líneas `Header: value` y línea de fecha de la tarjeta por defecto. | — |

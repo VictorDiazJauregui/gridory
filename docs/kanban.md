@@ -197,8 +197,9 @@ active group's `setValue(card, columnValue)`, moves the result in the board's in
 
 Dropping a card on its own column does nothing. The board does not change the data you passed:
 store `updatedCard` in your state, as in the quick example, or the move is lost the next time `data`
-changes. While dragging, the card carries `data-dragging` and the column under the pointer carries
-`data-drop-target`.
+changes. While drag and drop is on, every card carries `data-draggable`, which is what gives it the
+`grab` cursor. While dragging, the card carries `data-dragging` and the column under the pointer
+carries `data-drop-target`.
 
 ### Card click
 
@@ -210,7 +211,8 @@ call `event.stopPropagation()` on your own buttons and inputs to keep them from 
 ### Search
 
 The toolbar search box (`searchPlaceholder`, default `"Buscar cards..."`) keeps the cards where any
-searchable field contains the query, case-insensitive, over the values returned by `accessor`. The
+searchable field contains the query, ignoring case and accents (`peru` finds `Perú`), over the values
+returned by `accessor`. The
 search box is described in [toolbar.md](toolbar.md).
 
 ### Filtering
@@ -315,7 +317,7 @@ viewport `div.gdy-kanban-board-wrap.gdy-scroll`. When no card is visible the vie
 | `gdy-kanban-column-title` | Column label. | — |
 | `gdy-kanban-column-count` | Card count badge. | — |
 | `gdy-kanban-column-body` | Scrolling list of cards; `gdy-kanban-empty-col` is its `"Sin cards"` placeholder. | — |
-| `gdy-kanban-card` | Card (`article`). | `data-dragging` while it is dragged. |
+| `gdy-kanban-card` | Card (`article`). | `data-draggable` while it can be dragged; `data-dragging` while it is dragged. |
 | `gdy-kanban-card-title` | Title of the default card; `gdy-kanban-card-subtitle` is its subtitle. | — |
 | `gdy-kanban-tag` | Group tag of the default card. | — |
 | `gdy-kanban-card-value` | `Header: value` and date lines of the default card. | — |

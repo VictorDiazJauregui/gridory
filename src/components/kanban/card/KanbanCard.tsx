@@ -12,6 +12,7 @@ export const KanbanCard = <TData,>(props: KanbanCardProps<TData>) => {
     <article
       className="gdy-kanban-card"
       data-dragging={drag.draggingCardId === cardId || undefined}
+      data-draggable={drag.enabled || undefined}
       draggable={drag.enabled}
       {...buildCardDragHandlers({ drag, cardId })}
       onClick={buildCardClickHandler({ drag, onCardClick, ...clickEvent })}
