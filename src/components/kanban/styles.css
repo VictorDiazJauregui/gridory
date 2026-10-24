@@ -163,6 +163,11 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+/* :where() keeps the specificity of the bare class, so a consumer rule on
+   .gdy-kanban-card still overrides the cursor as it did before. */
+.gdy-kanban-card:where([data-draggable]) {
   cursor: grab;
 }
 

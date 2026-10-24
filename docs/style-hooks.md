@@ -66,7 +66,7 @@ The state selectors column lists the attributes the stylesheets combine with eac
 | `gdy-kanban` | styled | — |
 | `gdy-kanban-board` | styled | — |
 | `gdy-kanban-board-wrap` | styled | — |
-| `gdy-kanban-card` | styled | `[data-dragging]` |
+| `gdy-kanban-card` | styled | `[data-draggable]`, `[data-dragging]` |
 | `gdy-kanban-card-actions` | styled | — |
 | `gdy-kanban-card-head` | styled | — |
 | `gdy-kanban-card-main` | styled | — |
@@ -415,6 +415,7 @@ Radix or react-day-picker follow those libraries.
 | `data-clickable` | present / absent | Gridory | `gdy-table-row` |
 | `data-compact` | `"true"` | Gridory | `gdy-sidebar-logo` |
 | `data-disabled` | present / absent | Gridory, Radix or react-day-picker | `gdy-auth-google-slot`, `gdy-calendar-day`, `gdy-menu-item`, `gdy-select-item` |
+| `data-draggable` | present / absent | Gridory | `gdy-kanban-card` |
 | `data-dragging` | present / absent | Gridory | `gdy-kanban-card` |
 | `data-drop-target` | present / absent | Gridory | `gdy-kanban-column` |
 | `data-empty` | present / absent | Gridory | `gdy-ai-body` |
