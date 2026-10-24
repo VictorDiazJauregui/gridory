@@ -89,6 +89,7 @@
       "import": "./dist/markdown-editor-katex.js"
     },
     "./styles.css": "./dist/gridory.css",
+    "./tokens-hsl-channels.css": "./dist/tokens-hsl-channels.css",
     "./tailwind-preset": "./tailwind-preset.js",
     "./package.json": "./package.json"
   },

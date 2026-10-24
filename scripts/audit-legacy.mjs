@@ -52,8 +52,12 @@ const libraryCss = [
 ];
 const LITERAL_COLOR = /#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?|oklch|oklab|lab|lch|hwb)\(/i;
 
+// The token sheets are the only place where colors are written: tokens.css declares
+// the palette and tokens-hsl-channels.css wraps the app's channels in hsl().
+const TOKEN_SHEETS = new Set(["src/styles/tokens.css", "src/styles/tokens-hsl-channels.css"]);
+
 for (const file of libraryCss) {
-  if (path.basename(file) === "tokens.css") continue;
+  if (TOKEN_SHEETS.has(rel(file))) continue;
   readFileSync(file, "utf8")
     .split("\n")
     .forEach((line, index) => {

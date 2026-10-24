@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { defineConfig } from "vite";
+import { defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 
 const rootDir = import.meta.dirname;
@@ -26,8 +26,23 @@ const externalPackages = [
 const isExternal = (id: string): boolean =>
   externalPackages.some((name) => id === name || id.startsWith(`${name}/`));
 
+// Opt-in stylesheets ship next to gridory.css, untouched, and no entry imports them:
+// a consumer adds them on purpose (see docs/theming.md).
+const OPTIONAL_STYLESHEETS = ["tokens-hsl-channels.css"];
+
+const emitOptionalStylesheets = (): Plugin => ({
+  name: "gridory-optional-stylesheets",
+  apply: "build",
+  generateBundle() {
+    for (const fileName of OPTIONAL_STYLESHEETS) {
+      const source = readFileSync(path.join(rootDir, "src/styles", fileName), "utf8");
+      this.emitFile({ type: "asset", fileName, source });
+    }
+  },
+});
+
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), emitOptionalStylesheets()],
   resolve: {
     alias: {
       "@": path.resolve(rootDir, "./src"),
