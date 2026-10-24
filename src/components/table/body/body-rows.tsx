@@ -28,8 +28,9 @@ export const buildRowElements = <TData,>(input: RowElementsInput<TData>) => {
     elements.push(<TableGroupRow key={key} header={groupHeader} model={model} />);
   }
   if (!isCollapsed) {
-    const { onRowClick } = model.settings;
-    elements.push(<TableDataRow key={row.id} row={row} onRowClick={onRowClick} />);
+    const { onRowClick, getRowClassName, getRowAttributes } = model.settings;
+    const config = { onRowClick, getRowClassName, getRowAttributes };
+    elements.push(<TableDataRow key={row.id} row={row} config={config} />);
   }
   return elements;
 };
