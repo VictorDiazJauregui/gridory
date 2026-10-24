@@ -27,6 +27,9 @@ import "gridory/styles.css";
 
 Los textos de la interfaz vienen en español, y puedes reemplazar cualquiera de ellos con props.
 
+Las declaraciones de TypeScript incluidas compilan con `skipLibCheck: false` y
+`noUncheckedSideEffectImports: true`.
+
 ## Inicio rápido
 
 ```tsx

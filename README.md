@@ -26,6 +26,9 @@ import "gridory/styles.css";
 
 The built-in UI texts are in Spanish. Every one of them can be replaced through props.
 
+The bundled TypeScript declarations compile with `skipLibCheck: false` and
+`noUncheckedSideEffectImports: true`.
+
 ## Quick start
 
 ```tsx

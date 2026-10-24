@@ -1,5 +1,9 @@
 import { useMemo, useState } from "react";
 import type { FilterOption } from "../data-model";
+import {
+  includesNormalizedQuery,
+  normalizeSearchText,
+} from "../text-search/normalize-search-text";
 
 export interface FilterSelectionOptions {
   options: FilterOption[];
@@ -18,13 +22,13 @@ export interface FilterSelection {
 }
 
 const matchesSearch = (option: FilterOption, normalizedSearch: string) =>
-  option.label.toLowerCase().includes(normalizedSearch) ||
-  option.value.toLowerCase().includes(normalizedSearch);
+  includesNormalizedQuery(option.label, normalizedSearch) ||
+  includesNormalizedQuery(option.value, normalizedSearch);
 
 const useFilteredOptions = (options: FilterOption[], search: string) =>
   useMemo(() => {
-    if (!search.trim()) return options;
-    const normalizedSearch = search.trim().toLowerCase();
+    const normalizedSearch = normalizeSearchText(search);
+    if (!normalizedSearch) return options;
     return options.filter((option) => matchesSearch(option, normalizedSearch));
   }, [options, search]);
 

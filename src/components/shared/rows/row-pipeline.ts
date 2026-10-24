@@ -9,6 +9,10 @@ import type {
   Primitive,
 } from "../data-model";
 import { toComparableDate } from "../controls/date-filter";
+import {
+  includesNormalizedQuery,
+  normalizeSearchText,
+} from "../text-search/normalize-search-text";
 
 type CellValue = Primitive | Primitive[];
 type ColumnType = NonNullable<ColumnDefinition<unknown>["type"]>;
@@ -85,7 +89,7 @@ export const applyGlobalSearch = <TData>({
   columns,
   query,
 }: GlobalSearchInput<TData>): TData[] => {
-  const normalizedQuery = query.trim().toLowerCase();
+  const normalizedQuery = normalizeSearchText(query);
   if (!normalizedQuery) return rows;
 
   const searchableColumns = columns.filter(
@@ -96,7 +100,7 @@ export const applyGlobalSearch = <TData>({
   return rows.filter((row) =>
     searchableColumns.some((column) =>
       normalizeToArray(column.accessor(row)).some((value) =>
-        value.toLowerCase().includes(normalizedQuery),
+        includesNormalizedQuery(value, normalizedQuery),
       ),
     ),
   );
