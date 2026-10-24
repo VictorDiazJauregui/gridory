@@ -54,11 +54,13 @@ export type {
   FilterOption,
   GroupHeader,
   RowActions,
+  RowAttributes,
   RowGroupingResult,
   DataTableFeatures,
   DataInput,
   ViewMode,
   ViewSwitchConfig,
+  VisibleRowsState,
 } from "./types";
 
 export type {
@@ -78,6 +80,7 @@ export type {
   ToolbarLayout,
   ToolbarSide,
 } from "../shared/toolbar/toolbar-layout";
+export type { ToolbarCustomSlot } from "../shared/toolbar/toolbar-custom-slots";
 export type {
   HeaderSelectConfig,
   SelectOption,

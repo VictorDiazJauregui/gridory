@@ -52,6 +52,7 @@ export type {
   MenuLabel,
   MenuSeparator,
   SelectTheme,
+  ToolbarCustomSlot,
   ToolbarLayout,
   ToolbarSide,
   ToggleDisplay,

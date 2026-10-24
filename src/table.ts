@@ -7,7 +7,9 @@ export type {
   DataTableProps,
   GroupHeader,
   ManualPaginationState,
+  RowAttributes,
   RowGroupingResult,
+  VisibleRowsState,
 } from "./components/table/types";
 
 export type {
@@ -31,6 +33,7 @@ export type {
 export {
   BUILT_IN_ROW_ACTION_IDS,
   DuplicateRowActionError,
+  DuplicateToolbarSlotError,
 } from "./components/shared";
 export type {
   BuiltInActionId,
@@ -48,6 +51,7 @@ export type {
   ToggleDisplay,
   ToggleGroupConfig,
   ToggleOption,
+  ToolbarCustomSlot,
   ToolbarLayout,
   ToolbarSide,
 } from "./components/shared";
