@@ -1,6 +1,6 @@
 {
   "name": "gridory",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "React + TypeScript components for data-heavy apps. They emit events; your app keeps the data.",
   "keywords": [
     "react",
@@ -86,7 +86,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "build:lib": "vite build",
-    "build:types": "tsc -p tsconfig.build.json",
+    "build:types": "tsc -p tsconfig.build.json && node scripts/strip-declaration-css-imports.mjs",
+    "check:types": "node scripts/check-published-types.mjs",
     "build": "npm run typecheck && npm run build:lib && npm run build:types",
     "audit:styles": "node scripts/audit-legacy.mjs && node scripts/audit-classes.mjs && node scripts/style-catalog.mjs --check",
     "docs:hooks": "node scripts/style-catalog.mjs",
@@ -107,7 +108,7 @@
   "dependencies": {
     "@tanstack/react-table": "^8.21.3",
     "date-fns": "^4.1.0",
-    "lucide-react": "^0.577.0",
+    "lucide-react": ">=0.420.0 <2",
     "radix-ui": "^1.4.3",
     "react-day-picker": "^9.14.0"
   },

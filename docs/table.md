@@ -119,9 +119,10 @@ greater than, less than and between, with a calendar.
 ### Search
 
 The toolbar search box (`searchPlaceholder`, default `"Buscar..."`) keeps the rows where any searchable
-column contains the query, case-insensitive, over the values returned by `accessor`. Every column is
-searchable unless it sets `searchable: false`. Each change also calls `onSearchChange`. With
-`manualPagination` the local matching is skipped and the query is only reported.
+column contains the query, ignoring case and accents (`peru` finds `Perú`), over the values returned by
+`accessor`. Every column is searchable unless it sets `searchable: false`. Each change also calls
+`onSearchChange` with the query exactly as typed. With `manualPagination` the local matching is skipped
+and the query is only reported.
 
 ### Sorting
 

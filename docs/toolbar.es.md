@@ -48,12 +48,12 @@ La caja de búsqueda filtra mientras escribes. `searchPlaceholder` define su pla
 en la tabla y `"Buscar cards..."` en el kanban.
 
 Una fila coincide cuando el valor de alguna columna buscable contiene el texto buscado. Participan todas
-las columnas salvo las que declaran `searchable: false`. Al texto se le quitan los espacios de los
-extremos y se compara en minúsculas con los valores que devuelve `accessor` (si el valor es un array, se
-prueba cada elemento); la salida de `cell` no entra en la búsqueda. Los acentos no se normalizan, así
-que `"peru"` no coincide con `"Perú"`. Las filas pasan primero por la búsqueda y después por la vista de
-archivados, los filtros por columna y el orden. En la tabla, `manualPagination` omite la coincidencia
-local y solo notifica el texto por `onSearchChange` ([table.es.md](table.es.md)).
+las columnas salvo las que declaran `searchable: false`. El texto y los valores que devuelve `accessor`
+(si el valor es un array, se prueba cada elemento) se comparan sin distinguir mayúsculas, acentos ni
+espacios repetidos, así que `"peru"` coincide con `"Perú"`; la salida de `cell` no entra en la búsqueda.
+Las filas pasan primero por la búsqueda y después por la vista de archivados, los filtros por columna y
+el orden. En la tabla, `manualPagination` omite la coincidencia local y solo notifica el texto, tal cual
+lo escribió el usuario, por `onSearchChange` ([table.es.md](table.es.md)).
 
 ## Botón de crear
 
@@ -81,8 +81,8 @@ de aplicar.
   La dirección activa lleva `aria-pressed="true"`.
 - **"Filtrar"**: `"Seleccionar todo (n)"` marca todas las opciones que coinciden con la búsqueda del
   menú; `"Limpiar"` las desmarca todas.
-- **"Valores"**: un buscador (`"Buscar..."`) que acota las opciones por etiqueta o por valor, y la lista
-  de casillas (`"Sin resultados"` cuando nada coincide).
+- **"Valores"**: un buscador (`"Buscar..."`) que acota las opciones por etiqueta o por valor, sin
+  distinguir mayúsculas ni acentos, y la lista de casillas (`"Sin resultados"` cuando nada coincide).
 
 ### Filtro de fecha
 

@@ -66,7 +66,7 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-kanban` | con estilos | — |
 | `gdy-kanban-board` | con estilos | — |
 | `gdy-kanban-board-wrap` | con estilos | — |
-| `gdy-kanban-card` | con estilos | `[data-dragging]` |
+| `gdy-kanban-card` | con estilos | `[data-draggable]`, `[data-dragging]` |
 | `gdy-kanban-card-actions` | con estilos | — |
 | `gdy-kanban-card-head` | con estilos | — |
 | `gdy-kanban-card-main` | con estilos | — |
@@ -415,6 +415,7 @@ ponen Radix o react-day-picker siguen a esas librerías.
 | `data-clickable` | presente / ausente | Gridory | `gdy-table-row` |
 | `data-compact` | `"true"` | Gridory | `gdy-sidebar-logo` |
 | `data-disabled` | presente / ausente | Gridory, Radix o react-day-picker | `gdy-auth-google-slot`, `gdy-calendar-day`, `gdy-menu-item`, `gdy-select-item` |
+| `data-draggable` | presente / ausente | Gridory | `gdy-kanban-card` |
 | `data-dragging` | presente / ausente | Gridory | `gdy-kanban-card` |
 | `data-drop-target` | presente / ausente | Gridory | `gdy-kanban-column` |
 | `data-empty` | presente / ausente | Gridory | `gdy-ai-body` |

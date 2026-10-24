@@ -120,10 +120,10 @@ ofrece los operadores mayor que, menor que y entre, con un calendario.
 ### Búsqueda
 
 La caja de búsqueda de la toolbar (`searchPlaceholder`, por defecto `"Buscar..."`) conserva las filas en
-las que alguna columna buscable contiene el texto buscado, sin distinguir mayúsculas, sobre los valores
-que devuelve `accessor`. Todas las columnas son buscables salvo las que declaran `searchable: false`.
-Cada cambio también llama a `onSearchChange`. Con `manualPagination` no se filtra en local y la búsqueda
-solo se notifica.
+las que alguna columna buscable contiene el texto buscado, sin distinguir mayúsculas ni acentos (`peru`
+encuentra `Perú`), sobre los valores que devuelve `accessor`. Todas las columnas son buscables salvo las
+que declaran `searchable: false`. Cada cambio también llama a `onSearchChange` con el texto tal cual lo
+escribió el usuario. Con `manualPagination` no se filtra en local y la búsqueda solo se notifica.
 
 ### Ordenamiento
 

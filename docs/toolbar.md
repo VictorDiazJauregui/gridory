@@ -47,11 +47,11 @@ The search box filters as you type. `searchPlaceholder` sets its placeholder: `"
 table, `"Buscar cards..."` in the kanban.
 
 A row matches when the value of any searchable column contains the query. Every column takes part
-unless it sets `searchable: false`. The query is trimmed and compared in lower case with the values
-returned by `accessor` (each element of an array value is tested); the output of `cell` is not
-searched. Accents are not normalized, so `"peru"` does not match `"Perú"`. Rows go through search
-first, then the archived view, the column filters and the sort. In the table, `manualPagination`
-skips the local match and only reports the query through `onSearchChange` ([table.md](table.md)).
+unless it sets `searchable: false`. The query and the values returned by `accessor` (each element of
+an array value is tested) are compared without case, accents or repeated spaces, so `"peru"` matches
+`"Perú"`; the output of `cell` is not searched. Rows go through search first, then the archived view,
+the column filters and the sort. In the table, `manualPagination` skips the local match and only
+reports the query, exactly as typed, through `onSearchChange` ([table.md](table.md)).
 
 ## Create button
 
@@ -78,8 +78,8 @@ Each check applies at once; the value menu has no apply button.
   The active direction carries `aria-pressed="true"`.
 - **"Filtrar"**: `"Seleccionar todo (n)"` checks every option matching the menu search; `"Limpiar"`
   unchecks all.
-- **"Valores"**: a search input (`"Buscar..."`) that narrows the options by label or value, and the
-  checklist (`"Sin resultados"` when nothing matches).
+- **"Valores"**: a search input (`"Buscar..."`) that narrows the options by label or value, ignoring
+  case and accents, and the checklist (`"Sin resultados"` when nothing matches).
 
 ### Date filter
 
