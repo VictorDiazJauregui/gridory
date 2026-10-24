@@ -525,9 +525,29 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-toolbar-create-icon` | solo gancho | — |
 | `gdy-toolbar-left` | con estilos | — |
 | `gdy-toolbar-right` | con estilos | — |
+| `gdy-toolbar-slot` | con estilos | — |
 | `gdy-view-switch` | con estilos | — |
 | `gdy-view-switch-btn` | con estilos | `[aria-pressed="true"]` |
 | `gdy-view-switch-icon` | solo gancho | — |
+
+## Reglas con más de una clase
+
+Casi todas las reglas son una sola clase (0-1-0). Estas son las excepciones, con el selector que
+hay que escribir para pisarlas; los motivos están en [Temas y estilos](theming.es.md).
+
+### Tabla
+
+| Selector | Especificidad |
+|---|---|
+| `.gdy-table-cell.gdy-empty` | 0-2-0 |
+| `.gdy-table-row[data-clickable]` | 0-2-0 |
+| `.gdy-table-row[data-clickable]:hover .gdy-table-cell` | 0-4-0 |
+| `.gdy-select-trigger.gdy-table-inline-select` | 0-2-0 |
+| `.gdy-table-group-toggle:hover` | 0-2-0 |
+| `.gdy-table-group-toggle[aria-expanded="false"] .gdy-table-group-chevron` | 0-3-0 |
+| `.gdy-table-fill .gdy-card` | 0-2-0 |
+| `.gdy-table-fill .gdy-table-wrap` | 0-2-0 |
+| `.gdy-table-sticky .gdy-table-head-cell` | 0-2-0 |
 
 ## Atributos de estado
 
@@ -549,7 +569,9 @@ ponen Radix o react-day-picker siguen a esas librerías.
 | `data-animated` | `"true"` | Gridory | `gdy-segmented`, `gdy-sidebar` |
 | `data-checked` | presente / ausente | Gridory | `gdy-option-check` |
 | `data-clickable` | presente / ausente | Gridory | `gdy-table-row` |
+| `data-column-id` | el `id` de la columna | Gridory | sin regla por defecto |
 | `data-compact` | `"true"` | Gridory | `gdy-sidebar-logo` |
+| `data-day` | la fecha del día | Gridory | sin regla por defecto |
 | `data-diagram-state` | `"error"`, `"loading"`, `"ready"` | Gridory | `gdy-md-diagram` |
 | `data-disabled` | presente / ausente | Gridory, Radix o react-day-picker | `gdy-auth-google-slot`, `gdy-calendar-day`, `gdy-menu-item`, `gdy-select-item` |
 | `data-draggable` | presente / ausente | Gridory | `gdy-kanban-card` |
@@ -581,10 +603,12 @@ ponen Radix o react-day-picker siguen a esas librerías.
 | `data-range-middle` | presente / ausente | Gridory | `gdy-calendar-day`, `gdy-calendar-day-button` |
 | `data-range-start` | presente / ausente | Gridory | `gdy-calendar-day`, `gdy-calendar-day-button` |
 | `data-role` | `"assistant"`, `"user"` | Gridory | `gdy-ai-bubble`, `gdy-ai-message` |
+| `data-row-id` | el id de la fila (`getRowId`) | Gridory | sin regla por defecto |
 | `data-selected` | presente / ausente | Gridory, Radix o react-day-picker | `gdy-calendar-day`, `gdy-option-item` |
 | `data-selected-single` | presente / ausente | Gridory | `gdy-calendar-day-button` |
 | `data-side` | `"bottom"`, `"left"`, `"right"`, `"top"` | Radix o react-day-picker | `gdy-menu-content`, `gdy-popover-content`, `gdy-select-content` |
 | `data-size` | `"default"`, `"icon"`, `"icon-lg"`, `"icon-sm"`, `"icon-xs"`, `"lg"`, `"sm"`, `"xs"` | Gridory | `gdy-button` |
+| `data-slot-id` | el `id` del slot | Gridory | sin regla por defecto |
 | `data-state` | `"active"`, `"checked"`, `"closed"`, `"collapsed"`, `"expanded"`, `"on"`, `"open"` | Gridory, Radix o react-day-picker | `gdy-ai-sidebar`, `gdy-md-image-tab`, `gdy-md-picker-tab`, `gdy-md-tool`, `gdy-menu-content`, `gdy-popover-content`, `gdy-select-content`, `gdy-select-item`, `gdy-select-trigger`, `gdy-sidebar`, `gdy-sidebar-drawer`, `gdy-sidebar-overlay`, `gdy-toggle-item` |
 | `data-status` | `"met"`, `"pending"`, `"unmet"` | Gridory | `gdy-auth-rule` |
 | `data-streaming` | presente / ausente | Gridory | sin regla por defecto |
