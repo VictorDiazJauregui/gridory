@@ -6,12 +6,14 @@ import type { ColumnDefinition, DataTableProps } from "../types";
 import { useTablePaging } from "../pagination/use-table-paging";
 import { useTableRows } from "./use-table-rows";
 import { useTableState } from "./use-table-state";
+import { useVisibleRowsChange } from "./use-visible-rows-change";
 
 export const useTableCore = <TData>(props: DataTableProps<TData>) => {
   const settings = resolveTableSettings(props);
   const state = useTableState(settings);
   const { rows, grouping } = useTableRows(settings, state);
   const paging = useTablePaging(grouping.flatRows, settings, state);
+  useVisibleRowsChange({ pageRows: paging.pagedRows, filteredRows: grouping.flatRows }, settings);
   const { columns } = settings;
   const filterOptions = useMemo(
     () => computeColumnFilterOptions(columns, rows),
