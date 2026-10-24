@@ -30,7 +30,8 @@ propios controles (`toggleGroups`, `headerSelectors`) se renderizan siempre y us
 Por defecto, el lado izquierdo contiene `search`, `clearFilters` y los controles personalizados con
 `position` `"left"`; el derecho, los controles personalizados con `position` `"right"` (el valor por
 defecto) y después `archived`, `group`, `ai`, `viewSwitch` y `create`. Los grupos de toggles van antes
-que los selectores del encabezado, cada uno en el orden de su array.
+que los selectores del encabezado, cada uno en el orden de su array. Tus slots propios (`toolbarSlots`) van al
+final de su lado ([Slots propios](#slots-propios)).
 
 `toolbarLayout` (`{ left?: string[]; right?: string[] }`) reemplaza la disposición por defecto. Si lo
 defines, solo se renderizan los ids listados, en el lado y el orden que indiques. Los ids que no
@@ -212,6 +213,39 @@ const countrySelector: HeaderSelectConfig = {
 <DataTable {...tableProps} toggleGroups={[periodToggle]} headerSelectors={[countrySelector]} />;
 ```
 
+## Slots propios
+
+`toolbarSlots` agrega tu propio contenido a la toolbar (un contador, un botón, un menú) sin portales ni
+posicionamiento absoluto. Cada slot tiene un `id` y un `content` (`ReactNode`), y se renderiza dentro de
+`div.gdy-toolbar-slot` con `data-slot-id` igual a ese id; `className` suma tu clase a ese envoltorio. El
+envoltorio pone su contenido en una fila, centrado y con 8px de separación, igual que los controles
+integrados.
+
+- Sin `toolbarLayout`, un slot va al **final** del lado de su `position` (`"left"` o `"right"`, por
+  defecto `"right"`): a la derecha, después de `create`. Los slots respetan el orden de su array.
+- Con `toolbarLayout`, el id de un slot se ubica como cualquier otro, y un slot que no aparece no se
+  renderiza.
+- El id tiene que ser único: uno que repite el de otro slot, o que ya usa un slot integrado (`search`,
+  `clearFilters`, `archived`, `group`, `ai`, `viewSwitch`, `create`), un grupo de toggles o un selector
+  del encabezado, lanza `DuplicateToolbarSlotError` con el id en el mensaje.
+
+```tsx
+const slots: ToolbarCustomSlot[] = [
+  { id: "seats", content: <Badge>Asientos 7/10</Badge> },
+  { id: "newContact", content: <NewContactMenuButton /> },
+];
+
+<DataTable
+  {...tableProps}
+  toolbarSlots={slots}
+  features={{ createButton: false }}
+  toolbarLayout={{ left: ["search", "clearFilters"], right: ["seats", "newContact"] }}
+/>;
+```
+
+El kanban recibe la misma prop. Un slot es un hijo de React como cualquier otro: su estado y sus
+handlers quedan en tu componente, y la toolbar solo decide dónde va.
+
 ## Acciones de fila y de tarjeta
 
 `rowActions` llena un menú que se abre desde un botón "más" (tooltip `"Opciones"`): en una columna extra
@@ -331,6 +365,7 @@ Todos los tipos de esta sección se exportan desde `gridory`, `gridory/table` y 
 | `toggleGroups` | `ToggleGroupConfig[]` | — | Controles segmentados personalizados. |
 | `headerSelectors` | `HeaderSelectConfig[]` | — | Selects personalizados. |
 | `toolbarLayout` | `ToolbarLayout` | — | Composición explícita de la toolbar. |
+| `toolbarSlots` | `ToolbarCustomSlot[]` | — | Tu propio contenido en la toolbar ([Slots propios](#slots-propios)). |
 | `selectTheme` | `SelectTheme` | — | Estilo de todos los selects. |
 | `thinScrollbars` | `boolean` | `true` | Barras de scroll finas en las áreas de scroll internas. |
 | `scrollbarColor` | `string` | — | Color del thumb de la barra de scroll; fallback: `--gdy-input`. |
@@ -347,6 +382,17 @@ Todos los tipos de esta sección se exportan desde `gridory`, `gridory/table` y 
 |---|---|---|
 | `left` | `string[]` | Slot ids del grupo izquierdo, en orden. |
 | `right` | `string[]` | Slot ids del grupo derecho, en orden. |
+
+### ToolbarCustomSlot
+
+| Campo | Tipo | Por defecto | Descripción |
+|---|---|---|---|
+| `id` | `string` | — | Id único del slot; se usa en `toolbarLayout` y se escribe como `data-slot-id`. |
+| `content` | `ReactNode` | — | Lo que renderiza el slot. |
+| `position` | `"left" \| "right"` | `"right"` | Lado sin `toolbarLayout`; el slot va al final. |
+| `className` | `string` | — | Clases extra para el envoltorio `gdy-toolbar-slot`. |
+
+`DuplicateToolbarSlotError` se exporta como valor desde las mismas entradas.
 
 ### ToggleGroupConfig
 
