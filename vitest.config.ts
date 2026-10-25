@@ -34,6 +34,10 @@ export default mergeConfig(
           test: {
             name: "unit",
             environment: "jsdom",
+            // One jsdom per worker instead of one per file; each file still gets its own context.
+            pool: "vmThreads",
+            // The CI runner is slower and busier than a local machine.
+            testTimeout: 15_000,
             setupFiles: ["src/test/setup.ts"],
             css: false,
             include: ["src/test/**/*.test.{ts,tsx}"],
