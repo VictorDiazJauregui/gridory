@@ -249,6 +249,42 @@ componente.
 `data-clickable`, que la hoja de estilos usa para el cursor de puntero y el fondo en hover. El menú de
 acciones de fila y el select en línea detienen el clic, así que nunca lo disparan.
 
+### Ganchos de fila
+
+Cada fila de datos lleva `data-row-id` con su id: el valor de `getRowId` o, si no se pasa, la posición
+de la fila en la página actual (`"0"`, `"1"`…, que se repite en cada página y cambia con el orden).
+Pasa `getRowId` cuando necesites un id estable.
+
+`getRowClassName(row)` agrega clases después de `gdy-table-row`, y `getRowAttributes(row)` agrega
+atributos `data-*` y `aria-*`. Las dos se llaman una vez por fila y render, así que deben ser baratas.
+
+- `undefined` omite el atributo; `false` también lo omite en un `data-*`, pero en un `aria-*` se pinta
+  como `"false"`, porque ahí es un estado.
+- Los demás nombres, y los que escribe la tabla (`data-row-id`, `data-clickable`), se ignoran. La tabla
+  puede sumar atributos propios en versiones siguientes: conviene usar nombres de tu dominio
+  (`data-archived`, `data-priority`).
+
+```tsx
+<DataTable
+  columns={columns}
+  data={quotes}
+  getRowId={(quote) => quote.id}
+  getRowAttributes={(quote) => ({ "data-archived": quote.archived })}
+/>
+```
+
+```css
+/* Antes: llega a la fila a través de una marca dentro de una de sus celdas */
+tr:has([data-quote-archived]) {
+  opacity: 0.6;
+}
+
+/* Después */
+.gdy-table-row[data-archived] {
+  opacity: 0.6;
+}
+```
+
 ### Layout y scroll
 
 Por defecto, el contenedor de filas (`gdy-table-wrap`) hace scroll horizontal y crece con su contenido,
@@ -288,12 +324,45 @@ del thumb (consulta [toolbar.es.md](toolbar.es.md)).
 | `onGroupChange` | `(groupBy: string \| null) => void` | Cuando el usuario cambia el selector de agrupado; `null` significa "ninguno". No se dispara al montar. |
 | `onPaginationChange` | `(state: ManualPaginationState) => void` | Al pasar a la página anterior o siguiente, o al cambiar el tamaño de página, en los dos modos de paginación. |
 | `onSearchChange` | `(query: string) => void` | En cada cambio de la caja de búsqueda, en los dos modos de paginación. |
+| `onVisibleRowsChange` | `(state: VisibleRowsState<TData>) => void` | Al montar, y cada vez que la búsqueda, los filtros, el orden, el agrupado o la página cambian las filas visibles ([Filas visibles](#filas-visibles)). |
 | `ColumnDefinition.onInlineEdit` | `(row: TData, value: string) => void` | Al elegir una opción en una celda editable en línea. |
 
 `onCreate`, los callbacks de `rowActions` (`onEdit`, `onArchive`, `onArchiveToggle`, `onRemove`,
 `onHistory`, acciones personalizadas), `archivedView.onChange`, `viewSwitch.onChange`, `aiButton.onClick`
 y el `onChange` de los toggles y de los selectores del encabezado pertenecen a `DataViewProps`; consulta
 [toolbar.es.md](toolbar.es.md).
+
+### Filas visibles
+
+`onVisibleRowsChange` te entrega lo que el usuario está viendo, para mostrar totales o exportar la lista
+filtrada sin leer el DOM. Un solo evento trae los dos alcances:
+
+| Campo | En el cliente (por defecto) | `manualPagination` |
+|---|---|---|
+| `pageRows` | Las filas de la página actual, en el orden de pantalla. Las filas de un grupo plegado cuentan: siguen ocupando un lugar en la página. | La página que pasaste, después de los filtros y el orden de columna que la tabla le aplica. |
+| `filteredRows` | Todas las filas que pasan la búsqueda, la vista de archivados y los filtros, ordenadas (y en el orden de los grupos), antes de paginar. Con `features.pagination: false` es igual a `pageRows`. | Igual a `pageRows`: el resto lo tiene el servidor. |
+| `totalRows` | `filteredRows.length`. | `serverRowCount`, o `filteredRows.length` si no se pasa. |
+
+Se dispara al montar y después de cada cambio, y nunca dos veces por el mismo resultado: compara las
+filas una por una con el último aviso, así que unas `columns` o un handler inline no lo vuelven a
+disparar. Un `data` con objetos nuevos en cada render sí: memoiza `data` (o guarda las filas en un
+estado).
+
+```tsx
+// Antes: observar el DOM para saber qué filas se pintaron
+const observer = new MutationObserver(() => {
+  const ids = [...document.querySelectorAll("[data-quote-id]")].map((row) => row.dataset.quoteId);
+  setTotals(sumByCurrency(quotes.filter((quote) => ids.includes(quote.id))));
+});
+
+// Después
+<DataTable
+  columns={columns}
+  data={quotes}
+  onVisibleRowsChange={({ filteredRows }) => setTotals(sumByCurrency(filteredRows))}
+  toolbarSlots={[{ id: "totals", content: <Totals value={totals} /> }]}
+/>;
+```
 
 ## Toolbar y acciones de fila
 
@@ -309,15 +378,18 @@ final de cada fila (acciones integradas de editar, archivar, eliminar e historia
 El elemento raíz es `div.gdy-table`, que además lleva las clases `gdy-table-fill` (con `fillHeight`),
 `gdy-table-sticky` (cuando el encabezado sticky tiene efecto) y `gdy-thin-scroll` (con `thinScrollbars`).
 Dentro, `div.gdy-scope.gdy-card` envuelve la toolbar, el contenedor de filas `div.gdy-table-wrap.gdy-scroll`
-y el pie de paginación. Cada regla de la hoja de estilos usa una sola clase, así que una regla con la
-misma clase en tu CSS, cargada después de `gridory/styles.css`, la sobrescribe.
+y el pie de paginación. Casi todas las reglas de la hoja de estilos usan una sola clase, así que una regla
+con la misma clase en tu CSS, cargada después de `gridory/styles.css`, la sobrescribe. Las pocas reglas
+con más de una clase siguen el contrato de especificidad de [theming.es.md](theming.es.md), y
+[style-hooks.es.md](style-hooks.es.md) lista cada una con su especificidad: para pisarlas, escribe el
+mismo selector.
 
 | Gancho | Elemento | Atributos de estado |
 |---|---|---|
-| `gdy-table-head-cell` | Celda de encabezado (`th`). | — |
+| `gdy-table-head-cell` | Celda de encabezado (`th`). | `data-column-id` con el `id` de su columna. |
 | `gdy-table-head-trigger` | Botón dentro de la celda de encabezado que abre el menú de filtro o alterna el orden. | `data-filtered` mientras la columna tiene un filtro activo. |
-| `gdy-table-row` | Fila de datos (`tr`). | `data-clickable` cuando se pasa `onRowClick`. |
-| `gdy-table-cell` | Celda de datos (`td`); `gdy-table-cell-content` envuelve su contenido. | — |
+| `gdy-table-row` | Fila de datos (`tr`). | `data-row-id` con el id de la fila; `data-clickable` cuando se pasa `onRowClick`; más lo que devuelve `getRowAttributes`. |
+| `gdy-table-cell` | Celda de datos (`td`); `gdy-table-cell-content` envuelve su contenido. | `data-column-id` con el `id` de su columna. |
 | `gdy-table-group-row` | Fila de grupo; `gdy-table-group-cell` es su única celda. | — |
 | `gdy-table-group-toggle` | Botón de plegado de un grupo, con `gdy-table-group-label` y `gdy-table-group-count`. | `aria-expanded`. |
 | `gdy-table-empty-row` | Fila que aparece cuando ninguna fila coincide; su celda es `gdy-table-cell gdy-empty`. | — |
@@ -350,6 +422,30 @@ estos tokens, cada uno con un fallback a un token base, así que basta con decla
 }
 ```
 
+### Seleccionar una columna
+
+Cada celda de encabezado y cada celda de datos lleva `data-column-id` con el `id` de la definición de
+su columna, incluida la columna de acciones (`_actions`). Las filas de grupo y la celda del estado vacío
+ocupan toda la fila y no lo llevan. El atributo sigue a la columna, no a su posición, así que una regla
+sobre él sigue funcionando cuando las columnas se reordenan, se ocultan o se agrupan:
+
+```css
+/* Antes: se rompe apenas una columna cambia de lugar */
+.gdy-table-grid tr > :nth-child(5) {
+  text-align: right;
+}
+
+/* Después */
+.gdy-table-head-cell[data-column-id="amount"],
+.gdy-table-cell[data-column-id="amount"] {
+  text-align: right;
+}
+
+.gdy-table-cell[data-column-id="_actions"] {
+  width: 64px;
+}
+```
+
 El contrato de estilos, los tokens base y los temas claro y oscuro están en [theming.es.md](theming.es.md);
 el catálogo completo de clases, atributos de estado y tokens está en [style-hooks.es.md](style-hooks.es.md).
 
@@ -365,6 +461,8 @@ Props propias de `DataTableProps<TData>`, en el orden del código fuente.
 | `getRowId` | `(row: TData, index: number) => string` | — | Clave estable de la fila. Sin ella, las filas se identifican por índice. |
 | `features` | `DataTableFeatures` | todos `true` | Flags de capacidades. |
 | `onRowClick` | `(row: TData) => void` | — | Callback del clic en fila; marca las filas con `data-clickable`. |
+| `getRowClassName` | `(row: TData) => string \| undefined` | — | Clases extra para una fila, después de `gdy-table-row`. |
+| `getRowAttributes` | `(row: TData) => RowAttributes` | — | Atributos `data-*` y `aria-*` extra para una fila. |
 | `label` | `string` | `"elementos"` | Sustantivo que usa el resumen de paginación. |
 | `pageSizeOptions` | `number[]` | `[15, 25, 50, 100]` | Opciones del select de tamaño de página. |
 | `defaultPageSize` | `number` | `50` | Tamaño de página inicial. |
@@ -373,6 +471,7 @@ Props propias de `DataTableProps<TData>`, en el orden del código fuente.
 | `serverPageCount` | `number` | — | Total de páginas en el servidor; tiene prioridad sobre `serverRowCount`. |
 | `onPaginationChange` | `(state: ManualPaginationState) => void` | — | Cambio de página o de tamaño de página. |
 | `onSearchChange` | `(query: string) => void` | — | Cambio en la caja de búsqueda. |
+| `onVisibleRowsChange` | `(state: VisibleRowsState<TData>) => void` | — | Filas visibles al montar y después de cada cambio. |
 | `tableWrapClassName` | `string` | — | Clases extra para el contenedor de filas. |
 | `tableMinHeightClassName` | `string` | `"gdy-table-min-h-md"` | Clase de altura mínima del contenedor de filas. |
 | `tableMaxHeightClassName` | `string` | — | Clase de altura máxima del contenedor de filas; activa el scroll interno. |
@@ -404,3 +503,7 @@ Todos se exportan desde `gridory/table` y `gridory`.
 - `ManualPaginationState`: `{ pageIndex: number; pageSize: number }`, el payload de
   `onPaginationChange`.
 - `ColumnSortingState`: `{ id: string; direction: SortDirection }`, el orden activo de una columna.
+- `VisibleRowsState<TData>`: `{ pageRows: TData[]; filteredRows: TData[]; totalRows: number }`, el
+  payload de `onVisibleRowsChange`.
+- `RowAttributes`: el objeto que devuelve `getRowAttributes`, solo con nombres `data-*` y `aria-*` y
+  valores `string | number | boolean | undefined`.

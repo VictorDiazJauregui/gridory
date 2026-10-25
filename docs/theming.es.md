@@ -68,8 +68,32 @@ Los tokens base contienen toda la paleta. Cada uno lee primero la variable de sh
 usa el valor de Gridory como fallback: `--gdy-primary: var(--primary, oklch(0.205 0 0))`. Gracias a este
 puente, una app que define los tokens de shadcn como colores completos (`oklch(…)`, `hsl(…)`, hex) aplica su
 tema a Gridory en claro y en oscuro sin configurar nada. Si tus variables guardan canales sueltos, como
-`--primary: 222 47% 11%`, el puente produce un color inválido: en ese caso declara tú los tokens
-`--gdy-*`.
+`--primary: 222 47% 11%`, el puente produce un color inválido: importa la hoja de canales de abajo.
+
+### Variables con canales HSL sueltos
+
+Los proyectos con shadcn/ui v3 (Tailwind 3) guardan cada variable como tres canales y los envuelven en
+`hsl()` donde los usan. Para esas apps, Gridory trae una hoja opcional que lee las 19 variables de shadcn
+de la misma forma, en claro y en oscuro. Impórtala después de la hoja principal:
+
+```ts
+import "gridory/styles.css";
+import "gridory/tokens-hsl-channels.css";
+```
+
+- Redefine `--gdy-background`, `--gdy-foreground`, `--gdy-card`, `--gdy-card-foreground`,
+  `--gdy-popover`, `--gdy-popover-foreground`, `--gdy-primary`, `--gdy-primary-foreground`,
+  `--gdy-secondary`, `--gdy-secondary-foreground`, `--gdy-muted`, `--gdy-muted-foreground`,
+  `--gdy-accent`, `--gdy-accent-foreground`, `--gdy-destructive`, `--gdy-destructive-foreground`,
+  `--gdy-border`, `--gdy-input` y `--gdy-ring` como `hsl(var(--…))`.
+- Tu app tiene que definir esas 19 variables, como hace todo proyecto shadcn v3. Si falta una, su token
+  queda inválido y sin el fallback de Gridory: CSS no puede usar un fallback desde dentro de `hsl()`.
+- `--gdy-success`, `--gdy-warning` y `--gdy-radius` siguen con el puente normal, porque shadcn no tiene
+  una versión en canales de ellas.
+- Usa el mismo `:where()` que la hoja principal, así que una regla `:root` o `.dark` común de tu app
+  sigue ganando.
+- No la importes si tus variables guardan colores completos (shadcn v4, `oklch(…)`): el puente normal ya
+  las lee, y esta hoja envolvería un color en `hsl()` y lo rompería.
 
 La librería declara sus tokens dentro de `:where()`, que tiene especificidad cero. Una regla `:root` o
 `.dark` normal en tu CSS siempre gana, sea cual sea el orden de carga:

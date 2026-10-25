@@ -29,7 +29,8 @@ controls (`toggleGroups`, `headerSelectors`) always render and use their `id` as
 default the left side holds `search`, `clearFilters` and the custom controls whose `position` is
 `"left"`; the right side holds the custom controls with `position` `"right"` (the default), then
 `archived`, `group`, `ai`, `viewSwitch` and `create`. Toggle groups come before header selectors,
-each in array order.
+each in array order. Your own slots (`toolbarSlots`) go last on their side ([Your own
+slots](#your-own-slots)).
 
 `toolbarLayout` (`{ left?: string[]; right?: string[] }`) replaces the default layout. When it is
 set, only the listed ids render, on the side and in the order given. Unlisted ids do not render, the
@@ -204,6 +205,37 @@ const countrySelector: HeaderSelectConfig = {
 <DataTable {...tableProps} toggleGroups={[periodToggle]} headerSelectors={[countrySelector]} />;
 ```
 
+## Your own slots
+
+`toolbarSlots` adds your own content to the toolbar (a counter, a button, a menu) without portals or
+absolute positioning. Each slot has an `id` and a `content` (`ReactNode`), and renders inside
+`div.gdy-toolbar-slot` with `data-slot-id` set to that id; `className` adds your class to that
+wrapper. The wrapper lays its content in one row, centered and 8px apart, like the built-in controls.
+
+- Without `toolbarLayout`, a slot goes at the **end** of its `position` side (`"left"` or `"right"`,
+  default `"right"`): on the right, after `create`. Slots keep their array order.
+- With `toolbarLayout`, a slot id is placed like any other id, and an unlisted slot does not render.
+- The id must be unique: one that repeats another slot, or is taken by a built-in slot (`search`,
+  `clearFilters`, `archived`, `group`, `ai`, `viewSwitch`, `create`), a toggle group or a header
+  selector, throws `DuplicateToolbarSlotError` with the id in its message.
+
+```tsx
+const slots: ToolbarCustomSlot[] = [
+  { id: "seats", content: <Badge>Seats 7/10</Badge> },
+  { id: "newContact", content: <NewContactMenuButton /> },
+];
+
+<DataTable
+  {...tableProps}
+  toolbarSlots={slots}
+  features={{ createButton: false }}
+  toolbarLayout={{ left: ["search", "clearFilters"], right: ["seats", "newContact"] }}
+/>;
+```
+
+The kanban takes the same prop. A slot is a regular React child: its state and handlers stay in your
+component, and the toolbar only decides where it goes.
+
 ## Row and card actions
 
 `rowActions` fills a menu opened from a "more" button (tooltip `"Opciones"`): in an extra last
@@ -321,6 +353,7 @@ Every type below is exported from `gridory`, `gridory/table` and `gridory/kanban
 | `toggleGroups` | `ToggleGroupConfig[]` | — | Custom segmented controls. |
 | `headerSelectors` | `HeaderSelectConfig[]` | — | Custom selects. |
 | `toolbarLayout` | `ToolbarLayout` | — | Explicit toolbar composition. |
+| `toolbarSlots` | `ToolbarCustomSlot[]` | — | Your own content in the toolbar ([Your own slots](#your-own-slots)). |
 | `selectTheme` | `SelectTheme` | — | Styling of every select. |
 | `thinScrollbars` | `boolean` | `true` | Thin scrollbars on internal scroll areas. |
 | `scrollbarColor` | `string` | — | Scrollbar thumb color; falls back to `--gdy-input`. |
@@ -337,6 +370,17 @@ Every type below is exported from `gridory`, `gridory/table` and `gridory/kanban
 |---|---|---|
 | `left` | `string[]` | Slot ids of the left group, in order. |
 | `right` | `string[]` | Slot ids of the right group, in order. |
+
+### ToolbarCustomSlot
+
+| Field | Type | Default | Description |
+|---|---|---|---|
+| `id` | `string` | — | Unique slot id, also used in `toolbarLayout` and written as `data-slot-id`. |
+| `content` | `ReactNode` | — | What the slot renders. |
+| `position` | `"left" \| "right"` | `"right"` | Side without `toolbarLayout`; the slot goes at its end. |
+| `className` | `string` | — | Extra class(es) for the `gdy-toolbar-slot` wrapper. |
+
+`DuplicateToolbarSlotError` is exported as a value from the same entries.
 
 ### ToggleGroupConfig
 

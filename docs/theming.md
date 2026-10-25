@@ -65,8 +65,32 @@ Base tokens carry the whole palette. Each one reads the shadcn/ui variable of th
 and falls back to the Gridory value: `--gdy-primary: var(--primary, oklch(0.205 0 0))`. With this
 bridge, an app that defines shadcn tokens as full colors (`oklch(…)`, `hsl(…)`, hex) themes Gridory
 in light and dark with no setup. If your variables hold bare channels, such as
-`--primary: 222 47% 11%`, the bridge produces an invalid color: declare the `--gdy-*` tokens
-yourself.
+`--primary: 222 47% 11%`, the bridge produces an invalid color: import the channels sheet below.
+
+### Variables with bare HSL channels
+
+shadcn/ui v3 projects (Tailwind 3) store each variable as three channels and wrap them in `hsl()`
+where they use them. For those apps, Gridory ships an optional sheet that reads the 19 shadcn
+variables the same way, in light and dark. Import it after the main stylesheet:
+
+```ts
+import "gridory/styles.css";
+import "gridory/tokens-hsl-channels.css";
+```
+
+- It redefines `--gdy-background`, `--gdy-foreground`, `--gdy-card`, `--gdy-card-foreground`,
+  `--gdy-popover`, `--gdy-popover-foreground`, `--gdy-primary`, `--gdy-primary-foreground`,
+  `--gdy-secondary`, `--gdy-secondary-foreground`, `--gdy-muted`, `--gdy-muted-foreground`,
+  `--gdy-accent`, `--gdy-accent-foreground`, `--gdy-destructive`, `--gdy-destructive-foreground`,
+  `--gdy-border`, `--gdy-input` and `--gdy-ring` as `hsl(var(--…))`.
+- Your app must define those 19 variables, as every shadcn v3 project does. One that is missing
+  leaves its token invalid, with no Gridory fallback: CSS cannot fall back from inside `hsl()`.
+- `--gdy-success`, `--gdy-warning` and `--gdy-radius` keep the default bridge, because shadcn has no
+  channel version of them.
+- It uses the same `:where()` as the main sheet, so a plain `:root` or `.dark` rule of yours still
+  wins.
+- Do not import it when your variables hold full colors (shadcn v4, `oklch(…)`): the default bridge
+  already reads them, and this sheet would wrap a color in `hsl()` and break it.
 
 The library declares its tokens inside `:where()`, which has zero specificity. A plain `:root` or
 `.dark` rule in your CSS always wins, whatever the load order:

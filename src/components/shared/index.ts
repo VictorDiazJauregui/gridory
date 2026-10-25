@@ -22,6 +22,8 @@ export type { SelectTheme } from "./select-theme";
 export type { DataViewProps } from "./data-view-props";
 export { resolveToolbarClusters } from "./toolbar/toolbar-layout";
 export type { ToolbarLayout, ToolbarSide } from "./toolbar/toolbar-layout";
+export { DuplicateToolbarSlotError } from "./toolbar/toolbar-custom-slots";
+export type { ToolbarCustomSlot } from "./toolbar/toolbar-custom-slots";
 export type {
   HeaderSelectConfig,
   SelectOption,

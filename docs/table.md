@@ -243,6 +243,42 @@ change the row, so update your data and the cell re-renders. Clicks inside the s
 stylesheet uses for the pointer cursor and the hover background. The row actions menu and the inline
 select stop the click, so they never trigger it.
 
+### Row hooks
+
+Every data row carries `data-row-id` with its id: the value of `getRowId`, or, without it, the
+position of the row in the current page (`"0"`, `"1"`…, repeated on every page and changing with the
+sort). Pass `getRowId` when you need a stable id.
+
+`getRowClassName(row)` adds class(es) after `gdy-table-row`, and `getRowAttributes(row)` adds `data-*`
+and `aria-*` attributes. Both run once per row and render, so keep them cheap.
+
+- `undefined` omits an attribute; `false` omits a `data-*` one too, but renders `"false"` on an
+  `aria-*` one, where it is a state.
+- Other names, and the ones the table writes itself (`data-row-id`, `data-clickable`), are ignored.
+  The table may write more of its own attributes in later versions; prefer names of your domain
+  (`data-archived`, `data-priority`).
+
+```tsx
+<DataTable
+  columns={columns}
+  data={quotes}
+  getRowId={(quote) => quote.id}
+  getRowAttributes={(quote) => ({ "data-archived": quote.archived })}
+/>
+```
+
+```css
+/* Before: reaches the row through a marker inside one of its cells */
+tr:has([data-quote-archived]) {
+  opacity: 0.6;
+}
+
+/* After */
+.gdy-table-row[data-archived] {
+  opacity: 0.6;
+}
+```
+
 ### Layout and scrolling
 
 By default the rows container (`gdy-table-wrap`) scrolls horizontally and grows with its content, with
@@ -281,12 +317,44 @@ scroll area; `scrollbarColor` sets their thumb color (see [toolbar.md](toolbar.m
 | `onGroupChange` | `(groupBy: string \| null) => void` | The user changes the group selector; `null` means "none". Not on mount. |
 | `onPaginationChange` | `(state: ManualPaginationState) => void` | Previous or next page, or a page-size change, in both pagination modes. |
 | `onSearchChange` | `(query: string) => void` | Every change of the search box, in both pagination modes. |
+| `onVisibleRowsChange` | `(state: VisibleRowsState<TData>) => void` | On mount, and whenever search, filters, sort, grouping or the page change the visible rows ([Visible rows](#visible-rows)). |
 | `ColumnDefinition.onInlineEdit` | `(row: TData, value: string) => void` | An option is chosen in an inline-editable cell. |
 
 `onCreate`, the `rowActions` callbacks (`onEdit`, `onArchive`, `onArchiveToggle`, `onRemove`,
 `onHistory`, custom actions), `archivedView.onChange`, `viewSwitch.onChange`, `aiButton.onClick` and
 the `onChange` of toggles and header selectors belong to `DataViewProps`; see
 [toolbar.md](toolbar.md).
+
+### Visible rows
+
+`onVisibleRowsChange` hands you what the user is looking at, so you can show totals or export the
+filtered list without reading the DOM. One event carries both scopes:
+
+| Field | Client-side (default) | `manualPagination` |
+|---|---|---|
+| `pageRows` | The rows of the current page, in screen order. Rows of a collapsed group count: they still take a place in the page. | The page you passed, after the column filters and sort the table applies to it. |
+| `filteredRows` | Every row that passes search, archived view and filters, sorted (and in group order), before paging. With `features.pagination: false` it equals `pageRows`. | Equals `pageRows`: the server has the rest. |
+| `totalRows` | `filteredRows.length`. | `serverRowCount`, or `filteredRows.length` without it. |
+
+It fires on mount and after each change, and never twice for the same result: it compares the rows
+one by one with the last report, so inline `columns` or an inline handler do not re-trigger it.
+Passing `data` with new row objects on every render does: memoize `data` (or keep the rows in state).
+
+```tsx
+// Before: watching the DOM for rendered rows
+const observer = new MutationObserver(() => {
+  const ids = [...document.querySelectorAll("[data-quote-id]")].map((row) => row.dataset.quoteId);
+  setTotals(sumByCurrency(quotes.filter((quote) => ids.includes(quote.id))));
+});
+
+// After
+<DataTable
+  columns={columns}
+  data={quotes}
+  onVisibleRowsChange={({ filteredRows }) => setTotals(sumByCurrency(filteredRows))}
+  toolbarSlots={[{ id: "totals", content: <Totals value={totals} /> }]}
+/>;
+```
 
 ## Toolbar and row actions
 
@@ -301,15 +369,18 @@ They are configured through `DataViewProps` and documented in [toolbar.md](toolb
 The root element is `div.gdy-table`, which also carries the flags `gdy-table-fill` (with `fillHeight`),
 `gdy-table-sticky` (when the sticky header is effective) and `gdy-thin-scroll` (with `thinScrollbars`).
 Inside it, `div.gdy-scope.gdy-card` wraps the toolbar, the rows container `div.gdy-table-wrap.gdy-scroll`
-and the pagination footer. Every rule of the stylesheet uses a single class, so a rule with the same
-class in your CSS, loaded after `gridory/styles.css`, overrides it.
+and the pagination footer. Almost every rule of the stylesheet uses a single class, so a rule with the
+same class in your CSS, loaded after `gridory/styles.css`, overrides it. The few rules with more than
+one class follow the specificity contract of [theming.md](theming.md), and
+[style-hooks.md](style-hooks.md) lists each one with its specificity: to override them, write the same
+selector.
 
 | Hook | Element | State attributes |
 |---|---|---|
-| `gdy-table-head-cell` | Header cell (`th`). | — |
+| `gdy-table-head-cell` | Header cell (`th`). | `data-column-id` with the `id` of its column. |
 | `gdy-table-head-trigger` | Button inside the header cell that opens the filter menu or cycles the sort. | `data-filtered` while the column has an active filter. |
-| `gdy-table-row` | Data row (`tr`). | `data-clickable` when `onRowClick` is set. |
-| `gdy-table-cell` | Data cell (`td`); `gdy-table-cell-content` wraps its content. | — |
+| `gdy-table-row` | Data row (`tr`). | `data-row-id` with the row id; `data-clickable` when `onRowClick` is set; plus what `getRowAttributes` returns. |
+| `gdy-table-cell` | Data cell (`td`); `gdy-table-cell-content` wraps its content. | `data-column-id` with the `id` of its column. |
 | `gdy-table-group-row` | Group row; `gdy-table-group-cell` is its single cell. | — |
 | `gdy-table-group-toggle` | Collapse button of a group, with `gdy-table-group-label` and `gdy-table-group-count`. | `aria-expanded`. |
 | `gdy-table-empty-row` | Row shown when no row matches; its cell is `gdy-table-cell gdy-empty`. | — |
@@ -342,6 +413,30 @@ scope is enough:
 }
 ```
 
+### Selecting a column
+
+Every header cell and every data cell carries `data-column-id` with the `id` of its column
+definition, the row actions column included (`_actions`). The group rows and the empty-state cell
+span the whole row and carry none. The attribute follows the column, not its position, so a rule on
+it keeps working when the columns are reordered, hidden or grouped:
+
+```css
+/* Before: breaks as soon as a column moves */
+.gdy-table-grid tr > :nth-child(5) {
+  text-align: right;
+}
+
+/* After */
+.gdy-table-head-cell[data-column-id="amount"],
+.gdy-table-cell[data-column-id="amount"] {
+  text-align: right;
+}
+
+.gdy-table-cell[data-column-id="_actions"] {
+  width: 64px;
+}
+```
+
 The style contract, the base tokens and the light/dark themes are in [theming.md](theming.md); the
 full catalog of classes, state attributes and tokens is in [style-hooks.md](style-hooks.md).
 
@@ -357,6 +452,8 @@ Own props of `DataTableProps<TData>`, in source order.
 | `getRowId` | `(row: TData, index: number) => string` | — | Stable row key. Without it rows are keyed by index. |
 | `features` | `DataTableFeatures` | all `true` | Capability flags. |
 | `onRowClick` | `(row: TData) => void` | — | Row click handler; marks rows with `data-clickable`. |
+| `getRowClassName` | `(row: TData) => string \| undefined` | — | Extra class(es) for a row, after `gdy-table-row`. |
+| `getRowAttributes` | `(row: TData) => RowAttributes` | — | Extra `data-*` and `aria-*` attributes for a row. |
 | `label` | `string` | `"elementos"` | Noun used by the pagination summary. |
 | `pageSizeOptions` | `number[]` | `[15, 25, 50, 100]` | Options of the page-size select. |
 | `defaultPageSize` | `number` | `50` | Initial page size. |
@@ -365,6 +462,7 @@ Own props of `DataTableProps<TData>`, in source order.
 | `serverPageCount` | `number` | — | Total pages on the server; wins over `serverRowCount`. |
 | `onPaginationChange` | `(state: ManualPaginationState) => void` | — | Page or page-size change. |
 | `onSearchChange` | `(query: string) => void` | — | Search box change. |
+| `onVisibleRowsChange` | `(state: VisibleRowsState<TData>) => void` | — | Visible rows on mount and after each change. |
 | `tableWrapClassName` | `string` | — | Extra classes for the rows container. |
 | `tableMinHeightClassName` | `string` | `"gdy-table-min-h-md"` | Minimum height class of the rows container. |
 | `tableMaxHeightClassName` | `string` | — | Maximum height class of the rows container; enables internal scrolling. |
@@ -396,3 +494,7 @@ All of them are exported from `gridory/table` and `gridory`.
 - `ManualPaginationState`: `{ pageIndex: number; pageSize: number }`, the payload of
   `onPaginationChange`.
 - `ColumnSortingState`: `{ id: string; direction: SortDirection }`, the active sort of a column.
+- `VisibleRowsState<TData>`: `{ pageRows: TData[]; filteredRows: TData[]; totalRows: number }`, the
+  payload of `onVisibleRowsChange`.
+- `RowAttributes`: the object `getRowAttributes` returns, with `data-*` and `aria-*` names only and
+  `string | number | boolean | undefined` values.

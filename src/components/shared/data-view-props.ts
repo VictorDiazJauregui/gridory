@@ -7,6 +7,7 @@ import type {
 } from "./data-model";
 import type { SelectTheme } from "./select-theme";
 import type { HeaderSelectConfig, ToggleGroupConfig } from "./toolbar-controls";
+import type { ToolbarCustomSlot } from "./toolbar/toolbar-custom-slots";
 import type { ToolbarLayout } from "./toolbar/toolbar-layout";
 
 export interface DataViewProps<TData> {
@@ -34,10 +35,17 @@ export interface DataViewProps<TData> {
    * Explicit toolbar composition. When provided it is authoritative: only the
    * listed slot ids render, on the given side and order (built-in ids: `search`,
    * `clearFilters`, `archived`, `group`, `ai`, `viewSwitch`, `create`; plus each
-   * toggle/selector id). Omit it to keep the default layout, where each control
-   * honors its own `position` (default `"right"`).
+   * toggle/selector id, plus each `toolbarSlots` id). Omit it to keep the default
+   * layout, where each control honors its own `position` (default `"right"`).
    */
   toolbarLayout?: ToolbarLayout;
+  /**
+   * Your own content in the toolbar (a counter, a button, a menu). Each slot renders in
+   * `div.gdy-toolbar-slot[data-slot-id]`; without `toolbarLayout` it goes at the end of
+   * its `position` side (default `"right"`). A repeated id, or one taken by a built-in
+   * slot, a toggle group or a header selector, throws `DuplicateToolbarSlotError`.
+   */
+  toolbarSlots?: ToolbarCustomSlot[];
   /** Global styling for every styled select in the component (header + inline). */
   selectTheme?: SelectTheme;
   /**

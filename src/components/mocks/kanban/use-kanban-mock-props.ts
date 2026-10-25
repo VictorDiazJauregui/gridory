@@ -13,6 +13,8 @@ import {
   type CreatedRowTemplate,
 } from "../company/use-mock-row-creator";
 import { useViewSwitch } from "../company/use-view-switch";
+import { isDemoBaseline } from "../../../demo/use-demo-baseline";
+import { SEATS_SLOT } from "../company/demo-toolbar-slots";
 
 const KANBAN_CREATED_ROW: CreatedRowTemplate = {
   idPrefix: "kanban-new",
@@ -40,8 +42,18 @@ const useKanbanCardProps = () => {
   };
 };
 
+// The board has its own toolbarLayout, so the slot is listed there to choose its place.
+const KANBAN_SLOT_PROPS: Pick<KanbanBoardProps<MockCompanyRow>, "toolbarSlots" | "toolbarLayout"> = {
+  toolbarSlots: [SEATS_SLOT],
+  toolbarLayout: {
+    ...KANBAN_STATIC_PROPS.toolbarLayout,
+    right: ["brand", "archived", "group", "ai", "viewSwitch", "seats", "create"],
+  },
+};
+
 export const useKanbanMockProps = (): KanbanBoardProps<MockCompanyRow> => {
   const cardProps = useKanbanCardProps();
   const viewSwitch = useViewSwitch("kanban");
-  return { ...KANBAN_STATIC_PROPS, ...cardProps, viewSwitch };
+  const baseProps = { ...KANBAN_STATIC_PROPS, ...cardProps, viewSwitch };
+  return isDemoBaseline() ? baseProps : { ...baseProps, ...KANBAN_SLOT_PROPS };
 };

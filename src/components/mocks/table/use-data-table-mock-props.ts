@@ -12,6 +12,8 @@ import {
   type CreatedRowTemplate,
 } from "../company/use-mock-row-creator";
 import { useViewSwitch } from "../company/use-view-switch";
+import { isDemoBaseline } from "../../../demo/use-demo-baseline";
+import { useTableHookProps } from "./use-table-hook-props";
 
 const TABLE_CREATED_ROW: CreatedRowTemplate = {
   idPrefix: "new",
@@ -23,7 +25,7 @@ const useTableRowProps = () => {
   const [rows, setRows] = useState(MOCK_COMPANY_ROWS);
   const [scope, setScope] = useState("all");
   const [country, setCountry] = useState("all");
-  const columns = useMemo(() => buildTableColumns(setRows), []);
+  const columns = useMemo(() => buildTableColumns(setRows, !isDemoBaseline()), []);
   const displayedRows = useMemo(
     () => filterByValue(filterByScope(rows, scope), "country", country),
     [rows, scope, country],
@@ -41,5 +43,7 @@ const useTableRowProps = () => {
 export const useDataTableMockProps = (): DataTableProps<MockCompanyRow> => {
   const rowProps = useTableRowProps();
   const viewSwitch = useViewSwitch("table");
-  return { ...TABLE_STATIC_PROPS, ...rowProps, viewSwitch };
+  const hookProps = useTableHookProps();
+  const baseProps = { ...TABLE_STATIC_PROPS, ...rowProps, viewSwitch };
+  return isDemoBaseline() ? baseProps : { ...baseProps, ...hookProps };
 };

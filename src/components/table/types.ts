@@ -46,6 +46,24 @@ export interface ManualPaginationState {
   pageSize: number;
 }
 
+/**
+ * Extra attributes for a row. Only `data-*` and `aria-*` names are accepted, so a row can
+ * never lose its handlers, its class or the attributes the table writes itself.
+ */
+export type RowAttributes = Partial<
+  Record<`data-${string}` | `aria-${string}`, string | number | boolean | undefined>
+>;
+
+/** Payload of `onVisibleRowsChange`: what the user is looking at. */
+export interface VisibleRowsState<TData> {
+  /** Rows of the current page in screen order, rows of collapsed groups included. */
+  pageRows: TData[];
+  /** Every row that passes search, archived view and filters, sorted (and grouped), before paging. */
+  filteredRows: TData[];
+  /** `filteredRows.length`; with `manualPagination`, `serverRowCount` when it is set. */
+  totalRows: number;
+}
+
 export interface DataTableProps<TData> extends DataViewProps<TData> {
   columns: ColumnDefinition<TData>[];
   data: DataInput<TData>;
@@ -53,6 +71,18 @@ export interface DataTableProps<TData> extends DataViewProps<TData> {
   getRowId?: (row: TData, index: number) => string;
   features?: DataTableFeatures;
   onRowClick?: (row: TData) => void;
+  /**
+   * Extra class(es) for a row, added after `gdy-table-row`. Called once per row and
+   * render, so keep it cheap.
+   */
+  getRowClassName?: (row: TData) => string | undefined;
+  /**
+   * Extra `data-*` and `aria-*` attributes for a row. `undefined` omits an attribute and
+   * so does `false` on `data-*` (on `aria-*` it renders `"false"`). Names the table
+   * writes itself (`data-row-id`, `data-clickable`) are ignored. Called once per row and
+   * render, so keep it cheap.
+   */
+  getRowAttributes?: (row: TData) => RowAttributes;
   label?: string;
   pageSizeOptions?: number[];
   defaultPageSize?: number;
@@ -72,6 +102,12 @@ export interface DataTableProps<TData> extends DataViewProps<TData> {
   onPaginationChange?: (state: ManualPaginationState) => void;
   /** Notifies search changes so the consumer can run a server-side query. */
   onSearchChange?: (query: string) => void;
+  /**
+   * Reports the visible rows on mount and whenever search, filters, sort, grouping or
+   * the page change them; never twice for the same result. With `manualPagination`,
+   * `filteredRows` is the current page. New row objects in `data` count as a change.
+   */
+  onVisibleRowsChange?: (state: VisibleRowsState<TData>) => void;
   tableWrapClassName?: string;
   tableMinHeightClassName?: string;
   /**
