@@ -156,7 +156,7 @@ them.
 
 | Family | Examples (fallback) |
 |---|---|
-| `--gdy-table-*` | `--gdy-table-head-bg` (`--gdy-muted`), `--gdy-table-border` (`--gdy-border`), `--gdy-table-row-hover-bg` (`--gdy-muted`) |
+| `--gdy-table-*` | `--gdy-table-head-bg` (`--gdy-muted`), `--gdy-table-border` (`--gdy-border`), `--gdy-table-row-hover-bg` (`--gdy-muted`), `--gdy-table-row-focus-ring` (`--gdy-ring`) |
 | `--gdy-kanban-*` | `--gdy-kanban-column-bg` (`--gdy-muted`), `--gdy-kanban-card-bg` (`--gdy-card`), `--gdy-kanban-drop-outline` (`--gdy-muted-foreground`) |
 | `--gdy-ai-*` | `--gdy-ai-accent` (`--gdy-primary`), `--gdy-ai-bg` (`--gdy-background`), `--gdy-ai-user-bubble-bg` (`--gdy-ai-accent`, then `--gdy-primary`) |
 | `--gdy-auth-*` | `--gdy-auth-bg` (`--gdy-card`), `--gdy-auth-submit-bg` (`--gdy-primary`), `--gdy-auth-input-focus-border` (`--gdy-ring`), `--gdy-auth-rule-met` (`--gdy-success`) |
@@ -618,27 +618,57 @@ from your CSS (the same works for `.gdy-ai-thinking-icon`):
 
 ## Tailwind preset
 
-Gridory does not need Tailwind. The preset is for apps that use Tailwind and want the library
-palette in their own markup, for example inside a column `cell` or a `renderCard` output.
+Gridory does not need Tailwind. A preset is for apps that use Tailwind and want the library palette
+in their own markup, for example inside a column `cell` or a `renderCard` output.
+
+### Prefixed preset (recommended)
+
+`createGridoryPreset()` adds utilities under a prefix, so they never collide with the keys of your
+project and never change one of its colors:
 
 ```js
 // tailwind.config.js
-import gridoryPreset from "gridory/tailwind-preset";
+import { createGridoryPreset } from "gridory/tailwind-preset";
 
 export default {
-  presets: [gridoryPreset],
+  presets: [createGridoryPreset()], // or createGridoryPreset({ prefix: "my-app" })
   content: ["./index.html", "./src/**/*.{ts,tsx}"],
 };
 ```
 
-It maps the shadcn-style theme keys to the base tokens: the colors `background`, `foreground`,
-`card`, `popover`, `primary`, `secondary`, `muted`, `accent` and `destructive` (each with a
-`foreground` shade), `border`, `input` and `ring` (`bg-card`, `text-muted-foreground`,
-`border-border`, `outline-ring` and the rest), and the radii `lg` (`var(--gdy-radius)`), `md`
-(`calc(var(--gdy-radius) - 2px)`) and `sm` (`calc(var(--gdy-radius) - 4px)`). The utilities point
-at the tokens, so they follow the light/dark theme and your token overrides without `dark:`
-variants. Opacity modifiers such as `bg-primary/10` work: the preset blends the token with
-`color-mix()`. The preset adds no `content` paths; your own config provides them.
+| Utilities | Token |
+|---|---|
+| `bg-gdy-background`, `text-gdy-foreground` | `--gdy-background`, `--gdy-foreground` |
+| `bg-gdy-<name>`, `text-gdy-<name>-foreground` for `card`, `popover`, `primary`, `secondary`, `muted`, `accent` and `destructive` | `--gdy-<name>`, `--gdy-<name>-foreground` |
+| `border-gdy-border`, `border-gdy-input`, `outline-gdy-ring`, `ring-gdy-ring` | `--gdy-border`, `--gdy-input`, `--gdy-ring` |
+| `rounded-gdy-lg`, `rounded-gdy-md`, `rounded-gdy-sm` | `var(--gdy-radius)`, minus `2px`, minus `4px` |
+
+The colors work with any utility that takes a color (`bg-`, `text-`, `border-`, `ring-`, `fill-`…)
+and with opacity modifiers such as `bg-gdy-primary/10`, which blend the token with `color-mix()`. The
+utilities point at the tokens, so they follow the light/dark theme and your token overrides without
+`dark:` variants. `prefix` must be lowercase letters and digits, optionally joined by single hyphens
+(default `"gdy"`); anything else throws `InvalidPresetPrefixError`. The preset adds no `content`
+paths; your own config provides them.
+
+**A shadcn project does not need a preset:** its own utilities (`bg-primary`, `border-border`) already
+point at its variables, and Gridory reads the same variables through the token bridge. Use the
+prefixed preset only if you want to paint something with Gridory's tokens specifically.
+
+### Default preset (deprecated)
+
+The default export maps the shadcn-style keys (`bg-primary`, `bg-card`, `text-muted-foreground`,
+`border-border`, `outline-ring`, `rounded-lg`…) to the same tokens. In a project that defines those
+keys, the project wins and the preset adds little; in the keys it does not define, it mixes two
+palettes. It keeps working unchanged in 1.x and **is removed in 2.0.0**: start with
+`createGridoryPreset()` so you do not have to migrate twice.
+
+```js
+import gridoryPreset from "gridory/tailwind-preset"; // deprecated
+
+export default { presets: [gridoryPreset] };
+```
+
+Tailwind 4 (`@theme`) is not covered by either preset.
 
 ## Style audit
 
