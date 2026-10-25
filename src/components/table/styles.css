@@ -70,6 +70,13 @@
   background: var(--gdy-table-row-hover-bg, var(--gdy-muted));
 }
 
+/* Keyboard focus of a focusable row (`focusableRows`, `getRowHref`). The ring is drawn inside
+   the row: the rows container scrolls (overflow) and would clip an outer one. */
+.gdy-table-row:focus-visible {
+  outline: 2px solid var(--gdy-table-row-focus-ring, var(--gdy-ring));
+  outline-offset: -2px;
+}
+
 /* Header cell content: label, sort/filter icons and the filter panel anchor
    (gdy-table-menu-holder is positioned against this element) */
 .gdy-table-head-inner {
@@ -106,6 +113,37 @@
   opacity: 0.6;
 }
 
+/* Column alignment (`align` / `headerAlign`): data-align on th, td and the header trigger.
+   The title and its sort icon move together and keep their order. */
+.gdy-table-head-cell[data-align="center"],
+.gdy-table-cell[data-align="center"] {
+  text-align: center;
+}
+
+.gdy-table-head-cell[data-align="right"],
+.gdy-table-cell[data-align="right"] {
+  text-align: right;
+}
+
+.gdy-table-head-trigger[data-align="center"] {
+  justify-content: center;
+}
+
+.gdy-table-head-trigger[data-align="right"] {
+  justify-content: flex-end;
+}
+
+/* Header text of the actions column (`rowActions.columnLabel`); it has no trigger, so it
+   repeats the header typography. As a block it gets its own line box, so the 12px text does not
+   inherit the taller line of the th and the header row keeps its height. */
+.gdy-table-actions-head-label {
+  display: block;
+  color: var(--gdy-table-head-fg, var(--gdy-muted-foreground));
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
 .gdy-table-menu-holder {
   position: absolute;
   z-index: 50;
@@ -135,6 +173,14 @@
   display: flex;
   justify-content: flex-end;
   position: relative;
+}
+
+.gdy-table-actions-cell[data-align="left"] {
+  justify-content: flex-start;
+}
+
+.gdy-table-actions-cell[data-align="center"] {
+  justify-content: center;
 }
 
 /* Pagination footer */
