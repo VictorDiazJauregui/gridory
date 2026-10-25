@@ -39,15 +39,15 @@ muestra, pero no hace llamadas. La demo usa Tailwind solo para sí misma; nada d
 
 ## Scripts
 
-| Comando                           | Qué hace                                                                                                                                                                     |
-| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `npm run dev`                     | Servidor de Vite con la demo.                                                                                                                                                |
-| `npm run build`                   | Chequeo de tipos, bundle ESM en `dist/` y declaraciones de tipos en `dist/types/`.                                                                                           |
-| `npm run lint`                    | ESLint sobre el código y `scripts/`, con las reglas de estilo de código de abajo.                                                                                            |
-| `npm run typecheck`               | `tsc -b` sin generar archivos.                                                                                                                                               |
-| `npm test` / `npm run test:watch` | Vitest sobre `src/test/`; la variante watch vuelve a correr con cada cambio.                                                                                                 |
-| `npm run audit:styles`            | Después de `npm run build`: contrasta las hojas de estilo con las clases y atributos de estado que emiten los componentes, y verifica que `docs/style-hooks.md` esté al día. |
-| `npm run docs:hooks`              | Regenera `docs/style-hooks.md` y `docs/style-hooks.es.md` a partir del código.                                                                                               |
+| Comando | Qué hace |
+|---|---|
+| `npm run dev` | Servidor de Vite con la demo. |
+| `npm run build` | Chequeo de tipos, bundle ESM en `dist/` y declaraciones de tipos en `dist/types/`. |
+| `npm run lint` | ESLint sobre el código y `scripts/`, con las reglas de estilo de código de abajo. |
+| `npm run typecheck` | `tsc -b` sin generar archivos. |
+| `npm test` / `npm run test:watch` | Vitest sobre `src/test/`; la variante watch vuelve a correr con cada cambio. |
+| `npm run audit:styles` | Después de `npm run build`: contrasta las hojas de estilo con las clases y atributos de estado que emiten los componentes, y verifica que `docs/style-hooks.md` esté al día. |
+| `npm run docs:hooks` | Regenera `docs/style-hooks.md` y `docs/style-hooks.es.md` a partir del código. |
 
 ## Estructura del código
 
@@ -55,19 +55,19 @@ Cada módulo vive en `src/components/<módulo>/`. La raíz tiene la superficie p
 (`index.tsx` o `index.ts`, `types.ts`, `constants.ts` y `styles.css`). El resto se divide en carpetas
 por área, nunca por tipo de archivo, con 3 a 12 archivos cada una y sin barrels dentro.
 
-| Carpeta              | Áreas                                                                                                                         |
-| -------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `table/`             | `model/`, `header/`, `body/`, `pagination/`                                                                                   |
-| `kanban/`            | `model/`, `toolbar/`, `board/`, `card/`                                                                                       |
-| `ai/`                | `chat/`, `completion/`, `sidebar/`, `transcript/`, `actions/`                                                                 |
-| `auth/`              | `config/`, `model/`, `fields/`, `password/`, `validation/`, `layout/`, `actions/`                                             |
-| `segmented-control/` | `model/`, `parts/`                                                                                                            |
-| `country-select/`    | `model/`, `parts/`, `validation/`                                                                                             |
-| `phone-input/`       | `model/`, `parts/`                                                                                                            |
-| `sidebar/`           | `model/`, `parts/`, `desktop/`, `mobile/`                                                                                     |
-| `shared/`            | Contratos comunes en la raíz; `controls/`, `rows/`, `toolbar/`, `filter-menu/`, `date-filter-menu/`, `date-pickers/`, `menu/` |
-| `ui/`                | Primitivas sobre Radix y react-day-picker: `select/`, `toggle-group/`, `calendar/`                                            |
-| `mocks/`             | Datos y configuración de la demo                                                                                              |
+| Carpeta | Áreas |
+|---|---|
+| `table/` | `model/`, `header/`, `body/`, `pagination/` |
+| `kanban/` | `model/`, `toolbar/`, `board/`, `card/` |
+| `ai/` | `chat/`, `completion/`, `sidebar/`, `transcript/`, `actions/` |
+| `auth/` | `config/`, `model/`, `fields/`, `password/`, `validation/`, `layout/`, `actions/` |
+| `segmented-control/` | `model/`, `parts/` |
+| `country-select/` | `model/`, `parts/`, `validation/` |
+| `phone-input/` | `model/`, `parts/` |
+| `sidebar/` | `model/`, `parts/`, `desktop/`, `mobile/` |
+| `shared/` | Contratos comunes en la raíz; `controls/`, `rows/`, `toolbar/`, `filter-menu/`, `date-filter-menu/`, `date-pickers/`, `menu/` |
+| `ui/` | Primitivas sobre Radix y react-day-picker: `select/`, `toggle-group/`, `calendar/` |
+| `mocks/` | Datos y configuración de la demo |
 
 La demo está en `src/demo/`, los tests en `src/test/` y las guías en `docs/`. La demo, los mocks y los
 tests quedan fuera del paquete y de la auditoría de estilos.
