@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import {
   applyPropDefaults,
   resolveCalendarYearDefaults,
@@ -14,7 +15,7 @@ interface KanbanBoardDefaults {
   groupSelectorLabel: string;
   searchPlaceholder: string;
   createLabel: string;
-  emptyMessage: string;
+  emptyMessage: ReactNode;
   boardMinHeightClassName: string;
   columnBodyMaxHeight: number;
   thinScrollbars: boolean;

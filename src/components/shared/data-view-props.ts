@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type {
   AiButtonConfig,
   ArchivedViewConfig,
@@ -14,7 +15,12 @@ export interface DataViewProps<TData> {
   searchPlaceholder?: string;
   createLabel?: string;
   onCreate?: () => void;
-  emptyMessage?: string;
+  /**
+   * Content shown when no row or card matches: text, or any node (an icon, a link, a "create
+   * the first one" button). Defaults to "No se encontraron resultados"; `null`, `false` or `""`
+   * leave the empty state without text.
+   */
+  emptyMessage?: ReactNode;
   rowActions?: RowActions<TData>;
   archivedView?: ArchivedViewConfig;
   viewSwitch?: ViewSwitchConfig;
