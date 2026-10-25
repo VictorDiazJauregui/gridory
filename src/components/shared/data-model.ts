@@ -45,6 +45,9 @@ export interface FilterOption {
 /** Horizontal alignment of a table column. */
 export type ColumnAlign = "left" | "center" | "right";
 
+/** What a table cell does with content wider than its column. */
+export type ColumnOverflow = "ellipsis" | "wrap" | "visible";
+
 export interface CellHighlight {
   className?: string;
   style?: CSSProperties;
@@ -82,6 +85,12 @@ export interface ColumnDefinition<TData> {
    * links or text meant to be copied.
    */
   ignoreRowClick?: boolean;
+  /**
+   * Table only; the kanban ignores it. `"ellipsis"` (default) cuts the content on one line,
+   * `"wrap"` breaks it over several lines and `"visible"` lets it overflow the cell. Leave it out
+   * to keep the markup unchanged (no `data-overflow`).
+   */
+  overflow?: ColumnOverflow;
 }
 
 /** Built-in and custom actions available per row (table) or per card (kanban). */

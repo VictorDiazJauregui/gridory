@@ -158,6 +158,17 @@
   white-space: nowrap;
 }
 
+/* Column overflow (`overflow`): "ellipsis" is the base rule above. With table-layout: fixed
+   the column width still comes from `width`, so "wrap" grows the row in height only. */
+.gdy-table-cell-content[data-overflow="wrap"] {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.gdy-table-cell-content[data-overflow="visible"] {
+  overflow: visible;
+}
+
 .gdy-table-inline-select-wrap {
   width: 100%;
 }

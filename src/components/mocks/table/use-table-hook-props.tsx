@@ -6,10 +6,11 @@ import { AmountTotals } from "./AmountTotals";
 import { sumAmountsByCurrency } from "./company-amounts";
 import { buildActionsColumnProps } from "./actions-column";
 import { buildCompanyHref } from "./use-company-detail";
+import { readTableDemoClassNames } from "../company/demo-class-names";
 
 type TableHookProps = Pick<
   DataTableProps<MockCompanyRow>,
-  "getRowAttributes" | "onVisibleRowsChange" | "toolbarSlots" | "rowActions" | "getRowHref" | "onRowClick"
+  "getRowAttributes" | "onVisibleRowsChange" | "toolbarSlots" | "rowActions" | "getRowHref" | "onRowClick" | "classNames"
 >;
 
 const markArchivedRow = (row: MockCompanyRow) => ({
@@ -28,5 +29,6 @@ export const useTableHookProps = (openCompany: (row: MockCompanyRow) => void): T
     rowActions: buildActionsColumnProps(),
     getRowHref: buildCompanyHref,
     onRowClick: openCompany,
+    classNames: readTableDemoClassNames(),
   };
 };

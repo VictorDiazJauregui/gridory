@@ -28,7 +28,10 @@ export const TableCellContent = <TData,>(
   const value = normalizeToArray(column.accessor(row))[0] ?? "";
   const highlight = column.valueHighlights?.[value];
   return (
-    <div className={cn("gdy-table-cell-content", highlight?.className)}>
+    <div
+      className={cn("gdy-table-cell-content", highlight?.className)}
+      data-overflow={column.overflow}
+    >
       {canInlineEdit(column) ? (
         <InlineSelectCell {...props} value={value} highlight={highlight} />
       ) : (

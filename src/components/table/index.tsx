@@ -21,6 +21,8 @@ const resolveRootClassName = <TData,>(settings: TableSettings<TData>) => {
     settings.fillHeight && "gdy-table-fill",
     showStickyHeader && "gdy-table-sticky",
     settings.thinScrollbars && "gdy-thin-scroll",
+    settings.className,
+    settings.classNames?.root,
   );
 };
 
@@ -51,6 +53,8 @@ export type {
   CellHighlight,
   ColumnAlign,
   ColumnDefinition,
+  ColumnOverflow,
+  DataTableClassNames,
   DataTableProps,
   FilterOption,
   GroupHeader,

@@ -16,6 +16,7 @@ import { useViewSwitch } from "../company/use-view-switch";
 import { isDemoBaseline } from "../../../demo/use-demo-baseline";
 import { SEATS_SLOT } from "../company/demo-toolbar-slots";
 import { EmptyWithCreate } from "../company/EmptyWithCreate";
+import { readKanbanDemoClassNames } from "../company/demo-class-names";
 
 const KANBAN_CREATED_ROW: CreatedRowTemplate = {
   idPrefix: "kanban-new",
@@ -57,5 +58,10 @@ export const useKanbanMockProps = (): KanbanBoardProps<MockCompanyRow> => {
   const viewSwitch = useViewSwitch("kanban");
   const baseProps = { ...KANBAN_STATIC_PROPS, ...cardProps, viewSwitch };
   if (isDemoBaseline()) return baseProps;
-  return { ...baseProps, ...KANBAN_SLOT_PROPS, emptyMessage: <EmptyWithCreate onCreate={cardProps.onCreate} /> };
+  return {
+    ...baseProps,
+    ...KANBAN_SLOT_PROPS,
+    emptyMessage: <EmptyWithCreate onCreate={cardProps.onCreate} />,
+    classNames: readKanbanDemoClassNames(),
+  };
 };

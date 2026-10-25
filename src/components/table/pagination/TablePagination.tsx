@@ -1,3 +1,4 @@
+import { cn } from "../../../lib/cn";
 import type { SelectTheme } from "../../shared/select-theme";
 import { PaginationControls } from "./PaginationControls";
 import { PaginationSummary } from "./PaginationSummary";
@@ -16,12 +17,13 @@ export interface TablePaginationProps {
   onPrevPage: () => void;
   onNextPage: () => void;
   selectTheme?: SelectTheme;
+  className?: string;
 }
 
 export const TablePagination = (props: TablePaginationProps) => {
   if (!props.enabled) return null;
   return (
-    <div className="gdy-table-pagination">
+    <div className={cn("gdy-table-pagination", props.className)}>
       <PaginationSummary {...props} />
       <PaginationControls {...props} />
     </div>

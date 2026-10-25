@@ -100,6 +100,7 @@ Each entry of `columns` is a `ColumnDefinition<TData>`.
 | `align` | `"left" \| "center" \| "right"` | Aligns the cells and the header. See [Alignment](#alignment). Table only. |
 | `headerAlign` | `"left" \| "center" \| "right"` | Aligns the header apart from the cells. Defaults to `align`. Table only. |
 | `ignoreRowClick` | `boolean` | No gesture that starts in this column fires the row. See [Row click and row links](#row-click-and-row-links). Table only. |
+| `overflow` | `"ellipsis" \| "wrap" \| "visible"` | What the cells do with content wider than the column. Default `"ellipsis"`. See [Cell overflow](#cell-overflow). Table only. |
 
 Filter options are computed from every row in `data` (before search and filters), not only from the
 visible page. Columns with `type: "date"` never get a value list: their menu offers the operators
@@ -282,6 +283,41 @@ const columns: ColumnDefinition<Quote>[] = [
 /* After: nothing, `align` and `rowActions.columnLabel` do it */
 ```
 
+### Cell overflow
+
+By default every cell cuts its content on one line with an ellipsis. `overflow` changes it per
+column:
+
+| Value | What the cell does |
+|---|---|
+| `"ellipsis"` (default) | One line, cut with `…`. |
+| `"wrap"` | Breaks the text over several lines (`white-space: normal` and `overflow-wrap: anywhere`). The row grows in height; the width is still the one set by `width` (the grid uses `table-layout: fixed`). |
+| `"visible"` | Lets the content overflow the cell (`overflow: visible`). Meant for a badge or a control that sticks out, not for text: the text stays on one line and is drawn over the next cell. |
+
+It renders `data-overflow` on the `gdy-table-cell-content` of every cell of the column; without it
+there is no attribute and the CSS is the same as before.
+
+```tsx
+const columns: ColumnDefinition<Company>[] = [
+  { id: "name", header: "Empresa", accessor: (company) => company.name, width: 200 },
+  { id: "notes", header: "Notas", accessor: (company) => company.notes, width: 280, overflow: "wrap" },
+];
+```
+
+```css
+/* Before: every cell of every table wrapped */
+.gdy-table-cell-content {
+  white-space: normal;
+}
+
+/* After: nothing, `overflow: "wrap"` on the column that needs it */
+```
+
+A combobox or a menu inside a cell does not need `"visible"` when its list opens in a portal, as the
+inline-edit select does: the list is rendered outside the table and nothing cuts it. `"visible"` only
+reaches the edge of the rows container (`gdy-table-wrap`), which scrolls: what goes past that edge is
+cut or adds a scroll bar.
+
 ### Row click and row links
 
 `onRowClick(row, event)` fires when a data row is clicked. `event` is the React event of the row: a
@@ -463,7 +499,7 @@ selector.
 | `gdy-table-head-cell` | Header cell (`th`). | `data-column-id` with the `id` of its column; `data-align` with `headerAlign` or `align`. |
 | `gdy-table-head-trigger` | Button inside the header cell that opens the filter menu or cycles the sort. | `data-filtered` while the column has an active filter; `data-align` like its cell. |
 | `gdy-table-row` | Data row (`tr`). | `data-row-id` with the row id; `data-clickable` when `onRowClick` or `getRowHref` is set; `data-href` with the link; plus what `getRowAttributes` returns. Focusable rows take `:focus-visible`. |
-| `gdy-table-cell` | Data cell (`td`); `gdy-table-cell-content` wraps its content. | `data-column-id` with the `id` of its column; `data-align` with `align`. |
+| `gdy-table-cell` | Data cell (`td`); `gdy-table-cell-content` wraps its content. | `data-column-id` with the `id` of its column; `data-align` with `align`. `gdy-table-cell-content` takes `data-overflow` with `overflow`. |
 | `gdy-table-actions-cell` | Box of the ⋯ button in the actions column; `gdy-table-actions-head-label` is the text of its header (`rowActions.columnLabel`). | `data-align` when `rowActions.align` or `columnLabel` is set. |
 | `gdy-table-group-row` | Group row; `gdy-table-group-cell` is its single cell. | — |
 | `gdy-table-group-toggle` | Collapse button of a group, with `gdy-table-group-label` and `gdy-table-group-count`. | `aria-expanded`. |
@@ -497,6 +533,43 @@ scope is enough:
   opacity: 0.7;
 }
 ```
+
+### Class names per part
+
+`className` adds classes to the root and `classNames` adds one class per part, always after the
+`gdy-*` hook of that part, so both are visible in the DOM and the hook never goes away:
+
+| `classNames` key | Element | Hook it joins |
+|---|---|---|
+| `root` | Root `div` (same as `className`, which goes first) | `gdy-table` |
+| `toolbar` | Toolbar | `gdy-toolbar` |
+| `wrap` | Rows scroll container | `gdy-table-wrap` |
+| `table` | `table` | `gdy-table-grid` |
+| `headRow` | Header row | `gdy-table-head-row` |
+| `headCell` | Every header cell, the actions column included | `gdy-table-head-cell` |
+| `row` | Every data row | `gdy-table-row` |
+| `cell` | Every data cell, the actions column included | `gdy-table-cell` |
+| `pagination` | Pagination footer | `gdy-table-pagination` |
+| `empty` | Cell of the empty state (it does not take `cell`) | `gdy-empty` |
+
+Group rows keep their own hooks and take neither `row` nor `cell`. `tableMinHeightClassName`,
+`tableMaxHeightClassName` and `tableWrapClassName` keep working: `classNames.wrap` goes after them.
+`getRowClassName(row)` goes after `classNames.row`, since it is the more specific of the two.
+
+```tsx
+<DataTable
+  columns={columns}
+  data={companies}
+  className="shadow-sm"
+  classNames={{ row: "even:bg-slate-50", pagination: "bg-slate-50", empty: "italic" }}
+/>
+```
+
+A consumer class weighs the same as the `gdy-*` rule of its part (one class, 0-1-0), so for a
+property the stylesheet already sets, such as a background, the stylesheet loaded last wins. Load
+yours after `gridory/styles.css`, or change the token of that part from the class: the header cells
+paint the header background themselves when the header is sticky, so a class on `headRow` sets
+`--gdy-table-head-bg` instead (`[--gdy-table-head-bg:theme(colors.sky.100)]` in Tailwind).
 
 ### Selecting a column
 
@@ -552,6 +625,8 @@ Own props of `DataTableProps<TData>`, in source order.
 | `onSearchChange` | `(query: string) => void` | — | Search box change. |
 | `onVisibleRowsChange` | `(state: VisibleRowsState<TData>) => void` | — | Visible rows on mount and after each change. |
 | `tableWrapClassName` | `string` | — | Extra classes for the rows container. |
+| `className` | `string` | — | Extra classes for the root, after `gdy-table` and its flags. |
+| `classNames` | `DataTableClassNames` | — | One class per part. See [Class names per part](#class-names-per-part). |
 | `tableMinHeightClassName` | `string` | `"gdy-table-min-h-md"` | Minimum height class of the rows container. |
 | `tableMaxHeightClassName` | `string` | — | Maximum height class of the rows container; enables internal scrolling. |
 | `scrollResetOnPageChange` | `boolean` | `true` | Scroll the rows container to the top on page changes. |
@@ -588,3 +663,4 @@ All of them are exported from `gridory/table` and `gridory`.
   argument of `onRowClick`.
 - `RowAttributes`: the object `getRowAttributes` returns, with `data-*` and `aria-*` names only and
   `string | number | boolean | undefined` values.
+- `DataTableClassNames`: the optional classes per part of `classNames`.

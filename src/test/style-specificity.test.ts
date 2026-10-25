@@ -34,6 +34,8 @@ const TABLE_COMPOUND_RULES = {
   '.gdy-table-cell[data-align="right"]': "0-2-0",
   '.gdy-table-head-trigger[data-align="center"]': "0-2-0",
   '.gdy-table-head-trigger[data-align="right"]': "0-2-0",
+  '.gdy-table-cell-content[data-overflow="wrap"]': "0-2-0",
+  '.gdy-table-cell-content[data-overflow="visible"]': "0-2-0",
   ".gdy-select-trigger.gdy-table-inline-select": "0-2-0",
   '.gdy-table-actions-cell[data-align="left"]': "0-2-0",
   '.gdy-table-actions-cell[data-align="center"]': "0-2-0",
@@ -44,7 +46,7 @@ const TABLE_COMPOUND_RULES = {
   ".gdy-table-sticky .gdy-table-head-cell": "0-2-0",
 };
 
-test("lists every table rule that is not a single class, the 1.1.0 alignment and focus rules included", () => {
+test("lists every table rule that is not a single class, the 1.1.0 alignment, focus and overflow rules included", () => {
   const css = readFileSync("src/components/table/styles.css", "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
   const rules = Object.fromEntries(listCompoundRules(css).map((rule) => [rule.selector, rule.specificity]));
   expect(rules).toEqual(TABLE_COMPOUND_RULES);

@@ -1,4 +1,5 @@
 import { Fragment, type ReactNode } from "react";
+import { cn } from "../../../lib/cn";
 import type {
   AiButtonConfig,
   ArchivedViewMode,
@@ -63,6 +64,7 @@ interface ToolbarProps {
   toolbarLayout?: ToolbarLayout;
   toolbarSlots?: ToolbarCustomSlot[];
   selectTheme?: SelectTheme;
+  className?: string;
 }
 
 type ToolbarSlots = Record<string, ReactNode>;
@@ -226,7 +228,7 @@ export const Toolbar = (props: ToolbarProps) => {
   const slots = buildSlots(props);
   const clusters = resolveClusters(props, slots);
   return (
-    <div className="gdy-toolbar">
+    <div className={cn("gdy-toolbar", props.className)}>
       <div className="gdy-toolbar-left">
         {clusters.left.map((id) => (
           <Fragment key={id}>{slots[id]}</Fragment>

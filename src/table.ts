@@ -3,6 +3,7 @@ import "./styles/index.css";
 export { DataTable } from "./components/table";
 export type {
   ColumnSortingState,
+  DataTableClassNames,
   DataTableFeatures,
   DataTableProps,
   GroupHeader,
@@ -20,6 +21,7 @@ export type {
   CellHighlight,
   ColumnAlign,
   ColumnDefinition,
+  ColumnOverflow,
   DataInput,
   DateFilterOp,
   DateFilterState,

@@ -11,10 +11,11 @@ export const KanbanBoardBody = <TData,>({
       "gdy-kanban-board-wrap gdy-scroll",
       view.boardMinHeightClassName,
       view.boardWrapClassName,
+      view.classNames?.board,
     )}
   >
     {state.visibleCards.length === 0 ? (
-      <div className="gdy-empty">{view.emptyMessage}</div>
+      <div className={cn("gdy-empty", view.classNames?.empty)}>{view.emptyMessage}</div>
     ) : (
       <KanbanColumns state={state} view={view} />
     )}

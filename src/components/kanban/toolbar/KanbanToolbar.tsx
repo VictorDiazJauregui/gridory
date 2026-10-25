@@ -23,5 +23,6 @@ export const KanbanToolbar = <TData,>({
     onCreate={view.onCreate}
     {...buildArchivedToolbarProps(view, state)}
     {...pickToolbarPassThrough(view)}
+    className={view.classNames?.toolbar}
   />
 );

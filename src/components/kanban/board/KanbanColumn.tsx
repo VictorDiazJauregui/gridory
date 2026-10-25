@@ -1,16 +1,17 @@
+import { cn } from "../../../lib/cn";
 import type { KanbanColumnProps } from "./column-settings";
 import { buildColumnDropHandlers } from "./drag-handlers";
 import { KanbanColumnBody } from "./KanbanColumnBody";
 
 export const KanbanColumn = <TData,>(props: KanbanColumnProps<TData>) => {
-  const { value, label, cards, drag, moveCard } = props;
+  const { value, label, cards, drag, moveCard, classNames } = props;
   return (
     <section
-      className="gdy-kanban-column"
+      className={cn("gdy-kanban-column", classNames?.column)}
       data-drop-target={drag.dragOverValue === value || undefined}
       {...buildColumnDropHandlers({ drag, value, moveCard })}
     >
-      <header className="gdy-kanban-column-head">
+      <header className={cn("gdy-kanban-column-head", classNames?.columnHead)}>
         <span className="gdy-kanban-column-title" title={label}>
           {label}
         </span>
