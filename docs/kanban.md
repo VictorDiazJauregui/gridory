@@ -358,6 +358,38 @@ library's:
 The style contract, the base tokens and the light/dark themes are in [theming.md](theming.md); the
 full catalog of classes, state attributes and tokens is in [style-hooks.md](style-hooks.md).
 
+### Class names per part
+
+`className` adds classes to the root and `classNames` adds one class per part, always after the
+`gdy-*` hook of that part:
+
+| `classNames` key | Element | Hook it joins |
+|---|---|---|
+| `root` | Root `div` (same as `className`, which goes first) | `gdy-kanban` |
+| `toolbar` | Toolbar | `gdy-toolbar` |
+| `filterRow` | Row of filter triggers (only when some field is filterable) | `gdy-kanban-filter-row` |
+| `board` | Board viewport, the columns scroll container | `gdy-kanban-board-wrap` |
+| `column` | Every column | `gdy-kanban-column` |
+| `columnHead` | Header of every column | `gdy-kanban-column-head` |
+| `columnBody` | Card list of every column | `gdy-kanban-column-body` |
+| `card` | Every card, default or custom (`renderCard`) | `gdy-kanban-card` |
+| `empty` | Message of an empty board (`emptyMessage`) | `gdy-empty` |
+
+The `"Sin cards"` placeholder of an empty column has no key. `boardMinHeightClassName` and
+`boardWrapClassName` keep working: `classNames.board` goes after them.
+
+```tsx
+<KanbanBoard
+  {...boardProps}
+  classNames={{ columnHead: "uppercase", card: "shadow-md", empty: "italic" }}
+/>
+```
+
+A consumer class weighs the same as the `gdy-*` rule of its part, so for a property the stylesheet
+already sets, such as the column background, the stylesheet loaded last wins. Load yours after
+`gridory/styles.css`, or set the token of that part from the class
+(`[--gdy-kanban-column-bg:theme(colors.sky.50)]` in Tailwind).
+
 ## Props reference
 
 Own props of `KanbanBoardProps<TData>`, in source order.
@@ -377,6 +409,8 @@ Own props of `KanbanBoardProps<TData>`, in source order.
 | `onGroupChange` | `(groupId: string) => void` | — | Group selector change. |
 | `groupSelectorLabel` | `string` | `"Agrupar por"` | Prefix of every group option and accessible name of the selector. |
 | `boardWrapClassName` | `string` | — | Extra classes for the board viewport. |
+| `className` | `string` | — | Extra classes for the root, after `gdy-kanban` and its flags. |
+| `classNames` | `KanbanBoardClassNames` | — | One class per part. See [Class names per part](#class-names-per-part). |
 | `boardMinHeightClassName` | `string` | `"gdy-kanban-min-h-md"` | Minimum height class of the board viewport. |
 | `columnBodyMaxHeight` | `number` | `480` | Maximum height in pixels of each column body before it scrolls. |
 
@@ -401,3 +435,4 @@ Own props of `KanbanBoardProps<TData>`, in source order.
 - `KanbanSortingState`: `{ id: string; direction: SortDirection }`, the active sort of a field.
 - `KanbanFiltersState`: `Record<string, string[]>`, the selected values per field id.
 - `KanbanDateFiltersState`: `Record<string, DateFilterState>`, the date filter per field id.
+- `KanbanBoardClassNames`: the optional classes per part of `classNames`.

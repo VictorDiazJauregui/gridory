@@ -101,6 +101,7 @@ Cada entrada de `columns` es un `ColumnDefinition<TData>`.
 | `align` | `"left" \| "center" \| "right"` | Alinea las celdas y el encabezado. Ver [Alineación](#alineación). Solo la tabla. |
 | `headerAlign` | `"left" \| "center" \| "right"` | Alinea el encabezado aparte de las celdas. Por defecto copia `align`. Solo la tabla. |
 | `ignoreRowClick` | `boolean` | Ningún gesto que empiece en esta columna dispara la fila. Ver [Clic en fila y filas como enlace](#clic-en-fila-y-filas-como-enlace). Solo la tabla. |
+| `overflow` | `"ellipsis" \| "wrap" \| "visible"` | Qué hacen las celdas con un contenido más ancho que la columna. Por defecto `"ellipsis"`. Ver [Recorte de celdas](#recorte-de-celdas). Solo la tabla. |
 
 Las opciones de filtro se calculan con todas las filas de `data` (antes de la búsqueda y los filtros), no
 solo con la página visible. Las columnas con `type: "date"` nunca reciben una lista de valores: su menú
@@ -288,6 +289,41 @@ const columns: ColumnDefinition<Quote>[] = [
 /* Después: nada, lo hacen `align` y `rowActions.columnLabel` */
 ```
 
+### Recorte de celdas
+
+Por defecto, cada celda corta su contenido en una línea con puntos suspensivos. `overflow` lo cambia
+por columna:
+
+| Valor | Qué hace la celda |
+|---|---|
+| `"ellipsis"` (por defecto) | Una línea, cortada con `…`. |
+| `"wrap"` | Parte el texto en varias líneas (`white-space: normal` y `overflow-wrap: anywhere`). La fila crece en alto; el ancho sigue siendo el de `width` (la grilla usa `table-layout: fixed`). |
+| `"visible"` | Deja que el contenido sobresalga de la celda (`overflow: visible`). Pensado para una insignia o un control que sobresale, no para texto: el texto sigue en una línea y se dibuja encima de la celda vecina. |
+
+Pinta `data-overflow` en el `gdy-table-cell-content` de cada celda de la columna; sin la prop no hay
+atributo y el CSS es el mismo de antes.
+
+```tsx
+const columns: ColumnDefinition<Company>[] = [
+  { id: "name", header: "Empresa", accessor: (company) => company.name, width: 200 },
+  { id: "notes", header: "Notas", accessor: (company) => company.notes, width: 280, overflow: "wrap" },
+];
+```
+
+```css
+/* Antes: se partían todas las celdas de todas las tablas */
+.gdy-table-cell-content {
+  white-space: normal;
+}
+
+/* Después: nada, `overflow: "wrap"` en la columna que lo necesita */
+```
+
+Un combobox o un menú dentro de una celda no necesita `"visible"` cuando su lista se abre en un
+portal, como el select de edición en línea: la lista se dibuja fuera de la tabla y nada la corta.
+`"visible"` llega solo hasta el borde del contenedor de filas (`gdy-table-wrap`), que tiene scroll: lo
+que pase ese borde se corta o suma una barra de scroll.
+
 ### Clic en fila y filas como enlace
 
 `onRowClick(row, event)` se dispara al hacer clic en una fila de datos. `event` es el evento de React de
@@ -472,7 +508,7 @@ mismo selector.
 | `gdy-table-head-cell` | Celda de encabezado (`th`). | `data-column-id` con el `id` de su columna; `data-align` con `headerAlign` o `align`. |
 | `gdy-table-head-trigger` | Botón dentro de la celda de encabezado que abre el menú de filtro o alterna el orden. | `data-filtered` mientras la columna tiene un filtro activo; `data-align` igual que su celda. |
 | `gdy-table-row` | Fila de datos (`tr`). | `data-row-id` con el id de la fila; `data-clickable` cuando se pasa `onRowClick` o `getRowHref`; `data-href` con el enlace; más lo que devuelve `getRowAttributes`. Las filas enfocables toman `:focus-visible`. |
-| `gdy-table-cell` | Celda de datos (`td`); `gdy-table-cell-content` envuelve su contenido. | `data-column-id` con el `id` de su columna; `data-align` con `align`. |
+| `gdy-table-cell` | Celda de datos (`td`); `gdy-table-cell-content` envuelve su contenido. | `data-column-id` con el `id` de su columna; `data-align` con `align`. `gdy-table-cell-content` lleva `data-overflow` con `overflow`. |
 | `gdy-table-actions-cell` | Caja del botón ⋯ en la columna de acciones; `gdy-table-actions-head-label` es el texto de su encabezado (`rowActions.columnLabel`). | `data-align` cuando se pasa `rowActions.align` o `columnLabel`. |
 | `gdy-table-group-row` | Fila de grupo; `gdy-table-group-cell` es su única celda. | — |
 | `gdy-table-group-toggle` | Botón de plegado de un grupo, con `gdy-table-group-label` y `gdy-table-group-count`. | `aria-expanded`. |
@@ -506,6 +542,44 @@ estos tokens, cada uno con un fallback a un token base, así que basta con decla
   opacity: 0.7;
 }
 ```
+
+### Clases por parte
+
+`className` suma clases a la raíz y `classNames` suma una clase por parte, siempre después del gancho
+`gdy-*` de esa parte, así que las dos se ven en el DOM y el gancho no desaparece nunca:
+
+| Clave de `classNames` | Elemento | Gancho al que se suma |
+|---|---|---|
+| `root` | `div` raíz (igual que `className`, que va antes) | `gdy-table` |
+| `toolbar` | Barra de herramientas | `gdy-toolbar` |
+| `wrap` | Contenedor de filas con scroll | `gdy-table-wrap` |
+| `table` | `table` | `gdy-table-grid` |
+| `headRow` | Fila de encabezado | `gdy-table-head-row` |
+| `headCell` | Cada celda de encabezado, también la de acciones | `gdy-table-head-cell` |
+| `row` | Cada fila de datos | `gdy-table-row` |
+| `cell` | Cada celda de datos, también la de acciones | `gdy-table-cell` |
+| `pagination` | Pie de paginación | `gdy-table-pagination` |
+| `empty` | Celda del estado vacío (no recibe `cell`) | `gdy-empty` |
+
+Las filas de grupo conservan sus propios ganchos y no reciben ni `row` ni `cell`.
+`tableMinHeightClassName`, `tableMaxHeightClassName` y `tableWrapClassName` siguen funcionando:
+`classNames.wrap` va después de ellas. `getRowClassName(row)` va después de `classNames.row`, porque es
+la más específica de las dos.
+
+```tsx
+<DataTable
+  columns={columns}
+  data={companies}
+  className="shadow-sm"
+  classNames={{ row: "even:bg-slate-50", pagination: "bg-slate-50", empty: "italic" }}
+/>
+```
+
+Una clase del consumidor pesa lo mismo que la regla `gdy-*` de su parte (una clase, 0-1-0), así que
+para una propiedad que la hoja ya define, como un fondo, gana la hoja que se carga última. Cargá la
+tuya después de `gridory/styles.css`, o cambiá desde la clase el token de esa parte: con el encabezado
+fijo, las celdas de encabezado pintan su propio fondo, así que una clase en `headRow` define
+`--gdy-table-head-bg` (`[--gdy-table-head-bg:theme(colors.sky.100)]` en Tailwind).
 
 ### Seleccionar una columna
 
@@ -561,6 +635,8 @@ Props propias de `DataTableProps<TData>`, en el orden del código fuente.
 | `onSearchChange` | `(query: string) => void` | — | Cambio en la caja de búsqueda. |
 | `onVisibleRowsChange` | `(state: VisibleRowsState<TData>) => void` | — | Filas visibles al montar y después de cada cambio. |
 | `tableWrapClassName` | `string` | — | Clases extra para el contenedor de filas. |
+| `className` | `string` | — | Clases extra para la raíz, después de `gdy-table` y sus flags. |
+| `classNames` | `DataTableClassNames` | — | Una clase por parte. Ver [Clases por parte](#clases-por-parte). |
 | `tableMinHeightClassName` | `string` | `"gdy-table-min-h-md"` | Clase de altura mínima del contenedor de filas. |
 | `tableMaxHeightClassName` | `string` | — | Clase de altura máxima del contenedor de filas; activa el scroll interno. |
 | `scrollResetOnPageChange` | `boolean` | `true` | Lleva el scroll del contenedor de filas arriba al cambiar de página. |
@@ -597,3 +673,4 @@ Todos se exportan desde `gridory/table` y `gridory`.
   argumento de `onRowClick`.
 - `RowAttributes`: el objeto que devuelve `getRowAttributes`, solo con nombres `data-*` y `aria-*` y
   valores `string | number | boolean | undefined`.
+- `DataTableClassNames`: las clases opcionales por parte de `classNames`.
