@@ -4,10 +4,12 @@ import type { MockCompanyRow } from "../company/company-rows";
 import { SEATS_SLOT } from "../company/demo-toolbar-slots";
 import { AmountTotals } from "./AmountTotals";
 import { sumAmountsByCurrency } from "./company-amounts";
+import { buildActionsColumnProps } from "./actions-column";
+import { buildCompanyHref } from "./use-company-detail";
 
 type TableHookProps = Pick<
   DataTableProps<MockCompanyRow>,
-  "getRowAttributes" | "onVisibleRowsChange" | "toolbarSlots"
+  "getRowAttributes" | "onVisibleRowsChange" | "toolbarSlots" | "rowActions" | "getRowHref" | "onRowClick"
 >;
 
 const markArchivedRow = (row: MockCompanyRow) => ({
@@ -15,7 +17,7 @@ const markArchivedRow = (row: MockCompanyRow) => ({
 });
 
 // The props added in 1.1.0, kept apart so `?baseline=1` can render the 1.0.1 table.
-export const useTableHookProps = (): TableHookProps => {
+export const useTableHookProps = (openCompany: (row: MockCompanyRow) => void): TableHookProps => {
   const [totals, setTotals] = useState<ReturnType<typeof sumAmountsByCurrency>>({});
   const onVisibleRowsChange = ({ filteredRows }: VisibleRowsState<MockCompanyRow>) =>
     setTotals(sumAmountsByCurrency(filteredRows));
@@ -23,5 +25,8 @@ export const useTableHookProps = (): TableHookProps => {
     getRowAttributes: markArchivedRow,
     onVisibleRowsChange,
     toolbarSlots: [{ id: "totals", position: "left", content: <AmountTotals totals={totals} /> }, SEATS_SLOT],
+    rowActions: buildActionsColumnProps(),
+    getRowHref: buildCompanyHref,
+    onRowClick: openCompany,
   };
 };

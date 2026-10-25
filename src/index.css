@@ -87,10 +87,10 @@
     font-family: 'Geist Variable', sans-serif;
   }
 }
-/* Table demo: one column painted through its data-column-id hook. */
+/* Table demo: one column painted through its data-column-id hook (its alignment comes
+   from the column's `align`). */
 .gdy-table-head-cell[data-column-id="amount"],
 .gdy-table-cell[data-column-id="amount"] {
-  text-align: right;
   background: color-mix(in oklch, var(--gdy-primary) 5%, transparent);
 }
 
