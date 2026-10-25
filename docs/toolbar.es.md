@@ -62,6 +62,27 @@ lo escribió el usuario, por `onSearchChange` ([table.es.md](table.es.md)).
 `onCreate()` sin argumentos; lo que abra o agregue depende de ti. `createLabel` define su texto (por
 defecto `"Nuevo"`). `features.createButton: false` lo oculta aunque `onCreate` esté definido.
 
+## Estado vacío
+
+Cuando ninguna fila o tarjeta pasa la búsqueda, los filtros y la vista de archivados, la tabla y el
+kanban muestran `emptyMessage`: por defecto el texto `"No se encontraron resultados"`, tu propio texto o
+cualquier nodo (un ícono, un enlace, un botón). `null`, `false` o `""` dejan el estado vacío sin texto.
+En la tabla se pinta dentro de `td.gdy-table-cell.gdy-empty`, que nunca dispara `onRowClick`; en el
+kanban, dentro de `div.gdy-empty`.
+
+```tsx
+<DataTable
+  columns={columns}
+  data={companies}
+  onCreate={openCreateDialog}
+  emptyMessage={
+    <>
+      Ninguna empresa coincide. <button type="button" onClick={openCreateDialog}>Crear una</button>
+    </>
+  }
+/>
+```
+
 ## Filtros
 
 Una columna tiene menú de filtro cuando declara `filterable: true` y `features.filtering` está activo.
@@ -248,7 +269,7 @@ handlers quedan en tu componente, y la toolbar solo decide dónde va.
 
 ## Acciones de fila y de tarjeta
 
-`rowActions` llena un menú que se abre desde un botón "más" (tooltip `"Opciones"`): en una columna extra
+`rowActions` llena un menú que se abre desde un botón "más" (tooltip y nombre accesible `triggerLabel`, por defecto `"Opciones"`): en una columna extra
 al final de la tabla y en la cabecera de la tarjeta en el kanban (debajo de tu markup si usas
 `renderCard`). `features.rowActions: false` lo quita. El menú se abre en un portal y se reposiciona para
 no salirse de la pantalla; los clics dentro de él no disparan `onRowClick` ni `onCardClick`. Si ninguna
@@ -357,7 +378,7 @@ Todos los tipos de esta sección se exportan desde `gridory`, `gridory/table` y 
 | `searchPlaceholder` | `string` | `"Buscar..."` | Placeholder de la caja de búsqueda. En el kanban, por defecto `"Buscar cards..."`. |
 | `createLabel` | `string` | `"Nuevo"` | Texto del botón de crear. |
 | `onCreate` | `() => void` | — | Callback del botón de crear; el botón solo se renderiza si está definido. |
-| `emptyMessage` | `string` | `"No se encontraron resultados"` | Se muestra cuando ninguna fila coincide. |
+| `emptyMessage` | `ReactNode` | `"No se encontraron resultados"` | Se muestra cuando ninguna fila o tarjeta coincide. Ver [Estado vacío](#estado-vacío). |
 | `rowActions` | `RowActions<TData>` | — | Menú de acciones de cada fila o tarjeta. |
 | `archivedView` | `ArchivedViewConfig` | — | Select activos/archivados/todos. |
 | `viewSwitch` | `ViewSwitchConfig` | — | Selector tabla/kanban. |
@@ -471,6 +492,9 @@ Todos los tipos de esta sección se exportan desde `gridory`, `gridory/table` y 
 | `archiveLabel`, `unarchiveLabel`, `deleteLabel`, `editLabel`, `historyLabel` | `string` | en español | Textos de las acciones integradas; los valores por defecto están en [Acciones de fila y de tarjeta](#acciones-de-fila-y-de-tarjeta). |
 | `customActions` | `RowAction<TData>[]` | — | Acciones extra alrededor de las integradas. |
 | `menuActions` | `MenuItem<TData>[]` | — | Composición completa del menú; reemplaza `customActions`. |
+| `triggerLabel` | `string` | `"Opciones"` | Nombre accesible y tooltip del botón ⋯, en la tabla y en el kanban. |
+| `columnLabel` | `string` | — | Solo la tabla. Texto del encabezado de la columna de acciones. Ver [Alineación](table.es.md#alineación). |
+| `align` | `"left" \| "center" \| "right"` | `"right"` | Solo la tabla. Alineación del encabezado y del botón de la columna de acciones. |
 
 ### RowAction
 

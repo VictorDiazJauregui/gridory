@@ -144,7 +144,7 @@ that pass the search and filters), labelled with the value itself and sorted alp
 A card with an empty value goes to a column labelled `"Sin valor"`. To name that column, add an entry
 with `value: ""` and your own `label` to `values`. A column without cards shows `"Sin cards"`, and
 when no card passes the search, the filters and the archived view, the board shows `emptyMessage`
-instead of the columns. `"Sin valor"` and `"Sin cards"` are fixed texts.
+(text or any node, see [Empty state](toolbar.md#empty-state)) instead of the columns. `"Sin valor"` and `"Sin cards"` are fixed texts.
 
 The board throws while rendering when the grouping configuration is unusable:
 
