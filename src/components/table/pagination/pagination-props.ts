@@ -17,5 +17,6 @@ export const buildPaginationProps = <TData>(model: TableModel<TData>) => {
     onPrevPage: () => paging.goToPage(paging.pageIndex - 1),
     onNextPage: () => paging.goToPage(paging.pageIndex + 1),
     selectTheme: settings.selectTheme,
+    className: settings.classNames?.pagination,
   };
 };

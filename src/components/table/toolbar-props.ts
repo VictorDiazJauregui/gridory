@@ -68,4 +68,5 @@ export const buildToolbarProps = <TData>(
   groupSelector: buildGroupSelector(model),
   ...buildArchivedToolbarProps(model.settings, model.state),
   ...pickToolbarPassThrough(model.settings),
+  className: model.settings.classNames?.toolbar,
 });

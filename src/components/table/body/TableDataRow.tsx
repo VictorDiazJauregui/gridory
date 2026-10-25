@@ -13,14 +13,14 @@ export const TableDataRow = <TData,>({ row, config }: TableDataRowProps<TData>) 
   const href = resolveSafeRowHref(config.getRowHref?.(row.original));
   return (
     <tr
-      className={cn("gdy-table-row", config.getRowClassName?.(row.original))}
+      className={cn("gdy-table-row", config.classNames?.row, config.getRowClassName?.(row.original))}
       {...buildRowAttributes(row, config, href)}
       {...buildRowHandlers({ row: row.original, href, config })}
     >
       {row.getVisibleCells().map((cell) => (
         <td
           key={cell.id}
-          className="gdy-table-cell"
+          className={cn("gdy-table-cell", config.classNames?.cell)}
           {...buildCellAttributes(cell.column.id, readColumnAlignment(cell.column.columnDef).cells)}
         >
           {flexRender(cell.column.columnDef.cell, cell.getContext())}
