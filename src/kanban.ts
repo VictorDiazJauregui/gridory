@@ -18,6 +18,7 @@ export type {
   ArchivedViewConfig,
   ArchivedViewMode,
   CellHighlight,
+  ColumnAlign,
   ColumnDefinition,
   DataInput,
   DateFilterOp,

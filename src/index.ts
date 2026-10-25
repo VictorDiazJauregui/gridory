@@ -6,6 +6,7 @@ export type {
   GroupHeader,
   ManualPaginationState,
   RowAttributes,
+  RowClickEvent,
   RowGroupingResult,
   VisibleRowsState,
 } from "./table";
@@ -28,6 +29,7 @@ export type {
   ArchivedViewConfig,
   ArchivedViewMode,
   CellHighlight,
+  ColumnAlign,
   ColumnDefinition,
   DataInput,
   DateFilterOp,

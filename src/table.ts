@@ -8,6 +8,7 @@ export type {
   GroupHeader,
   ManualPaginationState,
   RowAttributes,
+  RowClickEvent,
   RowGroupingResult,
   VisibleRowsState,
 } from "./components/table/types";
@@ -17,6 +18,7 @@ export type {
   ArchivedViewConfig,
   ArchivedViewMode,
   CellHighlight,
+  ColumnAlign,
   ColumnDefinition,
   DataInput,
   DateFilterOp,
