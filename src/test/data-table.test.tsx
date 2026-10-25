@@ -126,7 +126,7 @@ test("marks the rows as clickable and reports the clicked record", () => {
   const [firstRow] = dataRows(container);
   expect(firstRow).toHaveAttribute("data-clickable");
   fireEvent.click(firstRow);
-  expect(onRowClick).toHaveBeenCalledWith(MOCK_COMPANY_ROWS[0]);
+  expect(onRowClick).toHaveBeenCalledWith(MOCK_COMPANY_ROWS[0], expect.objectContaining({ type: "click" }));
 });
 
 test("groups the rows and collapses a group from its toggle", () => {

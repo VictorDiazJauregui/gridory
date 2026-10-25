@@ -32,6 +32,7 @@ export const buildAmountColumn = (): MockCompanyColumn => ({
   type: "number",
   sortable: true,
   width: 130,
+  align: "right",
 });
 
 export const sumAmountsByCurrency = (rows: MockCompanyRow[]) =>

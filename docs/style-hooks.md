@@ -17,10 +17,11 @@ The state selectors column lists the attributes the stylesheets combine with eac
 | Class | Kind | State selectors |
 |---|---|---|
 | `gdy-table` | styled | — |
-| `gdy-table-actions-cell` | styled | — |
+| `gdy-table-actions-cell` | styled | `[data-align="center"]`, `[data-align="left"]` |
+| `gdy-table-actions-head-label` | styled | — |
 | `gdy-table-actions-icon` | hook only | — |
 | `gdy-table-body` | hook only | — |
-| `gdy-table-cell` | styled | — |
+| `gdy-table-cell` | styled | `[data-align="center"]`, `[data-align="right"]` |
 | `gdy-table-cell-content` | styled | — |
 | `gdy-table-empty-row` | hook only | — |
 | `gdy-table-fill` | styled | — |
@@ -33,13 +34,13 @@ The state selectors column lists the attributes the stylesheets combine with eac
 | `gdy-table-group-toggle` | styled | `[aria-expanded="false"]` |
 | `gdy-table-head` | hook only | — |
 | `gdy-table-head-arrow` | styled | — |
-| `gdy-table-head-cell` | styled | — |
+| `gdy-table-head-cell` | styled | `[data-align="center"]`, `[data-align="right"]` |
 | `gdy-table-head-filter-icon` | styled | — |
 | `gdy-table-head-inner` | styled | — |
 | `gdy-table-head-label` | styled | — |
 | `gdy-table-head-row` | styled | — |
 | `gdy-table-head-sort-icon` | hook only | — |
-| `gdy-table-head-trigger` | styled | — |
+| `gdy-table-head-trigger` | styled | `[data-align="center"]`, `[data-align="right"]` |
 | `gdy-table-inline-select` | styled | — |
 | `gdy-table-inline-select-wrap` | styled | — |
 | `gdy-table-max-h-lg` | utility | — |
@@ -542,7 +543,16 @@ write when you override them; the reasons are in [Theming and styling](theming.m
 | `.gdy-table-cell.gdy-empty` | 0-2-0 |
 | `.gdy-table-row[data-clickable]` | 0-2-0 |
 | `.gdy-table-row[data-clickable]:hover .gdy-table-cell` | 0-4-0 |
+| `.gdy-table-row:focus-visible` | 0-2-0 |
+| `.gdy-table-head-cell[data-align="center"]` | 0-2-0 |
+| `.gdy-table-cell[data-align="center"]` | 0-2-0 |
+| `.gdy-table-head-cell[data-align="right"]` | 0-2-0 |
+| `.gdy-table-cell[data-align="right"]` | 0-2-0 |
+| `.gdy-table-head-trigger[data-align="center"]` | 0-2-0 |
+| `.gdy-table-head-trigger[data-align="right"]` | 0-2-0 |
 | `.gdy-select-trigger.gdy-table-inline-select` | 0-2-0 |
+| `.gdy-table-actions-cell[data-align="left"]` | 0-2-0 |
+| `.gdy-table-actions-cell[data-align="center"]` | 0-2-0 |
 | `.gdy-table-group-toggle:hover` | 0-2-0 |
 | `.gdy-table-group-toggle[aria-expanded="false"] .gdy-table-group-chevron` | 0-3-0 |
 | `.gdy-table-fill .gdy-card` | 0-2-0 |
@@ -565,6 +575,7 @@ Radix or react-day-picker follow those libraries.
 | `aria-selected` | `"true"` | Gridory | `gdy-listbox-option` |
 | `data-action-type` | `"create-card"`, `"create-row"`, `"custom"`, `"move-card"`, `"update-row"` | Gridory | no default rule |
 | `data-active` | present / absent | Gridory | `gdy-listbox-option` |
+| `data-align` | `"center"`, `"left"`, `"right"` | Gridory, Radix or react-day-picker | `gdy-table-actions-cell`, `gdy-table-cell`, `gdy-table-head-cell`, `gdy-table-head-trigger` |
 | `data-alignment` | `"center"`, `"right"` | Gridory | `gdy-md-table-preview` |
 | `data-animated` | `"true"` | Gridory | `gdy-segmented`, `gdy-sidebar` |
 | `data-checked` | present / absent | Gridory | `gdy-option-check` |
@@ -585,6 +596,7 @@ Radix or react-day-picker follow those libraries.
 | `data-hidden` | present / absent | Radix or react-day-picker | `gdy-calendar-day` |
 | `data-highlighted` | present / absent | Radix or react-day-picker | `gdy-select-item` |
 | `data-hover-expand` | `"false"`, `"true"` | Gridory | `gdy-sidebar` |
+| `data-href` | present / absent | Gridory | no default rule |
 | `data-invalid` | present / absent | Gridory | `gdy-phone-input` |
 | `data-label-position` | `"start"` | Gridory | `gdy-field` |
 | `data-language` | `"mermaid"` | Gridory | no default rule |
@@ -972,6 +984,7 @@ any ancestor overrides that part only. `--gdy-select-*` also mirror the `selectT
 | `--gdy-table-group-bg` | `var(--gdy-accent)` | table |
 | `--gdy-table-head-bg` | `var(--gdy-muted)` | table |
 | `--gdy-table-head-fg` | `var(--gdy-muted-foreground)` | table |
+| `--gdy-table-row-focus-ring` | `var(--gdy-ring)` | table |
 | `--gdy-table-row-hover-bg` | `var(--gdy-muted)` | table |
 | `--gdy-toggle-active-bg` | `var(--gdy-background)` | ui |
 | `--gdy-toggle-bg` | `color-mix(in oklab, var(--gdy-muted) 50%, transparent)` | ui |

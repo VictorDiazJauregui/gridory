@@ -160,7 +160,7 @@ tengan que alcanzarlos.
 
 | Familia | Ejemplos (fallback) |
 |---|---|
-| `--gdy-table-*` | `--gdy-table-head-bg` (`--gdy-muted`), `--gdy-table-border` (`--gdy-border`), `--gdy-table-row-hover-bg` (`--gdy-muted`) |
+| `--gdy-table-*` | `--gdy-table-head-bg` (`--gdy-muted`), `--gdy-table-border` (`--gdy-border`), `--gdy-table-row-hover-bg` (`--gdy-muted`), `--gdy-table-row-focus-ring` (`--gdy-ring`) |
 | `--gdy-kanban-*` | `--gdy-kanban-column-bg` (`--gdy-muted`), `--gdy-kanban-card-bg` (`--gdy-card`), `--gdy-kanban-drop-outline` (`--gdy-muted-foreground`) |
 | `--gdy-ai-*` | `--gdy-ai-accent` (`--gdy-primary`), `--gdy-ai-bg` (`--gdy-background`), `--gdy-ai-user-bubble-bg` (`--gdy-ai-accent` y después `--gdy-primary`) |
 | `--gdy-auth-*` | `--gdy-auth-bg` (`--gdy-card`), `--gdy-auth-submit-bg` (`--gdy-primary`), `--gdy-auth-input-focus-border` (`--gdy-ring`), `--gdy-auth-rule-met` (`--gdy-success`) |
@@ -624,27 +624,57 @@ mismo vale para `.gdy-ai-thinking-icon`):
 
 ## Preset de Tailwind
 
-Gridory no necesita Tailwind. El preset es para apps que usan Tailwind y quieren la paleta de la librería en
-su propio markup, por ejemplo dentro de la `cell` de una columna o en lo que devuelve `renderCard`.
+Gridory no necesita Tailwind. Un preset es para apps que usan Tailwind y quieren la paleta de la librería
+en su propio markup, por ejemplo dentro de la `cell` de una columna o en lo que devuelve `renderCard`.
+
+### Preset con prefijo (recomendado)
+
+`createGridoryPreset()` agrega utilidades bajo un prefijo, así nunca chocan con las claves de tu
+proyecto ni cambian ninguno de sus colores:
 
 ```js
 // tailwind.config.js
-import gridoryPreset from "gridory/tailwind-preset";
+import { createGridoryPreset } from "gridory/tailwind-preset";
 
 export default {
-  presets: [gridoryPreset],
+  presets: [createGridoryPreset()], // o createGridoryPreset({ prefix: "mi-app" })
   content: ["./index.html", "./src/**/*.{ts,tsx}"],
 };
 ```
 
-Asocia a los tokens base las claves de tema al estilo de shadcn: los colores `background`, `foreground`,
-`card`, `popover`, `primary`, `secondary`, `muted`, `accent` y `destructive` (cada uno con su tono
-`foreground`), `border`, `input` y `ring` (`bg-card`, `text-muted-foreground`, `border-border`,
-`outline-ring` y el resto), y los radios `lg` (`var(--gdy-radius)`), `md`
-(`calc(var(--gdy-radius) - 2px)`) y `sm` (`calc(var(--gdy-radius) - 4px)`). Las utilidades apuntan a los
-tokens, así que siguen el tema claro u oscuro y los tokens que sobrescribas, sin variantes `dark:`. Los
-modificadores de opacidad como `bg-primary/10` funcionan: el preset mezcla el token con `color-mix()`. El
-preset no añade rutas en `content`; las pone tu propia configuración.
+| Utilidades | Token |
+|---|---|
+| `bg-gdy-background`, `text-gdy-foreground` | `--gdy-background`, `--gdy-foreground` |
+| `bg-gdy-<nombre>`, `text-gdy-<nombre>-foreground` para `card`, `popover`, `primary`, `secondary`, `muted`, `accent` y `destructive` | `--gdy-<nombre>`, `--gdy-<nombre>-foreground` |
+| `border-gdy-border`, `border-gdy-input`, `outline-gdy-ring`, `ring-gdy-ring` | `--gdy-border`, `--gdy-input`, `--gdy-ring` |
+| `rounded-gdy-lg`, `rounded-gdy-md`, `rounded-gdy-sm` | `var(--gdy-radius)`, menos `2px`, menos `4px` |
+
+Los colores funcionan con cualquier utilidad que reciba un color (`bg-`, `text-`, `border-`, `ring-`,
+`fill-`…) y con modificadores de opacidad como `bg-gdy-primary/10`, que mezclan el token con
+`color-mix()`. Las utilidades apuntan a los tokens, así que siguen el tema claro u oscuro y los tokens
+que sobrescribas, sin variantes `dark:`. `prefix` lleva letras minúsculas y dígitos, opcionalmente
+unidos por guiones simples (por defecto `"gdy"`); cualquier otra cosa lanza `InvalidPresetPrefixError`.
+El preset no añade rutas en `content`; las pone tu propia configuración.
+
+**Un proyecto shadcn no necesita preset:** sus propias utilidades (`bg-primary`, `border-border`) ya
+apuntan a sus variables, y Gridory lee esas mismas variables por el puente de tokens. Usa el preset con
+prefijo solo si quieres pintar algo específicamente con los tokens de Gridory.
+
+### Preset por defecto (obsoleto)
+
+El export por defecto asocia las claves al estilo de shadcn (`bg-primary`, `bg-card`,
+`text-muted-foreground`, `border-border`, `outline-ring`, `rounded-lg`…) a los mismos tokens. En un
+proyecto que define esas claves gana el proyecto y el preset aporta poco; en las que no define, mezcla
+dos paletas. Sigue funcionando igual en la 1.x y **se quita en la 2.0.0**: empieza directamente con
+`createGridoryPreset()` para no tener que migrar dos veces.
+
+```js
+import gridoryPreset from "gridory/tailwind-preset"; // obsoleto
+
+export default { presets: [gridoryPreset] };
+```
+
+Tailwind 4 (`@theme`) no está cubierto por ninguno de los dos presets.
 
 ## Auditoría de estilos
 

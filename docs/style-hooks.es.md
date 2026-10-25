@@ -17,10 +17,11 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | Clase | Tipo | Selectores de estado |
 |---|---|---|
 | `gdy-table` | con estilos | — |
-| `gdy-table-actions-cell` | con estilos | — |
+| `gdy-table-actions-cell` | con estilos | `[data-align="center"]`, `[data-align="left"]` |
+| `gdy-table-actions-head-label` | con estilos | — |
 | `gdy-table-actions-icon` | solo gancho | — |
 | `gdy-table-body` | solo gancho | — |
-| `gdy-table-cell` | con estilos | — |
+| `gdy-table-cell` | con estilos | `[data-align="center"]`, `[data-align="right"]` |
 | `gdy-table-cell-content` | con estilos | — |
 | `gdy-table-empty-row` | solo gancho | — |
 | `gdy-table-fill` | con estilos | — |
@@ -33,13 +34,13 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-table-group-toggle` | con estilos | `[aria-expanded="false"]` |
 | `gdy-table-head` | solo gancho | — |
 | `gdy-table-head-arrow` | con estilos | — |
-| `gdy-table-head-cell` | con estilos | — |
+| `gdy-table-head-cell` | con estilos | `[data-align="center"]`, `[data-align="right"]` |
 | `gdy-table-head-filter-icon` | con estilos | — |
 | `gdy-table-head-inner` | con estilos | — |
 | `gdy-table-head-label` | con estilos | — |
 | `gdy-table-head-row` | con estilos | — |
 | `gdy-table-head-sort-icon` | solo gancho | — |
-| `gdy-table-head-trigger` | con estilos | — |
+| `gdy-table-head-trigger` | con estilos | `[data-align="center"]`, `[data-align="right"]` |
 | `gdy-table-inline-select` | con estilos | — |
 | `gdy-table-inline-select-wrap` | con estilos | — |
 | `gdy-table-max-h-lg` | utilidad | — |
@@ -542,7 +543,16 @@ hay que escribir para pisarlas; los motivos están en [Temas y estilos](theming.
 | `.gdy-table-cell.gdy-empty` | 0-2-0 |
 | `.gdy-table-row[data-clickable]` | 0-2-0 |
 | `.gdy-table-row[data-clickable]:hover .gdy-table-cell` | 0-4-0 |
+| `.gdy-table-row:focus-visible` | 0-2-0 |
+| `.gdy-table-head-cell[data-align="center"]` | 0-2-0 |
+| `.gdy-table-cell[data-align="center"]` | 0-2-0 |
+| `.gdy-table-head-cell[data-align="right"]` | 0-2-0 |
+| `.gdy-table-cell[data-align="right"]` | 0-2-0 |
+| `.gdy-table-head-trigger[data-align="center"]` | 0-2-0 |
+| `.gdy-table-head-trigger[data-align="right"]` | 0-2-0 |
 | `.gdy-select-trigger.gdy-table-inline-select` | 0-2-0 |
+| `.gdy-table-actions-cell[data-align="left"]` | 0-2-0 |
+| `.gdy-table-actions-cell[data-align="center"]` | 0-2-0 |
 | `.gdy-table-group-toggle:hover` | 0-2-0 |
 | `.gdy-table-group-toggle[aria-expanded="false"] .gdy-table-group-chevron` | 0-3-0 |
 | `.gdy-table-fill .gdy-card` | 0-2-0 |
@@ -565,6 +575,7 @@ ponen Radix o react-day-picker siguen a esas librerías.
 | `aria-selected` | `"true"` | Gridory | `gdy-listbox-option` |
 | `data-action-type` | `"create-card"`, `"create-row"`, `"custom"`, `"move-card"`, `"update-row"` | Gridory | sin regla por defecto |
 | `data-active` | presente / ausente | Gridory | `gdy-listbox-option` |
+| `data-align` | `"center"`, `"left"`, `"right"` | Gridory, Radix o react-day-picker | `gdy-table-actions-cell`, `gdy-table-cell`, `gdy-table-head-cell`, `gdy-table-head-trigger` |
 | `data-alignment` | `"center"`, `"right"` | Gridory | `gdy-md-table-preview` |
 | `data-animated` | `"true"` | Gridory | `gdy-segmented`, `gdy-sidebar` |
 | `data-checked` | presente / ausente | Gridory | `gdy-option-check` |
@@ -585,6 +596,7 @@ ponen Radix o react-day-picker siguen a esas librerías.
 | `data-hidden` | presente / ausente | Radix o react-day-picker | `gdy-calendar-day` |
 | `data-highlighted` | presente / ausente | Radix o react-day-picker | `gdy-select-item` |
 | `data-hover-expand` | `"false"`, `"true"` | Gridory | `gdy-sidebar` |
+| `data-href` | presente / ausente | Gridory | sin regla por defecto |
 | `data-invalid` | presente / ausente | Gridory | `gdy-phone-input` |
 | `data-label-position` | `"start"` | Gridory | `gdy-field` |
 | `data-language` | `"mermaid"` | Gridory | sin regla por defecto |
@@ -972,6 +984,7 @@ cualquier ancestro cambia solo esa parte. Los `--gdy-select-*` también reflejan
 | `--gdy-table-group-bg` | `var(--gdy-accent)` | table |
 | `--gdy-table-head-bg` | `var(--gdy-muted)` | table |
 | `--gdy-table-head-fg` | `var(--gdy-muted-foreground)` | table |
+| `--gdy-table-row-focus-ring` | `var(--gdy-ring)` | table |
 | `--gdy-table-row-hover-bg` | `var(--gdy-muted)` | table |
 | `--gdy-toggle-active-bg` | `var(--gdy-background)` | ui |
 | `--gdy-toggle-bg` | `color-mix(in oklab, var(--gdy-muted) 50%, transparent)` | ui |

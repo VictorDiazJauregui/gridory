@@ -145,7 +145,7 @@ que pasan la búsqueda y los filtros), con el propio valor como título y en ord
 Una tarjeta con el valor vacío va a una columna titulada `"Sin valor"`. Para ponerle otro nombre,
 agrega a `values` una entrada con `value: ""` y tu propio `label`. Una columna sin tarjetas muestra
 `"Sin cards"`, y cuando ninguna tarjeta pasa la búsqueda, los filtros y la vista de archivados, el
-tablero muestra `emptyMessage` en lugar de las columnas. `"Sin valor"` y `"Sin cards"` son textos fijos.
+tablero muestra `emptyMessage` (texto o cualquier nodo, ver [Estado vacío](toolbar.es.md#estado-vacío)) en lugar de las columnas. `"Sin valor"` y `"Sin cards"` son textos fijos.
 
 El tablero lanza un error durante el render cuando la configuración de agrupación no sirve:
 

@@ -60,6 +60,8 @@ export const BASELINE_VIEW_PROPS = {
 
 const ADDED_ATTRIBUTES = / data-(?:column|row)-id="[^"]*"/g;
 const ICON = /<svg\b[^>]*>[\s\S]*?<\/svg>/g;
+// The table's ⋯ button gains the aria-label the kanban's already had; the kanban's is kept.
+const TABLE_ACTIONS_ARIA_LABEL = / aria-label="Opciones"(?=[^>]*><svg class="gdy-table-actions-icon")/g;
 const GRIDORY_CLASS = /\bgdy-[a-z0-9-]+/g;
 
 // The inside of an icon belongs to lucide-react, which changes it between the versions the
@@ -69,6 +71,10 @@ const keepGridoryIconClasses = (icon: string) => {
   return `<svg class="${classes.join(" ")}"></svg>`;
 };
 
-// 1.1.0 adds data-column-id and data-row-id on purpose; anything else must stay byte for byte.
+// 1.1.0 adds data-column-id, data-row-id and the table's ⋯ aria-label on purpose; anything
+// else must stay byte for byte.
 export const normalizeBaselineHtml = (html: string) =>
-  html.replace(ADDED_ATTRIBUTES, "").replace(ICON, keepGridoryIconClasses);
+  html
+    .replace(ADDED_ATTRIBUTES, "")
+    .replace(ICON, keepGridoryIconClasses)
+    .replace(TABLE_ACTIONS_ARIA_LABEL, "");

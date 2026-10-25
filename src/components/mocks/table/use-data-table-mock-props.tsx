@@ -14,6 +14,7 @@ import {
 import { useViewSwitch } from "../company/use-view-switch";
 import { isDemoBaseline } from "../../../demo/use-demo-baseline";
 import { useTableHookProps } from "./use-table-hook-props";
+import { EmptyWithCreate } from "../company/EmptyWithCreate";
 
 const TABLE_CREATED_ROW: CreatedRowTemplate = {
   idPrefix: "new",
@@ -40,10 +41,13 @@ const useTableRowProps = () => {
   };
 };
 
-export const useDataTableMockProps = (): DataTableProps<MockCompanyRow> => {
+export const useDataTableMockProps = (
+  openCompany: (row: MockCompanyRow) => void,
+): DataTableProps<MockCompanyRow> => {
   const rowProps = useTableRowProps();
   const viewSwitch = useViewSwitch("table");
-  const hookProps = useTableHookProps();
+  const hookProps = useTableHookProps(openCompany);
   const baseProps = { ...TABLE_STATIC_PROPS, ...rowProps, viewSwitch };
-  return isDemoBaseline() ? baseProps : { ...baseProps, ...hookProps };
+  if (isDemoBaseline()) return baseProps;
+  return { ...baseProps, ...hookProps, emptyMessage: <EmptyWithCreate onCreate={rowProps.onCreate} /> };
 };

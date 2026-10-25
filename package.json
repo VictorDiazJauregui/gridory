@@ -31,7 +31,8 @@
   "type": "module",
   "files": [
     "dist",
-    "tailwind-preset.js"
+    "tailwind-preset.js",
+    "tailwind-preset.d.ts"
   ],
   "sideEffects": [
     "**/*.css"
@@ -90,7 +91,10 @@
     },
     "./styles.css": "./dist/gridory.css",
     "./tokens-hsl-channels.css": "./dist/tokens-hsl-channels.css",
-    "./tailwind-preset": "./tailwind-preset.js",
+    "./tailwind-preset": {
+      "types": "./tailwind-preset.d.ts",
+      "default": "./tailwind-preset.js"
+    },
     "./package.json": "./package.json"
   },
   "scripts": {

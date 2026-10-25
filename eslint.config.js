@@ -39,6 +39,13 @@ export default defineConfig([
     },
   },
   {
+    // Published as plain JavaScript: a Tailwind config imports it without a build step.
+    files: ['tailwind-preset.js'],
+    extends: [js.configs.recommended],
+    languageOptions: { ecmaVersion: 2022, sourceType: 'module' },
+    rules: codeStyleRules,
+  },
+  {
     files: ['scripts/**/*.mjs'],
     extends: [js.configs.recommended],
     languageOptions: {

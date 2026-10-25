@@ -60,6 +60,27 @@ reports the query, exactly as typed, through `onSearchChange` ([table.md](table.
 `onCreate()` with no arguments; what it opens or adds is up to you. `createLabel` sets its text
 (default `"Nuevo"`). `features.createButton: false` hides it even when `onCreate` is set.
 
+## Empty state
+
+When no row or card passes the search, the filters and the archived view, the table and the kanban
+show `emptyMessage`: the text `"No se encontraron resultados"` by default, your own text, or any node
+(an icon, a link, a button). `null`, `false` or `""` leave the empty state without text. In the
+table it renders inside `td.gdy-table-cell.gdy-empty`, which never fires `onRowClick`; in the kanban,
+inside `div.gdy-empty`.
+
+```tsx
+<DataTable
+  columns={columns}
+  data={companies}
+  onCreate={openCreateDialog}
+  emptyMessage={
+    <>
+      No companies match. <button type="button" onClick={openCreateDialog}>Create one</button>
+    </>
+  }
+/>
+```
+
 ## Filters
 
 A column gets a filter menu when it sets `filterable: true` and `features.filtering` is on. In the
@@ -238,7 +259,7 @@ component, and the toolbar only decides where it goes.
 
 ## Row and card actions
 
-`rowActions` fills a menu opened from a "more" button (tooltip `"Opciones"`): in an extra last
+`rowActions` fills a menu opened from a "more" button (tooltip and accessible name `triggerLabel`, default `"Opciones"`): in an extra last
 column of the table, and in the card header of the kanban (below your markup with `renderCard`).
 `features.rowActions: false` removes it. The menu opens in a portal and repositions itself to stay
 on screen; clicks inside it do not trigger `onRowClick` or `onCardClick`. When no action resolves
@@ -345,7 +366,7 @@ Every type below is exported from `gridory`, `gridory/table` and `gridory/kanban
 | `searchPlaceholder` | `string` | `"Buscar..."` | Search box placeholder. Kanban default: `"Buscar cards..."`. |
 | `createLabel` | `string` | `"Nuevo"` | Create button text. |
 | `onCreate` | `() => void` | — | Create button handler; the button renders only when it is set. |
-| `emptyMessage` | `string` | `"No se encontraron resultados"` | Shown when no row matches. |
+| `emptyMessage` | `ReactNode` | `"No se encontraron resultados"` | Shown when no row or card matches. See [Empty state](#empty-state). |
 | `rowActions` | `RowActions<TData>` | — | Actions menu of each row or card. |
 | `archivedView` | `ArchivedViewConfig` | — | Active/archived/all select. |
 | `viewSwitch` | `ViewSwitchConfig` | — | Table/kanban switch. |
@@ -459,6 +480,9 @@ Every type below is exported from `gridory`, `gridory/table` and `gridory/kanban
 | `archiveLabel`, `unarchiveLabel`, `deleteLabel`, `editLabel`, `historyLabel` | `string` | Spanish | Built-in texts; defaults in [Row and card actions](#row-and-card-actions). |
 | `customActions` | `RowAction<TData>[]` | — | Extra actions around the built-ins. |
 | `menuActions` | `MenuItem<TData>[]` | — | Full menu composition; overrides `customActions`. |
+| `triggerLabel` | `string` | `"Opciones"` | Accessible name and tooltip of the ⋯ button, in the table and the kanban. |
+| `columnLabel` | `string` | — | Table only. Header text of the actions column. See [Alignment](table.md#alignment). |
+| `align` | `"left" \| "center" \| "right"` | `"right"` | Table only. Alignment of the actions column header and button. |
 
 ### RowAction
 

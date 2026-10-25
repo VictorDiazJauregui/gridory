@@ -85,14 +85,18 @@ const insertAmountColumn = (columns: MockCompanyColumn[]) => {
   return [...columns.slice(0, afterCountry), buildAmountColumn(), ...columns.slice(afterCountry)];
 };
 
+// The inline status select is a control of its own: clicking it must not open the row.
+const ignoreStatusClicks = (columns: MockCompanyColumn[]) =>
+  columns.map((column) => (column.id === "status" ? { ...column, ignoreRowClick: true } : column));
+
 export const buildTableColumns = (
   setRows: MockRowsUpdater,
-  withAmount: boolean,
+  withNewProps: boolean,
 ): MockCompanyColumn[] => {
   const columns = buildCompanyColumns(TABLE_COLUMN_OPTIONS).map((column) =>
     decorateColumn(column, setRows),
   );
-  return withAmount ? insertAmountColumn(columns) : columns;
+  return withNewProps ? ignoreStatusClicks(insertAmountColumn(columns)) : columns;
 };
 
 const TABLE_MENU_ACTIONS: MenuItem<MockCompanyRow>[] = [
@@ -123,7 +127,7 @@ const alertArchiveToggle = (row: MockCompanyRow) => {
   window.alert(`Evento onArchiveToggle (${nextActionLabel}) -> ${row.name}`);
 };
 
-const TABLE_ROW_ACTIONS: RowActions<MockCompanyRow> = {
+export const TABLE_ROW_ACTIONS: RowActions<MockCompanyRow> = {
   getIsArchived: (row) => row.status === "Archivada",
   onEdit: (row) => window.alert(`Evento onEdit -> ${row.name}`),
   onArchiveToggle: alertArchiveToggle,

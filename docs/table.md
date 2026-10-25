@@ -97,6 +97,9 @@ Each entry of `columns` is a `ColumnDefinition<TData>`.
 | `inlineEditOptions` | `FilterOption[]` | Together with `onInlineEdit`, renders the cell as a select with these options. |
 | `onInlineEdit` | `(row: TData, value: string) => void` | Fires with the chosen option value. |
 | `valueHighlights` | `Record<string, CellHighlight>` | `{ className?, style? }` keyed by cell value. `className` is added to the cell content; `style` is applied to the inline select trigger, so it only shows on inline-editable cells. |
+| `align` | `"left" \| "center" \| "right"` | Aligns the cells and the header. See [Alignment](#alignment). Table only. |
+| `headerAlign` | `"left" \| "center" \| "right"` | Aligns the header apart from the cells. Defaults to `align`. Table only. |
+| `ignoreRowClick` | `boolean` | No gesture that starts in this column fires the row. See [Row click and row links](#row-click-and-row-links). Table only. |
 
 Filter options are computed from every row in `data` (before search and filters), not only from the
 visible page. Columns with `type: "date"` never get a value list: their menu offers the operators
@@ -237,11 +240,91 @@ change the row, so update your data and the cell re-renders. Clicks inside the s
 }
 ```
 
-### Row click
+### Alignment
 
-`onRowClick(row)` fires when a data row is clicked. Rows then carry `data-clickable`, which the
-stylesheet uses for the pointer cursor and the hover background. The row actions menu and the inline
-select stop the click, so they never trigger it.
+`align` (`"left"`, `"center"` or `"right"`) aligns a column: its cells and its header, where the
+title and its sort or filter icon move together and keep their order (`Monto ↑↓`). It renders
+`data-align` on the `th`, on the header trigger and on every `td`; without it the column stays left
+aligned and the markup is unchanged. `headerAlign` aligns the header apart from the cells and
+defaults to `align`.
+
+The row actions column has no definition of its own, so `rowActions` configures it:
+
+- `columnLabel`: header text (default none, an empty header).
+- `align`: alignment of that header and of the ⋯ button (default `"right"`).
+- `triggerLabel`: accessible name and tooltip of the ⋯ button (default `"Opciones"`). The kanban
+  card menu takes it too.
+
+```tsx
+const columns: ColumnDefinition<Quote>[] = [
+  { id: "client", header: "Cliente", accessor: (quote) => quote.client },
+  { id: "amount", header: "Monto", accessor: (quote) => quote.amount, type: "number", align: "right" },
+];
+
+<DataTable
+  columns={columns}
+  data={quotes}
+  rowActions={{ ...rowActions, columnLabel: "Acciones", align: "center", triggerLabel: "Acciones de la cotización" }}
+/>;
+```
+
+```css
+/* Before: by position, and the header title never moved (the trigger is a flex box) */
+.gdy-table-grid tr > :nth-child(2) {
+  text-align: right;
+}
+
+/* Before: a fake title for the actions column */
+.gdy-table-head-row > th:last-child::after {
+  content: "Acciones";
+}
+
+/* After: nothing, `align` and `rowActions.columnLabel` do it */
+```
+
+### Row click and row links
+
+`onRowClick(row, event)` fires when a data row is clicked. `event` is the React event of the row: a
+mouse click, or a key press when the row is focusable (see below), typed as `RowClickEvent`. A
+handler that only takes `row` keeps working. Rows then carry `data-clickable`, which the stylesheet
+uses for the pointer cursor and the hover background.
+
+`getRowHref(row)` turns rows into links without wrapping them in `<a>` (HTML does not allow an `<a>`
+around a `<tr>`). The row carries `data-href` and:
+
+| Gesture | With `onRowClick` | Without `onRowClick` |
+|---|---|---|
+| Click | `onRowClick(row, event)`, so your router decides | Navigates to the link in the same tab |
+| Ctrl/Cmd + click, middle click | Opens the link in a new tab (`noopener`) | Same |
+| Enter (focused row) | Same as a click | Same as a click |
+| Ctrl/Cmd + Enter | Opens the link in a new tab | Same |
+
+`javascript:`, `data:` and `vbscript:` destinations are ignored: the row behaves as if it had no
+link. Return `undefined` for rows that should not link.
+
+**Keyboard.** `focusableRows` lets the rows take the focus with Tab and fire with Enter, with a
+visible focus ring (`--gdy-table-row-focus-ring`). It defaults to `false`, so a table that already
+uses `onRowClick` keeps the 1.0.1 behavior. Rows with `getRowHref` are focusable unless you pass
+`focusableRows={false}`: a link you cannot reach with the keyboard is no link. Rows with neither
+`onRowClick` nor `getRowHref` are never focusable.
+
+**What does not fire the row.** The row actions menu and the inline select never do. A column with
+`ignoreRowClick: true` never does, with any gesture: use it for columns of selects, links or text
+meant to be copied. Your own buttons and links in other columns still reach `onRowClick` with a
+plain click, as in 1.0.1; the gestures that open the row link (Ctrl/Cmd + click, middle click, Enter)
+skip them and leave them to the browser.
+
+```tsx
+const navigate = useNavigate();
+
+<DataTable
+  columns={columns}
+  data={companies}
+  getRowId={(company) => company.id}
+  getRowHref={(company) => `/companies/${company.id}`}
+  onRowClick={(company) => navigate(`/companies/${company.id}`)}
+/>;
+```
 
 ### Row hooks
 
@@ -254,7 +337,7 @@ and `aria-*` attributes. Both run once per row and render, so keep them cheap.
 
 - `undefined` omits an attribute; `false` omits a `data-*` one too, but renders `"false"` on an
   `aria-*` one, where it is a state.
-- Other names, and the ones the table writes itself (`data-row-id`, `data-clickable`), are ignored.
+- Other names, and the ones the table writes itself (`data-row-id`, `data-clickable`, `data-href`), are ignored.
   The table may write more of its own attributes in later versions; prefer names of your domain
   (`data-archived`, `data-priority`).
 
@@ -313,7 +396,7 @@ scroll area; `scrollbarColor` sets their thumb color (see [toolbar.md](toolbar.m
 
 | Callback | Signature | Fires |
 |---|---|---|
-| `onRowClick` | `(row: TData) => void` | A data row is clicked (not the row actions menu or the inline select). |
+| `onRowClick` | `(row: TData, event: RowClickEvent) => void` | A data row is clicked, or Enter on a focusable row (not the row actions menu, the inline select or an `ignoreRowClick` column). |
 | `onGroupChange` | `(groupBy: string \| null) => void` | The user changes the group selector; `null` means "none". Not on mount. |
 | `onPaginationChange` | `(state: ManualPaginationState) => void` | Previous or next page, or a page-size change, in both pagination modes. |
 | `onSearchChange` | `(query: string) => void` | Every change of the search box, in both pagination modes. |
@@ -377,10 +460,11 @@ selector.
 
 | Hook | Element | State attributes |
 |---|---|---|
-| `gdy-table-head-cell` | Header cell (`th`). | `data-column-id` with the `id` of its column. |
-| `gdy-table-head-trigger` | Button inside the header cell that opens the filter menu or cycles the sort. | `data-filtered` while the column has an active filter. |
-| `gdy-table-row` | Data row (`tr`). | `data-row-id` with the row id; `data-clickable` when `onRowClick` is set; plus what `getRowAttributes` returns. |
-| `gdy-table-cell` | Data cell (`td`); `gdy-table-cell-content` wraps its content. | `data-column-id` with the `id` of its column. |
+| `gdy-table-head-cell` | Header cell (`th`). | `data-column-id` with the `id` of its column; `data-align` with `headerAlign` or `align`. |
+| `gdy-table-head-trigger` | Button inside the header cell that opens the filter menu or cycles the sort. | `data-filtered` while the column has an active filter; `data-align` like its cell. |
+| `gdy-table-row` | Data row (`tr`). | `data-row-id` with the row id; `data-clickable` when `onRowClick` or `getRowHref` is set; `data-href` with the link; plus what `getRowAttributes` returns. Focusable rows take `:focus-visible`. |
+| `gdy-table-cell` | Data cell (`td`); `gdy-table-cell-content` wraps its content. | `data-column-id` with the `id` of its column; `data-align` with `align`. |
+| `gdy-table-actions-cell` | Box of the ⋯ button in the actions column; `gdy-table-actions-head-label` is the text of its header (`rowActions.columnLabel`). | `data-align` when `rowActions.align` or `columnLabel` is set. |
 | `gdy-table-group-row` | Group row; `gdy-table-group-cell` is its single cell. | — |
 | `gdy-table-group-toggle` | Collapse button of a group, with `gdy-table-group-label` and `gdy-table-group-count`. | `aria-expanded`. |
 | `gdy-table-empty-row` | Row shown when no row matches; its cell is `gdy-table-cell gdy-empty`. | — |
@@ -396,6 +480,7 @@ scope is enough:
 | `--gdy-table-head-fg` | `--gdy-muted-foreground` | Header text. |
 | `--gdy-table-border` | `--gdy-border` | Cell, group cell and footer borders. |
 | `--gdy-table-row-hover-bg` | `--gdy-muted` | Hover of clickable rows. |
+| `--gdy-table-row-focus-ring` | `--gdy-ring` | Keyboard focus ring of a focusable row. |
 | `--gdy-table-group-bg` | `--gdy-accent` | Group row background. |
 
 ```css
@@ -418,18 +503,19 @@ scope is enough:
 Every header cell and every data cell carries `data-column-id` with the `id` of its column
 definition, the row actions column included (`_actions`). The group rows and the empty-state cell
 span the whole row and carry none. The attribute follows the column, not its position, so a rule on
-it keeps working when the columns are reordered, hidden or grouped:
+it keeps working when the columns are reordered, hidden or grouped (to align a column, use
+[`align`](#alignment)):
 
 ```css
 /* Before: breaks as soon as a column moves */
 .gdy-table-grid tr > :nth-child(5) {
-  text-align: right;
+  background: #f8fafc;
 }
 
 /* After */
 .gdy-table-head-cell[data-column-id="amount"],
 .gdy-table-cell[data-column-id="amount"] {
-  text-align: right;
+  background: #f8fafc;
 }
 
 .gdy-table-cell[data-column-id="_actions"] {
@@ -451,7 +537,9 @@ Own props of `DataTableProps<TData>`, in source order.
 | `normalizeRow` | `(row: unknown, index: number) => TData` | — | Maps each record of an envelope to `TData`. |
 | `getRowId` | `(row: TData, index: number) => string` | — | Stable row key. Without it rows are keyed by index. |
 | `features` | `DataTableFeatures` | all `true` | Capability flags. |
-| `onRowClick` | `(row: TData) => void` | — | Row click handler; marks rows with `data-clickable`. |
+| `onRowClick` | `(row: TData, event: RowClickEvent) => void` | — | Row click handler; marks rows with `data-clickable`. |
+| `getRowHref` | `(row: TData) => string \| undefined` | — | Turns the row into a link (`data-href`). |
+| `focusableRows` | `boolean` | `false` (`true` with `getRowHref`) | Rows take the focus with Tab and fire with Enter. |
 | `getRowClassName` | `(row: TData) => string \| undefined` | — | Extra class(es) for a row, after `gdy-table-row`. |
 | `getRowAttributes` | `(row: TData) => RowAttributes` | — | Extra `data-*` and `aria-*` attributes for a row. |
 | `label` | `string` | `"elementos"` | Noun used by the pagination summary. |
@@ -496,5 +584,7 @@ All of them are exported from `gridory/table` and `gridory`.
 - `ColumnSortingState`: `{ id: string; direction: SortDirection }`, the active sort of a column.
 - `VisibleRowsState<TData>`: `{ pageRows: TData[]; filteredRows: TData[]; totalRows: number }`, the
   payload of `onVisibleRowsChange`.
+- `RowClickEvent`: `MouseEvent<HTMLTableRowElement> | KeyboardEvent<HTMLTableRowElement>`, the second
+  argument of `onRowClick`.
 - `RowAttributes`: the object `getRowAttributes` returns, with `data-*` and `aria-*` names only and
   `string | number | boolean | undefined` values.

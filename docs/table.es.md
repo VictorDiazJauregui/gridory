@@ -98,6 +98,9 @@ Cada entrada de `columns` es un `ColumnDefinition<TData>`.
 | `inlineEditOptions` | `FilterOption[]` | Junto con `onInlineEdit`, renderiza la celda como un select con estas opciones. |
 | `onInlineEdit` | `(row: TData, value: string) => void` | Se dispara con el valor de la opción elegida. |
 | `valueHighlights` | `Record<string, CellHighlight>` | `{ className?, style? }` indexado por valor de celda. `className` se añade al contenido de la celda; `style` se aplica al botón que abre el select en línea, así que solo se ve en celdas editables en línea. |
+| `align` | `"left" \| "center" \| "right"` | Alinea las celdas y el encabezado. Ver [Alineación](#alineación). Solo la tabla. |
+| `headerAlign` | `"left" \| "center" \| "right"` | Alinea el encabezado aparte de las celdas. Por defecto copia `align`. Solo la tabla. |
+| `ignoreRowClick` | `boolean` | Ningún gesto que empiece en esta columna dispara la fila. Ver [Clic en fila y filas como enlace](#clic-en-fila-y-filas-como-enlace). Solo la tabla. |
 
 Las opciones de filtro se calculan con todas las filas de `data` (antes de la búsqueda y los filtros), no
 solo con la página visible. Las columnas con `type: "date"` nunca reciben una lista de valores: su menú
@@ -243,11 +246,91 @@ componente.
 }
 ```
 
-### Clic en fila
+### Alineación
 
-`onRowClick(row)` se dispara al hacer clic en una fila de datos. En ese caso las filas llevan
-`data-clickable`, que la hoja de estilos usa para el cursor de puntero y el fondo en hover. El menú de
-acciones de fila y el select en línea detienen el clic, así que nunca lo disparan.
+`align` (`"left"`, `"center"` o `"right"`) alinea una columna: sus celdas y su encabezado, donde el
+título y su ícono de orden o de filtro se mueven juntos y conservan su orden (`Monto ↑↓`). Pinta
+`data-align` en el `th`, en el disparador del encabezado y en cada `td`; sin él, la columna sigue
+alineada a la izquierda y el markup no cambia. `headerAlign` alinea el encabezado aparte de las celdas
+y por defecto copia `align`.
+
+La columna de acciones de fila no tiene definición propia, así que se configura desde `rowActions`:
+
+- `columnLabel`: texto del encabezado (por defecto ninguno, el encabezado vacío).
+- `align`: alineación de ese encabezado y del botón ⋯ (por defecto `"right"`).
+- `triggerLabel`: nombre accesible y tooltip del botón ⋯ (por defecto `"Opciones"`). El menú de la
+  tarjeta del kanban también lo usa.
+
+```tsx
+const columns: ColumnDefinition<Quote>[] = [
+  { id: "client", header: "Cliente", accessor: (quote) => quote.client },
+  { id: "amount", header: "Monto", accessor: (quote) => quote.amount, type: "number", align: "right" },
+];
+
+<DataTable
+  columns={columns}
+  data={quotes}
+  rowActions={{ ...rowActions, columnLabel: "Acciones", align: "center", triggerLabel: "Acciones de la cotización" }}
+/>;
+```
+
+```css
+/* Antes: por posición, y el título del encabezado no se movía (el disparador es una caja flex) */
+.gdy-table-grid tr > :nth-child(2) {
+  text-align: right;
+}
+
+/* Antes: un título falso para la columna de acciones */
+.gdy-table-head-row > th:last-child::after {
+  content: "Acciones";
+}
+
+/* Después: nada, lo hacen `align` y `rowActions.columnLabel` */
+```
+
+### Clic en fila y filas como enlace
+
+`onRowClick(row, event)` se dispara al hacer clic en una fila de datos. `event` es el evento de React de
+la fila: un clic de mouse, o una tecla cuando la fila es enfocable (ver abajo), con el tipo
+`RowClickEvent`. Un handler que solo recibe `row` sigue funcionando. En ese caso las filas llevan
+`data-clickable`, que la hoja de estilos usa para el cursor de puntero y el fondo en hover.
+
+`getRowHref(row)` convierte las filas en enlaces sin envolverlas en un `<a>` (el HTML no permite un
+`<a>` alrededor de un `<tr>`). La fila lleva `data-href` y:
+
+| Gesto | Con `onRowClick` | Sin `onRowClick` |
+|---|---|---|
+| Clic | `onRowClick(row, event)`, así decide tu router | Navega al enlace en la misma pestaña |
+| Ctrl/Cmd + clic, clic con la rueda | Abre el enlace en otra pestaña (`noopener`) | Igual |
+| Enter (fila enfocada) | Igual que un clic | Igual que un clic |
+| Ctrl/Cmd + Enter | Abre el enlace en otra pestaña | Igual |
+
+Los destinos `javascript:`, `data:` y `vbscript:` se ignoran: la fila se comporta como si no tuviera
+enlace. Devuelve `undefined` en las filas que no deben enlazar.
+
+**Teclado.** `focusableRows` permite que las filas reciban el foco con Tab y se disparen con Enter, con
+un anillo de foco visible (`--gdy-table-row-focus-ring`). Por defecto es `false`, así una tabla que ya
+usa `onRowClick` conserva el comportamiento de la 1.0.1. Las filas con `getRowHref` son enfocables salvo
+que pases `focusableRows={false}`: un enlace al que no se llega con el teclado no sirve. Las filas sin
+`onRowClick` ni `getRowHref` nunca son enfocables.
+
+**Qué no dispara la fila.** El menú de acciones de fila y el select en línea, nunca. Una columna con
+`ignoreRowClick: true` tampoco, con ningún gesto: úsala para columnas de selects, enlaces o texto para
+copiar. Tus propios botones y enlaces en otras columnas siguen llegando a `onRowClick` con un clic
+simple, como en la 1.0.1; los gestos que abren el enlace de la fila (Ctrl/Cmd + clic, rueda, Enter) los
+saltean y se los dejan al navegador.
+
+```tsx
+const navigate = useNavigate();
+
+<DataTable
+  columns={columns}
+  data={companies}
+  getRowId={(company) => company.id}
+  getRowHref={(company) => `/companies/${company.id}`}
+  onRowClick={(company) => navigate(`/companies/${company.id}`)}
+/>;
+```
 
 ### Ganchos de fila
 
@@ -260,7 +343,7 @@ atributos `data-*` y `aria-*`. Las dos se llaman una vez por fila y render, así
 
 - `undefined` omite el atributo; `false` también lo omite en un `data-*`, pero en un `aria-*` se pinta
   como `"false"`, porque ahí es un estado.
-- Los demás nombres, y los que escribe la tabla (`data-row-id`, `data-clickable`), se ignoran. La tabla
+- Los demás nombres, y los que escribe la tabla (`data-row-id`, `data-clickable`, `data-href`), se ignoran. La tabla
   puede sumar atributos propios en versiones siguientes: conviene usar nombres de tu dominio
   (`data-archived`, `data-priority`).
 
@@ -320,7 +403,7 @@ del thumb (consulta [toolbar.es.md](toolbar.es.md)).
 
 | Callback | Firma | Se dispara |
 |---|---|---|
-| `onRowClick` | `(row: TData) => void` | Al hacer clic en una fila de datos (no en el menú de acciones de fila ni en el select en línea). |
+| `onRowClick` | `(row: TData, event: RowClickEvent) => void` | Al hacer clic en una fila de datos, o con Enter en una fila enfocable (no en el menú de acciones de fila, el select en línea ni una columna con `ignoreRowClick`). |
 | `onGroupChange` | `(groupBy: string \| null) => void` | Cuando el usuario cambia el selector de agrupado; `null` significa "ninguno". No se dispara al montar. |
 | `onPaginationChange` | `(state: ManualPaginationState) => void` | Al pasar a la página anterior o siguiente, o al cambiar el tamaño de página, en los dos modos de paginación. |
 | `onSearchChange` | `(query: string) => void` | En cada cambio de la caja de búsqueda, en los dos modos de paginación. |
@@ -386,10 +469,11 @@ mismo selector.
 
 | Gancho | Elemento | Atributos de estado |
 |---|---|---|
-| `gdy-table-head-cell` | Celda de encabezado (`th`). | `data-column-id` con el `id` de su columna. |
-| `gdy-table-head-trigger` | Botón dentro de la celda de encabezado que abre el menú de filtro o alterna el orden. | `data-filtered` mientras la columna tiene un filtro activo. |
-| `gdy-table-row` | Fila de datos (`tr`). | `data-row-id` con el id de la fila; `data-clickable` cuando se pasa `onRowClick`; más lo que devuelve `getRowAttributes`. |
-| `gdy-table-cell` | Celda de datos (`td`); `gdy-table-cell-content` envuelve su contenido. | `data-column-id` con el `id` de su columna. |
+| `gdy-table-head-cell` | Celda de encabezado (`th`). | `data-column-id` con el `id` de su columna; `data-align` con `headerAlign` o `align`. |
+| `gdy-table-head-trigger` | Botón dentro de la celda de encabezado que abre el menú de filtro o alterna el orden. | `data-filtered` mientras la columna tiene un filtro activo; `data-align` igual que su celda. |
+| `gdy-table-row` | Fila de datos (`tr`). | `data-row-id` con el id de la fila; `data-clickable` cuando se pasa `onRowClick` o `getRowHref`; `data-href` con el enlace; más lo que devuelve `getRowAttributes`. Las filas enfocables toman `:focus-visible`. |
+| `gdy-table-cell` | Celda de datos (`td`); `gdy-table-cell-content` envuelve su contenido. | `data-column-id` con el `id` de su columna; `data-align` con `align`. |
+| `gdy-table-actions-cell` | Caja del botón ⋯ en la columna de acciones; `gdy-table-actions-head-label` es el texto de su encabezado (`rowActions.columnLabel`). | `data-align` cuando se pasa `rowActions.align` o `columnLabel`. |
 | `gdy-table-group-row` | Fila de grupo; `gdy-table-group-cell` es su única celda. | — |
 | `gdy-table-group-toggle` | Botón de plegado de un grupo, con `gdy-table-group-label` y `gdy-table-group-count`. | `aria-expanded`. |
 | `gdy-table-empty-row` | Fila que aparece cuando ninguna fila coincide; su celda es `gdy-table-cell gdy-empty`. | — |
@@ -405,6 +489,7 @@ estos tokens, cada uno con un fallback a un token base, así que basta con decla
 | `--gdy-table-head-fg` | `--gdy-muted-foreground` | Texto del encabezado. |
 | `--gdy-table-border` | `--gdy-border` | Bordes de las celdas, de las celdas de grupo y del pie. |
 | `--gdy-table-row-hover-bg` | `--gdy-muted` | Hover de las filas clicables. |
+| `--gdy-table-row-focus-ring` | `--gdy-ring` | Anillo de foco de teclado de una fila enfocable. |
 | `--gdy-table-group-bg` | `--gdy-accent` | Fondo de la fila de grupo. |
 
 ```css
@@ -427,18 +512,19 @@ estos tokens, cada uno con un fallback a un token base, así que basta con decla
 Cada celda de encabezado y cada celda de datos lleva `data-column-id` con el `id` de la definición de
 su columna, incluida la columna de acciones (`_actions`). Las filas de grupo y la celda del estado vacío
 ocupan toda la fila y no lo llevan. El atributo sigue a la columna, no a su posición, así que una regla
-sobre él sigue funcionando cuando las columnas se reordenan, se ocultan o se agrupan:
+sobre él sigue funcionando cuando las columnas se reordenan, se ocultan o se agrupan (para alinear una
+columna, usa [`align`](#alineación)):
 
 ```css
 /* Antes: se rompe apenas una columna cambia de lugar */
 .gdy-table-grid tr > :nth-child(5) {
-  text-align: right;
+  background: #f8fafc;
 }
 
 /* Después */
 .gdy-table-head-cell[data-column-id="amount"],
 .gdy-table-cell[data-column-id="amount"] {
-  text-align: right;
+  background: #f8fafc;
 }
 
 .gdy-table-cell[data-column-id="_actions"] {
@@ -460,7 +546,9 @@ Props propias de `DataTableProps<TData>`, en el orden del código fuente.
 | `normalizeRow` | `(row: unknown, index: number) => TData` | — | Convierte cada registro del envoltorio en `TData`. |
 | `getRowId` | `(row: TData, index: number) => string` | — | Clave estable de la fila. Sin ella, las filas se identifican por índice. |
 | `features` | `DataTableFeatures` | todos `true` | Flags de capacidades. |
-| `onRowClick` | `(row: TData) => void` | — | Callback del clic en fila; marca las filas con `data-clickable`. |
+| `onRowClick` | `(row: TData, event: RowClickEvent) => void` | — | Callback del clic en fila; marca las filas con `data-clickable`. |
+| `getRowHref` | `(row: TData) => string \| undefined` | — | Convierte la fila en un enlace (`data-href`). |
+| `focusableRows` | `boolean` | `false` (`true` con `getRowHref`) | Las filas reciben el foco con Tab y se disparan con Enter. |
 | `getRowClassName` | `(row: TData) => string \| undefined` | — | Clases extra para una fila, después de `gdy-table-row`. |
 | `getRowAttributes` | `(row: TData) => RowAttributes` | — | Atributos `data-*` y `aria-*` extra para una fila. |
 | `label` | `string` | `"elementos"` | Sustantivo que usa el resumen de paginación. |
@@ -505,5 +593,7 @@ Todos se exportan desde `gridory/table` y `gridory`.
 - `ColumnSortingState`: `{ id: string; direction: SortDirection }`, el orden activo de una columna.
 - `VisibleRowsState<TData>`: `{ pageRows: TData[]; filteredRows: TData[]; totalRows: number }`, el
   payload de `onVisibleRowsChange`.
+- `RowClickEvent`: `MouseEvent<HTMLTableRowElement> | KeyboardEvent<HTMLTableRowElement>`, el segundo
+  argumento de `onRowClick`.
 - `RowAttributes`: el objeto que devuelve `getRowAttributes`, solo con nombres `data-*` y `aria-*` y
   valores `string | number | boolean | undefined`.
