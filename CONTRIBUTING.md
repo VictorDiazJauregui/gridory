@@ -39,15 +39,15 @@ makes no calls. The demo shell uses Tailwind for itself only; none of it ships.
 
 ## Scripts
 
-| Command | What it does |
-|---|---|
-| `npm run dev` | Vite dev server with the demo. |
-| `npm run build` | Type check, ESM bundle in `dist/` and type declarations in `dist/types/`. |
-| `npm run lint` | ESLint over the sources and `scripts/`, with the code style rules below. |
-| `npm run typecheck` | `tsc -b` without emitting files. |
-| `npm test` / `npm run test:watch` | Vitest over `src/test/`; the watch variant reruns on change. |
-| `npm run audit:styles` | After `npm run build`: checks the stylesheets against the classes and state attributes the components emit, and that `docs/style-hooks.md` is current. |
-| `npm run docs:hooks` | Regenerates `docs/style-hooks.md` and `docs/style-hooks.es.md` from the sources. |
+| Command                           | What it does                                                                                                                                           |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `npm run dev`                     | Vite dev server with the demo.                                                                                                                         |
+| `npm run build`                   | Type check, ESM bundle in `dist/` and type declarations in `dist/types/`.                                                                              |
+| `npm run lint`                    | ESLint over the sources and `scripts/`, with the code style rules below.                                                                               |
+| `npm run typecheck`               | `tsc -b` without emitting files.                                                                                                                       |
+| `npm test` / `npm run test:watch` | Vitest over `src/test/`; the watch variant reruns on change.                                                                                           |
+| `npm run audit:styles`            | After `npm run build`: checks the stylesheets against the classes and state attributes the components emit, and that `docs/style-hooks.md` is current. |
+| `npm run docs:hooks`              | Regenerates `docs/style-hooks.md` and `docs/style-hooks.es.md` from the sources.                                                                       |
 
 ## Code structure
 
@@ -55,19 +55,19 @@ Each module lives in `src/components/<module>/`. The root holds the public surfa
 (`index.tsx` or `index.ts`, `types.ts`, `constants.ts` and `styles.css`). The rest is split into
 folders by area, never by file type, with 3 to 12 files each and no barrel files inside them.
 
-| Folder | Areas |
-|---|---|
-| `table/` | `model/`, `header/`, `body/`, `pagination/` |
-| `kanban/` | `model/`, `toolbar/`, `board/`, `card/` |
-| `ai/` | `chat/`, `completion/`, `sidebar/`, `transcript/`, `actions/` |
-| `auth/` | `config/`, `model/`, `fields/`, `password/`, `validation/`, `layout/`, `actions/` |
-| `segmented-control/` | `model/`, `parts/` |
-| `country-select/` | `model/`, `parts/`, `validation/` |
-| `phone-input/` | `model/`, `parts/` |
-| `sidebar/` | `model/`, `parts/`, `desktop/`, `mobile/` |
-| `shared/` | Common contracts at the root; `controls/`, `rows/`, `toolbar/`, `filter-menu/`, `date-filter-menu/`, `date-pickers/`, `menu/` |
-| `ui/` | Primitives over Radix and react-day-picker: `select/`, `toggle-group/`, `calendar/` |
-| `mocks/` | Demo data and configuration |
+| Folder               | Areas                                                                                                                         |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `table/`             | `model/`, `header/`, `body/`, `pagination/`                                                                                   |
+| `kanban/`            | `model/`, `toolbar/`, `board/`, `card/`                                                                                       |
+| `ai/`                | `chat/`, `completion/`, `sidebar/`, `transcript/`, `actions/`                                                                 |
+| `auth/`              | `config/`, `model/`, `fields/`, `password/`, `validation/`, `layout/`, `actions/`                                             |
+| `segmented-control/` | `model/`, `parts/`                                                                                                            |
+| `country-select/`    | `model/`, `parts/`, `validation/`                                                                                             |
+| `phone-input/`       | `model/`, `parts/`                                                                                                            |
+| `sidebar/`           | `model/`, `parts/`, `desktop/`, `mobile/`                                                                                     |
+| `shared/`            | Common contracts at the root; `controls/`, `rows/`, `toolbar/`, `filter-menu/`, `date-filter-menu/`, `date-pickers/`, `menu/` |
+| `ui/`                | Primitives over Radix and react-day-picker: `select/`, `toggle-group/`, `calendar/`                                           |
+| `mocks/`             | Demo data and configuration                                                                                                   |
 
 The demo shell is in `src/demo/`, the tests in `src/test/` and the guides in `docs/`. The demo, the
 mocks and the tests stay out of the package and out of the style audit.
@@ -129,6 +129,12 @@ fails without it. New features need at least a smoke test of the main path.
 
 The helpers in `src/test/browser/` measure boxes and computed styles, and switch the theme and the
 screen size (desktop, iPhone 14 Pro and Pixel 7).
+
+In long lists, such as countries or dial codes, pick an option with `getOptionByName` from
+`src/test/option-queries.ts` instead of `getByRole("option", { name })`. `getByRole` computes the
+accessible name of every option, which in jsdom takes over 100 ms per query on the ~250 countries and
+pushes tests past the CI timeout. The helper checks the same things (a single visible option with
+that accessible name) on the match only.
 
 The `browser` project uses the Google Chrome installed on your machine, the same way CI uses the one
 the GitHub runner ships, so there is no browser to download. You only need Chrome installed.
