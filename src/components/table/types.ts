@@ -9,6 +9,7 @@ export type {
   CellHighlight,
   ColumnAlign,
   ColumnDefinition,
+  ColumnOverflow,
   ColumnSortingState,
   DataInput,
   DateFilterOp,
@@ -69,6 +70,35 @@ export interface VisibleRowsState<TData> {
   filteredRows: TData[];
   /** `filteredRows.length`; with `manualPagination`, `serverRowCount` when it is set. */
   totalRows: number;
+}
+
+/**
+ * One class per part, added after the `gdy-*` hook of that part. `wrap` goes after
+ * `tableMinHeightClassName`, `tableMaxHeightClassName` and `tableWrapClassName`, and `row` before
+ * `getRowClassName`. `row` and `cell` are the data rows and cells; `empty` is the cell of the empty
+ * state, which does not take `cell`.
+ */
+export interface DataTableClassNames {
+  /** `gdy-table` */
+  root?: string;
+  /** `gdy-toolbar` */
+  toolbar?: string;
+  /** `gdy-table-wrap`, the rows scroll container */
+  wrap?: string;
+  /** `gdy-table-grid` */
+  table?: string;
+  /** `gdy-table-head-row` */
+  headRow?: string;
+  /** `gdy-table-head-cell` */
+  headCell?: string;
+  /** `gdy-table-row` */
+  row?: string;
+  /** `gdy-table-cell` */
+  cell?: string;
+  /** `gdy-table-pagination` */
+  pagination?: string;
+  /** `gdy-empty` */
+  empty?: string;
 }
 
 export interface DataTableProps<TData> extends DataViewProps<TData> {
@@ -132,6 +162,9 @@ export interface DataTableProps<TData> extends DataViewProps<TData> {
    * `filteredRows` is the current page. New row objects in `data` count as a change.
    */
   onVisibleRowsChange?: (state: VisibleRowsState<TData>) => void;
+  /** Extra class(es) for the root element, added after `gdy-table` and its flags. */
+  className?: string;
+  classNames?: DataTableClassNames;
   tableWrapClassName?: string;
   tableMinHeightClassName?: string;
   /**

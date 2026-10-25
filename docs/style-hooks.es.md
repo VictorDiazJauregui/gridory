@@ -22,7 +22,7 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-table-actions-icon` | solo gancho | — |
 | `gdy-table-body` | solo gancho | — |
 | `gdy-table-cell` | con estilos | `[data-align="center"]`, `[data-align="right"]` |
-| `gdy-table-cell-content` | con estilos | — |
+| `gdy-table-cell-content` | con estilos | `[data-overflow="visible"]`, `[data-overflow="wrap"]` |
 | `gdy-table-empty-row` | solo gancho | — |
 | `gdy-table-fill` | con estilos | — |
 | `gdy-table-grid` | con estilos | — |
@@ -550,6 +550,8 @@ hay que escribir para pisarlas; los motivos están en [Temas y estilos](theming.
 | `.gdy-table-cell[data-align="right"]` | 0-2-0 |
 | `.gdy-table-head-trigger[data-align="center"]` | 0-2-0 |
 | `.gdy-table-head-trigger[data-align="right"]` | 0-2-0 |
+| `.gdy-table-cell-content[data-overflow="wrap"]` | 0-2-0 |
+| `.gdy-table-cell-content[data-overflow="visible"]` | 0-2-0 |
 | `.gdy-select-trigger.gdy-table-inline-select` | 0-2-0 |
 | `.gdy-table-actions-cell[data-align="left"]` | 0-2-0 |
 | `.gdy-table-actions-cell[data-align="center"]` | 0-2-0 |
@@ -609,6 +611,7 @@ ponen Radix o react-day-picker siguen a esas librerías.
 | `data-mobile` | `"true"` | Gridory | `gdy-sidebar-layout` |
 | `data-multiple` | presente / ausente | Gridory | `gdy-country-select` |
 | `data-outside` | presente / ausente | Radix o react-day-picker | `gdy-calendar-day` |
+| `data-overflow` | `"visible"`, `"wrap"` | Gridory | `gdy-table-cell-content` |
 | `data-pinned` | `"false"`, `"true"` | Gridory | `gdy-sidebar` |
 | `data-placeholder` | presente / ausente | Gridory, Radix o react-day-picker | `gdy-country-select-value`, `gdy-phone-input-dial-code`, `gdy-select-trigger` |
 | `data-range-end` | presente / ausente | Gridory | `gdy-calendar-day`, `gdy-calendar-day-button` |

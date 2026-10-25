@@ -22,7 +22,7 @@ The state selectors column lists the attributes the stylesheets combine with eac
 | `gdy-table-actions-icon` | hook only | — |
 | `gdy-table-body` | hook only | — |
 | `gdy-table-cell` | styled | `[data-align="center"]`, `[data-align="right"]` |
-| `gdy-table-cell-content` | styled | — |
+| `gdy-table-cell-content` | styled | `[data-overflow="visible"]`, `[data-overflow="wrap"]` |
 | `gdy-table-empty-row` | hook only | — |
 | `gdy-table-fill` | styled | — |
 | `gdy-table-grid` | styled | — |
@@ -550,6 +550,8 @@ write when you override them; the reasons are in [Theming and styling](theming.m
 | `.gdy-table-cell[data-align="right"]` | 0-2-0 |
 | `.gdy-table-head-trigger[data-align="center"]` | 0-2-0 |
 | `.gdy-table-head-trigger[data-align="right"]` | 0-2-0 |
+| `.gdy-table-cell-content[data-overflow="wrap"]` | 0-2-0 |
+| `.gdy-table-cell-content[data-overflow="visible"]` | 0-2-0 |
 | `.gdy-select-trigger.gdy-table-inline-select` | 0-2-0 |
 | `.gdy-table-actions-cell[data-align="left"]` | 0-2-0 |
 | `.gdy-table-actions-cell[data-align="center"]` | 0-2-0 |
@@ -609,6 +611,7 @@ Radix or react-day-picker follow those libraries.
 | `data-mobile` | `"true"` | Gridory | `gdy-sidebar-layout` |
 | `data-multiple` | present / absent | Gridory | `gdy-country-select` |
 | `data-outside` | present / absent | Radix or react-day-picker | `gdy-calendar-day` |
+| `data-overflow` | `"visible"`, `"wrap"` | Gridory | `gdy-table-cell-content` |
 | `data-pinned` | `"false"`, `"true"` | Gridory | `gdy-sidebar` |
 | `data-placeholder` | present / absent | Gridory, Radix or react-day-picker | `gdy-country-select-value`, `gdy-phone-input-dial-code`, `gdy-select-trigger` |
 | `data-range-end` | present / absent | Gridory | `gdy-calendar-day`, `gdy-calendar-day-button` |

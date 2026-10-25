@@ -2,6 +2,7 @@ import "./styles/index.css";
 
 export { KanbanBoard } from "./components/kanban";
 export type {
+  KanbanBoardClassNames,
   KanbanBoardFeatures,
   KanbanBoardProps,
   KanbanCardClickEvent,
@@ -20,6 +21,7 @@ export type {
   CellHighlight,
   ColumnAlign,
   ColumnDefinition,
+  ColumnOverflow,
   DataInput,
   DateFilterOp,
   DateFilterState,

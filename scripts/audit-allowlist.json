@@ -65,7 +65,8 @@
     "data-view",
     "data-alignment",
     "data-diagram-state",
-    "data-math-state"
+    "data-math-state",
+    "data-overflow"
   ],
   "runtimeAttributes": [
     "data-state",
