@@ -1,0 +1,137 @@
+{
+  "content": [],
+  "theme": {
+    "extend": {
+      "borderColor": {
+        "border": [
+          "var(--gdy-border)",
+          "color-mix(in oklab, var(--gdy-border) calc(0.1 * 100%), transparent)",
+          "var(--gdy-border)"
+        ]
+      },
+      "outlineColor": {
+        "ring": [
+          "var(--gdy-ring)",
+          "color-mix(in oklab, var(--gdy-ring) calc(0.1 * 100%), transparent)",
+          "var(--gdy-ring)"
+        ]
+      },
+      "colors": {
+        "background": [
+          "var(--gdy-background)",
+          "color-mix(in oklab, var(--gdy-background) calc(0.1 * 100%), transparent)",
+          "var(--gdy-background)"
+        ],
+        "foreground": [
+          "var(--gdy-foreground)",
+          "color-mix(in oklab, var(--gdy-foreground) calc(0.1 * 100%), transparent)",
+          "var(--gdy-foreground)"
+        ],
+        "card": {
+          "DEFAULT": [
+            "var(--gdy-card)",
+            "color-mix(in oklab, var(--gdy-card) calc(0.1 * 100%), transparent)",
+            "var(--gdy-card)"
+          ],
+          "foreground": [
+            "var(--gdy-card-foreground)",
+            "color-mix(in oklab, var(--gdy-card-foreground) calc(0.1 * 100%), transparent)",
+            "var(--gdy-card-foreground)"
+          ]
+        },
+        "popover": {
+          "DEFAULT": [
+            "var(--gdy-popover)",
+            "color-mix(in oklab, var(--gdy-popover) calc(0.1 * 100%), transparent)",
+            "var(--gdy-popover)"
+          ],
+          "foreground": [
+            "var(--gdy-popover-foreground)",
+            "color-mix(in oklab, var(--gdy-popover-foreground) calc(0.1 * 100%), transparent)",
+            "var(--gdy-popover-foreground)"
+          ]
+        },
+        "primary": {
+          "DEFAULT": [
+            "var(--gdy-primary)",
+            "color-mix(in oklab, var(--gdy-primary) calc(0.1 * 100%), transparent)",
+            "var(--gdy-primary)"
+          ],
+          "foreground": [
+            "var(--gdy-primary-foreground)",
+            "color-mix(in oklab, var(--gdy-primary-foreground) calc(0.1 * 100%), transparent)",
+            "var(--gdy-primary-foreground)"
+          ]
+        },
+        "secondary": {
+          "DEFAULT": [
+            "var(--gdy-secondary)",
+            "color-mix(in oklab, var(--gdy-secondary) calc(0.1 * 100%), transparent)",
+            "var(--gdy-secondary)"
+          ],
+          "foreground": [
+            "var(--gdy-secondary-foreground)",
+            "color-mix(in oklab, var(--gdy-secondary-foreground) calc(0.1 * 100%), transparent)",
+            "var(--gdy-secondary-foreground)"
+          ]
+        },
+        "muted": {
+          "DEFAULT": [
+            "var(--gdy-muted)",
+            "color-mix(in oklab, var(--gdy-muted) calc(0.1 * 100%), transparent)",
+            "var(--gdy-muted)"
+          ],
+          "foreground": [
+            "var(--gdy-muted-foreground)",
+            "color-mix(in oklab, var(--gdy-muted-foreground) calc(0.1 * 100%), transparent)",
+            "var(--gdy-muted-foreground)"
+          ]
+        },
+        "accent": {
+          "DEFAULT": [
+            "var(--gdy-accent)",
+            "color-mix(in oklab, var(--gdy-accent) calc(0.1 * 100%), transparent)",
+            "var(--gdy-accent)"
+          ],
+          "foreground": [
+            "var(--gdy-accent-foreground)",
+            "color-mix(in oklab, var(--gdy-accent-foreground) calc(0.1 * 100%), transparent)",
+            "var(--gdy-accent-foreground)"
+          ]
+        },
+        "destructive": {
+          "DEFAULT": [
+            "var(--gdy-destructive)",
+            "color-mix(in oklab, var(--gdy-destructive) calc(0.1 * 100%), transparent)",
+            "var(--gdy-destructive)"
+          ],
+          "foreground": [
+            "var(--gdy-destructive-foreground)",
+            "color-mix(in oklab, var(--gdy-destructive-foreground) calc(0.1 * 100%), transparent)",
+            "var(--gdy-destructive-foreground)"
+          ]
+        },
+        "border": [
+          "var(--gdy-border)",
+          "color-mix(in oklab, var(--gdy-border) calc(0.1 * 100%), transparent)",
+          "var(--gdy-border)"
+        ],
+        "input": [
+          "var(--gdy-input)",
+          "color-mix(in oklab, var(--gdy-input) calc(0.1 * 100%), transparent)",
+          "var(--gdy-input)"
+        ],
+        "ring": [
+          "var(--gdy-ring)",
+          "color-mix(in oklab, var(--gdy-ring) calc(0.1 * 100%), transparent)",
+          "var(--gdy-ring)"
+        ]
+      },
+      "borderRadius": {
+        "lg": "var(--gdy-radius)",
+        "md": "calc(var(--gdy-radius) - 2px)",
+        "sm": "calc(var(--gdy-radius) - 4px)"
+      }
+    }
+  }
+}
