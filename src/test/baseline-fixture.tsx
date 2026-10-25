@@ -59,6 +59,16 @@ export const BASELINE_VIEW_PROPS = {
 };
 
 const ADDED_ATTRIBUTES = / data-(?:column|row)-id="[^"]*"/g;
+const ICON = /<svg\b[^>]*>[\s\S]*?<\/svg>/g;
+const GRIDORY_CLASS = /\bgdy-[a-z0-9-]+/g;
+
+// The inside of an icon belongs to lucide-react, which changes it between the versions the
+// dependency range allows: only the gdy-* classes Gridory puts on the icon are compared.
+const keepGridoryIconClasses = (icon: string) => {
+  const classes = icon.slice(0, icon.indexOf(">")).match(GRIDORY_CLASS) ?? [];
+  return `<svg class="${classes.join(" ")}"></svg>`;
+};
 
 // 1.1.0 adds data-column-id and data-row-id on purpose; anything else must stay byte for byte.
-export const normalizeBaselineHtml = (html: string) => html.replace(ADDED_ATTRIBUTES, "");
+export const normalizeBaselineHtml = (html: string) =>
+  html.replace(ADDED_ATTRIBUTES, "").replace(ICON, keepGridoryIconClasses);
