@@ -1,6 +1,6 @@
 {
   "name": "gridory",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "React + TypeScript components for data-heavy apps. They emit events; your app keeps the data.",
   "keywords": [
     "react",
@@ -11,6 +11,7 @@
     "data-table",
     "datagrid",
     "kanban",
+    "markdown-editor",
     "ai-assistant",
     "forms",
     "sidebar"
