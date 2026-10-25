@@ -3,13 +3,16 @@ import type { DataTableProps, RowAttributes } from "../types";
 
 export type TableRowConfig<TData> = Pick<
   DataTableProps<TData>,
-  "onRowClick" | "getRowClassName" | "getRowAttributes"
->;
+  "onRowClick" | "getRowClassName" | "getRowAttributes" | "getRowHref" | "focusableRows"
+> & {
+  /** Ids of the columns with `ignoreRowClick`. */
+  ignoredColumnIds: ReadonlySet<string>;
+};
 
 type RowAttributeValue = RowAttributes[keyof RowAttributes];
 
 // Written by the table itself: a consumer attribute with one of these names is dropped.
-export const INTERNAL_ROW_ATTRIBUTES: readonly string[] = ["data-row-id", "data-clickable"];
+export const INTERNAL_ROW_ATTRIBUTES: readonly string[] = ["data-row-id", "data-clickable", "data-href"];
 
 const CONSUMER_ATTRIBUTE_PREFIXES = ["data-", "aria-"];
 
@@ -30,8 +33,13 @@ export const pickConsumerRowAttributes = (attributes: RowAttributes | undefined)
       .map(([name, value]) => [name, String(value)]),
   );
 
-export const buildRowAttributes = <TData,>(row: Row<TData>, config: TableRowConfig<TData>) => ({
+export const buildRowAttributes = <TData,>(
+  row: Row<TData>,
+  config: TableRowConfig<TData>,
+  href: string | undefined,
+) => ({
   ...pickConsumerRowAttributes(config.getRowAttributes?.(row.original)),
   "data-row-id": row.id,
-  "data-clickable": config.onRowClick ? true : undefined,
+  "data-clickable": config.onRowClick || href ? true : undefined,
+  "data-href": href,
 });

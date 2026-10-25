@@ -1,3 +1,4 @@
+import type { KeyboardEvent, MouseEvent } from "react";
 import type { ColumnDefinition, DataInput } from "../shared/data-model";
 import type { DataViewProps } from "../shared/data-view-props";
 
@@ -6,6 +7,7 @@ export type {
   ArchivedViewConfig,
   ArchivedViewMode,
   CellHighlight,
+  ColumnAlign,
   ColumnDefinition,
   ColumnSortingState,
   DataInput,
@@ -54,6 +56,11 @@ export type RowAttributes = Partial<
   Record<`data-${string}` | `aria-${string}`, string | number | boolean | undefined>
 >;
 
+/** Event `onRowClick` receives: the mouse click, or Enter on a focused row (`focusableRows`). */
+export type RowClickEvent =
+  | MouseEvent<HTMLTableRowElement>
+  | KeyboardEvent<HTMLTableRowElement>;
+
 /** Payload of `onVisibleRowsChange`: what the user is looking at. */
 export interface VisibleRowsState<TData> {
   /** Rows of the current page in screen order, rows of collapsed groups included. */
@@ -70,7 +77,24 @@ export interface DataTableProps<TData> extends DataViewProps<TData> {
   normalizeRow?: (row: unknown, index: number) => TData;
   getRowId?: (row: TData, index: number) => string;
   features?: DataTableFeatures;
-  onRowClick?: (row: TData) => void;
+  /**
+   * Fires when a data row is clicked, or with Enter on a focusable row. A click that starts in a
+   * column with `ignoreRowClick` never fires it. With `getRowHref`, Ctrl/Cmd + click opens the
+   * link instead.
+   */
+  onRowClick?: (row: TData, event: RowClickEvent) => void;
+  /**
+   * Turns a row into a link (`data-href`): Ctrl/Cmd + click, middle click and Ctrl/Cmd + Enter
+   * open it in a new tab; a plain click or Enter call `onRowClick`, or navigate to it when there
+   * is no `onRowClick`. `javascript:`, `data:` and `vbscript:` destinations are ignored.
+   */
+  getRowHref?: (row: TData) => string | undefined;
+  /**
+   * Lets the rows take the keyboard focus (Tab) and fire with Enter. Defaults to `false`, so a
+   * table with `onRowClick` keeps the 1.0.1 behavior; rows with `getRowHref` are focusable unless
+   * it is `false`. Rows with neither `onRowClick` nor `getRowHref` are never focusable.
+   */
+  focusableRows?: boolean;
   /**
    * Extra class(es) for a row, added after `gdy-table-row`. Called once per row and
    * render, so keep it cheap.
@@ -79,7 +103,7 @@ export interface DataTableProps<TData> extends DataViewProps<TData> {
   /**
    * Extra `data-*` and `aria-*` attributes for a row. `undefined` omits an attribute and
    * so does `false` on `data-*` (on `aria-*` it renders `"false"`). Names the table
-   * writes itself (`data-row-id`, `data-clickable`) are ignored. Called once per row and
+   * writes itself (`data-row-id`, `data-clickable`, `data-href`) are ignored. Called once per row and
    * render, so keep it cheap.
    */
   getRowAttributes?: (row: TData) => RowAttributes;
