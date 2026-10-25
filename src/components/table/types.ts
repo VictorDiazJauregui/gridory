@@ -1,3 +1,4 @@
+import type { KeyboardEvent, MouseEvent } from "react";
 import type { ColumnDefinition, DataInput } from "../shared/data-model";
 import type { DataViewProps } from "../shared/data-view-props";
 
@@ -6,7 +7,9 @@ export type {
   ArchivedViewConfig,
   ArchivedViewMode,
   CellHighlight,
+  ColumnAlign,
   ColumnDefinition,
+  ColumnOverflow,
   ColumnSortingState,
   DataInput,
   DateFilterOp,
@@ -46,13 +49,94 @@ export interface ManualPaginationState {
   pageSize: number;
 }
 
+/**
+ * Extra attributes for a row. Only `data-*` and `aria-*` names are accepted, so a row can
+ * never lose its handlers, its class or the attributes the table writes itself.
+ */
+export type RowAttributes = Partial<
+  Record<`data-${string}` | `aria-${string}`, string | number | boolean | undefined>
+>;
+
+/** Event `onRowClick` receives: the mouse click, or Enter on a focused row (`focusableRows`). */
+export type RowClickEvent =
+  | MouseEvent<HTMLTableRowElement>
+  | KeyboardEvent<HTMLTableRowElement>;
+
+/** Payload of `onVisibleRowsChange`: what the user is looking at. */
+export interface VisibleRowsState<TData> {
+  /** Rows of the current page in screen order, rows of collapsed groups included. */
+  pageRows: TData[];
+  /** Every row that passes search, archived view and filters, sorted (and grouped), before paging. */
+  filteredRows: TData[];
+  /** `filteredRows.length`; with `manualPagination`, `serverRowCount` when it is set. */
+  totalRows: number;
+}
+
+/**
+ * One class per part, added after the `gdy-*` hook of that part. `wrap` goes after
+ * `tableMinHeightClassName`, `tableMaxHeightClassName` and `tableWrapClassName`, and `row` before
+ * `getRowClassName`. `row` and `cell` are the data rows and cells; `empty` is the cell of the empty
+ * state, which does not take `cell`.
+ */
+export interface DataTableClassNames {
+  /** `gdy-table` */
+  root?: string;
+  /** `gdy-toolbar` */
+  toolbar?: string;
+  /** `gdy-table-wrap`, the rows scroll container */
+  wrap?: string;
+  /** `gdy-table-grid` */
+  table?: string;
+  /** `gdy-table-head-row` */
+  headRow?: string;
+  /** `gdy-table-head-cell` */
+  headCell?: string;
+  /** `gdy-table-row` */
+  row?: string;
+  /** `gdy-table-cell` */
+  cell?: string;
+  /** `gdy-table-pagination` */
+  pagination?: string;
+  /** `gdy-empty` */
+  empty?: string;
+}
+
 export interface DataTableProps<TData> extends DataViewProps<TData> {
   columns: ColumnDefinition<TData>[];
   data: DataInput<TData>;
   normalizeRow?: (row: unknown, index: number) => TData;
   getRowId?: (row: TData, index: number) => string;
   features?: DataTableFeatures;
-  onRowClick?: (row: TData) => void;
+  /**
+   * Fires when a data row is clicked, or with Enter on a focusable row. A click that starts in a
+   * column with `ignoreRowClick` never fires it. With `getRowHref`, Ctrl/Cmd + click opens the
+   * link instead.
+   */
+  onRowClick?: (row: TData, event: RowClickEvent) => void;
+  /**
+   * Turns a row into a link (`data-href`): Ctrl/Cmd + click, middle click and Ctrl/Cmd + Enter
+   * open it in a new tab; a plain click or Enter call `onRowClick`, or navigate to it when there
+   * is no `onRowClick`. `javascript:`, `data:` and `vbscript:` destinations are ignored.
+   */
+  getRowHref?: (row: TData) => string | undefined;
+  /**
+   * Lets the rows take the keyboard focus (Tab) and fire with Enter. Defaults to `false`, so a
+   * table with `onRowClick` keeps the 1.0.1 behavior; rows with `getRowHref` are focusable unless
+   * it is `false`. Rows with neither `onRowClick` nor `getRowHref` are never focusable.
+   */
+  focusableRows?: boolean;
+  /**
+   * Extra class(es) for a row, added after `gdy-table-row`. Called once per row and
+   * render, so keep it cheap.
+   */
+  getRowClassName?: (row: TData) => string | undefined;
+  /**
+   * Extra `data-*` and `aria-*` attributes for a row. `undefined` omits an attribute and
+   * so does `false` on `data-*` (on `aria-*` it renders `"false"`). Names the table
+   * writes itself (`data-row-id`, `data-clickable`, `data-href`) are ignored. Called once per row and
+   * render, so keep it cheap.
+   */
+  getRowAttributes?: (row: TData) => RowAttributes;
   label?: string;
   pageSizeOptions?: number[];
   defaultPageSize?: number;
@@ -72,6 +156,15 @@ export interface DataTableProps<TData> extends DataViewProps<TData> {
   onPaginationChange?: (state: ManualPaginationState) => void;
   /** Notifies search changes so the consumer can run a server-side query. */
   onSearchChange?: (query: string) => void;
+  /**
+   * Reports the visible rows on mount and whenever search, filters, sort, grouping or
+   * the page change them; never twice for the same result. With `manualPagination`,
+   * `filteredRows` is the current page. New row objects in `data` count as a change.
+   */
+  onVisibleRowsChange?: (state: VisibleRowsState<TData>) => void;
+  /** Extra class(es) for the root element, added after `gdy-table` and its flags. */
+  className?: string;
+  classNames?: DataTableClassNames;
   tableWrapClassName?: string;
   tableMinHeightClassName?: string;
   /**

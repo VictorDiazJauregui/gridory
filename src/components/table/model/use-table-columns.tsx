@@ -3,6 +3,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import type { SelectTheme } from "../../shared/select-theme";
 import { RowActionsMenu } from "../body/RowActionsMenu";
 import type { TableSettings } from "../settings";
+import { resolveActionsAlign } from "./cell-attributes";
 import { TableCellContent } from "../body/TableCellContent";
 import type { ColumnDefinition, RowActions } from "../types";
 
@@ -13,6 +14,7 @@ const buildDataColumn = <TData,>(
   id: column.id,
   size: column.width,
   header: column.header,
+  meta: { alignment: { cells: column.align, header: column.headerAlign ?? column.align } },
   cell: ({ row }) => (
     <TableCellContent
       column={column}
@@ -24,12 +26,16 @@ const buildDataColumn = <TData,>(
 
 const buildRowActionsColumn = <TData,>(
   rowActions: RowActions<TData>,
-): ColumnDef<TData> => ({
-  id: "_actions",
-  size: 56,
-  header: "",
-  cell: ({ row }) => <RowActionsMenu row={row.original} actions={rowActions} />,
-});
+): ColumnDef<TData> => {
+  const align = resolveActionsAlign(rowActions);
+  return {
+    id: "_actions",
+    size: 56,
+    header: "",
+    meta: { alignment: { cells: align, header: align } },
+    cell: ({ row }) => <RowActionsMenu row={row.original} actions={rowActions} align={align} />,
+  };
+};
 
 export const useTableColumns = <TData,>(
   settings: TableSettings<TData>,

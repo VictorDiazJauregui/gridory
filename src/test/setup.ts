@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom/vitest";
-import { cleanup } from "@testing-library/react";
-import { afterEach } from "vitest";
+import { cleanup, waitFor } from "@testing-library/react";
+import { afterEach, expect } from "vitest";
 
 // jsdom implements neither pointer capture, scrollIntoView nor ResizeObserver;
 // Radix Select and the chat transcript call them on every open or new message.
@@ -15,4 +15,13 @@ window.ResizeObserver ??= class {
   disconnect() {}
 };
 
-afterEach(cleanup);
+// The Markdown editor loads CodeMirror lazily; a load still pending when the file ends fails the run.
+const waitForMarkdownEditorsToLoad = () =>
+  waitFor(() => expect(document.querySelector('.gdy-md-source[aria-busy="true"]')).toBeNull(), {
+    timeout: 10_000,
+  });
+
+afterEach(async () => {
+  await waitForMarkdownEditorsToLoad();
+  cleanup();
+});

@@ -145,7 +145,7 @@ que pasan la búsqueda y los filtros), con el propio valor como título y en ord
 Una tarjeta con el valor vacío va a una columna titulada `"Sin valor"`. Para ponerle otro nombre,
 agrega a `values` una entrada con `value: ""` y tu propio `label`. Una columna sin tarjetas muestra
 `"Sin cards"`, y cuando ninguna tarjeta pasa la búsqueda, los filtros y la vista de archivados, el
-tablero muestra `emptyMessage` en lugar de las columnas. `"Sin valor"` y `"Sin cards"` son textos fijos.
+tablero muestra `emptyMessage` (texto o cualquier nodo, ver [Estado vacío](toolbar.es.md#estado-vacío)) en lugar de las columnas. `"Sin valor"` y `"Sin cards"` son textos fijos.
 
 El tablero lanza un error durante el render cuando la configuración de agrupación no sirve:
 
@@ -368,6 +368,38 @@ El contrato de estilos, los tokens base y los temas claro y oscuro están en
 [theming.es.md](theming.es.md); el catálogo completo de clases, atributos de estado y tokens está en
 [style-hooks.es.md](style-hooks.es.md).
 
+### Clases por parte
+
+`className` suma clases a la raíz y `classNames` suma una clase por parte, siempre después del gancho
+`gdy-*` de esa parte:
+
+| Clave de `classNames` | Elemento | Gancho al que se suma |
+|---|---|---|
+| `root` | `div` raíz (igual que `className`, que va antes) | `gdy-kanban` |
+| `toolbar` | Barra de herramientas | `gdy-toolbar` |
+| `filterRow` | Fila de filtros (solo si algún campo es filtrable) | `gdy-kanban-filter-row` |
+| `board` | Viewport del tablero, el contenedor de columnas con scroll | `gdy-kanban-board-wrap` |
+| `column` | Cada columna | `gdy-kanban-column` |
+| `columnHead` | Encabezado de cada columna | `gdy-kanban-column-head` |
+| `columnBody` | Lista de tarjetas de cada columna | `gdy-kanban-column-body` |
+| `card` | Cada tarjeta, por defecto o propia (`renderCard`) | `gdy-kanban-card` |
+| `empty` | Mensaje del tablero vacío (`emptyMessage`) | `gdy-empty` |
+
+El recuadro `"Sin cards"` de una columna vacía no tiene clave. `boardMinHeightClassName` y
+`boardWrapClassName` siguen funcionando: `classNames.board` va después de ellas.
+
+```tsx
+<KanbanBoard
+  {...boardProps}
+  classNames={{ columnHead: "uppercase", card: "shadow-md", empty: "italic" }}
+/>
+```
+
+Una clase del consumidor pesa lo mismo que la regla `gdy-*` de su parte, así que para una propiedad
+que la hoja ya define, como el fondo de la columna, gana la hoja que se carga última. Cargá la tuya
+después de `gridory/styles.css`, o definí desde la clase el token de esa parte
+(`[--gdy-kanban-column-bg:theme(colors.sky.50)]` en Tailwind).
+
 ## Referencia de props
 
 Props propias de `KanbanBoardProps<TData>`, en el orden del código fuente.
@@ -387,6 +419,8 @@ Props propias de `KanbanBoardProps<TData>`, en el orden del código fuente.
 | `onGroupChange` | `(groupId: string) => void` | — | Cambio en el selector de grupo. |
 | `groupSelectorLabel` | `string` | `"Agrupar por"` | Prefijo de cada opción de grupo y nombre accesible del selector. |
 | `boardWrapClassName` | `string` | — | Clases extra para el viewport del tablero. |
+| `className` | `string` | — | Clases extra para la raíz, después de `gdy-kanban` y sus flags. |
+| `classNames` | `KanbanBoardClassNames` | — | Una clase por parte. Ver [Clases por parte](#clases-por-parte). |
 | `boardMinHeightClassName` | `string` | `"gdy-kanban-min-h-md"` | Clase de altura mínima del viewport del tablero. |
 | `columnBodyMaxHeight` | `number` | `480` | Altura máxima en píxeles del cuerpo de cada columna antes de hacer scroll. |
 
@@ -411,3 +445,4 @@ Props propias de `KanbanBoardProps<TData>`, en el orden del código fuente.
 - `KanbanSortingState`: `{ id: string; direction: SortDirection }`, el orden activo de un campo.
 - `KanbanFiltersState`: `Record<string, string[]>`, los valores seleccionados por id de campo.
 - `KanbanDateFiltersState`: `Record<string, DateFilterState>`, el filtro de fecha por id de campo.
+- `KanbanBoardClassNames`: las clases opcionales por parte de `classNames`.

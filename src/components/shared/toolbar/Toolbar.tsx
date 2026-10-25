@@ -1,4 +1,5 @@
 import { Fragment, type ReactNode } from "react";
+import { cn } from "../../../lib/cn";
 import type {
   AiButtonConfig,
   ArchivedViewMode,
@@ -18,6 +19,12 @@ import { ToolbarClearFilters } from "./ToolbarClearFilters";
 import { ToolbarCreateButton } from "./ToolbarCreateButton";
 import { ToolbarSearch } from "./ToolbarSearch";
 import { ToolbarViewSwitch } from "./ToolbarViewSwitch";
+import {
+  renderToolbarSlot,
+  splitSlotSides,
+  validateToolbarSlots,
+  type ToolbarCustomSlot,
+} from "./toolbar-custom-slots";
 
 const DEFAULT_ARCHIVED_OPTION_LABELS: Record<ArchivedViewMode, string> = {
   active: "Activos",
@@ -55,7 +62,9 @@ interface ToolbarProps {
   toggleGroups?: ToggleGroupConfig[];
   headerSelectors?: HeaderSelectConfig[];
   toolbarLayout?: ToolbarLayout;
+  toolbarSlots?: ToolbarCustomSlot[];
   selectTheme?: SelectTheme;
+  className?: string;
 }
 
 type ToolbarSlots = Record<string, ReactNode>;
@@ -166,6 +175,17 @@ const fillHeaderSelectorSlots = (props: ToolbarProps, slots: ToolbarSlots) => {
   });
 };
 
+const listControlIds = (props: ToolbarProps) => [
+  ...(props.toggleGroups ?? []).map((group) => group.id),
+  ...(props.headerSelectors ?? []).map((selector) => selector.id),
+];
+
+const fillCustomSlots = (props: ToolbarProps, slots: ToolbarSlots) => {
+  validateToolbarSlots(props.toolbarSlots, listControlIds(props)).forEach((slot) => {
+    slots[slot.id] = renderToolbarSlot(slot);
+  });
+};
+
 const buildSlots = (props: ToolbarProps): ToolbarSlots => {
   const slots: ToolbarSlots = {};
   fillSearchSlots(props, slots);
@@ -174,6 +194,7 @@ const buildSlots = (props: ToolbarProps): ToolbarSlots => {
   fillActionSlots(props, slots);
   fillToggleGroupSlots(props, slots);
   fillHeaderSelectorSlots(props, slots);
+  fillCustomSlots(props, slots);
   return slots;
 };
 
@@ -192,11 +213,14 @@ const splitCustomSides = (props: ToolbarProps) => {
 
 const resolveClusters = (props: ToolbarProps, slots: ToolbarSlots) => {
   const custom = splitCustomSides(props);
+  const trailing = splitSlotSides(props.toolbarSlots ?? []);
   return resolveToolbarClusters({
     layout: props.toolbarLayout,
     isVisible: (id) => id in slots,
     customLeftIds: custom.left,
     customRightIds: custom.right,
+    trailingLeftIds: trailing.left,
+    trailingRightIds: trailing.right,
   });
 };
 
@@ -204,7 +228,7 @@ export const Toolbar = (props: ToolbarProps) => {
   const slots = buildSlots(props);
   const clusters = resolveClusters(props, slots);
   return (
-    <div className="gdy-toolbar">
+    <div className={cn("gdy-toolbar", props.className)}>
       <div className="gdy-toolbar-left">
         {clusters.left.map((id) => (
           <Fragment key={id}>{slots[id]}</Fragment>

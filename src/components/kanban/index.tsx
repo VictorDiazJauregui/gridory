@@ -1,12 +1,15 @@
 import "./styles.css";
 import { cn } from "../../lib/cn";
 import { resolveRootStyle } from "../shared/root-style";
-import { applyBoardDefaults, assertGroupConfiguration } from "./board-view";
+import { applyBoardDefaults, assertGroupConfiguration, type KanbanBoardView } from "./board-view";
 import { KanbanBoardBody } from "./board/KanbanBoardBody";
 import { KanbanFilterRow } from "./toolbar/KanbanFilterRow";
 import { KanbanToolbar } from "./toolbar/KanbanToolbar";
 import type { KanbanBoardProps } from "./types";
 import { useKanbanBoardState } from "./model/use-kanban-board-state";
+
+const resolveRootClassName = <TData,>(view: KanbanBoardView<TData>) =>
+  cn("gdy-kanban", view.thinScrollbars && "gdy-thin-scroll", view.className, view.classNames?.root);
 
 export const KanbanBoard = <TData,>(props: KanbanBoardProps<TData>) => {
   assertGroupConfiguration(props.groups, props.defaultGroupId);
@@ -14,7 +17,7 @@ export const KanbanBoard = <TData,>(props: KanbanBoardProps<TData>) => {
   const state = useKanbanBoardState(view);
   return (
     <div
-      className={cn("gdy-kanban", view.thinScrollbars && "gdy-thin-scroll")}
+      className={resolveRootClassName(view)}
       style={resolveRootStyle(view)}
     >
       <div className="gdy-scope gdy-card">
@@ -34,6 +37,7 @@ export type {
   AiButtonConfig,
   ColumnDefinition,
   RowActions,
+  KanbanBoardClassNames,
   KanbanBoardFeatures,
   KanbanGroupOption,
   KanbanMoveEvent,
@@ -52,6 +56,7 @@ export type {
   MenuLabel,
   MenuSeparator,
   SelectTheme,
+  ToolbarCustomSlot,
   ToolbarLayout,
   ToolbarSide,
   ToggleDisplay,

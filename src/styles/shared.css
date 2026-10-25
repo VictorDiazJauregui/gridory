@@ -28,6 +28,14 @@
   gap: 8px;
 }
 
+/* One row, like the built-in controls: a slot never makes the toolbar taller. */
+.gdy-toolbar-slot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
 .gdy-toolbar-left:empty {
   display: none;
 }

@@ -68,8 +68,32 @@ Los tokens base contienen toda la paleta. Cada uno lee primero la variable de sh
 usa el valor de Gridory como fallback: `--gdy-primary: var(--primary, oklch(0.205 0 0))`. Gracias a este
 puente, una app que define los tokens de shadcn como colores completos (`oklch(…)`, `hsl(…)`, hex) aplica su
 tema a Gridory en claro y en oscuro sin configurar nada. Si tus variables guardan canales sueltos, como
-`--primary: 222 47% 11%`, el puente produce un color inválido: en ese caso declara tú los tokens
-`--gdy-*`.
+`--primary: 222 47% 11%`, el puente produce un color inválido: importa la hoja de canales de abajo.
+
+### Variables con canales HSL sueltos
+
+Los proyectos con shadcn/ui v3 (Tailwind 3) guardan cada variable como tres canales y los envuelven en
+`hsl()` donde los usan. Para esas apps, Gridory trae una hoja opcional que lee las 19 variables de shadcn
+de la misma forma, en claro y en oscuro. Impórtala después de la hoja principal:
+
+```ts
+import "gridory/styles.css";
+import "gridory/tokens-hsl-channels.css";
+```
+
+- Redefine `--gdy-background`, `--gdy-foreground`, `--gdy-card`, `--gdy-card-foreground`,
+  `--gdy-popover`, `--gdy-popover-foreground`, `--gdy-primary`, `--gdy-primary-foreground`,
+  `--gdy-secondary`, `--gdy-secondary-foreground`, `--gdy-muted`, `--gdy-muted-foreground`,
+  `--gdy-accent`, `--gdy-accent-foreground`, `--gdy-destructive`, `--gdy-destructive-foreground`,
+  `--gdy-border`, `--gdy-input` y `--gdy-ring` como `hsl(var(--…))`.
+- Tu app tiene que definir esas 19 variables, como hace todo proyecto shadcn v3. Si falta una, su token
+  queda inválido y sin el fallback de Gridory: CSS no puede usar un fallback desde dentro de `hsl()`.
+- `--gdy-success`, `--gdy-warning` y `--gdy-radius` siguen con el puente normal, porque shadcn no tiene
+  una versión en canales de ellas.
+- Usa el mismo `:where()` que la hoja principal, así que una regla `:root` o `.dark` común de tu app
+  sigue ganando.
+- No la importes si tus variables guardan colores completos (shadcn v4, `oklch(…)`): el puente normal ya
+  las lee, y esta hoja envolvería un color en `hsl()` y lo rompería.
 
 La librería declara sus tokens dentro de `:where()`, que tiene especificidad cero. Una regla `:root` o
 `.dark` normal en tu CSS siempre gana, sea cual sea el orden de carga:
@@ -104,6 +128,7 @@ Cada token hace de puente con la variable de shadcn que se llama igual sin la pa
 | `--gdy-accent` / `--gdy-accent-foreground` | `oklch(0.97 0 0)` / `oklch(0.205 0 0)` | `oklch(0.269 0 0)` / `oklch(0.985 0 0)` |
 | `--gdy-destructive` / `--gdy-destructive-foreground` | `oklch(0.577 0.245 27.325)` / `oklch(0.985 0 0)` | `oklch(0.704 0.191 22.216)` / `oklch(0.985 0 0)` |
 | `--gdy-success` | `oklch(0.527 0.154 150.069)` | `oklch(0.792 0.209 151.711)` |
+| `--gdy-warning` | `oklch(0.666 0.179 58.318)` | `oklch(0.828 0.189 84.429)` |
 | `--gdy-border` / `--gdy-input` / `--gdy-ring` | `oklch(0.922 0 0)` / `oklch(0.922 0 0)` / `oklch(0.708 0 0)` | `oklch(1 0 0 / 10%)` / `oklch(1 0 0 / 15%)` / `oklch(0.556 0 0)` |
 | `--gdy-radius` | `0.625rem` | igual que en claro |
 
@@ -135,7 +160,7 @@ tengan que alcanzarlos.
 
 | Familia | Ejemplos (fallback) |
 |---|---|
-| `--gdy-table-*` | `--gdy-table-head-bg` (`--gdy-muted`), `--gdy-table-border` (`--gdy-border`), `--gdy-table-row-hover-bg` (`--gdy-muted`) |
+| `--gdy-table-*` | `--gdy-table-head-bg` (`--gdy-muted`), `--gdy-table-border` (`--gdy-border`), `--gdy-table-row-hover-bg` (`--gdy-muted`), `--gdy-table-row-focus-ring` (`--gdy-ring`) |
 | `--gdy-kanban-*` | `--gdy-kanban-column-bg` (`--gdy-muted`), `--gdy-kanban-card-bg` (`--gdy-card`), `--gdy-kanban-drop-outline` (`--gdy-muted-foreground`) |
 | `--gdy-ai-*` | `--gdy-ai-accent` (`--gdy-primary`), `--gdy-ai-bg` (`--gdy-background`), `--gdy-ai-user-bubble-bg` (`--gdy-ai-accent` y después `--gdy-primary`) |
 | `--gdy-auth-*` | `--gdy-auth-bg` (`--gdy-card`), `--gdy-auth-submit-bg` (`--gdy-primary`), `--gdy-auth-input-focus-border` (`--gdy-ring`), `--gdy-auth-rule-met` (`--gdy-success`) |
@@ -154,6 +179,7 @@ tengan que alcanzarlos.
 | `--gdy-popover-*` | `--gdy-popover-bg` (`--gdy-popover`), `--gdy-popover-fg` (`--gdy-popover-foreground`) |
 | `--gdy-toggle-*` | `--gdy-toggle-bg` (`color-mix(in oklab, var(--gdy-muted) 50%, transparent)`), `--gdy-toggle-active-bg` (`--gdy-background`) |
 | `--gdy-calendar-*` | `--gdy-calendar-selected-bg` (`--gdy-primary`), `--gdy-calendar-selected-fg` (`--gdy-primary-foreground`), `--gdy-calendar-range-bg` (`--gdy-muted`) |
+| `--gdy-md-*` | `--gdy-md-editor-background` (`--gdy-background`), `--gdy-md-border` (`--gdy-border`), `--gdy-md-preview-font-size` (`0.9375rem`), `--gdy-md-alert-warning` (`--gdy-warning`), `--gdy-md-scrollbar-size` (`8px`) — lista completa en [Tokens del editor Markdown](#tokens-del-editor-markdown) |
 
 La lista completa, con todos los fallbacks, está en [style-hooks.es.md](style-hooks.es.md#tokens-de-componente).
 Un ejemplo que cambia un token en los dos temas y otro solo en una pantalla:
@@ -171,6 +197,200 @@ Un ejemplo que cambia un token en los dos temas y otro solo en una pantalla:
   --gdy-table-row-hover-bg: color-mix(in oklab, var(--gdy-primary) 8%, transparent);
 }
 ```
+
+### Tokens del editor Markdown
+
+Cada valor del editor Markdown lee un token `--gdy-md-*` con fallback, así que ninguno hace falta
+declararlo. Sus ventanas, menús y el diagrama a tamaño completo se renderizan en portales bajo
+`<body>`: declará los tokens que los estilan en `:root` o `.dark`. Los colores de avisos y código caen
+en una mezcla del color base con el del texto, que los mantiene en contraste WCAG AA en los dos temas;
+un token que declares se usa tal cual. Los colores de los diagramas de Mermaid se leen de
+`--gdy-md-diagram-*` al dibujar, y se redibujan al cambiar el tema.
+
+#### Marco, cabecera y scrollbars
+
+| Token | Valor por defecto |
+|---|---|
+| `--gdy-md-border` | `var(--gdy-border)` |
+| `--gdy-md-divider` | `var(--gdy-md-border, var(--gdy-border))` |
+| `--gdy-md-divider-width` | `1px` |
+| `--gdy-md-editor-background` | `var(--gdy-background)` |
+| `--gdy-md-editor-height` | `32rem` |
+| `--gdy-md-editor-radius` | `var(--gdy-radius)` |
+| `--gdy-md-fullscreen-z` | `45` |
+| `--gdy-md-header-background` | `var(--gdy-card)` |
+| `--gdy-md-scrollbar-size` | `8px` |
+| `--gdy-md-scrollbar-thumb` | `var(--gdy-scrollbar-thumb, var(--gdy-input))` |
+| `--gdy-md-scrollbar-width` | `thin` |
+
+#### Barra y selector de vista
+
+| Token | Valor por defecto |
+|---|---|
+| `--gdy-md-tool-active-background` | `var(--gdy-accent)` |
+| `--gdy-md-tool-active-foreground` | `var(--gdy-foreground)` |
+| `--gdy-md-tool-foreground` | `var(--gdy-muted-foreground)` |
+| `--gdy-md-tool-hover-background` | `var(--gdy-accent)` |
+| `--gdy-md-tool-hover-foreground` | `var(--gdy-foreground)` |
+| `--gdy-md-tool-icon-size` | `1rem` |
+| `--gdy-md-tool-size` | `2rem` |
+| `--gdy-md-toolbar-separator` | `var(--gdy-border)` |
+| `--gdy-md-tooltip-background` | `var(--gdy-foreground)` |
+| `--gdy-md-tooltip-foreground` | `var(--gdy-background)` |
+| `--gdy-md-view-option-active-background` | `var(--gdy-background)` |
+| `--gdy-md-view-option-active-foreground` | `var(--gdy-foreground)` |
+| `--gdy-md-view-option-foreground` | `var(--gdy-muted-foreground)` |
+| `--gdy-md-view-switch-background` | `var(--gdy-muted)` |
+
+#### Área de escritura (CodeMirror)
+
+| Token | Valor por defecto |
+|---|---|
+| `--gdy-md-panel-background` | `var(--gdy-card)` |
+| `--gdy-md-panel-button` | `var(--gdy-secondary)` |
+| `--gdy-md-panel-foreground` | `var(--gdy-foreground)` |
+| `--gdy-md-search-match` | `color-mix(in oklab, var(--gdy-warning) 28%, transparent)` |
+| `--gdy-md-search-match-active` | `color-mix(in oklab, var(--gdy-warning) 55%, transparent)` |
+| `--gdy-md-source-background` | `var(--gdy-md-editor-background, var(--gdy-background))` |
+| `--gdy-md-source-caret` | `var(--gdy-foreground)` |
+| `--gdy-md-source-code` | `var(--gdy-foreground)` |
+| `--gdy-md-source-code-background` | `var(--gdy-muted)` |
+| `--gdy-md-source-font-family` | `var(--gdy-font-mono)` |
+| `--gdy-md-source-font-size` | `0.875rem` |
+| `--gdy-md-source-foreground` | `var(--gdy-foreground)` |
+| `--gdy-md-source-heading` | `var(--gdy-foreground)` |
+| `--gdy-md-source-line-height` | `1.65` |
+| `--gdy-md-source-link` | `var(--gdy-link)` |
+| `--gdy-md-source-mark` | `var(--gdy-muted-foreground)` |
+| `--gdy-md-source-min-height` | `12rem` |
+| `--gdy-md-source-padding` | `0.75rem 1rem` |
+| `--gdy-md-source-placeholder` | `var(--gdy-muted-foreground)` |
+| `--gdy-md-source-quote` | `var(--gdy-muted-foreground)` |
+| `--gdy-md-source-selection` | `color-mix(in oklab, var(--gdy-primary) 22%, transparent)` |
+
+#### Tipografía de la vista previa
+
+| Token | Valor por defecto |
+|---|---|
+| `--gdy-md-block-gap` | `0.875rem` |
+| `--gdy-md-heading-color` | `var(--gdy-foreground)` |
+| `--gdy-md-heading-font-family` | `inherit` |
+| `--gdy-md-heading-font-weight` | `600` |
+| `--gdy-md-heading-gap` | `1.5rem` |
+| `--gdy-md-heading-scroll-margin` | `1rem` |
+| `--gdy-md-image-preview-background` | `var(--gdy-muted)` |
+| `--gdy-md-image-radius` | `calc(var(--gdy-radius) - 2px)` |
+| `--gdy-md-link` | `var(--gdy-link)` |
+| `--gdy-md-muted` | `var(--gdy-muted-foreground)` |
+| `--gdy-md-preview-background` | `transparent` |
+| `--gdy-md-preview-font-family` | `inherit` |
+| `--gdy-md-preview-font-size` | `0.9375rem` |
+| `--gdy-md-preview-foreground` | `var(--gdy-foreground)` |
+| `--gdy-md-preview-line-height` | `1.7` |
+| `--gdy-md-preview-padding` | `0.75rem 1.25rem` |
+| `--gdy-md-preview-panel-background` | `transparent` |
+| `--gdy-md-quote-border` | `var(--gdy-border)` |
+| `--gdy-md-quote-border-width` | `4px` |
+| `--gdy-md-quote-foreground` | `var(--gdy-muted-foreground)` |
+| `--gdy-md-task-checkbox` | `var(--gdy-primary)` |
+
+#### Código y resaltado
+
+| Token | Valor por defecto |
+|---|---|
+| `--gdy-md-code-background` | `var(--gdy-muted)` |
+| `--gdy-md-code-comment` | `var(--gdy-muted-foreground)` |
+| `--gdy-md-code-deletion` | `color-mix(in oklab, var(--gdy-destructive) 62%, var(--gdy-md-preview-foreground, var(--gdy-foreground)))` |
+| `--gdy-md-code-font-family` | `var(--gdy-font-mono)` |
+| `--gdy-md-code-font-size` | `0.8125rem` |
+| `--gdy-md-code-foreground` | `inherit` |
+| `--gdy-md-code-keyword` | `var(--gdy-link)` |
+| `--gdy-md-code-number` | `color-mix(in oklab, var(--gdy-warning) 62%, var(--gdy-md-preview-foreground, var(--gdy-foreground)))` |
+| `--gdy-md-code-radius` | `calc(var(--gdy-radius) - 2px)` |
+| `--gdy-md-code-string` | `color-mix(in oklab, var(--gdy-success) 62%, var(--gdy-md-preview-foreground, var(--gdy-foreground)))` |
+| `--gdy-md-code-title` | `color-mix(in oklab, var(--gdy-destructive) 62%, var(--gdy-md-preview-foreground, var(--gdy-foreground)))` |
+| `--gdy-md-code-type` | `var(--gdy-primary)` |
+| `--gdy-md-inline-code-background` | `var(--gdy-md-code-background, var(--gdy-muted))` |
+| `--gdy-md-inline-code-foreground` | `inherit` |
+
+#### Tablas
+
+| Token | Valor por defecto |
+|---|---|
+| `--gdy-md-table-border` | `var(--gdy-md-border, var(--gdy-border))` |
+| `--gdy-md-table-cell-padding` | `0.5rem 0.75rem` |
+| `--gdy-md-table-header-background` | `var(--gdy-muted)` |
+| `--gdy-md-table-stripe` | `transparent` |
+
+#### Avisos
+
+| Token | Valor por defecto |
+|---|---|
+| `--gdy-md-alert-error` | `var(--gdy-destructive)` |
+| `--gdy-md-alert-error-text` | `color-mix(in oklab, var(--gdy-md-alert-error, var(--gdy-destructive)) 62%, var(--gdy-md-preview-foreground, var(--gdy-foreground)))` |
+| `--gdy-md-alert-important` | `color-mix(in oklch, var(--gdy-link) 70%, var(--gdy-destructive))` |
+| `--gdy-md-alert-important-text` | `color-mix(in oklab, var(--gdy-md-alert-important, color-mix(in oklch, var(--gdy-link) 70%, var(--gdy-destructive))) 62%, var(--gdy-md-preview-foreground, var(--gdy-foreground)))` |
+| `--gdy-md-alert-info` | `var(--gdy-link)` |
+| `--gdy-md-alert-info-text` | `color-mix(in oklab, var(--gdy-md-alert-info, var(--gdy-link)) 62%, var(--gdy-md-preview-foreground, var(--gdy-foreground)))` |
+| `--gdy-md-alert-success` | `var(--gdy-success)` |
+| `--gdy-md-alert-success-text` | `color-mix(in oklab, var(--gdy-md-alert-success, var(--gdy-success)) 62%, var(--gdy-md-preview-foreground, var(--gdy-foreground)))` |
+| `--gdy-md-alert-tint` | `8%` |
+| `--gdy-md-alert-warning` | `var(--gdy-warning)` |
+| `--gdy-md-alert-warning-text` | `color-mix(in oklab, var(--gdy-md-alert-warning, var(--gdy-warning)) 62%, var(--gdy-md-preview-foreground, var(--gdy-foreground)))` |
+
+#### Ventanas, selectores y guía
+
+| Token | Valor por defecto |
+|---|---|
+| `--gdy-md-dialog-accent` | `var(--gdy-primary)` |
+| `--gdy-md-dialog-background` | `var(--gdy-popover)` |
+| `--gdy-md-dialog-overlay` | `var(--gdy-overlay)` |
+| `--gdy-md-dialog-radius` | `var(--gdy-radius)` |
+| `--gdy-md-dialog-width` | `32rem` |
+| `--gdy-md-dialog-z` | `55` |
+| `--gdy-md-entity-columns` | `4` |
+| `--gdy-md-guide-source-background` | `var(--gdy-muted)` |
+| `--gdy-md-guide-tool-background` | `var(--gdy-muted)` |
+| `--gdy-md-guide-width` | `56rem` |
+| `--gdy-md-picker-cell-hover` | `var(--gdy-accent)` |
+| `--gdy-md-picker-cell-size` | `2.25rem` |
+| `--gdy-md-picker-columns` | `8` |
+| `--gdy-md-picker-emoji-size` | `1.375rem` |
+| `--gdy-md-picker-height` | `20rem` |
+| `--gdy-md-picker-width` | `26rem` |
+| `--gdy-md-table-preview-cell` | `var(--gdy-muted)` |
+| `--gdy-md-table-preview-header` | `var(--gdy-accent)` |
+| `--gdy-md-table-preview-line` | `var(--gdy-muted-foreground)` |
+
+#### Índice
+
+| Token | Valor por defecto |
+|---|---|
+| `--gdy-md-outline-active` | `var(--gdy-primary)` |
+| `--gdy-md-outline-active-foreground` | `var(--gdy-foreground)` |
+| `--gdy-md-outline-background` | `var(--gdy-md-editor-background, var(--gdy-background))` |
+| `--gdy-md-outline-foreground` | `var(--gdy-muted-foreground)` |
+| `--gdy-md-outline-hover` | `var(--gdy-accent)` |
+| `--gdy-md-outline-indent` | `0.75rem` |
+| `--gdy-md-outline-width` | `14rem` |
+
+#### Diagramas y fórmulas
+
+| Token | Valor por defecto |
+|---|---|
+| `--gdy-md-diagram-accent` | `var(--gdy-accent)` |
+| `--gdy-md-diagram-active` | `var(--gdy-primary)` |
+| `--gdy-md-diagram-background` | `var(--gdy-background)` |
+| `--gdy-md-diagram-border` | `var(--gdy-ring)` |
+| `--gdy-md-diagram-dialog-width` | `90rem` |
+| `--gdy-md-diagram-editor-height` | `16rem` |
+| `--gdy-md-diagram-editor-width` | `60rem` |
+| `--gdy-md-diagram-error-background` | `var(--gdy-muted)` |
+| `--gdy-md-diagram-frame` | `var(--gdy-md-border, var(--gdy-border))` |
+| `--gdy-md-diagram-line` | `var(--gdy-muted-foreground)` |
+| `--gdy-md-diagram-min-height` | `8rem` |
+| `--gdy-md-diagram-node` | `var(--gdy-muted)` |
+| `--gdy-md-diagram-text` | `var(--gdy-foreground)` |
 
 ## Sobrescribir por clase
 
@@ -404,27 +624,57 @@ mismo vale para `.gdy-ai-thinking-icon`):
 
 ## Preset de Tailwind
 
-Gridory no necesita Tailwind. El preset es para apps que usan Tailwind y quieren la paleta de la librería en
-su propio markup, por ejemplo dentro de la `cell` de una columna o en lo que devuelve `renderCard`.
+Gridory no necesita Tailwind. Un preset es para apps que usan Tailwind y quieren la paleta de la librería
+en su propio markup, por ejemplo dentro de la `cell` de una columna o en lo que devuelve `renderCard`.
+
+### Preset con prefijo (recomendado)
+
+`createGridoryPreset()` agrega utilidades bajo un prefijo, así nunca chocan con las claves de tu
+proyecto ni cambian ninguno de sus colores:
 
 ```js
 // tailwind.config.js
-import gridoryPreset from "gridory/tailwind-preset";
+import { createGridoryPreset } from "gridory/tailwind-preset";
 
 export default {
-  presets: [gridoryPreset],
+  presets: [createGridoryPreset()], // o createGridoryPreset({ prefix: "mi-app" })
   content: ["./index.html", "./src/**/*.{ts,tsx}"],
 };
 ```
 
-Asocia a los tokens base las claves de tema al estilo de shadcn: los colores `background`, `foreground`,
-`card`, `popover`, `primary`, `secondary`, `muted`, `accent` y `destructive` (cada uno con su tono
-`foreground`), `border`, `input` y `ring` (`bg-card`, `text-muted-foreground`, `border-border`,
-`outline-ring` y el resto), y los radios `lg` (`var(--gdy-radius)`), `md`
-(`calc(var(--gdy-radius) - 2px)`) y `sm` (`calc(var(--gdy-radius) - 4px)`). Las utilidades apuntan a los
-tokens, así que siguen el tema claro u oscuro y los tokens que sobrescribas, sin variantes `dark:`. Los
-modificadores de opacidad como `bg-primary/10` funcionan: el preset mezcla el token con `color-mix()`. El
-preset no añade rutas en `content`; las pone tu propia configuración.
+| Utilidades | Token |
+|---|---|
+| `bg-gdy-background`, `text-gdy-foreground` | `--gdy-background`, `--gdy-foreground` |
+| `bg-gdy-<nombre>`, `text-gdy-<nombre>-foreground` para `card`, `popover`, `primary`, `secondary`, `muted`, `accent` y `destructive` | `--gdy-<nombre>`, `--gdy-<nombre>-foreground` |
+| `border-gdy-border`, `border-gdy-input`, `outline-gdy-ring`, `ring-gdy-ring` | `--gdy-border`, `--gdy-input`, `--gdy-ring` |
+| `rounded-gdy-lg`, `rounded-gdy-md`, `rounded-gdy-sm` | `var(--gdy-radius)`, menos `2px`, menos `4px` |
+
+Los colores funcionan con cualquier utilidad que reciba un color (`bg-`, `text-`, `border-`, `ring-`,
+`fill-`…) y con modificadores de opacidad como `bg-gdy-primary/10`, que mezclan el token con
+`color-mix()`. Las utilidades apuntan a los tokens, así que siguen el tema claro u oscuro y los tokens
+que sobrescribas, sin variantes `dark:`. `prefix` lleva letras minúsculas y dígitos, opcionalmente
+unidos por guiones simples (por defecto `"gdy"`); cualquier otra cosa lanza `InvalidPresetPrefixError`.
+El preset no añade rutas en `content`; las pone tu propia configuración.
+
+**Un proyecto shadcn no necesita preset:** sus propias utilidades (`bg-primary`, `border-border`) ya
+apuntan a sus variables, y Gridory lee esas mismas variables por el puente de tokens. Usa el preset con
+prefijo solo si quieres pintar algo específicamente con los tokens de Gridory.
+
+### Preset por defecto (obsoleto)
+
+El export por defecto asocia las claves al estilo de shadcn (`bg-primary`, `bg-card`,
+`text-muted-foreground`, `border-border`, `outline-ring`, `rounded-lg`…) a los mismos tokens. En un
+proyecto que define esas claves gana el proyecto y el preset aporta poco; en las que no define, mezcla
+dos paletas. Sigue funcionando igual en la 1.x y **se quita en la 2.0.0**: empieza directamente con
+`createGridoryPreset()` para no tener que migrar dos veces.
+
+```js
+import gridoryPreset from "gridory/tailwind-preset"; // obsoleto
+
+export default { presets: [gridoryPreset] };
+```
+
+Tailwind 4 (`@theme`) no está cubierto por ninguno de los dos presets.
 
 ## Auditoría de estilos
 

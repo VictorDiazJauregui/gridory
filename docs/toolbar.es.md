@@ -30,7 +30,8 @@ propios controles (`toggleGroups`, `headerSelectors`) se renderizan siempre y us
 Por defecto, el lado izquierdo contiene `search`, `clearFilters` y los controles personalizados con
 `position` `"left"`; el derecho, los controles personalizados con `position` `"right"` (el valor por
 defecto) y después `archived`, `group`, `ai`, `viewSwitch` y `create`. Los grupos de toggles van antes
-que los selectores del encabezado, cada uno en el orden de su array.
+que los selectores del encabezado, cada uno en el orden de su array. Tus slots propios (`toolbarSlots`) van al
+final de su lado ([Slots propios](#slots-propios)).
 
 `toolbarLayout` (`{ left?: string[]; right?: string[] }`) reemplaza la disposición por defecto. Si lo
 defines, solo se renderizan los ids listados, en el lado y el orden que indiques. Los ids que no
@@ -60,6 +61,27 @@ lo escribió el usuario, por `onSearchChange` ([table.es.md](table.es.md)).
 `onCreate` añade un botón primario con un icono de más, por defecto el último a la derecha. Llama a
 `onCreate()` sin argumentos; lo que abra o agregue depende de ti. `createLabel` define su texto (por
 defecto `"Nuevo"`). `features.createButton: false` lo oculta aunque `onCreate` esté definido.
+
+## Estado vacío
+
+Cuando ninguna fila o tarjeta pasa la búsqueda, los filtros y la vista de archivados, la tabla y el
+kanban muestran `emptyMessage`: por defecto el texto `"No se encontraron resultados"`, tu propio texto o
+cualquier nodo (un ícono, un enlace, un botón). `null`, `false` o `""` dejan el estado vacío sin texto.
+En la tabla se pinta dentro de `td.gdy-table-cell.gdy-empty`, que nunca dispara `onRowClick`; en el
+kanban, dentro de `div.gdy-empty`.
+
+```tsx
+<DataTable
+  columns={columns}
+  data={companies}
+  onCreate={openCreateDialog}
+  emptyMessage={
+    <>
+      Ninguna empresa coincide. <button type="button" onClick={openCreateDialog}>Crear una</button>
+    </>
+  }
+/>
+```
 
 ## Filtros
 
@@ -212,9 +234,42 @@ const countrySelector: HeaderSelectConfig = {
 <DataTable {...tableProps} toggleGroups={[periodToggle]} headerSelectors={[countrySelector]} />;
 ```
 
+## Slots propios
+
+`toolbarSlots` agrega tu propio contenido a la toolbar (un contador, un botón, un menú) sin portales ni
+posicionamiento absoluto. Cada slot tiene un `id` y un `content` (`ReactNode`), y se renderiza dentro de
+`div.gdy-toolbar-slot` con `data-slot-id` igual a ese id; `className` suma tu clase a ese envoltorio. El
+envoltorio pone su contenido en una fila, centrado y con 8px de separación, igual que los controles
+integrados.
+
+- Sin `toolbarLayout`, un slot va al **final** del lado de su `position` (`"left"` o `"right"`, por
+  defecto `"right"`): a la derecha, después de `create`. Los slots respetan el orden de su array.
+- Con `toolbarLayout`, el id de un slot se ubica como cualquier otro, y un slot que no aparece no se
+  renderiza.
+- El id tiene que ser único: uno que repite el de otro slot, o que ya usa un slot integrado (`search`,
+  `clearFilters`, `archived`, `group`, `ai`, `viewSwitch`, `create`), un grupo de toggles o un selector
+  del encabezado, lanza `DuplicateToolbarSlotError` con el id en el mensaje.
+
+```tsx
+const slots: ToolbarCustomSlot[] = [
+  { id: "seats", content: <Badge>Asientos 7/10</Badge> },
+  { id: "newContact", content: <NewContactMenuButton /> },
+];
+
+<DataTable
+  {...tableProps}
+  toolbarSlots={slots}
+  features={{ createButton: false }}
+  toolbarLayout={{ left: ["search", "clearFilters"], right: ["seats", "newContact"] }}
+/>;
+```
+
+El kanban recibe la misma prop. Un slot es un hijo de React como cualquier otro: su estado y sus
+handlers quedan en tu componente, y la toolbar solo decide dónde va.
+
 ## Acciones de fila y de tarjeta
 
-`rowActions` llena un menú que se abre desde un botón "más" (tooltip `"Opciones"`): en una columna extra
+`rowActions` llena un menú que se abre desde un botón "más" (tooltip y nombre accesible `triggerLabel`, por defecto `"Opciones"`): en una columna extra
 al final de la tabla y en la cabecera de la tarjeta en el kanban (debajo de tu markup si usas
 `renderCard`). `features.rowActions: false` lo quita. El menú se abre en un portal y se reposiciona para
 no salirse de la pantalla; los clics dentro de él no disparan `onRowClick` ni `onCardClick`. Si ninguna
@@ -323,7 +378,7 @@ Todos los tipos de esta sección se exportan desde `gridory`, `gridory/table` y 
 | `searchPlaceholder` | `string` | `"Buscar..."` | Placeholder de la caja de búsqueda. En el kanban, por defecto `"Buscar cards..."`. |
 | `createLabel` | `string` | `"Nuevo"` | Texto del botón de crear. |
 | `onCreate` | `() => void` | — | Callback del botón de crear; el botón solo se renderiza si está definido. |
-| `emptyMessage` | `string` | `"No se encontraron resultados"` | Se muestra cuando ninguna fila coincide. |
+| `emptyMessage` | `ReactNode` | `"No se encontraron resultados"` | Se muestra cuando ninguna fila o tarjeta coincide. Ver [Estado vacío](#estado-vacío). |
 | `rowActions` | `RowActions<TData>` | — | Menú de acciones de cada fila o tarjeta. |
 | `archivedView` | `ArchivedViewConfig` | — | Select activos/archivados/todos. |
 | `viewSwitch` | `ViewSwitchConfig` | — | Selector tabla/kanban. |
@@ -331,6 +386,7 @@ Todos los tipos de esta sección se exportan desde `gridory`, `gridory/table` y 
 | `toggleGroups` | `ToggleGroupConfig[]` | — | Controles segmentados personalizados. |
 | `headerSelectors` | `HeaderSelectConfig[]` | — | Selects personalizados. |
 | `toolbarLayout` | `ToolbarLayout` | — | Composición explícita de la toolbar. |
+| `toolbarSlots` | `ToolbarCustomSlot[]` | — | Tu propio contenido en la toolbar ([Slots propios](#slots-propios)). |
 | `selectTheme` | `SelectTheme` | — | Estilo de todos los selects. |
 | `thinScrollbars` | `boolean` | `true` | Barras de scroll finas en las áreas de scroll internas. |
 | `scrollbarColor` | `string` | — | Color del thumb de la barra de scroll; fallback: `--gdy-input`. |
@@ -347,6 +403,17 @@ Todos los tipos de esta sección se exportan desde `gridory`, `gridory/table` y 
 |---|---|---|
 | `left` | `string[]` | Slot ids del grupo izquierdo, en orden. |
 | `right` | `string[]` | Slot ids del grupo derecho, en orden. |
+
+### ToolbarCustomSlot
+
+| Campo | Tipo | Por defecto | Descripción |
+|---|---|---|---|
+| `id` | `string` | — | Id único del slot; se usa en `toolbarLayout` y se escribe como `data-slot-id`. |
+| `content` | `ReactNode` | — | Lo que renderiza el slot. |
+| `position` | `"left" \| "right"` | `"right"` | Lado sin `toolbarLayout`; el slot va al final. |
+| `className` | `string` | — | Clases extra para el envoltorio `gdy-toolbar-slot`. |
+
+`DuplicateToolbarSlotError` se exporta como valor desde las mismas entradas.
 
 ### ToggleGroupConfig
 
@@ -425,6 +492,9 @@ Todos los tipos de esta sección se exportan desde `gridory`, `gridory/table` y 
 | `archiveLabel`, `unarchiveLabel`, `deleteLabel`, `editLabel`, `historyLabel` | `string` | en español | Textos de las acciones integradas; los valores por defecto están en [Acciones de fila y de tarjeta](#acciones-de-fila-y-de-tarjeta). |
 | `customActions` | `RowAction<TData>[]` | — | Acciones extra alrededor de las integradas. |
 | `menuActions` | `MenuItem<TData>[]` | — | Composición completa del menú; reemplaza `customActions`. |
+| `triggerLabel` | `string` | `"Opciones"` | Nombre accesible y tooltip del botón ⋯, en la tabla y en el kanban. |
+| `columnLabel` | `string` | — | Solo la tabla. Texto del encabezado de la columna de acciones. Ver [Alineación](table.es.md#alineación). |
+| `align` | `"left" \| "center" \| "right"` | `"right"` | Solo la tabla. Alineación del encabezado y del botón de la columna de acciones. |
 
 ### RowAction
 

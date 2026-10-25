@@ -9,14 +9,13 @@ import type {
   SingleCountrySelectProps,
 } from "../components/country-select";
 import { expectRenderError } from "./expect-render-error";
+import { getOptionByName } from "./option-queries";
 
 const DATA_FLAG_URL = "data:image/gif;base64,R0lGODlhAQABAAAAACw=";
 
 const countryCombobox = (name = "País") => screen.getByRole("combobox", { name });
 
 const searchBox = () => screen.getByRole("combobox", { name: "Buscar país" });
-
-const option = (name: string) => screen.getByRole("option", { name });
 
 const visibleOptionNames = () => screen.queryAllByRole("option").map((element) => element.textContent);
 
@@ -79,7 +78,7 @@ test("picking a country closes the list, returns the focus and shows its flag an
   const { user } = renderCountrySelect({ onValueChange });
   await openList(user);
   await user.type(searchBox(), "peru");
-  await user.click(option("Perú"));
+  await user.click(getOptionByName("Perú"));
   await expectListClosed();
   const combobox = countryCombobox();
   expect(onValueChange).toHaveBeenCalledExactlyOnceWith("PE");
@@ -94,10 +93,10 @@ test("reopening with Uruguay chosen makes it the active option and scrolls it in
   const scrollIntoView = vi.spyOn(HTMLElement.prototype, "scrollIntoView");
   const { user } = renderCountrySelect({ defaultValue: "UY" });
   await openList(user);
-  expect(option("Uruguay")).toHaveAttribute("data-active");
-  expect(option("Uruguay")).toHaveAttribute("aria-selected", "true");
-  expect(searchBox()).toHaveAttribute("aria-activedescendant", option("Uruguay").id);
-  expect(scrollIntoView.mock.contexts.at(-1)).toBe(option("Uruguay"));
+  expect(getOptionByName("Uruguay")).toHaveAttribute("data-active");
+  expect(getOptionByName("Uruguay")).toHaveAttribute("aria-selected", "true");
+  expect(searchBox()).toHaveAttribute("aria-activedescendant", getOptionByName("Uruguay").id);
+  expect(scrollIntoView.mock.contexts.at(-1)).toBe(getOptionByName("Uruguay"));
 });
 
 test("Escape closes the list and returns the focus to the combobox", async () => {
@@ -145,7 +144,7 @@ test("choosing the country already chosen only closes the list", async () => {
   const onValueChange = vi.fn();
   const { user } = renderCountrySelect({ defaultValue: "PE", onValueChange });
   await openList(user);
-  await user.click(option("Perú"));
+  await user.click(getOptionByName("Perú"));
   await expectListClosed();
   expect(onValueChange).not.toHaveBeenCalled();
   expect(countryCombobox()).toHaveTextContent("Perú");
@@ -155,7 +154,7 @@ test("a controlled control shows the app's value until the app changes it", asyn
   const onValueChange = vi.fn();
   const { user, rerender } = renderCountrySelect({ value: "PE", onValueChange });
   await openList(user);
-  await user.click(option("Uruguay"));
+  await user.click(getOptionByName("Uruguay"));
   expect(onValueChange).toHaveBeenCalledExactlyOnceWith("UY");
   expect(countryCombobox()).toHaveTextContent("Perú");
   rerender(<CountrySelect value="UY" onValueChange={onValueChange} />);
@@ -168,7 +167,7 @@ test("an uncontrolled control starts on defaultValue and keeps the new choice", 
   const { user } = renderCountrySelect({ defaultValue: "AR" });
   expect(countryCombobox()).toHaveTextContent("Argentina");
   await openList(user);
-  await user.click(option("Chile"));
+  await user.click(getOptionByName("Chile"));
   expect(countryCombobox()).toHaveTextContent("Chile");
 });
 
@@ -202,7 +201,7 @@ test("choosing a country clears the own error of a required control", async () =
   await user.keyboard("{Escape}");
   await expectListClosed();
   await openList(user);
-  await user.click(option("Perú"));
+  await user.click(getOptionByName("Perú"));
   await expectListClosed();
   expect(countryCombobox()).not.toHaveAttribute("aria-invalid");
 });
@@ -271,7 +270,7 @@ test('locale="en" shows the country names in English', async () => {
   const { user } = renderCountrySelect({ locale: "en", defaultValue: "PE" });
   expect(countryCombobox()).toHaveTextContent("Peru");
   await openList(user);
-  expect(option("Peru")).toHaveAttribute("aria-selected", "true");
+  expect(getOptionByName("Peru")).toHaveAttribute("aria-selected", "true");
 });
 
 test("showFlags={false} renders no flag in the combobox nor in the list", async () => {
@@ -287,7 +286,7 @@ test("flagUrl builds the flag of the combobox and of the options", async () => {
   expect(within(countryCombobox()).getByRole("presentation")).toHaveAttribute("src", DATA_FLAG_URL);
   expect(flagUrl).toHaveBeenCalledWith("PE", 20);
   await openList(user);
-  expect(within(option("Uruguay")).getByRole("presentation")).toHaveAttribute("src", DATA_FLAG_URL);
+  expect(within(getOptionByName("Uruguay")).getByRole("presentation")).toHaveAttribute("src", DATA_FLAG_URL);
 });
 
 test("width writes the width token: a number in px, a string as given", () => {
@@ -332,9 +331,9 @@ test("in multiple mode the list stays open and each pick toggles a country, in t
   const { user } = renderCountrySelect({ multiple: true, onValueChange });
   await openList(user);
   expect(screen.getByRole("listbox")).toHaveAttribute("aria-multiselectable", "true");
-  await user.click(option("Uruguay"));
-  await user.click(option("Perú"));
-  await user.click(option("Uruguay"));
+  await user.click(getOptionByName("Uruguay"));
+  await user.click(getOptionByName("Perú"));
+  await user.click(getOptionByName("Uruguay"));
   expect(screen.getByRole("dialog")).toBeInTheDocument();
   expect(onValueChange.mock.calls).toEqual([[["UY"]], [["UY", "PE"]], [["PE"]]]);
   expect(chipNames()).toEqual(["Perú"]);
@@ -350,7 +349,7 @@ test("in multiple mode Enter picks several countries with the list open", async 
   expect(screen.getByRole("dialog")).toBeInTheDocument();
   expect(searchBox()).toHaveFocus();
   expect(onValueChange).toHaveBeenLastCalledWith(["CL", "PE"]);
-  expect(option("Perú")).toHaveAttribute("aria-selected", "true");
+  expect(getOptionByName("Perú")).toHaveAttribute("aria-selected", "true");
 });
 
 test("a controlled multiple value is never mutated: every change emits a new array", async () => {
@@ -358,7 +357,7 @@ test("a controlled multiple value is never mutated: every change emits a new arr
   const onValueChange = vi.fn();
   const { user } = renderCountrySelect({ multiple: true, value, onValueChange });
   await openList(user);
-  await user.click(option("Chile"));
+  await user.click(getOptionByName("Chile"));
   expect(onValueChange).toHaveBeenCalledExactlyOnceWith(["PE", "CL"]);
   expect(value).toEqual(["PE"]);
 });
@@ -367,14 +366,14 @@ test("at the maximum the other countries are disabled and a status says why; rem
   const { user } = renderCountrySelect({ multiple: true, maxSelected: 2, defaultValue: ["PE"] });
   await openList(user);
   expect(limitStatus()).toBeEmptyDOMElement();
-  await user.click(option("Chile"));
-  expect(option("Uruguay")).toHaveAttribute("aria-disabled", "true");
-  expect(option("Perú")).not.toHaveAttribute("aria-disabled");
+  await user.click(getOptionByName("Chile"));
+  expect(getOptionByName("Uruguay")).toHaveAttribute("aria-disabled", "true");
+  expect(getOptionByName("Perú")).not.toHaveAttribute("aria-disabled");
   expect(limitStatus()).toHaveTextContent("Alcanzaste el máximo permitido (2)");
-  await user.click(option("Uruguay"));
+  await user.click(getOptionByName("Uruguay"));
   expect(chipNames()).toEqual(["Perú", "Chile"]);
-  await user.click(option("Chile"));
-  expect(option("Uruguay")).not.toHaveAttribute("aria-disabled");
+  await user.click(getOptionByName("Chile"));
+  expect(getOptionByName("Uruguay")).not.toHaveAttribute("aria-disabled");
   expect(limitStatus()).toBeEmptyDOMElement();
 });
 
@@ -388,7 +387,7 @@ test("texts.maxReached replaces the limit message", async () => {
 test("a selection below the minimum shows its error once the list closes", async () => {
   const { user } = renderCountrySelect({ multiple: true, minSelected: 2 });
   await openList(user);
-  await user.click(option("Perú"));
+  await user.click(getOptionByName("Perú"));
   expect(countryCombobox()).not.toHaveAttribute("aria-invalid");
   await user.keyboard("{Escape}");
   await expectListClosed();
@@ -404,7 +403,7 @@ test("texts.belowMinimum replaces the minimum error, and an empty selection is n
   await expectListClosed();
   expect(countryCombobox()).toHaveAccessibleDescription("Mínimo 3");
   await openList(user);
-  await user.click(option("Perú"));
+  await user.click(getOptionByName("Perú"));
   await user.keyboard("{Escape}");
   await expectListClosed();
   expect(countryCombobox()).not.toHaveAttribute("aria-invalid");

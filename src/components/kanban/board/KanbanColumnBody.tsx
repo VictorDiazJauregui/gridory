@@ -1,3 +1,4 @@
+import { cn } from "../../../lib/cn";
 import type { KanbanColumnProps } from "./column-settings";
 import { KanbanCard } from "../card/KanbanCard";
 
@@ -18,7 +19,7 @@ const renderColumnCards = <TData,>(props: KanbanColumnProps<TData>) =>
 
 export const KanbanColumnBody = <TData,>(props: KanbanColumnProps<TData>) => (
   <div
-    className="gdy-kanban-column-body gdy-scroll"
+    className={cn("gdy-kanban-column-body gdy-scroll", props.classNames?.columnBody)}
     style={{ maxHeight: `${props.columnBodyMaxHeight}px` }}
   >
     {props.cards.length === 0 ? (

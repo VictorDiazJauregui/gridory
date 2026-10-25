@@ -18,16 +18,22 @@ import {
   readStripped,
   root,
 } from "./style-sources.mjs";
+import { listCompoundRules } from "./style-specificity.mjs";
 
 const allowlist = readAllowlist();
 const publicUtilities = new Set(allowlist.publicUtilities);
 const tokensFile = path.join(root, "src/styles/tokens.css");
-const componentStylesheets = libraryStylesheets.filter((file) => file !== tokensFile);
+// Optional token sheet: it re-declares base tokens and is documented in theming.md.
+const optionalTokenSheets = [path.join(root, "src/styles/tokens-hsl-channels.css")];
+const componentStylesheets = libraryStylesheets.filter(
+  (file) => file !== tokensFile && !optionalTokenSheets.includes(file),
+);
 
 const COMPOUND =
   /\.(gdy-[a-z0-9]+(?:-[a-z0-9]+)*)((?:\.[\w-]+|\[[^\]]+\]|::?[\w-]+(?:\((?:[^()]|\([^()]*\))*\))?)*)/g;
 const ATTRIBUTE = /\[((?:data|aria)-[a-z0-9-]+)(?:="?([^"\]]+)"?)?\]/g;
-const EMITTED_DATA_ATTRIBUTE = /\b(data-[a-z0-9-]+)=/g;
+// Written as a JSX attribute (data-x=) or as a key of an attributes object ("data-x":).
+const EMITTED_DATA_ATTRIBUTE = /\b(data-[a-z0-9-]+)(?:=|":)/g;
 const EMITTED_LITERAL_VALUE = /\b(data-[a-z0-9-]+)="([^"]+)"/g;
 // Attributes whose value is a typed prop (data-action-type={action.type}):
 // their values are read from the union type so the catalog follows the API.
@@ -52,9 +58,13 @@ const GROUPS = [
   { id: "country-select", match: /^gdy-country-select(?:-|$)/ },
   { id: "phone-input", match: /^gdy-phone-input(?:-|$)/ },
   { id: "sidebar", match: /^gdy-sidebar(?:-|$)/ },
+  { id: "markdown-editor", match: /^gdy-md(?:-|$)/ },
   { id: "ui", match: /^gdy-(?:button|select|menu|popover|toggle|calendar)(?:-|$)/ },
   { id: "shared", match: /^gdy-/ },
 ];
+
+// Modules whose rules other than a single class (0-1-0) are published in the catalog.
+const SPECIFICITY_MODULES = [{ group: "table", stylesheet: "src/components/table/styles.css" }];
 
 const formatAttribute = (name, value) => (value ? `[${name}="${value}"]` : `[${name}]`);
 const addTo = (map, key, value) => {
@@ -214,11 +224,18 @@ const TEXT = {
       "country-select": "Country select",
       "phone-input": "Phone input",
       sidebar: "Sidebar",
+      "markdown-editor": "Markdown editor",
       ui: "Primitives",
       shared: "Shared layer and toolbar",
     },
     classHeader: "| Class | Kind | State selectors |",
     kinds: { styled: "styled", hook: "hook only", utility: "utility" },
+    specificity: "Rules with more than one class",
+    specificityIntro: [
+      "Almost every rule is a single class (0-1-0). These are the exceptions, with the selector to",
+      "write when you override them; the reasons are in [Theming and styling](theming.md).",
+    ],
+    specificityHeader: "| Selector | Specificity |",
     attributes: "State attributes",
     attributesIntro: [
       "Boolean attributes are present or absent; the others take the listed values. Attributes set by",
@@ -232,6 +249,13 @@ const TEXT = {
       host: "your app",
     },
     boolean: "present / absent",
+    // Attributes whose value is data (an id, a date) rather than a fixed set of states.
+    freeValues: {
+      "data-column-id": "the column `id`",
+      "data-row-id": "the row id (`getRowId`)",
+      "data-slot-id": "the slot `id`",
+      "data-day": "the date of the day",
+    },
     noRule: "no default rule",
     baseTokens: "Base tokens",
     baseIntro: [
@@ -270,11 +294,18 @@ const TEXT = {
       "country-select": "Selector de país",
       "phone-input": "Teléfono con prefijo",
       sidebar: "Menú lateral",
+      "markdown-editor": "Editor Markdown",
       ui: "Primitivos",
       shared: "Capa compartida y toolbar",
     },
     classHeader: "| Clase | Tipo | Selectores de estado |",
     kinds: { styled: "con estilos", hook: "solo gancho", utility: "utilidad" },
+    specificity: "Reglas con más de una clase",
+    specificityIntro: [
+      "Casi todas las reglas son una sola clase (0-1-0). Estas son las excepciones, con el selector que",
+      "hay que escribir para pisarlas; los motivos están en [Temas y estilos](theming.es.md).",
+    ],
+    specificityHeader: "| Selector | Especificidad |",
     attributes: "Atributos de estado",
     attributesIntro: [
       "Los atributos booleanos están presentes o ausentes; el resto toma los valores listados. Los que",
@@ -288,6 +319,12 @@ const TEXT = {
       host: "tu app",
     },
     boolean: "presente / ausente",
+    freeValues: {
+      "data-column-id": "el `id` de la columna",
+      "data-row-id": "el id de la fila (`getRowId`)",
+      "data-slot-id": "el `id` del slot",
+      "data-day": "la fecha del día",
+    },
     noRule: "sin regla por defecto",
     baseTokens: "Tokens base",
     baseIntro: [
@@ -326,11 +363,32 @@ const originOf = (name, emitted) => {
   return emitted.has(name) ? "both" : "runtime";
 };
 
+const readSpecificity = () =>
+  SPECIFICITY_MODULES.map(({ group, stylesheet }) => ({
+    group,
+    rules: listCompoundRules(readStripped(path.join(root, stylesheet))),
+  }));
+
+const renderSpecificity = (text, modules) => [
+  `## ${text.specificity}`,
+  "",
+  ...text.specificityIntro,
+  "",
+  ...modules.flatMap(({ group, rules }) => [
+    `### ${text.groups[group]}`,
+    "",
+    text.specificityHeader,
+    tableDivider(text.specificityHeader),
+    ...rules.map(({ selector, specificity }) => `| ${code(selector)} | ${specificity} |`),
+    "",
+  ]),
+];
+
 const renderAttributeRow = (text, name, { selectors, emitted }) => {
   const values = [...(selectors.valuesByAttribute.get(name) ?? [])].map((value) => `"${value}"`);
   const classes = [...(selectors.classesByAttribute.get(name) ?? [])];
   const usedWith = classes.length ? codeList(classes) : text.noRule;
-  const valueList = values.length ? codeList(values) : text.boolean;
+  const valueList = text.freeValues[name] ?? (values.length ? codeList(values) : text.boolean);
   return `| ${code(name)} | ${valueList} | ${text.origins[originOf(name, emitted)]} | ${usedWith} |`;
 };
 
@@ -382,6 +440,7 @@ const renderCatalog = (text, model) =>
     ...text.classesIntro,
     "",
     ...renderClassGroups(text, model.classes, model.selectors.selectorsByClass),
+    ...renderSpecificity(text, model.specificity),
     ...renderAttributes(text, model.selectors, model.emittedAttributes),
     ...renderTokens(text, model.baseTokens, model.componentTokens),
     "",
@@ -393,6 +452,7 @@ const buildModel = () => {
     classes: readClasses(),
     selectors: readStateSelectors(),
     emittedAttributes: readEmittedAttributes(),
+    specificity: readSpecificity(),
     baseTokens,
     componentTokens: readComponentTokens(new Set(baseTokens.map((token) => token.name))),
   };

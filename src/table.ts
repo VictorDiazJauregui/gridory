@@ -3,11 +3,15 @@ import "./styles/index.css";
 export { DataTable } from "./components/table";
 export type {
   ColumnSortingState,
+  DataTableClassNames,
   DataTableFeatures,
   DataTableProps,
   GroupHeader,
   ManualPaginationState,
+  RowAttributes,
+  RowClickEvent,
   RowGroupingResult,
+  VisibleRowsState,
 } from "./components/table/types";
 
 export type {
@@ -15,7 +19,9 @@ export type {
   ArchivedViewConfig,
   ArchivedViewMode,
   CellHighlight,
+  ColumnAlign,
   ColumnDefinition,
+  ColumnOverflow,
   DataInput,
   DateFilterOp,
   DateFilterState,
@@ -31,6 +37,7 @@ export type {
 export {
   BUILT_IN_ROW_ACTION_IDS,
   DuplicateRowActionError,
+  DuplicateToolbarSlotError,
 } from "./components/shared";
 export type {
   BuiltInActionId,
@@ -48,6 +55,7 @@ export type {
   ToggleDisplay,
   ToggleGroupConfig,
   ToggleOption,
+  ToolbarCustomSlot,
   ToolbarLayout,
   ToolbarSide,
 } from "./components/shared";

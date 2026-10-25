@@ -42,6 +42,12 @@ export interface FilterOption {
   label: string;
 }
 
+/** Horizontal alignment of a table column. */
+export type ColumnAlign = "left" | "center" | "right";
+
+/** What a table cell does with content wider than its column. */
+export type ColumnOverflow = "ellipsis" | "wrap" | "visible";
+
 export interface CellHighlight {
   className?: string;
   style?: CSSProperties;
@@ -65,6 +71,26 @@ export interface ColumnDefinition<TData> {
   inlineEditOptions?: FilterOption[];
   onInlineEdit?: (row: TData, value: string) => void;
   valueHighlights?: Record<string, CellHighlight>;
+  /**
+   * Table only (the kanban ignores it). Aligns the cells and the header (title and sort
+   * icon together, in that order) and renders `data-align` on the `th` and `td`. Omit it
+   * to keep the default left alignment and the markup unchanged.
+   */
+  align?: ColumnAlign;
+  /** Table only. Aligns the header apart from the cells; defaults to `align`. */
+  headerAlign?: ColumnAlign;
+  /**
+   * Table only. No click, Ctrl/Cmd + click, middle click or Enter that starts inside this
+   * column's cells triggers the row (`onRowClick` or `getRowHref`). For columns of selects,
+   * links or text meant to be copied.
+   */
+  ignoreRowClick?: boolean;
+  /**
+   * Table only; the kanban ignores it. `"ellipsis"` (default) cuts the content on one line,
+   * `"wrap"` breaks it over several lines and `"visible"` lets it overflow the cell. Leave it out
+   * to keep the markup unchanged (no `data-overflow`).
+   */
+  overflow?: ColumnOverflow;
 }
 
 /** Built-in and custom actions available per row (table) or per card (kanban). */
@@ -84,6 +110,15 @@ export interface RowActions<TData> {
   deleteLabel?: string;
   editLabel?: string;
   historyLabel?: string;
+  /** Table only. Header text of the actions column. Defaults to none (an empty header). */
+  columnLabel?: string;
+  /**
+   * Table only. Alignment of the actions column header and button. Defaults to `"right"`;
+   * `data-align` is rendered only when `align` or `columnLabel` is set.
+   */
+  align?: ColumnAlign;
+  /** Accessible name and tooltip of the ⋯ button, in the table and the kanban. Defaults to `"Opciones"`. */
+  triggerLabel?: string;
   /**
    * Extra menu actions beyond the built-ins. Each needs a unique `id` (validated
    * against `edit`/`archive`/`remove`/`history` and against other custom actions);

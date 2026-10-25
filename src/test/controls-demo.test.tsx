@@ -2,6 +2,7 @@ import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { expect, test } from "vitest";
 import { ControlsMock } from "../components/mocks/controls/Controls.mock";
+import { getOptionByName } from "./option-queries";
 
 const CONTROL_SECTIONS = ["Control segmentado", "Selector de país", "Teléfono con prefijo"];
 const SEGMENTED_EXAMPLES = [
@@ -106,7 +107,8 @@ test("choosing a country records onValueChange with the example and the value", 
   const countrySection = screen.getByRole("region", { name: "Selector de país" });
   const [defaultExample] = within(countrySection).getAllByRole("combobox", { name: "País" });
   await user.click(defaultExample);
-  await user.click(await screen.findByRole("option", { name: "Perú" }));
+  await screen.findByRole("dialog");
+  await user.click(getOptionByName("Perú"));
   expect(within(getEventLog()).getByText(/"control": "Por defecto"/)).toBeInTheDocument();
   expect(within(getEventLog()).getByText(/"value": "PE"/)).toBeInTheDocument();
 });

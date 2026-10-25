@@ -7,6 +7,7 @@ import {
 import { resolveMenuNodes } from "../../shared/menu/menu-nodes";
 import { renderMenuNodes } from "../../shared/menu/render-menu-nodes";
 import { stopPropagation } from "../../shared/stop-propagation";
+import { resolveTriggerLabel } from "../../shared/menu/trigger-label";
 import type { RowActions } from "../types";
 
 interface KanbanCardMenuProps<TData> {
@@ -14,12 +15,12 @@ interface KanbanCardMenuProps<TData> {
   rowActions?: RowActions<TData>;
 }
 
-const renderCardMenuTrigger = () => (
+const renderCardMenuTrigger = (label: string) => (
   <button
     type="button"
     className="gdy-icon-btn"
-    title="Opciones"
-    aria-label="Opciones"
+    title={label}
+    aria-label={label}
     onClick={stopPropagation}
   >
     <MoreHorizontal size={14} className="gdy-kanban-card-menu-icon" />
@@ -33,7 +34,7 @@ export const KanbanCardMenu = <TData,>(props: KanbanCardMenuProps<TData>) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        {renderCardMenuTrigger()}
+        {renderCardMenuTrigger(resolveTriggerLabel(props.rowActions))}
       </DropdownMenuTrigger>
       <DropdownMenuContent onClick={stopPropagation}>
         {renderMenuNodes(nodes)}

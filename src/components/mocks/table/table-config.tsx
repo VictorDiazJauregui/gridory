@@ -12,6 +12,8 @@ import {
 } from "../company/company-columns";
 import type { MockCompanyRow } from "../company/company-rows";
 import type { MockRowsUpdater } from "../company/row-updates";
+import { buildAmountColumn } from "./company-amounts";
+import { buildNotesColumn } from "./company-notes";
 
 const TABLE_COLUMN_OPTIONS = { appsWidth: 220, statusSearchable: false };
 
@@ -73,14 +75,33 @@ const withFormattedCreatedAt = (
   cell: (row) => row.createdAt.split("-").reverse().join("/"),
 });
 
+const decorateColumn = (column: MockCompanyColumn, setRows: MockRowsUpdater) => {
+  if (column.id === "status") return withInlineStatus(column, setRows);
+  if (column.id === "createdAt") return withFormattedCreatedAt(column);
+  return column;
+};
+
+const insertColumnAfter = (columns: MockCompanyColumn[], previousId: string, column: MockCompanyColumn) => {
+  const position = columns.findIndex((item) => item.id === previousId) + 1;
+  return [...columns.slice(0, position), column, ...columns.slice(position)];
+};
+
+const insertNewColumns = (columns: MockCompanyColumn[]) =>
+  insertColumnAfter(insertColumnAfter(columns, "country", buildAmountColumn()), "apps", buildNotesColumn());
+
+// The inline status select is a control of its own: clicking it must not open the row.
+const ignoreStatusClicks = (columns: MockCompanyColumn[]) =>
+  columns.map((column) => (column.id === "status" ? { ...column, ignoreRowClick: true } : column));
+
 export const buildTableColumns = (
   setRows: MockRowsUpdater,
-): MockCompanyColumn[] =>
-  buildCompanyColumns(TABLE_COLUMN_OPTIONS).map((column) => {
-    if (column.id === "status") return withInlineStatus(column, setRows);
-    if (column.id === "createdAt") return withFormattedCreatedAt(column);
-    return column;
-  });
+  withNewProps: boolean,
+): MockCompanyColumn[] => {
+  const columns = buildCompanyColumns(TABLE_COLUMN_OPTIONS).map((column) =>
+    decorateColumn(column, setRows),
+  );
+  return withNewProps ? ignoreStatusClicks(insertNewColumns(columns)) : columns;
+};
 
 const TABLE_MENU_ACTIONS: MenuItem<MockCompanyRow>[] = [
   { kind: "label", id: "group-quick", label: "Acciones rápidas" },
@@ -110,7 +131,7 @@ const alertArchiveToggle = (row: MockCompanyRow) => {
   window.alert(`Evento onArchiveToggle (${nextActionLabel}) -> ${row.name}`);
 };
 
-const TABLE_ROW_ACTIONS: RowActions<MockCompanyRow> = {
+export const TABLE_ROW_ACTIONS: RowActions<MockCompanyRow> = {
   getIsArchived: (row) => row.status === "Archivada",
   onEdit: (row) => window.alert(`Evento onEdit -> ${row.name}`),
   onArchiveToggle: alertArchiveToggle,

@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { defineConfig } from "vite";
+import { defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 
 const rootDir = import.meta.dirname;
@@ -26,8 +26,23 @@ const externalPackages = [
 const isExternal = (id: string): boolean =>
   externalPackages.some((name) => id === name || id.startsWith(`${name}/`));
 
+// Opt-in stylesheets ship next to gridory.css, untouched, and no entry imports them:
+// a consumer adds them on purpose (see docs/theming.md).
+const OPTIONAL_STYLESHEETS = ["tokens-hsl-channels.css"];
+
+const emitOptionalStylesheets = (): Plugin => ({
+  name: "gridory-optional-stylesheets",
+  apply: "build",
+  generateBundle() {
+    for (const fileName of OPTIONAL_STYLESHEETS) {
+      const source = readFileSync(path.join(rootDir, "src/styles", fileName), "utf8");
+      this.emitFile({ type: "asset", fileName, source });
+    }
+  },
+});
+
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), emitOptionalStylesheets()],
   resolve: {
     alias: {
       "@": path.resolve(rootDir, "./src"),
@@ -56,6 +71,9 @@ export default defineConfig({
         "country-select": path.resolve(rootDir, "src/country-select.ts"),
         "phone-input": path.resolve(rootDir, "src/phone-input.ts"),
         sidebar: path.resolve(rootDir, "src/sidebar.ts"),
+        "markdown-editor": path.resolve(rootDir, "src/markdown-editor.ts"),
+        "markdown-editor-mermaid": path.resolve(rootDir, "src/markdown-editor-mermaid.ts"),
+        "markdown-editor-katex": path.resolve(rootDir, "src/markdown-editor-katex.ts"),
       },
       formats: ["es"],
       cssFileName: "gridory",

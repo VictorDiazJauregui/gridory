@@ -21,6 +21,8 @@ const resolveRootClassName = <TData,>(settings: TableSettings<TData>) => {
     settings.fillHeight && "gdy-table-fill",
     showStickyHeader && "gdy-table-sticky",
     settings.thinScrollbars && "gdy-thin-scroll",
+    settings.className,
+    settings.classNames?.root,
   );
 };
 
@@ -49,16 +51,22 @@ export type {
   ManualPaginationState,
   AiButtonConfig,
   CellHighlight,
+  ColumnAlign,
   ColumnDefinition,
+  ColumnOverflow,
+  DataTableClassNames,
   DataTableProps,
   FilterOption,
   GroupHeader,
   RowActions,
+  RowAttributes,
+  RowClickEvent,
   RowGroupingResult,
   DataTableFeatures,
   DataInput,
   ViewMode,
   ViewSwitchConfig,
+  VisibleRowsState,
 } from "./types";
 
 export type {
@@ -78,6 +86,7 @@ export type {
   ToolbarLayout,
   ToolbarSide,
 } from "../shared/toolbar/toolbar-layout";
+export type { ToolbarCustomSlot } from "../shared/toolbar/toolbar-custom-slots";
 export type {
   HeaderSelectConfig,
   SelectOption,

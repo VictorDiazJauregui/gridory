@@ -29,7 +29,8 @@ controls (`toggleGroups`, `headerSelectors`) always render and use their `id` as
 default the left side holds `search`, `clearFilters` and the custom controls whose `position` is
 `"left"`; the right side holds the custom controls with `position` `"right"` (the default), then
 `archived`, `group`, `ai`, `viewSwitch` and `create`. Toggle groups come before header selectors,
-each in array order.
+each in array order. Your own slots (`toolbarSlots`) go last on their side ([Your own
+slots](#your-own-slots)).
 
 `toolbarLayout` (`{ left?: string[]; right?: string[] }`) replaces the default layout. When it is
 set, only the listed ids render, on the side and in the order given. Unlisted ids do not render, the
@@ -58,6 +59,27 @@ reports the query, exactly as typed, through `onSearchChange` ([table.md](table.
 `onCreate` adds a primary button with a plus icon, last on the right by default. It calls
 `onCreate()` with no arguments; what it opens or adds is up to you. `createLabel` sets its text
 (default `"Nuevo"`). `features.createButton: false` hides it even when `onCreate` is set.
+
+## Empty state
+
+When no row or card passes the search, the filters and the archived view, the table and the kanban
+show `emptyMessage`: the text `"No se encontraron resultados"` by default, your own text, or any node
+(an icon, a link, a button). `null`, `false` or `""` leave the empty state without text. In the
+table it renders inside `td.gdy-table-cell.gdy-empty`, which never fires `onRowClick`; in the kanban,
+inside `div.gdy-empty`.
+
+```tsx
+<DataTable
+  columns={columns}
+  data={companies}
+  onCreate={openCreateDialog}
+  emptyMessage={
+    <>
+      No companies match. <button type="button" onClick={openCreateDialog}>Create one</button>
+    </>
+  }
+/>
+```
 
 ## Filters
 
@@ -204,9 +226,40 @@ const countrySelector: HeaderSelectConfig = {
 <DataTable {...tableProps} toggleGroups={[periodToggle]} headerSelectors={[countrySelector]} />;
 ```
 
+## Your own slots
+
+`toolbarSlots` adds your own content to the toolbar (a counter, a button, a menu) without portals or
+absolute positioning. Each slot has an `id` and a `content` (`ReactNode`), and renders inside
+`div.gdy-toolbar-slot` with `data-slot-id` set to that id; `className` adds your class to that
+wrapper. The wrapper lays its content in one row, centered and 8px apart, like the built-in controls.
+
+- Without `toolbarLayout`, a slot goes at the **end** of its `position` side (`"left"` or `"right"`,
+  default `"right"`): on the right, after `create`. Slots keep their array order.
+- With `toolbarLayout`, a slot id is placed like any other id, and an unlisted slot does not render.
+- The id must be unique: one that repeats another slot, or is taken by a built-in slot (`search`,
+  `clearFilters`, `archived`, `group`, `ai`, `viewSwitch`, `create`), a toggle group or a header
+  selector, throws `DuplicateToolbarSlotError` with the id in its message.
+
+```tsx
+const slots: ToolbarCustomSlot[] = [
+  { id: "seats", content: <Badge>Seats 7/10</Badge> },
+  { id: "newContact", content: <NewContactMenuButton /> },
+];
+
+<DataTable
+  {...tableProps}
+  toolbarSlots={slots}
+  features={{ createButton: false }}
+  toolbarLayout={{ left: ["search", "clearFilters"], right: ["seats", "newContact"] }}
+/>;
+```
+
+The kanban takes the same prop. A slot is a regular React child: its state and handlers stay in your
+component, and the toolbar only decides where it goes.
+
 ## Row and card actions
 
-`rowActions` fills a menu opened from a "more" button (tooltip `"Opciones"`): in an extra last
+`rowActions` fills a menu opened from a "more" button (tooltip and accessible name `triggerLabel`, default `"Opciones"`): in an extra last
 column of the table, and in the card header of the kanban (below your markup with `renderCard`).
 `features.rowActions: false` removes it. The menu opens in a portal and repositions itself to stay
 on screen; clicks inside it do not trigger `onRowClick` or `onCardClick`. When no action resolves
@@ -313,7 +366,7 @@ Every type below is exported from `gridory`, `gridory/table` and `gridory/kanban
 | `searchPlaceholder` | `string` | `"Buscar..."` | Search box placeholder. Kanban default: `"Buscar cards..."`. |
 | `createLabel` | `string` | `"Nuevo"` | Create button text. |
 | `onCreate` | `() => void` | — | Create button handler; the button renders only when it is set. |
-| `emptyMessage` | `string` | `"No se encontraron resultados"` | Shown when no row matches. |
+| `emptyMessage` | `ReactNode` | `"No se encontraron resultados"` | Shown when no row or card matches. See [Empty state](#empty-state). |
 | `rowActions` | `RowActions<TData>` | — | Actions menu of each row or card. |
 | `archivedView` | `ArchivedViewConfig` | — | Active/archived/all select. |
 | `viewSwitch` | `ViewSwitchConfig` | — | Table/kanban switch. |
@@ -321,6 +374,7 @@ Every type below is exported from `gridory`, `gridory/table` and `gridory/kanban
 | `toggleGroups` | `ToggleGroupConfig[]` | — | Custom segmented controls. |
 | `headerSelectors` | `HeaderSelectConfig[]` | — | Custom selects. |
 | `toolbarLayout` | `ToolbarLayout` | — | Explicit toolbar composition. |
+| `toolbarSlots` | `ToolbarCustomSlot[]` | — | Your own content in the toolbar ([Your own slots](#your-own-slots)). |
 | `selectTheme` | `SelectTheme` | — | Styling of every select. |
 | `thinScrollbars` | `boolean` | `true` | Thin scrollbars on internal scroll areas. |
 | `scrollbarColor` | `string` | — | Scrollbar thumb color; falls back to `--gdy-input`. |
@@ -337,6 +391,17 @@ Every type below is exported from `gridory`, `gridory/table` and `gridory/kanban
 |---|---|---|
 | `left` | `string[]` | Slot ids of the left group, in order. |
 | `right` | `string[]` | Slot ids of the right group, in order. |
+
+### ToolbarCustomSlot
+
+| Field | Type | Default | Description |
+|---|---|---|---|
+| `id` | `string` | — | Unique slot id, also used in `toolbarLayout` and written as `data-slot-id`. |
+| `content` | `ReactNode` | — | What the slot renders. |
+| `position` | `"left" \| "right"` | `"right"` | Side without `toolbarLayout`; the slot goes at its end. |
+| `className` | `string` | — | Extra class(es) for the `gdy-toolbar-slot` wrapper. |
+
+`DuplicateToolbarSlotError` is exported as a value from the same entries.
 
 ### ToggleGroupConfig
 
@@ -415,6 +480,9 @@ Every type below is exported from `gridory`, `gridory/table` and `gridory/kanban
 | `archiveLabel`, `unarchiveLabel`, `deleteLabel`, `editLabel`, `historyLabel` | `string` | Spanish | Built-in texts; defaults in [Row and card actions](#row-and-card-actions). |
 | `customActions` | `RowAction<TData>[]` | — | Extra actions around the built-ins. |
 | `menuActions` | `MenuItem<TData>[]` | — | Full menu composition; overrides `customActions`. |
+| `triggerLabel` | `string` | `"Opciones"` | Accessible name and tooltip of the ⋯ button, in the table and the kanban. |
+| `columnLabel` | `string` | — | Table only. Header text of the actions column. See [Alignment](table.md#alignment). |
+| `align` | `"left" \| "center" \| "right"` | `"right"` | Table only. Alignment of the actions column header and button. |
 
 ### RowAction
 

@@ -49,6 +49,7 @@ jobs:
 
   lucide-range:
     name: lucide-react ${{ matrix.lucide-react }}
+    needs: ci
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -74,8 +75,9 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      # Browser tests measure styles and positions, which do not depend on the icon version.
       - name: Test
-        run: npm test
+        run: npm test -- --project unit
 
       - name: Build library
         run: npm run build

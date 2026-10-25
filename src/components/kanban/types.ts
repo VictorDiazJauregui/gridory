@@ -76,6 +76,32 @@ export interface KanbanCardRenderContext<TData> {
   groupValue: string;
 }
 
+/**
+ * One class per part, added after the `gdy-*` hook of that part. `board` goes after
+ * `boardMinHeightClassName` and `boardWrapClassName`. `empty` is the message of an empty board, not
+ * the "Sin cards" box of an empty column.
+ */
+export interface KanbanBoardClassNames {
+  /** `gdy-kanban` */
+  root?: string;
+  /** `gdy-toolbar` */
+  toolbar?: string;
+  /** `gdy-kanban-filter-row`, rendered only when some field is filterable */
+  filterRow?: string;
+  /** `gdy-kanban-board-wrap`, the columns scroll container */
+  board?: string;
+  /** `gdy-kanban-column` */
+  column?: string;
+  /** `gdy-kanban-column-head` */
+  columnHead?: string;
+  /** `gdy-kanban-column-body` */
+  columnBody?: string;
+  /** `gdy-kanban-card`, default and custom cards alike */
+  card?: string;
+  /** `gdy-empty` */
+  empty?: string;
+}
+
 export interface KanbanBoardProps<TData> extends DataViewProps<TData> {
   fields: ColumnDefinition<TData>[];
   data: DataInput<TData>;
@@ -96,6 +122,9 @@ export interface KanbanBoardProps<TData> extends DataViewProps<TData> {
    * label. Defaults to `"Agrupar por"`.
    */
   groupSelectorLabel?: string;
+  /** Extra class(es) for the root element, added after `gdy-kanban` and its flags. */
+  className?: string;
+  classNames?: KanbanBoardClassNames;
   boardWrapClassName?: string;
   boardMinHeightClassName?: string;
   columnBodyMaxHeight?: number;

@@ -1,0 +1,35 @@
+/*
+ * Optional bridge for apps whose shadcn/ui variables hold bare HSL channels
+ * (`--primary: 222 47% 11%`, the shadcn v3 format). The default bridge in
+ * tokens.css reads `var(--primary)` as a full color, which is invalid there.
+ * This sheet wraps each of the 19 shadcn variables in `hsl()` instead.
+ *
+ * Import it after gridory/styles.css. It needs every one of those 19 variables:
+ * a missing one leaves its token invalid. Apps whose variables are full colors
+ * (oklch, hsl(), hex: shadcn v4) must not import it.
+ *
+ * Declared once for light and dark: a custom property resolves where it is
+ * declared, so repeating it on `.dark` re-reads the dark channels there. Same
+ * `:where()` as tokens.css, so a plain rule in the app still wins.
+ */
+:where(:root, .dark, [data-theme="dark"]) {
+  --gdy-background: hsl(var(--background));
+  --gdy-foreground: hsl(var(--foreground));
+  --gdy-card: hsl(var(--card));
+  --gdy-card-foreground: hsl(var(--card-foreground));
+  --gdy-popover: hsl(var(--popover));
+  --gdy-popover-foreground: hsl(var(--popover-foreground));
+  --gdy-primary: hsl(var(--primary));
+  --gdy-primary-foreground: hsl(var(--primary-foreground));
+  --gdy-secondary: hsl(var(--secondary));
+  --gdy-secondary-foreground: hsl(var(--secondary-foreground));
+  --gdy-muted: hsl(var(--muted));
+  --gdy-muted-foreground: hsl(var(--muted-foreground));
+  --gdy-accent: hsl(var(--accent));
+  --gdy-accent-foreground: hsl(var(--accent-foreground));
+  --gdy-destructive: hsl(var(--destructive));
+  --gdy-destructive-foreground: hsl(var(--destructive-foreground));
+  --gdy-border: hsl(var(--border));
+  --gdy-input: hsl(var(--input));
+  --gdy-ring: hsl(var(--ring));
+}

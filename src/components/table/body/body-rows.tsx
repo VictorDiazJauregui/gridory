@@ -4,10 +4,12 @@ import { resolveRowGroupState } from "../model/row-grouping";
 import { TableDataRow } from "./TableDataRow";
 import { TableGroupRow } from "./TableGroupRow";
 import type { TableModelProps } from "../model/use-table-core";
+import type { TableRowConfig } from "./row-attributes";
 
 interface RowElementsInput<TData> extends TableModelProps<TData> {
   row: Row<TData>;
   indexInPage: number;
+  config: TableRowConfig<TData>;
 }
 
 const resolveRowPlacement = <TData,>({
@@ -20,7 +22,7 @@ const resolveRowPlacement = <TData,>({
 };
 
 export const buildRowElements = <TData,>(input: RowElementsInput<TData>) => {
-  const { row, model } = input;
+  const { row, model, config } = input;
   const { groupHeader, isCollapsed } = resolveRowPlacement(input);
   const elements: ReactNode[] = [];
   if (groupHeader) {
@@ -28,8 +30,7 @@ export const buildRowElements = <TData,>(input: RowElementsInput<TData>) => {
     elements.push(<TableGroupRow key={key} header={groupHeader} model={model} />);
   }
   if (!isCollapsed) {
-    const { onRowClick } = model.settings;
-    elements.push(<TableDataRow key={row.id} row={row} onRowClick={onRowClick} />);
+    elements.push(<TableDataRow key={row.id} row={row} config={config} />);
   }
   return elements;
 };

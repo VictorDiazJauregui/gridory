@@ -97,6 +97,10 @@ Each entry of `columns` is a `ColumnDefinition<TData>`.
 | `inlineEditOptions` | `FilterOption[]` | Together with `onInlineEdit`, renders the cell as a select with these options. |
 | `onInlineEdit` | `(row: TData, value: string) => void` | Fires with the chosen option value. |
 | `valueHighlights` | `Record<string, CellHighlight>` | `{ className?, style? }` keyed by cell value. `className` is added to the cell content; `style` is applied to the inline select trigger, so it only shows on inline-editable cells. |
+| `align` | `"left" \| "center" \| "right"` | Aligns the cells and the header. See [Alignment](#alignment). Table only. |
+| `headerAlign` | `"left" \| "center" \| "right"` | Aligns the header apart from the cells. Defaults to `align`. Table only. |
+| `ignoreRowClick` | `boolean` | No gesture that starts in this column fires the row. See [Row click and row links](#row-click-and-row-links). Table only. |
+| `overflow` | `"ellipsis" \| "wrap" \| "visible"` | What the cells do with content wider than the column. Default `"ellipsis"`. See [Cell overflow](#cell-overflow). Table only. |
 
 Filter options are computed from every row in `data` (before search and filters), not only from the
 visible page. Columns with `type: "date"` never get a value list: their menu offers the operators
@@ -237,11 +241,162 @@ change the row, so update your data and the cell re-renders. Clicks inside the s
 }
 ```
 
-### Row click
+### Alignment
 
-`onRowClick(row)` fires when a data row is clicked. Rows then carry `data-clickable`, which the
-stylesheet uses for the pointer cursor and the hover background. The row actions menu and the inline
-select stop the click, so they never trigger it.
+`align` (`"left"`, `"center"` or `"right"`) aligns a column: its cells and its header, where the
+title and its sort or filter icon move together and keep their order (`Monto ↑↓`). It renders
+`data-align` on the `th`, on the header trigger and on every `td`; without it the column stays left
+aligned and the markup is unchanged. `headerAlign` aligns the header apart from the cells and
+defaults to `align`.
+
+The row actions column has no definition of its own, so `rowActions` configures it:
+
+- `columnLabel`: header text (default none, an empty header).
+- `align`: alignment of that header and of the ⋯ button (default `"right"`).
+- `triggerLabel`: accessible name and tooltip of the ⋯ button (default `"Opciones"`). The kanban
+  card menu takes it too.
+
+```tsx
+const columns: ColumnDefinition<Quote>[] = [
+  { id: "client", header: "Cliente", accessor: (quote) => quote.client },
+  { id: "amount", header: "Monto", accessor: (quote) => quote.amount, type: "number", align: "right" },
+];
+
+<DataTable
+  columns={columns}
+  data={quotes}
+  rowActions={{ ...rowActions, columnLabel: "Acciones", align: "center", triggerLabel: "Acciones de la cotización" }}
+/>;
+```
+
+```css
+/* Before: by position, and the header title never moved (the trigger is a flex box) */
+.gdy-table-grid tr > :nth-child(2) {
+  text-align: right;
+}
+
+/* Before: a fake title for the actions column */
+.gdy-table-head-row > th:last-child::after {
+  content: "Acciones";
+}
+
+/* After: nothing, `align` and `rowActions.columnLabel` do it */
+```
+
+### Cell overflow
+
+By default every cell cuts its content on one line with an ellipsis. `overflow` changes it per
+column:
+
+| Value | What the cell does |
+|---|---|
+| `"ellipsis"` (default) | One line, cut with `…`. |
+| `"wrap"` | Breaks the text over several lines (`white-space: normal` and `overflow-wrap: anywhere`). The row grows in height; the width is still the one set by `width` (the grid uses `table-layout: fixed`). |
+| `"visible"` | Lets the content overflow the cell (`overflow: visible`). Meant for a badge or a control that sticks out, not for text: the text stays on one line and is drawn over the next cell. |
+
+It renders `data-overflow` on the `gdy-table-cell-content` of every cell of the column; without it
+there is no attribute and the CSS is the same as before.
+
+```tsx
+const columns: ColumnDefinition<Company>[] = [
+  { id: "name", header: "Empresa", accessor: (company) => company.name, width: 200 },
+  { id: "notes", header: "Notas", accessor: (company) => company.notes, width: 280, overflow: "wrap" },
+];
+```
+
+```css
+/* Before: every cell of every table wrapped */
+.gdy-table-cell-content {
+  white-space: normal;
+}
+
+/* After: nothing, `overflow: "wrap"` on the column that needs it */
+```
+
+A combobox or a menu inside a cell does not need `"visible"` when its list opens in a portal, as the
+inline-edit select does: the list is rendered outside the table and nothing cuts it. `"visible"` only
+reaches the edge of the rows container (`gdy-table-wrap`), which scrolls: what goes past that edge is
+cut or adds a scroll bar.
+
+### Row click and row links
+
+`onRowClick(row, event)` fires when a data row is clicked. `event` is the React event of the row: a
+mouse click, or a key press when the row is focusable (see below), typed as `RowClickEvent`. A
+handler that only takes `row` keeps working. Rows then carry `data-clickable`, which the stylesheet
+uses for the pointer cursor and the hover background.
+
+`getRowHref(row)` turns rows into links without wrapping them in `<a>` (HTML does not allow an `<a>`
+around a `<tr>`). The row carries `data-href` and:
+
+| Gesture | With `onRowClick` | Without `onRowClick` |
+|---|---|---|
+| Click | `onRowClick(row, event)`, so your router decides | Navigates to the link in the same tab |
+| Ctrl/Cmd + click, middle click | Opens the link in a new tab (`noopener`) | Same |
+| Enter (focused row) | Same as a click | Same as a click |
+| Ctrl/Cmd + Enter | Opens the link in a new tab | Same |
+
+`javascript:`, `data:` and `vbscript:` destinations are ignored: the row behaves as if it had no
+link. Return `undefined` for rows that should not link.
+
+**Keyboard.** `focusableRows` lets the rows take the focus with Tab and fire with Enter, with a
+visible focus ring (`--gdy-table-row-focus-ring`). It defaults to `false`, so a table that already
+uses `onRowClick` keeps the 1.0.1 behavior. Rows with `getRowHref` are focusable unless you pass
+`focusableRows={false}`: a link you cannot reach with the keyboard is no link. Rows with neither
+`onRowClick` nor `getRowHref` are never focusable.
+
+**What does not fire the row.** The row actions menu and the inline select never do. A column with
+`ignoreRowClick: true` never does, with any gesture: use it for columns of selects, links or text
+meant to be copied. Your own buttons and links in other columns still reach `onRowClick` with a
+plain click, as in 1.0.1; the gestures that open the row link (Ctrl/Cmd + click, middle click, Enter)
+skip them and leave them to the browser.
+
+```tsx
+const navigate = useNavigate();
+
+<DataTable
+  columns={columns}
+  data={companies}
+  getRowId={(company) => company.id}
+  getRowHref={(company) => `/companies/${company.id}`}
+  onRowClick={(company) => navigate(`/companies/${company.id}`)}
+/>;
+```
+
+### Row hooks
+
+Every data row carries `data-row-id` with its id: the value of `getRowId`, or, without it, the
+position of the row in the current page (`"0"`, `"1"`…, repeated on every page and changing with the
+sort). Pass `getRowId` when you need a stable id.
+
+`getRowClassName(row)` adds class(es) after `gdy-table-row`, and `getRowAttributes(row)` adds `data-*`
+and `aria-*` attributes. Both run once per row and render, so keep them cheap.
+
+- `undefined` omits an attribute; `false` omits a `data-*` one too, but renders `"false"` on an
+  `aria-*` one, where it is a state.
+- Other names, and the ones the table writes itself (`data-row-id`, `data-clickable`, `data-href`), are ignored.
+  The table may write more of its own attributes in later versions; prefer names of your domain
+  (`data-archived`, `data-priority`).
+
+```tsx
+<DataTable
+  columns={columns}
+  data={quotes}
+  getRowId={(quote) => quote.id}
+  getRowAttributes={(quote) => ({ "data-archived": quote.archived })}
+/>
+```
+
+```css
+/* Before: reaches the row through a marker inside one of its cells */
+tr:has([data-quote-archived]) {
+  opacity: 0.6;
+}
+
+/* After */
+.gdy-table-row[data-archived] {
+  opacity: 0.6;
+}
+```
 
 ### Layout and scrolling
 
@@ -277,16 +432,48 @@ scroll area; `scrollbarColor` sets their thumb color (see [toolbar.md](toolbar.m
 
 | Callback | Signature | Fires |
 |---|---|---|
-| `onRowClick` | `(row: TData) => void` | A data row is clicked (not the row actions menu or the inline select). |
+| `onRowClick` | `(row: TData, event: RowClickEvent) => void` | A data row is clicked, or Enter on a focusable row (not the row actions menu, the inline select or an `ignoreRowClick` column). |
 | `onGroupChange` | `(groupBy: string \| null) => void` | The user changes the group selector; `null` means "none". Not on mount. |
 | `onPaginationChange` | `(state: ManualPaginationState) => void` | Previous or next page, or a page-size change, in both pagination modes. |
 | `onSearchChange` | `(query: string) => void` | Every change of the search box, in both pagination modes. |
+| `onVisibleRowsChange` | `(state: VisibleRowsState<TData>) => void` | On mount, and whenever search, filters, sort, grouping or the page change the visible rows ([Visible rows](#visible-rows)). |
 | `ColumnDefinition.onInlineEdit` | `(row: TData, value: string) => void` | An option is chosen in an inline-editable cell. |
 
 `onCreate`, the `rowActions` callbacks (`onEdit`, `onArchive`, `onArchiveToggle`, `onRemove`,
 `onHistory`, custom actions), `archivedView.onChange`, `viewSwitch.onChange`, `aiButton.onClick` and
 the `onChange` of toggles and header selectors belong to `DataViewProps`; see
 [toolbar.md](toolbar.md).
+
+### Visible rows
+
+`onVisibleRowsChange` hands you what the user is looking at, so you can show totals or export the
+filtered list without reading the DOM. One event carries both scopes:
+
+| Field | Client-side (default) | `manualPagination` |
+|---|---|---|
+| `pageRows` | The rows of the current page, in screen order. Rows of a collapsed group count: they still take a place in the page. | The page you passed, after the column filters and sort the table applies to it. |
+| `filteredRows` | Every row that passes search, archived view and filters, sorted (and in group order), before paging. With `features.pagination: false` it equals `pageRows`. | Equals `pageRows`: the server has the rest. |
+| `totalRows` | `filteredRows.length`. | `serverRowCount`, or `filteredRows.length` without it. |
+
+It fires on mount and after each change, and never twice for the same result: it compares the rows
+one by one with the last report, so inline `columns` or an inline handler do not re-trigger it.
+Passing `data` with new row objects on every render does: memoize `data` (or keep the rows in state).
+
+```tsx
+// Before: watching the DOM for rendered rows
+const observer = new MutationObserver(() => {
+  const ids = [...document.querySelectorAll("[data-quote-id]")].map((row) => row.dataset.quoteId);
+  setTotals(sumByCurrency(quotes.filter((quote) => ids.includes(quote.id))));
+});
+
+// After
+<DataTable
+  columns={columns}
+  data={quotes}
+  onVisibleRowsChange={({ filteredRows }) => setTotals(sumByCurrency(filteredRows))}
+  toolbarSlots={[{ id: "totals", content: <Totals value={totals} /> }]}
+/>;
+```
 
 ## Toolbar and row actions
 
@@ -301,15 +488,19 @@ They are configured through `DataViewProps` and documented in [toolbar.md](toolb
 The root element is `div.gdy-table`, which also carries the flags `gdy-table-fill` (with `fillHeight`),
 `gdy-table-sticky` (when the sticky header is effective) and `gdy-thin-scroll` (with `thinScrollbars`).
 Inside it, `div.gdy-scope.gdy-card` wraps the toolbar, the rows container `div.gdy-table-wrap.gdy-scroll`
-and the pagination footer. Every rule of the stylesheet uses a single class, so a rule with the same
-class in your CSS, loaded after `gridory/styles.css`, overrides it.
+and the pagination footer. Almost every rule of the stylesheet uses a single class, so a rule with the
+same class in your CSS, loaded after `gridory/styles.css`, overrides it. The few rules with more than
+one class follow the specificity contract of [theming.md](theming.md), and
+[style-hooks.md](style-hooks.md) lists each one with its specificity: to override them, write the same
+selector.
 
 | Hook | Element | State attributes |
 |---|---|---|
-| `gdy-table-head-cell` | Header cell (`th`). | — |
-| `gdy-table-head-trigger` | Button inside the header cell that opens the filter menu or cycles the sort. | `data-filtered` while the column has an active filter. |
-| `gdy-table-row` | Data row (`tr`). | `data-clickable` when `onRowClick` is set. |
-| `gdy-table-cell` | Data cell (`td`); `gdy-table-cell-content` wraps its content. | — |
+| `gdy-table-head-cell` | Header cell (`th`). | `data-column-id` with the `id` of its column; `data-align` with `headerAlign` or `align`. |
+| `gdy-table-head-trigger` | Button inside the header cell that opens the filter menu or cycles the sort. | `data-filtered` while the column has an active filter; `data-align` like its cell. |
+| `gdy-table-row` | Data row (`tr`). | `data-row-id` with the row id; `data-clickable` when `onRowClick` or `getRowHref` is set; `data-href` with the link; plus what `getRowAttributes` returns. Focusable rows take `:focus-visible`. |
+| `gdy-table-cell` | Data cell (`td`); `gdy-table-cell-content` wraps its content. | `data-column-id` with the `id` of its column; `data-align` with `align`. `gdy-table-cell-content` takes `data-overflow` with `overflow`. |
+| `gdy-table-actions-cell` | Box of the ⋯ button in the actions column; `gdy-table-actions-head-label` is the text of its header (`rowActions.columnLabel`). | `data-align` when `rowActions.align` or `columnLabel` is set. |
 | `gdy-table-group-row` | Group row; `gdy-table-group-cell` is its single cell. | — |
 | `gdy-table-group-toggle` | Collapse button of a group, with `gdy-table-group-label` and `gdy-table-group-count`. | `aria-expanded`. |
 | `gdy-table-empty-row` | Row shown when no row matches; its cell is `gdy-table-cell gdy-empty`. | — |
@@ -325,6 +516,7 @@ scope is enough:
 | `--gdy-table-head-fg` | `--gdy-muted-foreground` | Header text. |
 | `--gdy-table-border` | `--gdy-border` | Cell, group cell and footer borders. |
 | `--gdy-table-row-hover-bg` | `--gdy-muted` | Hover of clickable rows. |
+| `--gdy-table-row-focus-ring` | `--gdy-ring` | Keyboard focus ring of a focusable row. |
 | `--gdy-table-group-bg` | `--gdy-accent` | Group row background. |
 
 ```css
@@ -342,6 +534,68 @@ scope is enough:
 }
 ```
 
+### Class names per part
+
+`className` adds classes to the root and `classNames` adds one class per part, always after the
+`gdy-*` hook of that part, so both are visible in the DOM and the hook never goes away:
+
+| `classNames` key | Element | Hook it joins |
+|---|---|---|
+| `root` | Root `div` (same as `className`, which goes first) | `gdy-table` |
+| `toolbar` | Toolbar | `gdy-toolbar` |
+| `wrap` | Rows scroll container | `gdy-table-wrap` |
+| `table` | `table` | `gdy-table-grid` |
+| `headRow` | Header row | `gdy-table-head-row` |
+| `headCell` | Every header cell, the actions column included | `gdy-table-head-cell` |
+| `row` | Every data row | `gdy-table-row` |
+| `cell` | Every data cell, the actions column included | `gdy-table-cell` |
+| `pagination` | Pagination footer | `gdy-table-pagination` |
+| `empty` | Cell of the empty state (it does not take `cell`) | `gdy-empty` |
+
+Group rows keep their own hooks and take neither `row` nor `cell`. `tableMinHeightClassName`,
+`tableMaxHeightClassName` and `tableWrapClassName` keep working: `classNames.wrap` goes after them.
+`getRowClassName(row)` goes after `classNames.row`, since it is the more specific of the two.
+
+```tsx
+<DataTable
+  columns={columns}
+  data={companies}
+  className="shadow-sm"
+  classNames={{ row: "even:bg-slate-50", pagination: "bg-slate-50", empty: "italic" }}
+/>
+```
+
+A consumer class weighs the same as the `gdy-*` rule of its part (one class, 0-1-0), so for a
+property the stylesheet already sets, such as a background, the stylesheet loaded last wins. Load
+yours after `gridory/styles.css`, or change the token of that part from the class: the header cells
+paint the header background themselves when the header is sticky, so a class on `headRow` sets
+`--gdy-table-head-bg` instead (`[--gdy-table-head-bg:theme(colors.sky.100)]` in Tailwind).
+
+### Selecting a column
+
+Every header cell and every data cell carries `data-column-id` with the `id` of its column
+definition, the row actions column included (`_actions`). The group rows and the empty-state cell
+span the whole row and carry none. The attribute follows the column, not its position, so a rule on
+it keeps working when the columns are reordered, hidden or grouped (to align a column, use
+[`align`](#alignment)):
+
+```css
+/* Before: breaks as soon as a column moves */
+.gdy-table-grid tr > :nth-child(5) {
+  background: #f8fafc;
+}
+
+/* After */
+.gdy-table-head-cell[data-column-id="amount"],
+.gdy-table-cell[data-column-id="amount"] {
+  background: #f8fafc;
+}
+
+.gdy-table-cell[data-column-id="_actions"] {
+  width: 64px;
+}
+```
+
 The style contract, the base tokens and the light/dark themes are in [theming.md](theming.md); the
 full catalog of classes, state attributes and tokens is in [style-hooks.md](style-hooks.md).
 
@@ -356,7 +610,11 @@ Own props of `DataTableProps<TData>`, in source order.
 | `normalizeRow` | `(row: unknown, index: number) => TData` | — | Maps each record of an envelope to `TData`. |
 | `getRowId` | `(row: TData, index: number) => string` | — | Stable row key. Without it rows are keyed by index. |
 | `features` | `DataTableFeatures` | all `true` | Capability flags. |
-| `onRowClick` | `(row: TData) => void` | — | Row click handler; marks rows with `data-clickable`. |
+| `onRowClick` | `(row: TData, event: RowClickEvent) => void` | — | Row click handler; marks rows with `data-clickable`. |
+| `getRowHref` | `(row: TData) => string \| undefined` | — | Turns the row into a link (`data-href`). |
+| `focusableRows` | `boolean` | `false` (`true` with `getRowHref`) | Rows take the focus with Tab and fire with Enter. |
+| `getRowClassName` | `(row: TData) => string \| undefined` | — | Extra class(es) for a row, after `gdy-table-row`. |
+| `getRowAttributes` | `(row: TData) => RowAttributes` | — | Extra `data-*` and `aria-*` attributes for a row. |
 | `label` | `string` | `"elementos"` | Noun used by the pagination summary. |
 | `pageSizeOptions` | `number[]` | `[15, 25, 50, 100]` | Options of the page-size select. |
 | `defaultPageSize` | `number` | `50` | Initial page size. |
@@ -365,7 +623,10 @@ Own props of `DataTableProps<TData>`, in source order.
 | `serverPageCount` | `number` | — | Total pages on the server; wins over `serverRowCount`. |
 | `onPaginationChange` | `(state: ManualPaginationState) => void` | — | Page or page-size change. |
 | `onSearchChange` | `(query: string) => void` | — | Search box change. |
+| `onVisibleRowsChange` | `(state: VisibleRowsState<TData>) => void` | — | Visible rows on mount and after each change. |
 | `tableWrapClassName` | `string` | — | Extra classes for the rows container. |
+| `className` | `string` | — | Extra classes for the root, after `gdy-table` and its flags. |
+| `classNames` | `DataTableClassNames` | — | One class per part. See [Class names per part](#class-names-per-part). |
 | `tableMinHeightClassName` | `string` | `"gdy-table-min-h-md"` | Minimum height class of the rows container. |
 | `tableMaxHeightClassName` | `string` | — | Maximum height class of the rows container; enables internal scrolling. |
 | `scrollResetOnPageChange` | `boolean` | `true` | Scroll the rows container to the top on page changes. |
@@ -396,3 +657,10 @@ All of them are exported from `gridory/table` and `gridory`.
 - `ManualPaginationState`: `{ pageIndex: number; pageSize: number }`, the payload of
   `onPaginationChange`.
 - `ColumnSortingState`: `{ id: string; direction: SortDirection }`, the active sort of a column.
+- `VisibleRowsState<TData>`: `{ pageRows: TData[]; filteredRows: TData[]; totalRows: number }`, the
+  payload of `onVisibleRowsChange`.
+- `RowClickEvent`: `MouseEvent<HTMLTableRowElement> | KeyboardEvent<HTMLTableRowElement>`, the second
+  argument of `onRowClick`.
+- `RowAttributes`: the object `getRowAttributes` returns, with `data-*` and `aria-*` names only and
+  `string | number | boolean | undefined` values.
+- `DataTableClassNames`: the optional classes per part of `classNames`.

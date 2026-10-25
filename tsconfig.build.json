@@ -18,6 +18,9 @@
     "src/country-select.ts",
     "src/phone-input.ts",
     "src/sidebar.ts",
+    "src/markdown-editor.ts",
+    "src/markdown-editor-mermaid.ts",
+    "src/markdown-editor-katex.ts",
     "src/components/table/**/*",
     "src/components/kanban/**/*",
     "src/components/ai/**/*",
@@ -26,6 +29,7 @@
     "src/components/country-select/**/*",
     "src/components/phone-input/**/*",
     "src/components/sidebar/**/*",
+    "src/components/markdown-editor/**/*",
     "src/components/shared/**/*",
     "src/components/ui/**/*",
     "src/lib/cn.ts"

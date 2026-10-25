@@ -10,6 +10,20 @@ const BROWSER_TESTS = "src/test/**/*.browser.test.{ts,tsx}";
 // contributor downloads a browser.
 const installedChrome = playwright({ launchOptions: { channel: "chrome" } });
 
+const LAZY_EDITOR_DEPENDENCIES = [
+  "@codemirror/commands",
+  "@codemirror/language",
+  "@codemirror/search",
+  "@codemirror/state",
+  "@codemirror/view",
+  "@lezer/highlight",
+  "@lezer/markdown",
+  "highlight.js/lib/core",
+  "highlight.js/lib/languages/*",
+  "katex",
+  "mermaid",
+];
+
 export default mergeConfig(
   viteConfig,
   defineConfig({
@@ -20,6 +34,11 @@ export default mergeConfig(
           test: {
             name: "unit",
             environment: "jsdom",
+            // One jsdom per worker instead of one per file; each file still gets its own context.
+            pool: "vmThreads",
+            // The CI runner is slower and busier than a local machine.
+            testTimeout: 15_000,
+            hookTimeout: 15_000,
             setupFiles: ["src/test/setup.ts"],
             css: false,
             include: ["src/test/**/*.test.{ts,tsx}"],
@@ -28,6 +47,7 @@ export default mergeConfig(
         },
         {
           extends: true,
+          optimizeDeps: { include: LAZY_EDITOR_DEPENDENCIES },
           test: {
             name: "browser",
             setupFiles: ["src/test/browser/setup.ts"],
