@@ -134,6 +134,12 @@ que falle sin él. Las features nuevas necesitan al menos un smoke test del cami
 Los helpers de `src/test/browser/` miden cajas y estilos computados, y cambian el tema y el tamaño de
 pantalla (escritorio, iPhone 14 Pro y Pixel 7).
 
+En listas largas, como países o prefijos, elige una opción con `getOptionByName` de
+`src/test/option-queries.ts` en lugar de `getByRole("option", { name })`. `getByRole` calcula el
+nombre accesible de todas las opciones, y en jsdom eso cuesta más de 100 ms por consulta sobre los ~250
+países y empuja los tests por encima del límite de tiempo de la CI. El helper comprueba lo mismo (una
+sola opción visible con ese nombre accesible), pero solo sobre la que coincide.
+
 El proyecto `browser` usa el Google Chrome instalado en tu máquina, igual que la CI usa el que trae el
 runner de GitHub, así que no hay que descargar ningún navegador. Solo necesitas tener Chrome instalado.
 

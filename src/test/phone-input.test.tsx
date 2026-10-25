@@ -3,14 +3,13 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, expect, test, vi } from "vitest";
 import { PhoneInput } from "../components/phone-input";
 import type { PhoneInputProps } from "../components/phone-input";
+import { getOptionByName } from "./option-queries";
 
 const prefixButton = (name: RegExp = /^Prefijo/) => screen.getByRole("combobox", { name });
 
 const numberInput = (name = "Teléfono") => screen.getByRole("textbox", { name });
 
 const searchBox = () => screen.getByRole("combobox", { name: "Buscar prefijo" });
-
-const option = (name: RegExp) => screen.getByRole("option", { name });
 
 const visibleOptionNames = () => screen.queryAllByRole("option").map((element) => element.textContent);
 
@@ -83,7 +82,7 @@ test("choosing Canadá emits CA, closes the list and names the prefix after Cana
   const { user } = renderPhoneInput({ onValueChange });
   await openList(user);
   await user.type(searchBox(), "canad");
-  await user.click(option(/^Canadá/));
+  await user.click(getOptionByName(/^Canadá/));
   await expectListClosed();
   expect(onValueChange).toHaveBeenCalledExactlyOnceWith({ country: "CA", number: "" });
   expect(prefixButton(/^Prefijo: Canadá \+1$/)).toHaveFocus();
@@ -94,10 +93,10 @@ test("reopening with Canadá chosen marks it, makes it active and scrolls it int
   const scrollIntoView = vi.spyOn(HTMLElement.prototype, "scrollIntoView");
   const { user } = renderPhoneInput({ defaultCountry: "CA" });
   await openList(user);
-  const canada = option(/^Canadá/);
+  const canada = getOptionByName(/^Canadá/);
   expect(canada).toHaveAttribute("aria-selected", "true");
   expect(canada).toHaveAttribute("data-active");
-  expect(option(/^Estados Unidos/)).toHaveAttribute("aria-selected", "false");
+  expect(getOptionByName(/^Estados Unidos/)).toHaveAttribute("aria-selected", "false");
   expect(scrollIntoView.mock.contexts.at(-1)).toBe(canada);
 });
 
@@ -105,7 +104,7 @@ test("choosing the country already chosen only closes the list", async () => {
   const onValueChange = vi.fn();
   const { user } = renderPhoneInput({ defaultCountry: "PE", onValueChange });
   await openList(user);
-  await user.click(option(/^Perú/));
+  await user.click(getOptionByName(/^Perú/));
   await expectListClosed();
   expect(onValueChange).not.toHaveBeenCalled();
 });

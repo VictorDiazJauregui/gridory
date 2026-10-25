@@ -130,6 +130,12 @@ fails without it. New features need at least a smoke test of the main path.
 The helpers in `src/test/browser/` measure boxes and computed styles, and switch the theme and the
 screen size (desktop, iPhone 14 Pro and Pixel 7).
 
+In long lists, such as countries or dial codes, pick an option with `getOptionByName` from
+`src/test/option-queries.ts` instead of `getByRole("option", { name })`. `getByRole` computes the
+accessible name of every option, which in jsdom takes over 100 ms per query on the ~250 countries and
+pushes tests past the CI timeout. The helper checks the same things (a single visible option with
+that accessible name) on the match only.
+
 The `browser` project uses the Google Chrome installed on your machine, the same way CI uses the one
 the GitHub runner ships, so there is no browser to download. You only need Chrome installed.
 
