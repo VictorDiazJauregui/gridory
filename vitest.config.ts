@@ -38,6 +38,7 @@ export default mergeConfig(
             pool: "vmThreads",
             // The CI runner is slower and busier than a local machine.
             testTimeout: 15_000,
+            hookTimeout: 15_000,
             setupFiles: ["src/test/setup.ts"],
             css: false,
             include: ["src/test/**/*.test.{ts,tsx}"],
