@@ -656,6 +656,103 @@ del thumb (consulta [toolbar.es.md](toolbar.es.md)).
 </div>
 ```
 
+### Textos e idioma
+
+Cualquier texto de la tabla se reemplaza con `labels`, y `calendarLocale` cambia el idioma del
+calendario de los filtros. Los defaults están en español (decisión de producto); pasá solo las claves
+que quieras cambiar y el resto queda igual. Los textos con valores son funciones.
+
+```tsx
+import { enUS } from "date-fns/locale";
+
+<DataTable
+  columns={columns}
+  data={invoices}
+  labels={{
+    searchPlaceholder: "Search...",
+    clearFilters: "Clear filters",
+    showing: ({ from, to, total, itemsName }) =>
+      total === 0 ? `0 ${itemsName}` : `Showing ${from}–${to} of ${total} ${itemsName}`,
+    pageOf: (page, count) => `Page ${page} of ${count}`,
+    itemsName: "invoices",
+  }}
+  calendarLocale={enUS}
+/>;
+```
+
+- **Prioridad.** Las props sueltas de antes (`searchPlaceholder`, `createLabel`, `emptyMessage`,
+  `label`, `groupSelectorLabel`, `groupNoneLabel`, `groupEmptyValueLabel`, los `*Label` de
+  `rowActions`, `archivedView.label` y `optionLabels`, `viewSwitch.tableLabel` y `kanbanLabel`,
+  `aiButton.label`) siguen funcionando y ganan sobre su clave.
+- **Memorizalo.** Guardá `labels` en una constante o en un `useMemo`: un objeto nuevo en cada render
+  rearma las columnas y los menús cada vez.
+- **Los contenidos son tuyos.** Los títulos de columna, los valores de las celdas y tus propios
+  controles de la barra son textos de tu app: traducilos ahí.
+- **`calendarLocale`** recibe un locale de `date-fns` y cambia los nombres de meses y días, el primer
+  día de la semana y el desplegable de meses. Sin la prop, el calendario queda en español. Un locale de
+  `react-day-picker/locale` (`import { enUS } from "react-day-picker/locale"`) traduce además los
+  nombres accesibles del calendario ("mes anterior", "elegir el año"), que si no quedan en inglés.
+- Los campos de fecha muestran como placeholder la máscara de `dateInputFormat` (`"dd/mm/yyyy"`);
+  elegí la que esperan tus usuarios.
+
+Claves comunes a la tabla y al kanban (`DataViewLabels`):
+
+| Clave | Default | Qué es | Prop suelta que gana |
+|---|---|---|---|
+| `searchPlaceholder` | `"Buscar..."` (kanban: `"Buscar cards..."`) | Placeholder del buscador | `searchPlaceholder` |
+| `createButton` | `"Nuevo"` | Botón de crear | `createLabel` |
+| `emptyMessage` | `"No se encontraron resultados"` | Ninguna fila o card coincide | `emptyMessage` |
+| `groupSelector` | `"Agrupar por"` | Prefijo y nombre accesible del selector de agrupar | `groupSelectorLabel` |
+| `clearFilters` | `"Limpiar filtros"` | Botón que limpia todos los filtros | — |
+| `archivedView` | `"Mostrar"` | Prefijo y nombre accesible del selector de archivados | `archivedView.label` |
+| `archivedActive` | `"Activos"` | Opción de archivados: activos | `archivedView.optionLabels.active` |
+| `archivedArchived` | `"Archivados"` | Opción de archivados: archivados | `archivedView.optionLabels.archived` |
+| `archivedAll` | `"Todos"` | Opción de archivados: todos | `archivedView.optionLabels.all` |
+| `viewSwitchTable` | `"Tabla"` | Cambio de vista: tabla | `viewSwitch.tableLabel` |
+| `viewSwitchKanban` | `"Kanban"` | Cambio de vista: kanban | `viewSwitch.kanbanLabel` |
+| `aiButton` | `"AI"` | Botón de IA | `aiButton.label` |
+| `rowActionsTrigger` | `"Opciones"` | Tooltip y nombre accesible del botón ⋯ | `rowActions.triggerLabel` |
+| `editAction` | `"Editar"` | Acción de editar | `rowActions.editLabel` |
+| `archiveAction` | `"Archivar"` | Acción de archivar | `rowActions.archiveLabel` |
+| `unarchiveAction` | `"Desarchivar"` | Acción de desarchivar | `rowActions.unarchiveLabel` |
+| `deleteAction` | `"Eliminar"` | Acción de eliminar | `rowActions.deleteLabel` |
+| `historyAction` | `"Ver historial"` | Acción de historial | `rowActions.historyLabel` |
+| `sortTitle` | `"Ordenar"` | Sección de orden de los menús | — |
+| `sortAscending` | `"Ascendente (A → Z)"` | Orden ascendente de una columna de valores | — |
+| `sortDescending` | `"Descendente (Z → A)"` | Orden descendente de una columna de valores | — |
+| `filterTitle` | `"Filtrar"` | Sección de filtro del menú de valores | — |
+| `selectAll(count)` | `"Seleccionar todo (n)"` | Marca todas las opciones listadas; `count` es cuántas hay | — |
+| `clearSelection` | `"Limpiar"` | Limpia la selección del menú de valores | — |
+| `filterSearchPlaceholder` | `"Buscar..."` | Buscador del menú de valores | — |
+| `valuesTitle` | `"Valores"` | Sección de valores del menú | — |
+| `noResults` | `"Sin resultados"` | Menú de valores sin opciones para la búsqueda | — |
+| `dateSortAscending` | `"Ascendente (antigua → reciente)"` | Orden ascendente de una fecha | — |
+| `dateSortDescending` | `"Descendente (reciente → antigua)"` | Orden descendente de una fecha | — |
+| `operatorTitle` | `"Operador"` | Sección de operador del menú de fecha | — |
+| `operatorAfter` | `"Mayor que (fecha posterior)"` | Operador "mayor que" | — |
+| `operatorBefore` | `"Menor que (fecha anterior)"` | Operador "menor que" | — |
+| `operatorBetween` | `"Entre (rango)"` | Operador "entre" | — |
+| `datesTitle` | `"Fechas"` | Sección de fechas del menú de fecha | — |
+| `dateClear` | `"Limpiar"` | Limpia el filtro de fecha | — |
+| `dateApply` | `"Aplicar"` | Aplica el filtro de fecha | — |
+| `pickDate` | `"Seleccionar fecha"` | Nombre accesible del botón del calendario (una fecha) | — |
+| `pickRange` | `"Seleccionar rango"` | Nombre accesible del botón del calendario (rango) | — |
+| `labeledValue(label, value)` | `` `${label}: ${value}` `` | Une un prefijo y su valor: "Agrupar por: Ninguno", "Mostrar: Activos", los selectores propios y la etiqueta de la card | — |
+
+Claves propias de la tabla (`DataTableLabels`):
+
+| Clave | Default | Qué es | Prop suelta que gana |
+|---|---|---|---|
+| `itemsName` | `"elementos"` | Sustantivo del resumen de paginación | `label` |
+| `showing({ from, to, total, itemsName })` | `"Mostrando 1–25 de 53 elementos"`; `"0 elementos"` sin filas | Resumen de paginación | — |
+| `pageSize` | `"Elementos por página"` | Texto y nombre accesible del selector de tamaño | — |
+| `pageOf(page, count)` | `"Página 1 de 3"` | Posición; `page` es `0` sin filas | — |
+| `previousPage` | `"Página anterior"` | Nombre accesible de la flecha anterior | — |
+| `nextPage` | `"Página siguiente"` | Nombre accesible de la flecha siguiente | — |
+| `inlineSelectPlaceholder` | `"Seleccionar..."` | Celda editable sin valor | — |
+| `groupNone` | `"Ninguno"` | Opción "sin agrupar" | `groupNoneLabel` |
+| `groupEmptyValue` | `"Sin valor"` | Grupo de las filas sin valor | `groupEmptyValueLabel` |
+
 ## Eventos
 
 | Callback | Firma | Se dispara |
@@ -840,6 +937,7 @@ Props propias de `DataTableProps<TData>`, en el orden del código fuente.
 
 | Prop | Tipo | Por defecto | Descripción |
 |---|---|---|---|
+| `labels` | `Partial<DataTableLabels>` | textos en español | Reemplaza cualquier texto. Ver [Textos e idioma](#textos-e-idioma). |
 | `columns` | `ColumnDefinition<TData>[]` | — | Definiciones de columna (obligatoria). |
 | `data` | `DataInput<TData>` | — | Filas: un array o un envoltorio de API (obligatoria). |
 | `normalizeRow` | `(row: unknown, index: number) => TData` | — | Convierte cada registro del envoltorio en `TData`. |
@@ -890,12 +988,14 @@ Props propias de `DataTableProps<TData>`, en el orden del código fuente.
 `viewSwitch`, `aiButton`, `toggleGroups`,
 `headerSelectors`, `toolbarLayout`, `selectTheme`, `thinScrollbars`, `scrollbarColor`,
 `optionHoverColor`, `dateFilterRequireOperator`, `dateInputFormat`, `calendarMonthYearDropdown`,
-`calendarFromYear`, `calendarToYear`), documentadas en [toolbar.es.md](toolbar.es.md).
+`calendarFromYear`, `calendarToYear`, `calendarLocale`), documentadas en [toolbar.es.md](toolbar.es.md).
 
 ### Tipos
 
 Todos se exportan desde `gridory/table` y `gridory`.
 
+- `DataTableLabels`: todos los textos de la tabla, la forma de `labels` ([Textos e idioma](#textos-e-idioma)).
+  Extiende `DataViewLabels`, los textos que la tabla comparte con el kanban.
 - `DataTableFeatures`: los flags booleanos opcionales de `features` (`search`, `sorting`, `filtering`,
   `pagination`, `rowActions`, `createButton`, `grouping`).
 - `GroupHeader`: `{ value: string; label: string; count: number }`, una fila de grupo.

@@ -164,8 +164,12 @@ fecha activo.
 - `calendarMonthYearDropdown` (por defecto `true`) muestra desplegables de mes y año en la cabecera del
   calendario; con `false`, el mes aparece como texto fijo. Los años van de `calendarFromYear` (por
   defecto, el año actual menos 100) a `calendarToYear` (por defecto, el año actual más 10).
-- El calendario usa el locale español (nombres de meses y de días, semanas que empiezan el lunes).
-  Ninguna prop lo cambia.
+- El calendario usa el locale español (nombres de meses y de días, semanas que empiezan el lunes),
+  salvo que `calendarLocale` indique otro locale de `date-fns`. Un locale de `react-day-picker/locale`
+  traduce además los nombres accesibles del calendario.
+- Todos los textos de la barra y de los menús ("Limpiar filtros", "Ordenar", "Aplicar"…) se reemplazan
+  con `labels`: ver [table.es.md](table.es.md#textos-e-idioma) y
+  [kanban.es.md](kanban.es.md#textos-e-idioma).
 
 ### Limpiar filtros
 
@@ -431,6 +435,7 @@ Todos los tipos de esta sección se exportan desde `gridory`, `gridory/table` y 
 | `calendarMonthYearDropdown` | `boolean` | `true` | Desplegables de mes y año en la cabecera del calendario. |
 | `calendarFromYear` | `number` | año actual menos 100 | Primer año del desplegable de años. |
 | `calendarToYear` | `number` | año actual más 10 | Último año del desplegable de años. |
+| `calendarLocale` | `Locale` (`date-fns`) | español (`es`) | Idioma del calendario de los filtros. |
 
 ### ToolbarLayout
 
