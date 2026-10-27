@@ -8,11 +8,13 @@ import { resolveMenuNodes } from "../../shared/menu/menu-nodes";
 import { renderMenuNodes } from "../../shared/menu/render-menu-nodes";
 import { stopPropagation } from "../../shared/stop-propagation";
 import { resolveTriggerLabel } from "../../shared/menu/trigger-label";
-import type { RowActions } from "../types";
+import type { RowActionLabels } from "../../shared/menu/menu-nodes";
+import type { KanbanBoardLabels, RowActions } from "../types";
 
 interface KanbanCardMenuProps<TData> {
   card: TData;
   rowActions?: RowActions<TData>;
+  labels: RowActionLabels & Pick<KanbanBoardLabels, "rowActionsTrigger">;
 }
 
 const renderCardMenuTrigger = (label: string) => (
@@ -29,12 +31,12 @@ const renderCardMenuTrigger = (label: string) => (
 
 export const KanbanCardMenu = <TData,>(props: KanbanCardMenuProps<TData>) => {
   if (!props.rowActions) return null;
-  const nodes = resolveMenuNodes(props.card, props.rowActions);
+  const nodes = resolveMenuNodes({ row: props.card, actions: props.rowActions, labels: props.labels });
   if (nodes.length === 0) return null;
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        {renderCardMenuTrigger(resolveTriggerLabel(props.rowActions))}
+        {renderCardMenuTrigger(resolveTriggerLabel(props.rowActions, props.labels))}
       </DropdownMenuTrigger>
       <DropdownMenuContent onClick={stopPropagation}>
         {renderMenuNodes(nodes)}

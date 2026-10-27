@@ -38,17 +38,17 @@ const KanbanLoadingColumn = ({ label, cardCount, classNames }: LoadingColumnProp
 
 // The known columns keep their real title (no count: it is not known yet); before the first
 // data there is none, so placeholder columns stand in for them.
-const resolveLoadingLabels = <TData,>({ state }: Pick<KanbanSectionProps<TData>, "state">) => {
+const resolveLoadingLabels = <TData,>({ state, view }: KanbanSectionProps<TData>) => {
   const values = state.visibleColumnValues;
   if (values.length === 0) return Array.from({ length: PLACEHOLDER_COLUMN_COUNT }, () => undefined);
-  return values.map((value) => resolveColumnLabel(state.groupColumns, value));
+  return values.map((value) => resolveColumnLabel(state.groupColumns, value, view.labels.emptyValue));
 };
 
 export const KanbanLoadingColumns = <TData,>({ state, view }: KanbanSectionProps<TData>) => {
   const cardCount = resolveLoadingRowCount(view.loadingRowCount);
   return (
     <div className="gdy-kanban-board">
-      {resolveLoadingLabels({ state }).map((label, index) => (
+      {resolveLoadingLabels({ state, view }).map((label, index) => (
         <KanbanLoadingColumn key={label ?? `placeholder-${index}`} label={label} cardCount={cardCount} classNames={view.classNames} />
       ))}
     </div>

@@ -2,6 +2,7 @@ import type { KanbanBoardView } from "../board-view";
 import type {
   ColumnDefinition,
   KanbanBoardClassNames,
+  KanbanBoardLabels,
   KanbanBoardProps,
   KanbanGroupOption,
 } from "../types";
@@ -23,6 +24,7 @@ export interface KanbanCardSettings<TData> extends CardCallbacks<TData> {
   fields: ColumnDefinition<TData>[];
   rowActionsEnabled: boolean;
   cardClassName?: string;
+  labels: KanbanBoardLabels;
 }
 
 export interface KanbanColumnSettings<TData> extends ColumnActions<TData> {
@@ -60,6 +62,7 @@ export const buildColumnSettings = <TData>(
     rowActionsEnabled: view.flags.rowActions,
     onCardClick: view.onCardClick,
     cardClassName: view.classNames?.card,
+    labels: view.labels,
   },
   classNames: view.classNames,
 });

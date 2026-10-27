@@ -2,6 +2,7 @@ import { DefaultKanbanCardFields } from "./DefaultKanbanCardFields";
 import { DefaultKanbanCardHead } from "./DefaultKanbanCardHead";
 import type {
   ColumnDefinition,
+  KanbanBoardLabels,
   KanbanGroupOption,
   RowActions,
 } from "../types";
@@ -12,22 +13,20 @@ interface DefaultKanbanCardProps<TData> {
   group: KanbanGroupOption<TData>;
   groupValue: string;
   rowActions?: RowActions<TData>;
+  labels: KanbanBoardLabels;
 }
 
-export const DefaultKanbanCard = <TData,>(
-  props: DefaultKanbanCardProps<TData>,
-) => (
-  <>
-    <DefaultKanbanCardHead
-      card={props.card}
-      fields={props.fields}
-      rowActions={props.rowActions}
-    />
-    <div className="gdy-kanban-card-meta">
-      <span className="gdy-kanban-tag">
-        {props.group.label}: {props.groupValue || "Sin valor"}
-      </span>
-    </div>
-    <DefaultKanbanCardFields card={props.card} fields={props.fields} />
-  </>
-);
+export const DefaultKanbanCard = <TData,>(props: DefaultKanbanCardProps<TData>) => {
+  const { card, fields, labels } = props;
+  return (
+    <>
+      <DefaultKanbanCardHead card={card} fields={fields} rowActions={props.rowActions} labels={labels} />
+      <div className="gdy-kanban-card-meta">
+        <span className="gdy-kanban-tag">
+          {labels.labeledValue(props.group.label, props.groupValue || labels.emptyValue)}
+        </span>
+      </div>
+      <DefaultKanbanCardFields card={card} fields={fields} labels={labels} />
+    </>
+  );
+};

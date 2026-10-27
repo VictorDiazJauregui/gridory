@@ -4,6 +4,7 @@ export { KanbanBoard } from "./components/kanban";
 export type {
   KanbanBoardClassNames,
   KanbanBoardFeatures,
+  KanbanBoardLabels,
   KanbanBoardProps,
   KanbanCardClickEvent,
   KanbanCardRenderContext,
@@ -43,6 +44,7 @@ export type {
   BuiltInActionId,
   BuiltInMenuRef,
   DataViewProps,
+  DataViewLabels,
   HeaderSelectConfig,
   MenuItem,
   MenuLabel,

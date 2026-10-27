@@ -21,6 +21,7 @@ export const KanbanDateFilterMenu = <TData,>(
       {...pickCalendarSettings(view)}
       onChange={(next) => state.setDateFilter(field.id, next)}
       onClose={state.closeFilterMenu}
+      labels={view.labels}
       {...buildFilterSortProps(props, state.sortBy)}
       onSortClear={() => state.clearColumnSort(field.id)}
     />
