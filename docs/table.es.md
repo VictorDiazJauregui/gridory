@@ -102,6 +102,7 @@ Cada entrada de `columns` es un `ColumnDefinition<TData>`.
 | `headerAlign` | `"left" \| "center" \| "right"` | Alinea el encabezado aparte de las celdas. Por defecto copia `align`. Solo la tabla. |
 | `ignoreRowClick` | `boolean` | Ningún gesto que empiece en esta columna dispara la fila. Ver [Clic en fila y filas como enlace](#clic-en-fila-y-filas-como-enlace). Solo la tabla. |
 | `overflow` | `"ellipsis" \| "wrap" \| "visible"` | Qué hacen las celdas con un contenido más ancho que la columna. Por defecto `"ellipsis"`. Ver [Recorte de celdas](#recorte-de-celdas). Solo la tabla. |
+| `footer` | `(context: ColumnFooterContext<TData>) => ReactNode` | Contenido de esta columna en la fila de totales. Ver [Fila de totales](#fila-de-totales). Solo la tabla. |
 
 Las opciones de filtro se calculan con todas las filas de `data` (antes de la búsqueda y los filtros), no
 solo con la página visible. Las columnas con `type: "date"` nunca reciben una lista de valores: su menú
@@ -127,7 +128,9 @@ La caja de búsqueda de la toolbar (`searchPlaceholder`, por defecto `"Buscar...
 las que alguna columna buscable contiene el texto buscado, sin distinguir mayúsculas ni acentos (`peru`
 encuentra `Perú`), sobre los valores que devuelve `accessor`. Todas las columnas son buscables salvo las
 que declaran `searchable: false`. Cada cambio también llama a `onSearchChange` con el texto tal cual lo
-escribió el usuario. Con `manualPagination` no se filtra en local y la búsqueda solo se notifica.
+escribió el usuario (tras una pausa con `searchDebounceMs`). Con `manualPagination` no se filtra en
+local y la búsqueda solo se notifica. Para manejar el texto desde tu app, mira
+[Búsqueda](#búsqueda-1) en Estado controlado.
 
 ### Ordenamiento
 
@@ -207,7 +210,8 @@ además el total que muestra el resumen. `onPaginationChange({ pageIndex, pageSi
 el usuario cambia de página o de tamaño de página; `onSearchChange(query)` se dispara en cada cambio de
 búsqueda, que además devuelve la tabla a la primera página. Los filtros por columna, el orden, el
 agrupado y la vista de archivados se siguen aplicando en local sobre las filas de la página actual;
-para ordenar en el servidor, usa `manualSorting` ([Estado controlado](#estado-controlado)).
+para ordenar o filtrar en el servidor, usa `manualSorting` y `manualFiltering`
+([Estado controlado](#estado-controlado)).
 
 ```tsx
 <DataTable
@@ -262,6 +266,116 @@ useEffect(() => {
   onPaginationChange={setPage}
 />;
 ```
+
+#### Filtros controlados
+
+- `columnFilters` (`ColumnFiltersState`) fija los filtros de valores y de fecha:
+  `{ values: { status: ["Activa"] }, dates: { createdAt: { op: "gt", date: "2026-01-01", dateFrom: "", dateTo: "" } } }`.
+- `onFiltersChange(filters)` se dispara cuando el usuario cambia los filtros activos, controlado o no: un
+  menú de valores, el botón "Aplicar" o "Limpiar" de un menú de fecha y "Limpiar filtros", que avisa
+  `{ values: {}, dates: {} }`. Recibe **solo los filtros activos**: ninguna columna con la selección
+  vacía ni un filtro de fecha incompleto (un operador sin su fecha), así que se puede mandar tal cual al
+  servidor. No se dispara si no cambió nada activo, ni cuando cambia la prop `columnFilters`.
+- `manualFiltering` (por defecto `false`) indica que filtra el servidor: la tabla nunca filtra `data` y
+  solo avisa los filtros. Al cambiarlos vuelve a la primera página; `onPaginationChange` se dispara solo
+  si no estaba ya en la primera página.
+- Los menús de valores listan las `filterOptions` de la columna cuando las tiene. Si no, listan los
+  valores de las filas cargadas, que con `manualFiltering` ya vienen filtradas (y con
+  `manualPagination`, son una sola página): la tabla suma los valores marcados para que siempre se
+  puedan desmarcar, pero faltan los demás valores del servidor. **Pasa las `filterOptions` de cada
+  columna filtrable cuando filtra el servidor.**
+
+```tsx
+const [filters, setFilters] = useState<ColumnFiltersState>({ values: {}, dates: {} });
+
+useEffect(() => {
+  fetchInvoices({ ...page, sort: sorting, filters }).then(setResult);
+}, [sorting, filters, page]);
+
+<DataTable
+  columns={columns} // cada columna filtrable con sus filterOptions
+  data={result.rows}
+  manualPagination
+  manualSorting
+  manualFiltering
+  serverRowCount={result.total}
+  columnFilters={filters}
+  onFiltersChange={setFilters}
+  sorting={sorting}
+  onSortChange={setSorting}
+  onPaginationChange={setPage}
+/>;
+```
+
+#### Página y tamaño de página
+
+- `pageIndex` (desde 0) y `pageSize` se controlan por separado; `onPaginationChange` mantiene su firma
+  y siempre trae los dos valores. `pageIndex={0}` vuelve a la primera página sin remontar la tabla (la
+  búsqueda, los filtros y el orden se mantienen).
+- Mientras `pageIndex` está controlado, cada página que la tabla elige por su cuenta se avisa con
+  `onPaginationChange` para que tu estado la siga: la primera página después de un cambio de búsqueda,
+  filtro, orden, agrupado o vista de archivados, y la última cuando la que pasas está fuera de rango (se
+  muestra al instante, se avisa una vez y nunca mientras `loading`). Sin `pageIndex` esos cambios siguen
+  en silencio, como hasta ahora.
+- Un `pageSize` cambiado desde fuera vuelve a la primera página, igual que el select de tamaño. Un
+  tamaño que no está en `pageSizeOptions` (por ejemplo `13`) aparece en el select mientras está activo.
+
+#### Búsqueda
+
+- `search` fija el texto de la caja de búsqueda. `onSearchChange(query)` mantiene su firma y solo avisa
+  lo que escribe el usuario, nunca los cambios de la prop.
+- `searchDebounceMs` espera esa cantidad de milisegundos sin escribir antes de llamar a
+  `onSearchChange`. La caja y la búsqueda local responden al instante: solo espera el aviso. Con
+  `manualPagination`, la vuelta a la primera página también espera y llega junto con la búsqueda, así
+  un único pedido cubre los dos. Con `search` controlada, la caja conserva lo que escribe el usuario
+  mientras espera el aviso, y toma cualquier otro valor que fije tu app (el aviso pendiente se
+  descarta). También se descarta si la tabla se desmonta. Sin la prop se avisa cada tecla, como hasta
+  ahora.
+
+```tsx
+const [query, setQuery] = useState("");
+const [page, setPage] = useState({ pageIndex: 0, pageSize: 25 });
+
+<button onClick={() => setPage({ ...page, pageIndex: 0 })}>Primera página</button>
+<DataTable
+  columns={columns}
+  data={result.rows}
+  manualPagination
+  serverRowCount={result.total}
+  search={query}
+  searchDebounceMs={300}
+  onSearchChange={setQuery}
+  pageIndex={page.pageIndex}
+  pageSize={page.pageSize}
+  onPaginationChange={setPage}
+/>;
+```
+
+#### Receta: tamaño de página según la altura del contenedor
+
+La tabla no calcula sola el tamaño de sus páginas. Con `pageSize` controlado, mide el contenedor y
+divide por el alto de fila (usa el alto de tus filas, con o sin acciones):
+
+```tsx
+const ROW_HEIGHT = 40;
+const CHROME_HEIGHT = 140; // barra + encabezado + paginación
+
+const usePageSizeByHeight = (element: HTMLElement | null) => {
+  const [pageSize, setPageSize] = useState(10);
+  useEffect(() => {
+    if (!element) return;
+    const observer = new ResizeObserver(([entry]) => {
+      setPageSize(Math.max(1, Math.floor((entry.contentRect.height - CHROME_HEIGHT) / ROW_HEIGHT)));
+    });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [element]);
+  return pageSize;
+};
+```
+
+Pasa el resultado como `pageSize`: cada cambio vuelve a la primera página, y el tamaño aparece en el
+select aunque no esté en `pageSizeOptions`.
 
 ### Impresión
 
@@ -469,6 +583,48 @@ tr:has([data-quote-archived]) {
 }
 ```
 
+### Fila de totales
+
+Una columna con `footer` agrega una fila de totales: un `tfoot.gdy-table-foot` con un
+`tr.gdy-table-foot-row` y un `td.gdy-table-foot-cell` por columna visible (la de acciones incluida,
+vacía), cada uno con el `data-column-id` y el `data-align` de su columna, así cada total queda debajo de
+su columna y sigue su alineación. La fila solo se pinta si alguna columna visible tiene `footer`; sin
+eso no hay `tfoot`.
+
+- `footer(context)` devuelve el contenido de su celda. `context` es el mismo objeto que avisa
+  `onVisibleRowsChange` (`ColumnFooterContext<TData>`: `pageRows`, `filteredRows` y `totalRows`, ver
+  [Filas visibles](#filas-visibles)), así un total puede cubrir la página o todas las filas filtradas,
+  y sigue a la búsqueda, los filtros, el orden, el agrupado y la página. La tabla no suma nada: lo hace
+  la función.
+- Con `stickyHeader` y un scroll interno (`fillHeight` o `tableMaxHeightClassName`) la fila queda fija
+  abajo del área de filas mientras las filas se desplazan. Sin scroll interno, sigue a la última fila.
+- Mientras `loading`, las celdas con `footer` muestran una barra fantasma y `footer` no se llama.
+- Con `printMode` la fila se imprime una sola vez, después de la última fila (no al pie de cada hoja).
+- Se ve como el encabezado (`--gdy-table-foot-bg`, que cae en `--gdy-table-head-bg`) con una línea
+  arriba; `classNames.foot` y `classNames.footCell` suman tus clases.
+
+```tsx
+// Antes: totales pintados fuera de la tabla, alineados a mano
+<DataTable
+  columns={columns}
+  data={quotes}
+  onVisibleRowsChange={({ filteredRows }) => setTotals(sumByCurrency(filteredRows))}
+/>
+<div className="totals" style={{ paddingLeft: 412 }}>{formatTotals(totals)}</div>
+
+// Después
+const columns: ColumnDefinition<Quote>[] = [
+  { id: "client", header: "Cliente", accessor: (row) => row.client, footer: () => "Total" },
+  {
+    id: "amount",
+    header: "Monto",
+    accessor: (row) => row.amount,
+    align: "right",
+    footer: ({ filteredRows }) => formatTotals(sumByCurrency(filteredRows)),
+  },
+];
+```
+
 ### Layout y scroll
 
 Por defecto, el contenedor de filas (`gdy-table-wrap`) hace scroll horizontal y crece con su contenido,
@@ -506,9 +662,10 @@ del thumb (consulta [toolbar.es.md](toolbar.es.md)).
 |---|---|---|
 | `onRowClick` | `(row: TData, event: RowClickEvent) => void` | Al hacer clic en una fila de datos, o con Enter en una fila enfocable (no en el menú de acciones de fila, el select en línea ni una columna con `ignoreRowClick`). |
 | `onGroupChange` | `(groupBy: string \| null) => void` | Cuando el usuario cambia el selector de agrupado; `null` significa "ninguno". No se dispara al montar. |
-| `onPaginationChange` | `(state: ManualPaginationState) => void` | Al pasar a la página anterior o siguiente, o al cambiar el tamaño de página, en los dos modos de paginación. |
-| `onSearchChange` | `(query: string) => void` | En cada cambio de la caja de búsqueda, en los dos modos de paginación. |
+| `onPaginationChange` | `(state: ManualPaginationState) => void` | Al pasar a la página anterior o siguiente, o al cambiar el tamaño de página, en los dos modos de paginación. Con `pageIndex` controlado, también cada página que la tabla elige por su cuenta ([Página y tamaño de página](#página-y-tamaño-de-página)). |
+| `onSearchChange` | `(query: string) => void` | En cada cambio de la caja de búsqueda, en los dos modos de paginación; con `searchDebounceMs`, cuando el usuario deja de escribir. |
 | `onSortChange` | `(sorting: ColumnSortingState \| null) => void` | En cada cambio de orden que hace el usuario, controlado o no ([Estado controlado](#estado-controlado)). |
+| `onFiltersChange` | `(filters: ColumnFiltersState) => void` | En cada cambio de los filtros activos que hace el usuario, controlado o no ([Filtros controlados](#filtros-controlados)). |
 | `onVisibleRowsChange` | `(state: VisibleRowsState<TData>) => void` | Al montar, y cada vez que la búsqueda, los filtros, el orden, el agrupado o la página cambian las filas visibles ([Filas visibles](#filas-visibles)). |
 | `ColumnDefinition.onInlineEdit` | `(row: TData, value: string) => void` | Al elegir una opción en una celda editable en línea. |
 
@@ -626,6 +783,8 @@ estos tokens, cada uno con un fallback a un token base, así que basta con decla
 | `cell` | Cada celda de datos, también la de acciones | `gdy-table-cell` |
 | `pagination` | Pie de paginación | `gdy-table-pagination` |
 | `empty` | Celda del estado vacío (no recibe `cell`) | `gdy-empty` |
+| `foot` | Grupo de la fila de totales (`tfoot`) | `gdy-table-foot` |
+| `footCell` | Cada celda de la fila de totales | `gdy-table-foot-cell` |
 
 Las filas de grupo conservan sus propios ganchos y no reciben ni `row` ni `cell`.
 `tableMinHeightClassName`, `tableMaxHeightClassName` y `tableWrapClassName` siguen funcionando:
@@ -698,9 +857,16 @@ Props propias de `DataTableProps<TData>`, en el orden del código fuente.
 | `serverRowCount` | `number` | — | Total de filas en el servidor; de él salen el número de páginas y el total del resumen. |
 | `serverPageCount` | `number` | — | Total de páginas en el servidor; tiene prioridad sobre `serverRowCount`. |
 | `onPaginationChange` | `(state: ManualPaginationState) => void` | — | Cambio de página o de tamaño de página. |
+| `pageIndex` | `number` | — | Página controlada (desde 0); `undefined` la deja en manos de la tabla. |
+| `pageSize` | `number` | — | Tamaño de página controlado; prevalece sobre `defaultPageSize`. |
+| `search` | `string` | — | Texto de búsqueda controlado. |
+| `searchDebounceMs` | `number` | — | Retrasa `onSearchChange` hasta que el usuario deja de escribir. |
 | `sorting` | `ColumnSortingState \| null` | — | Orden controlado; `undefined` lo deja en manos de la tabla. |
 | `onSortChange` | `(sorting: ColumnSortingState \| null) => void` | — | Cambio de orden hecho por el usuario. |
 | `manualSorting` | `boolean` | `false` | Ordena el servidor: `data` nunca se reordena. |
+| `columnFilters` | `ColumnFiltersState` | — | Filtros controlados; `undefined` los deja en manos de la tabla. |
+| `onFiltersChange` | `(filters: ColumnFiltersState) => void` | — | Cambio de los filtros activos hecho por el usuario. |
+| `manualFiltering` | `boolean` | `false` | Filtra el servidor: `data` nunca se filtra. |
 | `onSearchChange` | `(query: string) => void` | — | Cambio en la caja de búsqueda. |
 | `onVisibleRowsChange` | `(state: VisibleRowsState<TData>) => void` | — | Filas visibles al montar y después de cada cambio. |
 | `tableWrapClassName` | `string` | — | Clases extra para el contenedor de filas. |
@@ -738,8 +904,11 @@ Todos se exportan desde `gridory/table` y `gridory`.
 - `ManualPaginationState`: `{ pageIndex: number; pageSize: number }`, el payload de
   `onPaginationChange`.
 - `ColumnSortingState`: `{ id: string; direction: SortDirection }`, el orden activo de una columna.
+- `ColumnFiltersState`: `{ values: Record<string, string[]>; dates: Record<string, DateFilterState> }`,
+  los filtros por id de columna.
 - `VisibleRowsState<TData>`: `{ pageRows: TData[]; filteredRows: TData[]; totalRows: number }`, el
   payload de `onVisibleRowsChange`.
+- `ColumnFooterContext<TData>`: los mismos tres campos, el argumento del `footer` de una columna.
 - `RowClickEvent`: `MouseEvent<HTMLTableRowElement> | KeyboardEvent<HTMLTableRowElement>`, el segundo
   argumento de `onRowClick`.
 - `RowAttributes`: el objeto que devuelve `getRowAttributes`, solo con nombres `data-*` y `aria-*` y

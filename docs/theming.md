@@ -156,7 +156,7 @@ them.
 
 | Family | Examples (fallback) |
 |---|---|
-| `--gdy-table-*` | `--gdy-table-head-bg` (`--gdy-muted`), `--gdy-table-border` (`--gdy-border`), `--gdy-table-row-hover-bg` (`--gdy-muted`), `--gdy-table-row-focus-ring` (`--gdy-ring`) |
+| `--gdy-table-*` | `--gdy-table-head-bg` (`--gdy-muted`), `--gdy-table-foot-bg` (`--gdy-table-head-bg`, then `--gdy-muted`), `--gdy-table-border` (`--gdy-border`), `--gdy-table-row-hover-bg` (`--gdy-muted`), `--gdy-table-row-focus-ring` (`--gdy-ring`) |
 | `--gdy-kanban-*` | `--gdy-kanban-column-bg` (`--gdy-muted`), `--gdy-kanban-card-bg` (`--gdy-card`), `--gdy-kanban-drop-outline` (`--gdy-muted-foreground`) |
 | `--gdy-ai-*` | `--gdy-ai-accent` (`--gdy-primary`), `--gdy-ai-bg` (`--gdy-background`), `--gdy-ai-user-bubble-bg` (`--gdy-ai-accent`, then `--gdy-primary`) |
 | `--gdy-auth-*` | `--gdy-auth-bg` (`--gdy-card`), `--gdy-auth-submit-bg` (`--gdy-primary`), `--gdy-auth-input-focus-border` (`--gdy-ring`), `--gdy-auth-rule-met` (`--gdy-success`) |

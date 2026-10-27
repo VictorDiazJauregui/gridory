@@ -101,6 +101,7 @@ Each entry of `columns` is a `ColumnDefinition<TData>`.
 | `headerAlign` | `"left" \| "center" \| "right"` | Aligns the header apart from the cells. Defaults to `align`. Table only. |
 | `ignoreRowClick` | `boolean` | No gesture that starts in this column fires the row. See [Row click and row links](#row-click-and-row-links). Table only. |
 | `overflow` | `"ellipsis" \| "wrap" \| "visible"` | What the cells do with content wider than the column. Default `"ellipsis"`. See [Cell overflow](#cell-overflow). Table only. |
+| `footer` | `(context: ColumnFooterContext<TData>) => ReactNode` | Content of this column in the totals row. See [Totals row](#totals-row). Table only. |
 
 Filter options are computed from every row in `data` (before search and filters), not only from the
 visible page. Columns with `type: "date"` never get a value list: their menu offers the operators
@@ -125,8 +126,9 @@ greater than, less than and between, with a calendar.
 The toolbar search box (`searchPlaceholder`, default `"Buscar..."`) keeps the rows where any searchable
 column contains the query, ignoring case and accents (`peru` finds `Perú`), over the values returned by
 `accessor`. Every column is searchable unless it sets `searchable: false`. Each change also calls
-`onSearchChange` with the query exactly as typed. With `manualPagination` the local matching is skipped
-and the query is only reported.
+`onSearchChange` with the query exactly as typed (after a pause with `searchDebounceMs`). With
+`manualPagination` the local matching is skipped and the query is only reported. To own the query, see
+[Search](#search-1) under Controlled state.
 
 ### Sorting
 
@@ -201,8 +203,8 @@ is given it falls back to the length of `data`, so always pass one of them. `ser
 the total shown in the summary. `onPaginationChange({ pageIndex, pageSize })` fires when the user
 changes page or page size; `onSearchChange(query)` fires on each search change, which also moves the
 table back to the first page. Column filters, sorting, grouping and the archived view still apply
-locally to the rows of the current page; to sort on the server, use `manualSorting`
-([Controlled state](#controlled-state)).
+locally to the rows of the current page; to sort or filter on the server, use `manualSorting` and
+`manualFiltering` ([Controlled state](#controlled-state)).
 
 ```tsx
 <DataTable
@@ -257,6 +259,115 @@ useEffect(() => {
   onPaginationChange={setPage}
 />;
 ```
+
+#### Filters
+
+- `columnFilters` (`ColumnFiltersState`) sets the value and date filters:
+  `{ values: { status: ["Activa"] }, dates: { createdAt: { op: "gt", date: "2026-01-01", dateFrom: "", dateTo: "" } } }`.
+- `onFiltersChange(filters)` fires when the user changes the active filters, controlled or not: a value
+  menu, the "Aplicar" or "Limpiar" button of a date menu and "Limpiar filtros", which reports
+  `{ values: {}, dates: {} }`. It receives **only the active filters**: no column with an empty
+  selection and no incomplete date filter (an operator without its date), so you can send it to the
+  server as it comes. It does not fire when nothing active changed, nor when the `columnFilters` prop
+  changes.
+- `manualFiltering` (default `false`) means the server filters: the table never filters `data` and only
+  reports the filters. Changing them returns to the first page; `onPaginationChange` fires only when the
+  page was not already the first one.
+- The value menus list the column `filterOptions` when it has them. Without them they list the values
+  of the loaded rows, which with `manualFiltering` are already filtered (and with `manualPagination`,
+  one page only): the table adds the selected values so they can always be unselected, but the other
+  values of the server are missing. **Give every filterable column its `filterOptions` when the server
+  filters.**
+
+```tsx
+const [filters, setFilters] = useState<ColumnFiltersState>({ values: {}, dates: {} });
+
+useEffect(() => {
+  fetchInvoices({ ...page, sort: sorting, filters }).then(setResult);
+}, [sorting, filters, page]);
+
+<DataTable
+  columns={columns} // each filterable column with its filterOptions
+  data={result.rows}
+  manualPagination
+  manualSorting
+  manualFiltering
+  serverRowCount={result.total}
+  columnFilters={filters}
+  onFiltersChange={setFilters}
+  sorting={sorting}
+  onSortChange={setSorting}
+  onPaginationChange={setPage}
+/>;
+```
+
+#### Page and page size
+
+- `pageIndex` (0-based) and `pageSize` are controlled separately; `onPaginationChange` keeps its
+  signature and always carries both values. `pageIndex={0}` goes back to the first page without
+  remounting the table (search, filters and sort stay).
+- While `pageIndex` is controlled, every page the table picks on its own is reported through
+  `onPaginationChange` so your state can follow it: the first page after a search, filter, sort,
+  grouping or archived-view change, and the last page when the one you pass is out of range (shown at
+  once, reported once, never while `loading`). Without `pageIndex` those changes stay silent, as before.
+- A `pageSize` changed from outside goes back to the first page, like the page-size select. A size
+  missing from `pageSizeOptions` (say `13`) is listed in the select while it is active.
+
+#### Search
+
+- `search` sets the query of the search box. `onSearchChange(query)` keeps its signature and reports
+  only what the user types, never the changes of the prop.
+- `searchDebounceMs` waits that many milliseconds without typing before calling `onSearchChange`.
+  The box and the local search respond at once: only the report waits. With `manualPagination`, the
+  return to the first page waits too and arrives with the search, so one request covers both. With
+  `search` controlled, the box keeps what the user types while the report waits, and takes any other
+  value your app sets (a pending report is then dropped). A pending report is also dropped when the
+  table unmounts. Without the prop every keystroke is reported, as before.
+
+```tsx
+const [query, setQuery] = useState("");
+const [page, setPage] = useState({ pageIndex: 0, pageSize: 25 });
+
+<button onClick={() => setPage({ ...page, pageIndex: 0 })}>First page</button>
+<DataTable
+  columns={columns}
+  data={result.rows}
+  manualPagination
+  serverRowCount={result.total}
+  search={query}
+  searchDebounceMs={300}
+  onSearchChange={setQuery}
+  pageIndex={page.pageIndex}
+  pageSize={page.pageSize}
+  onPaginationChange={setPage}
+/>;
+```
+
+#### Recipe: page size from the container height
+
+The table does not size its pages by itself. With `pageSize` controlled, measure the container and
+divide by the row height (use the height of your rows, with or without actions):
+
+```tsx
+const ROW_HEIGHT = 40;
+const CHROME_HEIGHT = 140; // toolbar + header + pagination
+
+const usePageSizeByHeight = (element: HTMLElement | null) => {
+  const [pageSize, setPageSize] = useState(10);
+  useEffect(() => {
+    if (!element) return;
+    const observer = new ResizeObserver(([entry]) => {
+      setPageSize(Math.max(1, Math.floor((entry.contentRect.height - CHROME_HEIGHT) / ROW_HEIGHT)));
+    });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [element]);
+  return pageSize;
+};
+```
+
+Pass the result as `pageSize`: each change goes back to the first page, and the size shows in the
+select even when it is not one of `pageSizeOptions`.
 
 ### Printing
 
@@ -463,6 +574,47 @@ tr:has([data-quote-archived]) {
 }
 ```
 
+### Totals row
+
+A column with `footer` adds a totals row: a `tfoot.gdy-table-foot` with one `tr.gdy-table-foot-row` and
+one `td.gdy-table-foot-cell` per visible column (the actions column included, empty), each with the
+`data-column-id` and `data-align` of its column, so a total sits under its column and follows its
+alignment. The row only renders when a visible column has `footer`; without it there is no `tfoot`.
+
+- `footer(context)` returns the content of its cell. `context` is the same object `onVisibleRowsChange`
+  reports (`ColumnFooterContext<TData>`: `pageRows`, `filteredRows` and `totalRows`, see
+  [Visible rows](#visible-rows)), so a total can cover the page or every filtered row, and follows the
+  search, the filters, the sort, the grouping and the page. The table does not add anything up: the
+  function does.
+- With `stickyHeader` and an internal scroll (`fillHeight` or `tableMaxHeightClassName`) the row stays at
+  the bottom of the rows area while the rows scroll. Without an internal scroll it follows the last row.
+- While `loading`, the cells with `footer` show a placeholder bar and `footer` is not called.
+- With `printMode` the row prints once, after the last row (not at the foot of every sheet).
+- It looks like the header (`--gdy-table-foot-bg`, which falls back to `--gdy-table-head-bg`) with a
+  line above it; `classNames.foot` and `classNames.footCell` add your classes.
+
+```tsx
+// Before: totals painted outside the table, aligned by hand
+<DataTable
+  columns={columns}
+  data={quotes}
+  onVisibleRowsChange={({ filteredRows }) => setTotals(sumByCurrency(filteredRows))}
+/>
+<div className="totals" style={{ paddingLeft: 412 }}>{formatTotals(totals)}</div>
+
+// After
+const columns: ColumnDefinition<Quote>[] = [
+  { id: "client", header: "Client", accessor: (row) => row.client, footer: () => "Total" },
+  {
+    id: "amount",
+    header: "Amount",
+    accessor: (row) => row.amount,
+    align: "right",
+    footer: ({ filteredRows }) => formatTotals(sumByCurrency(filteredRows)),
+  },
+];
+```
+
 ### Layout and scrolling
 
 By default the rows container (`gdy-table-wrap`) scrolls horizontally and grows with its content, with
@@ -499,9 +651,10 @@ scroll area; `scrollbarColor` sets their thumb color (see [toolbar.md](toolbar.m
 |---|---|---|
 | `onRowClick` | `(row: TData, event: RowClickEvent) => void` | A data row is clicked, or Enter on a focusable row (not the row actions menu, the inline select or an `ignoreRowClick` column). |
 | `onGroupChange` | `(groupBy: string \| null) => void` | The user changes the group selector; `null` means "none". Not on mount. |
-| `onPaginationChange` | `(state: ManualPaginationState) => void` | Previous or next page, or a page-size change, in both pagination modes. |
-| `onSearchChange` | `(query: string) => void` | Every change of the search box, in both pagination modes. |
+| `onPaginationChange` | `(state: ManualPaginationState) => void` | Previous or next page, or a page-size change, in both pagination modes. With `pageIndex` controlled, also each page the table picks on its own ([Page and page size](#page-and-page-size)). |
+| `onSearchChange` | `(query: string) => void` | Every change of the search box, in both pagination modes; with `searchDebounceMs`, once the user stops typing. |
 | `onSortChange` | `(sorting: ColumnSortingState \| null) => void` | Every sort change made by the user, controlled or not ([Controlled state](#controlled-state)). |
+| `onFiltersChange` | `(filters: ColumnFiltersState) => void` | Every change of the active filters made by the user, controlled or not ([Filters](#filters)). |
 | `onVisibleRowsChange` | `(state: VisibleRowsState<TData>) => void` | On mount, and whenever search, filters, sort, grouping or the page change the visible rows ([Visible rows](#visible-rows)). |
 | `ColumnDefinition.onInlineEdit` | `(row: TData, value: string) => void` | An option is chosen in an inline-editable cell. |
 
@@ -617,6 +770,8 @@ scope is enough:
 | `cell` | Every data cell, the actions column included | `gdy-table-cell` |
 | `pagination` | Pagination footer | `gdy-table-pagination` |
 | `empty` | Cell of the empty state (it does not take `cell`) | `gdy-empty` |
+| `foot` | Totals row group (`tfoot`) | `gdy-table-foot` |
+| `footCell` | Every cell of the totals row | `gdy-table-foot-cell` |
 
 Group rows keep their own hooks and take neither `row` nor `cell`. `tableMinHeightClassName`,
 `tableMaxHeightClassName` and `tableWrapClassName` keep working: `classNames.wrap` goes after them.
@@ -688,9 +843,16 @@ Own props of `DataTableProps<TData>`, in source order.
 | `serverRowCount` | `number` | — | Total rows on the server; derives the page count and the summary total. |
 | `serverPageCount` | `number` | — | Total pages on the server; wins over `serverRowCount`. |
 | `onPaginationChange` | `(state: ManualPaginationState) => void` | — | Page or page-size change. |
+| `pageIndex` | `number` | — | Controlled page (0-based); `undefined` leaves it to the table. |
+| `pageSize` | `number` | — | Controlled page size; wins over `defaultPageSize`. |
+| `search` | `string` | — | Controlled search query. |
+| `searchDebounceMs` | `number` | — | Delays `onSearchChange` until the user stops typing. |
 | `sorting` | `ColumnSortingState \| null` | — | Controlled sort; `undefined` leaves it to the table. |
 | `onSortChange` | `(sorting: ColumnSortingState \| null) => void` | — | Sort change made by the user. |
 | `manualSorting` | `boolean` | `false` | The server sorts: `data` is never reordered. |
+| `columnFilters` | `ColumnFiltersState` | — | Controlled filters; `undefined` leaves them to the table. |
+| `onFiltersChange` | `(filters: ColumnFiltersState) => void` | — | Change of the active filters made by the user. |
+| `manualFiltering` | `boolean` | `false` | The server filters: `data` is never filtered. |
 | `onSearchChange` | `(query: string) => void` | — | Search box change. |
 | `onVisibleRowsChange` | `(state: VisibleRowsState<TData>) => void` | — | Visible rows on mount and after each change. |
 | `tableWrapClassName` | `string` | — | Extra classes for the rows container. |
@@ -728,8 +890,11 @@ All of them are exported from `gridory/table` and `gridory`.
 - `ManualPaginationState`: `{ pageIndex: number; pageSize: number }`, the payload of
   `onPaginationChange`.
 - `ColumnSortingState`: `{ id: string; direction: SortDirection }`, the active sort of a column.
+- `ColumnFiltersState`: `{ values: Record<string, string[]>; dates: Record<string, DateFilterState> }`,
+  the filters by column id.
 - `VisibleRowsState<TData>`: `{ pageRows: TData[]; filteredRows: TData[]; totalRows: number }`, the
   payload of `onVisibleRowsChange`.
+- `ColumnFooterContext<TData>`: the same three fields, the argument of a column `footer`.
 - `RowClickEvent`: `MouseEvent<HTMLTableRowElement> | KeyboardEvent<HTMLTableRowElement>`, the second
   argument of `onRowClick`.
 - `RowAttributes`: the object `getRowAttributes` returns, with `data-*` and `aria-*` names only and
