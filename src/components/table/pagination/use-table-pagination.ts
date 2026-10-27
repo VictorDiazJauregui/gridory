@@ -1,16 +1,10 @@
-import { useState, type Dispatch, type SetStateAction } from "react";
+import { useControllableState } from "../../shared/state/use-controllable-state";
 import type { TableSettings } from "../settings";
+import { usePageSync } from "./use-page-sync";
 
 export interface PageWindow {
   pageIndex: number;
   pageSize: number;
-}
-
-interface PageNavigationInput extends PageWindow {
-  pageCount: number;
-  setPageIndex: Dispatch<SetStateAction<number>>;
-  setPageSize: Dispatch<SetStateAction<number>>;
-  onPaginationChange?: (state: PageWindow) => void;
 }
 
 const computePageCount = <TData>(
@@ -28,43 +22,79 @@ const computePageCount = <TData>(
   return Math.max(1, Math.ceil(total / pageSize));
 };
 
-const buildPageNavigation = (input: PageNavigationInput) => {
-  const { pageCount, pageSize, setPageIndex, setPageSize } = input;
-  const changePageSize = (size: number) => {
-    setPageSize(size);
-    setPageIndex(0);
-    input.onPaginationChange?.({ pageIndex: 0, pageSize: size });
-  };
-  const goToPage = (next: number) => {
-    const target = Math.min(Math.max(0, next), pageCount - 1);
-    setPageIndex(target);
-    input.onPaginationChange?.({ pageIndex: target, pageSize });
-  };
-  return { changePageSize, goToPage };
-};
-
 export interface PageNavigation extends PageWindow {
   pageCount: number;
-  setPageIndex: Dispatch<SetStateAction<number>>;
-  changePageSize: (size: number) => void;
+  /** A change the user asked for (previous or next page): always reported. */
   goToPage: (next: number) => void;
+  /** The page-size select: back to the first page, always reported. */
+  changePageSize: (size: number) => void;
+  /**
+   * A first page the table decides on its own (search, filters, sort, grouping, archived view).
+   * Silent, as before, unless `pageIndex` is controlled: then it is reported or the app never sees it.
+   */
+  resetToFirstPage: () => void;
+  /** Server-side sort or filter change: back to the first page, reported when the page changes. */
+  returnToFirstPage: () => void;
 }
+
+const usePageWindowState = <TData>(settings: TableSettings<TData>) => {
+  const [rawPageIndex, setPageIndex] = useControllableState({
+    value: settings.pageIndex,
+    defaultValue: 0,
+    name: "pageIndex",
+  });
+  const [pageSize, setPageSize] = useControllableState({
+    value: settings.pageSize,
+    defaultValue: settings.defaultPageSize,
+    name: "pageSize",
+  });
+  return { rawPageIndex, pageSize, setPageIndex, setPageSize };
+};
+
+type PageWindowState = ReturnType<typeof usePageWindowState>;
+
+interface NavigationInput<TData> extends PageWindow {
+  pageCount: number;
+  state: PageWindowState;
+  settings: TableSettings<TData>;
+}
+
+const buildUserNavigation = <TData>({ pageIndex, pageSize, pageCount, state, settings }: NavigationInput<TData>) => ({
+  goToPage: (next: number) => {
+    const target = Math.min(Math.max(0, next), pageCount - 1);
+    state.setPageIndex(target);
+    settings.onPaginationChange?.({ pageIndex: target, pageSize });
+  },
+  changePageSize: (size: number) => {
+    state.setPageSize(size);
+    state.setPageIndex(0);
+    settings.onPaginationChange?.({ pageIndex: 0, pageSize: size });
+  },
+  returnToFirstPage: () => {
+    if (pageIndex === 0) return;
+    state.setPageIndex(0);
+    settings.onPaginationChange?.({ pageIndex: 0, pageSize });
+  },
+});
+
+const buildFirstPageReset = <TData>({ pageIndex, pageSize, state, settings }: NavigationInput<TData>) => () => {
+  if (settings.pageIndex === undefined) {
+    state.setPageIndex(0);
+    return;
+  }
+  if (pageIndex !== 0) settings.onPaginationChange?.({ pageIndex: 0, pageSize });
+};
 
 export const useTablePagination = <TData>(
   localRowCount: number,
   settings: TableSettings<TData>,
 ): PageNavigation => {
-  const [pageIndex, setPageIndex] = useState(0);
-  const [pageSize, setPageSize] = useState(settings.defaultPageSize);
+  const state = usePageWindowState(settings);
+  const { rawPageIndex, pageSize } = state;
   const pageCount = computePageCount(localRowCount, pageSize, settings);
-  const safePageIndex = Math.min(pageIndex, pageCount - 1);
-  const navigation = buildPageNavigation({
-    pageIndex: safePageIndex,
-    pageSize,
-    pageCount,
-    setPageIndex,
-    setPageSize,
-    onPaginationChange: settings.onPaginationChange,
-  });
-  return { pageIndex: safePageIndex, pageSize, pageCount, setPageIndex, ...navigation };
+  const pageIndex = Math.max(0, Math.min(rawPageIndex, pageCount - 1));
+  const input = { pageIndex, pageSize, pageCount, state, settings };
+  const navigation = { pageIndex, pageSize, pageCount, ...buildUserNavigation(input), resetToFirstPage: buildFirstPageReset(input) };
+  usePageSync({ rawPageIndex, navigation, settings });
+  return navigation;
 };

@@ -56,6 +56,8 @@ export type {
   CellHighlight,
   ColumnAlign,
   ColumnDefinition,
+  ColumnFiltersState,
+  ColumnFooterContext,
   ColumnOverflow,
   DataTableClassNames,
   DataTableProps,

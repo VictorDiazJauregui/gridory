@@ -25,6 +25,9 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-table-cell-content` | con estilos | `[data-overflow="visible"]`, `[data-overflow="wrap"]` |
 | `gdy-table-empty-row` | solo gancho | — |
 | `gdy-table-fill` | con estilos | — |
+| `gdy-table-foot` | con estilos | — |
+| `gdy-table-foot-cell` | con estilos | `[data-align="center"]`, `[data-align="right"]` |
+| `gdy-table-foot-row` | solo gancho | — |
 | `gdy-table-grid` | con estilos | — |
 | `gdy-table-group-cell` | con estilos | — |
 | `gdy-table-group-chevron` | con estilos | — |
@@ -554,8 +557,10 @@ hay que escribir para pisarlas; los motivos están en [Temas y estilos](theming.
 | `.gdy-table-row:focus-visible` | 0-2-0 |
 | `.gdy-table-head-cell[data-align="center"]` | 0-2-0 |
 | `.gdy-table-cell[data-align="center"]` | 0-2-0 |
+| `.gdy-table-foot-cell[data-align="center"]` | 0-2-0 |
 | `.gdy-table-head-cell[data-align="right"]` | 0-2-0 |
 | `.gdy-table-cell[data-align="right"]` | 0-2-0 |
+| `.gdy-table-foot-cell[data-align="right"]` | 0-2-0 |
 | `.gdy-table-head-trigger[data-align="center"]` | 0-2-0 |
 | `.gdy-table-head-trigger[data-align="right"]` | 0-2-0 |
 | `.gdy-table-cell-content[data-overflow="wrap"]` | 0-2-0 |
@@ -568,6 +573,7 @@ hay que escribir para pisarlas; los motivos están en [Temas y estilos](theming.
 | `.gdy-table-fill .gdy-card` | 0-2-0 |
 | `.gdy-table-fill .gdy-table-wrap` | 0-2-0 |
 | `.gdy-table-sticky .gdy-table-head-cell` | 0-2-0 |
+| `.gdy-table-sticky .gdy-table-foot-cell` | 0-2-0 |
 | `.gdy-table[data-print-mode] .gdy-toolbar` | 0-3-0 |
 | `.gdy-table[data-print-mode] .gdy-table-pagination` | 0-3-0 |
 | `.gdy-table[data-print-mode] [data-column-id="_actions"]` | 0-3-0 |
@@ -575,6 +581,8 @@ hay que escribir para pisarlas; los motivos están en [Temas y estilos](theming.
 | `.gdy-table[data-print-mode] .gdy-card` | 0-3-0 |
 | `.gdy-table[data-print-mode] .gdy-table-wrap` | 0-3-0 |
 | `.gdy-table[data-print-mode] .gdy-table-head-cell` | 0-3-0 |
+| `.gdy-table[data-print-mode] .gdy-table-foot` | 0-3-0 |
+| `.gdy-table[data-print-mode] .gdy-table-foot-cell` | 0-3-0 |
 | `.gdy-table[data-print-mode] thead` | 0-2-1 |
 | `.gdy-table[data-print-mode] tr` | 0-2-1 |
 
@@ -594,7 +602,7 @@ ponen Radix o react-day-picker siguen a esas librerías.
 | `aria-selected` | `"true"` | Gridory | `gdy-listbox-option` |
 | `data-action-type` | `"create-card"`, `"create-row"`, `"custom"`, `"move-card"`, `"update-row"` | Gridory | sin regla por defecto |
 | `data-active` | presente / ausente | Gridory | `gdy-listbox-option` |
-| `data-align` | `"center"`, `"left"`, `"right"` | Gridory, Radix o react-day-picker | `gdy-table-actions-cell`, `gdy-table-cell`, `gdy-table-head-cell`, `gdy-table-head-trigger` |
+| `data-align` | `"center"`, `"left"`, `"right"` | Gridory, Radix o react-day-picker | `gdy-table-actions-cell`, `gdy-table-cell`, `gdy-table-foot-cell`, `gdy-table-head-cell`, `gdy-table-head-trigger` |
 | `data-alignment` | `"center"`, `"right"` | Gridory | `gdy-md-table-preview` |
 | `data-animated` | `"true"` | Gridory | `gdy-segmented`, `gdy-sidebar` |
 | `data-checked` | presente / ausente | Gridory | `gdy-option-check` |
@@ -1005,6 +1013,7 @@ cualquier ancestro cambia solo esa parte. Los `--gdy-select-*` también reflejan
 | `--gdy-skeleton-bg` | `color-mix(in oklab, var(--gdy-foreground) 10%, transparent)` | shared |
 | `--gdy-skeleton-shine` | `color-mix(in oklab, var(--gdy-background) 60%, transparent)` | motion |
 | `--gdy-table-border` | `var(--gdy-border)` | table |
+| `--gdy-table-foot-bg` | `var(--gdy-table-head-bg, var(--gdy-muted))` | table |
 | `--gdy-table-group-bg` | `var(--gdy-accent)` | table |
 | `--gdy-table-head-bg` | `var(--gdy-muted)` | table |
 | `--gdy-table-head-fg` | `var(--gdy-muted-foreground)` | table |

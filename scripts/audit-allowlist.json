@@ -52,7 +52,8 @@
     "gdy-ai-md-paragraph",
     "gdy-ai-md-text",
     "gdy-md-viewer",
-    "gdy-md-alert-option"
+    "gdy-md-alert-option",
+    "gdy-table-foot-row"
   ],
   "variantAttributes": [
     "data-variant",

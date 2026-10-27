@@ -1,5 +1,5 @@
 import type { KeyboardEvent, MouseEvent } from "react";
-import type { ColumnDefinition, ColumnSortingState, DataInput } from "../shared/data-model";
+import type { ColumnDefinition, ColumnFiltersState, ColumnSortingState, DataInput } from "../shared/data-model";
 import type { DataViewProps } from "../shared/data-view-props";
 
 export type {
@@ -9,6 +9,8 @@ export type {
   CellHighlight,
   ColumnAlign,
   ColumnDefinition,
+  ColumnFiltersState,
+  ColumnFooterContext,
   ColumnOverflow,
   ColumnSortingState,
   DataInput,
@@ -99,6 +101,10 @@ export interface DataTableClassNames {
   pagination?: string;
   /** `gdy-empty` */
   empty?: string;
+  /** `gdy-table-foot`, the totals row group (`tfoot`) */
+  foot?: string;
+  /** `gdy-table-foot-cell` */
+  footCell?: string;
 }
 
 export interface DataTableProps<TData> extends DataViewProps<TData> {
@@ -155,6 +161,32 @@ export interface DataTableProps<TData> extends DataViewProps<TData> {
   /** Notifies page/pageSize changes so the consumer can refetch the page. */
   onPaginationChange?: (state: ManualPaginationState) => void;
   /**
+   * Controlled page (0-based). Pass it together with `onPaginationChange`: `pageIndex={0}` goes back
+   * to the first page without remounting the table. While it is controlled, every page the table
+   * picks on its own (the first page after a search, filter, sort, grouping or archived-view change,
+   * or the last page when it is out of range) is reported through `onPaginationChange`; the out of
+   * range fix is not reported while `loading`. Leave it `undefined` to let the table keep the page.
+   */
+  pageIndex?: number;
+  /**
+   * Controlled page size; `defaultPageSize` is ignored while it is set. Changing it from outside goes
+   * back to the first page. A size missing from `pageSizeOptions` is added to the select while it is
+   * active. Leave it `undefined` to let the table keep the size.
+   */
+  pageSize?: number;
+  /**
+   * Controlled search query shown in the search box. Pass it together with `onSearchChange`, which
+   * only reports what the user types (not the changes of this prop).
+   */
+  search?: string;
+  /**
+   * Waits this many milliseconds without typing before calling `onSearchChange` (and, with
+   * `manualPagination`, before going back to the first page, so both arrive together). The box and
+   * the local search respond at once; with `search` controlled the box keeps what the user types and
+   * takes any other value the app sets. Omit it (or `0`) to report every keystroke, as before.
+   */
+  searchDebounceMs?: number;
+  /**
    * Controlled sort. Pass it together with `onSortChange` to own the sort; `null` means no sort.
    * Leave it `undefined` to let the table keep the sort, as before. Switching between both
    * modes after mounting is not supported (a development warning reports it).
@@ -171,6 +203,24 @@ export interface DataTableProps<TData> extends DataViewProps<TData> {
    * page was not already the first one. Defaults to `false`.
    */
   manualSorting?: boolean;
+  /**
+   * Controlled column filters (value and date filters). Pass it together with `onFiltersChange` to
+   * own them. Leave it `undefined` to let the table keep them, as before.
+   */
+  columnFilters?: ColumnFiltersState;
+  /**
+   * Fires when the user changes the active filters (a value menu, a date menu, "Clear filters"),
+   * controlled or not. It receives only the active ones: no column with an empty selection and no
+   * incomplete date filter.
+   */
+  onFiltersChange?: (filters: ColumnFiltersState) => void;
+  /**
+   * The server filters the rows: the table never filters `data`, it only reports the filters through
+   * `onFiltersChange`. A filter change returns to the first page and calls `onPaginationChange` when
+   * the page was not already the first one. Give each filterable column its `filterOptions`: without
+   * them the menu lists the values of the loaded rows plus the selected ones. Defaults to `false`.
+   */
+  manualFiltering?: boolean;
   /** Notifies search changes so the consumer can run a server-side query. */
   onSearchChange?: (query: string) => void;
   /**

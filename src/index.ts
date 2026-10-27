@@ -1,5 +1,6 @@
 export { DataTable } from "./table";
 export type {
+  ColumnFiltersState,
   ColumnSortingState,
   DataTableClassNames,
   DataTableFeatures,
@@ -33,6 +34,7 @@ export type {
   CellHighlight,
   ColumnAlign,
   ColumnDefinition,
+  ColumnFooterContext,
   ColumnOverflow,
   DataInput,
   DateFilterOp,

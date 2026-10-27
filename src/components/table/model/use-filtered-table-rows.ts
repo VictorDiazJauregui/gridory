@@ -15,7 +15,7 @@ export const useFilteredTableRows = <TData>(
     columns,
     filters,
     dateFilters,
-    enabled: flags.filtering,
+    enabled: flags.filtering && !settings.manualFiltering,
   });
   const sortLocally = flags.sorting && !settings.manualSorting;
   return useSortedRows({ rows: filtered, columns, sorting, enabled: sortLocally });

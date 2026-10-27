@@ -25,6 +25,9 @@ The state selectors column lists the attributes the stylesheets combine with eac
 | `gdy-table-cell-content` | styled | `[data-overflow="visible"]`, `[data-overflow="wrap"]` |
 | `gdy-table-empty-row` | hook only | — |
 | `gdy-table-fill` | styled | — |
+| `gdy-table-foot` | styled | — |
+| `gdy-table-foot-cell` | styled | `[data-align="center"]`, `[data-align="right"]` |
+| `gdy-table-foot-row` | hook only | — |
 | `gdy-table-grid` | styled | — |
 | `gdy-table-group-cell` | styled | — |
 | `gdy-table-group-chevron` | styled | — |
@@ -554,8 +557,10 @@ write when you override them; the reasons are in [Theming and styling](theming.m
 | `.gdy-table-row:focus-visible` | 0-2-0 |
 | `.gdy-table-head-cell[data-align="center"]` | 0-2-0 |
 | `.gdy-table-cell[data-align="center"]` | 0-2-0 |
+| `.gdy-table-foot-cell[data-align="center"]` | 0-2-0 |
 | `.gdy-table-head-cell[data-align="right"]` | 0-2-0 |
 | `.gdy-table-cell[data-align="right"]` | 0-2-0 |
+| `.gdy-table-foot-cell[data-align="right"]` | 0-2-0 |
 | `.gdy-table-head-trigger[data-align="center"]` | 0-2-0 |
 | `.gdy-table-head-trigger[data-align="right"]` | 0-2-0 |
 | `.gdy-table-cell-content[data-overflow="wrap"]` | 0-2-0 |
@@ -568,6 +573,7 @@ write when you override them; the reasons are in [Theming and styling](theming.m
 | `.gdy-table-fill .gdy-card` | 0-2-0 |
 | `.gdy-table-fill .gdy-table-wrap` | 0-2-0 |
 | `.gdy-table-sticky .gdy-table-head-cell` | 0-2-0 |
+| `.gdy-table-sticky .gdy-table-foot-cell` | 0-2-0 |
 | `.gdy-table[data-print-mode] .gdy-toolbar` | 0-3-0 |
 | `.gdy-table[data-print-mode] .gdy-table-pagination` | 0-3-0 |
 | `.gdy-table[data-print-mode] [data-column-id="_actions"]` | 0-3-0 |
@@ -575,6 +581,8 @@ write when you override them; the reasons are in [Theming and styling](theming.m
 | `.gdy-table[data-print-mode] .gdy-card` | 0-3-0 |
 | `.gdy-table[data-print-mode] .gdy-table-wrap` | 0-3-0 |
 | `.gdy-table[data-print-mode] .gdy-table-head-cell` | 0-3-0 |
+| `.gdy-table[data-print-mode] .gdy-table-foot` | 0-3-0 |
+| `.gdy-table[data-print-mode] .gdy-table-foot-cell` | 0-3-0 |
 | `.gdy-table[data-print-mode] thead` | 0-2-1 |
 | `.gdy-table[data-print-mode] tr` | 0-2-1 |
 
@@ -594,7 +602,7 @@ Radix or react-day-picker follow those libraries.
 | `aria-selected` | `"true"` | Gridory | `gdy-listbox-option` |
 | `data-action-type` | `"create-card"`, `"create-row"`, `"custom"`, `"move-card"`, `"update-row"` | Gridory | no default rule |
 | `data-active` | present / absent | Gridory | `gdy-listbox-option` |
-| `data-align` | `"center"`, `"left"`, `"right"` | Gridory, Radix or react-day-picker | `gdy-table-actions-cell`, `gdy-table-cell`, `gdy-table-head-cell`, `gdy-table-head-trigger` |
+| `data-align` | `"center"`, `"left"`, `"right"` | Gridory, Radix or react-day-picker | `gdy-table-actions-cell`, `gdy-table-cell`, `gdy-table-foot-cell`, `gdy-table-head-cell`, `gdy-table-head-trigger` |
 | `data-alignment` | `"center"`, `"right"` | Gridory | `gdy-md-table-preview` |
 | `data-animated` | `"true"` | Gridory | `gdy-segmented`, `gdy-sidebar` |
 | `data-checked` | present / absent | Gridory | `gdy-option-check` |
@@ -1005,6 +1013,7 @@ any ancestor overrides that part only. `--gdy-select-*` also mirror the `selectT
 | `--gdy-skeleton-bg` | `color-mix(in oklab, var(--gdy-foreground) 10%, transparent)` | shared |
 | `--gdy-skeleton-shine` | `color-mix(in oklab, var(--gdy-background) 60%, transparent)` | motion |
 | `--gdy-table-border` | `var(--gdy-border)` | table |
+| `--gdy-table-foot-bg` | `var(--gdy-table-head-bg, var(--gdy-muted))` | table |
 | `--gdy-table-group-bg` | `var(--gdy-accent)` | table |
 | `--gdy-table-head-bg` | `var(--gdy-muted)` | table |
 | `--gdy-table-head-fg` | `var(--gdy-muted-foreground)` | table |

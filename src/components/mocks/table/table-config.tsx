@@ -13,6 +13,7 @@ import {
 import type { MockCompanyRow } from "../company/company-rows";
 import type { MockRowsUpdater } from "../company/row-updates";
 import { buildAmountColumn } from "./company-amounts";
+import { AmountFooter, TotalLabelFooter } from "./AmountFooter";
 import { buildNotesColumn } from "./company-notes";
 
 const TABLE_COLUMN_OPTIONS = { appsWidth: 220, statusSearchable: false };
@@ -89,6 +90,13 @@ const insertColumnAfter = (columns: MockCompanyColumn[], previousId: string, col
 const insertNewColumns = (columns: MockCompanyColumn[]) =>
   insertColumnAfter(insertColumnAfter(columns, "country", buildAmountColumn()), "apps", buildNotesColumn());
 
+// The totals row (1.2.0): the label under the company and the amounts under their column.
+const withTotalsFooter = (column: MockCompanyColumn): MockCompanyColumn => {
+  if (column.id === "name") return { ...column, footer: TotalLabelFooter };
+  if (column.id === "amount") return { ...column, footer: AmountFooter };
+  return column;
+};
+
 // The inline status select is a control of its own: clicking it must not open the row.
 const ignoreStatusClicks = (columns: MockCompanyColumn[]) =>
   columns.map((column) => (column.id === "status" ? { ...column, ignoreRowClick: true } : column));
@@ -100,7 +108,7 @@ export const buildTableColumns = (
   const columns = buildCompanyColumns(TABLE_COLUMN_OPTIONS).map((column) =>
     decorateColumn(column, setRows),
   );
-  return withNewProps ? ignoreStatusClicks(insertNewColumns(columns)) : columns;
+  return withNewProps ? ignoreStatusClicks(insertNewColumns(columns)).map(withTotalsFooter) : columns;
 };
 
 const TABLE_MENU_ACTIONS: MenuItem<MockCompanyRow>[] = [

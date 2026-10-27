@@ -14,6 +14,8 @@ const CLASS_NAMES: Required<DataTableClassNames> = {
   cell: "x-cell",
   pagination: "x-pagination",
   empty: "x-empty",
+  foot: "x-foot",
+  footCell: "x-foot-cell",
 };
 
 // Each part: its gdy-* hook, the consumer class it takes and how many elements carry it.

@@ -54,6 +54,19 @@ export interface CellHighlight {
 }
 
 /**
+ * What a column `footer` receives: the same rows `onVisibleRowsChange` reports. With
+ * `manualPagination`, `filteredRows` is the current page and `totalRows` is `serverRowCount`.
+ */
+export interface ColumnFooterContext<TData> {
+  /** Rows of the current page in screen order, rows of collapsed groups included. */
+  pageRows: TData[];
+  /** Every row that passes search, archived view and filters, sorted (and grouped), before paging. */
+  filteredRows: TData[];
+  /** `filteredRows.length`; with `manualPagination`, `serverRowCount` when it is set. */
+  totalRows: number;
+}
+
+/**
  * Field definition shared by `DataTable` (`columns`) and `KanbanBoard`
  * (`fields`): how to read, render, sort, search, filter and edit a value.
  */
@@ -91,6 +104,12 @@ export interface ColumnDefinition<TData> {
    * to keep the markup unchanged (no `data-overflow`).
    */
   overflow?: ColumnOverflow;
+  /**
+   * Table only; the kanban ignores it. Content of this column's cell in the totals row
+   * (`tfoot.gdy-table-foot`), computed from the rows on screen: `({ pageRows, filteredRows, totalRows })
+   * => ReactNode`. The row only renders when a visible column has `footer`.
+   */
+  footer?: (context: ColumnFooterContext<TData>) => ReactNode;
 }
 
 /** Built-in and custom actions available per row (table) or per card (kanban). */
@@ -143,6 +162,14 @@ export interface DateFilterState {
   date: string;
   dateFrom: string;
   dateTo: string;
+}
+
+/** Every column filter of a table: the value filters and the date filters, by column id. */
+export interface ColumnFiltersState {
+  /** Selected values of each value-filter column. */
+  values: Record<string, string[]>;
+  /** Date filter of each date column. */
+  dates: Record<string, DateFilterState>;
 }
 
 export type ArchivedViewMode = "all" | "active" | "archived";
