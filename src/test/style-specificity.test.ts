@@ -44,9 +44,21 @@ const TABLE_COMPOUND_RULES = {
   ".gdy-table-fill .gdy-card": "0-2-0",
   ".gdy-table-fill .gdy-table-wrap": "0-2-0",
   ".gdy-table-sticky .gdy-table-head-cell": "0-2-0",
+  ".gdy-table-skeleton > .gdy-skeleton": "0-2-0",
+  '.gdy-table-skeleton[data-column-id="_actions"]': "0-2-0",
+  '.gdy-table-skeleton[data-column-id="_actions"] > .gdy-skeleton': "0-3-0",
+  ".gdy-table[data-print-mode]": "0-2-0",
+  ".gdy-table[data-print-mode] .gdy-card": "0-3-0",
+  ".gdy-table[data-print-mode] .gdy-table-head-cell": "0-3-0",
+  ".gdy-table[data-print-mode] .gdy-table-pagination": "0-3-0",
+  ".gdy-table[data-print-mode] .gdy-table-wrap": "0-3-0",
+  ".gdy-table[data-print-mode] .gdy-toolbar": "0-3-0",
+  '.gdy-table[data-print-mode] [data-column-id="_actions"]': "0-3-0",
+  ".gdy-table[data-print-mode] thead": "0-2-1",
+  ".gdy-table[data-print-mode] tr": "0-2-1",
 };
 
-test("lists every table rule that is not a single class, the 1.1.0 alignment, focus and overflow rules included", () => {
+test("lists every table rule that is not a single class, the alignment, focus, overflow, loading and print rules included", () => {
   const css = readFileSync("src/components/table/styles.css", "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
   const rules = Object.fromEntries(listCompoundRules(css).map((rule) => [rule.selector, rule.specificity]));
   expect(rules).toEqual(TABLE_COMPOUND_RULES);

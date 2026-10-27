@@ -1,5 +1,6 @@
 import { playwright } from "@vitest/browser-playwright";
 import { defineConfig, mergeConfig } from "vitest/config";
+import type { BrowserCommand } from "vitest/node";
 import viteConfig from "./vite.config.ts";
 
 const BROWSER_TESTS = "src/test/**/*.browser.test.{ts,tsx}";
@@ -9,6 +10,12 @@ const BROWSER_TESTS = "src/test/**/*.browser.test.{ts,tsx}";
 // the installed Google Chrome (the GitHub runner ships one), so neither CI nor a
 // contributor downloads a browser.
 const installedChrome = playwright({ launchOptions: { channel: "chrome" } });
+
+// Vitest's browser API cannot switch the CSS media type, so the print tests reach the Playwright
+// page of the provider above through this command.
+const emulateMedia: BrowserCommand<[media: "screen" | "print"]> = async ({ page }, media) => {
+  await page.emulateMedia({ media });
+};
 
 const LAZY_EDITOR_DEPENDENCIES = [
   "@codemirror/commands",
@@ -58,6 +65,7 @@ export default mergeConfig(
               headless: true,
               viewport: { width: 1920, height: 1080 },
               instances: [{ browser: "chromium" }],
+              commands: { emulateMedia },
             },
           },
         },
