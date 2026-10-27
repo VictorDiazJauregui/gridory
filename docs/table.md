@@ -201,7 +201,8 @@ is given it falls back to the length of `data`, so always pass one of them. `ser
 the total shown in the summary. `onPaginationChange({ pageIndex, pageSize })` fires when the user
 changes page or page size; `onSearchChange(query)` fires on each search change, which also moves the
 table back to the first page. Column filters, sorting, grouping and the archived view still apply
-locally to the rows of the current page.
+locally to the rows of the current page; to sort on the server, use `manualSorting`
+([Controlled state](#controlled-state)).
 
 ```tsx
 <DataTable
@@ -215,6 +216,70 @@ locally to the rows of the current page.
   onPaginationChange={({ pageIndex, pageSize }) => fetchPage({ pageIndex, pageSize, query })}
   onSearchChange={(nextQuery) => fetchPage({ pageIndex: 0, pageSize, query: nextQuery })}
 />
+```
+
+### Controlled state
+
+Some table state can be owned by your app. The pattern is the same as a React input: pass the value
+and its `on…Change` handler and the table shows exactly that value and only reports what the user does;
+leave the value `undefined` and the table keeps the state itself, as before. `null` is a value ("no
+sort"), not "uncontrolled". Pick one mode for the whole lifetime of the table: switching after mounting
+logs a warning in development builds.
+
+#### Sort
+
+- `sorting` (`ColumnSortingState | null`) sets the active sort.
+- `onSortChange(sorting)` fires on every sort change made by the user, controlled or not: header click
+  (ascending, descending, none), the "Ordenar" buttons of a filter menu and the "Limpiar" button of a
+  date filter. It does not fire when the `sorting` prop changes.
+- `manualSorting` (default `false`) means the server sorts: the table never reorders `data` and only
+  reports the sort. Changing it returns to the first page; `onPaginationChange({ pageIndex: 0, pageSize })`
+  fires only when the page was not already the first one, so one request covers both changes.
+
+```tsx
+const [sorting, setSorting] = useState<ColumnSortingState | null>(null);
+const [page, setPage] = useState({ pageIndex: 0, pageSize: 25 });
+
+// One effect fetches whatever changed: the sort, the page or both.
+useEffect(() => {
+  fetchInvoices({ ...page, sort: sorting }).then(setResult);
+}, [sorting, page]);
+
+<DataTable
+  columns={columns}
+  data={result.rows}
+  manualPagination
+  manualSorting
+  serverRowCount={result.total}
+  defaultPageSize={25}
+  sorting={sorting}
+  onSortChange={setSorting}
+  onPaginationChange={setPage}
+/>;
+```
+
+### Printing
+
+`printMode` prints a clean table. With it, the print view (Ctrl+P, `window.print()`) hides the
+toolbar, the pagination and the whole row actions column (header and cells), lets the rows area grow
+to its content (no internal scroll cutting rows, no sticky header), repeats the header on every sheet
+and never splits a row between two sheets. The root carries `data-print-mode`.
+
+- `"page"` prints the page on screen.
+- `"all"` prints every row that passes the search, the filters and the archived view, in screen
+  order. **Groups print expanded, even the ones collapsed on screen.** When printing ends the table is
+  back on the page and the collapsed groups it had; neither `onPaginationChange` nor
+  `onVisibleRowsChange` fire for printing. The table renders the extra rows on the spot when the
+  browser announces the print (`beforeprint`, or the `print` media query), so they are in the printed
+  page. Thousands of rows take a moment to render.
+- With `manualPagination` the table only has the current page, so `"all"` prints that page: load every
+  row first if you need them all on paper.
+
+Without `printMode` nothing changes: the table prints as before. To print your own way instead, leave
+the prop out and write an `@media print` stylesheet over the [style hooks](style-hooks.md).
+
+```tsx
+<DataTable columns={columns} data={invoices} printMode="all" />
 ```
 
 ### Inline editing
@@ -436,6 +501,7 @@ scroll area; `scrollbarColor` sets their thumb color (see [toolbar.md](toolbar.m
 | `onGroupChange` | `(groupBy: string \| null) => void` | The user changes the group selector; `null` means "none". Not on mount. |
 | `onPaginationChange` | `(state: ManualPaginationState) => void` | Previous or next page, or a page-size change, in both pagination modes. |
 | `onSearchChange` | `(query: string) => void` | Every change of the search box, in both pagination modes. |
+| `onSortChange` | `(sorting: ColumnSortingState \| null) => void` | Every sort change made by the user, controlled or not ([Controlled state](#controlled-state)). |
 | `onVisibleRowsChange` | `(state: VisibleRowsState<TData>) => void` | On mount, and whenever search, filters, sort, grouping or the page change the visible rows ([Visible rows](#visible-rows)). |
 | `ColumnDefinition.onInlineEdit` | `(row: TData, value: string) => void` | An option is chosen in an inline-editable cell. |
 
@@ -622,9 +688,13 @@ Own props of `DataTableProps<TData>`, in source order.
 | `serverRowCount` | `number` | — | Total rows on the server; derives the page count and the summary total. |
 | `serverPageCount` | `number` | — | Total pages on the server; wins over `serverRowCount`. |
 | `onPaginationChange` | `(state: ManualPaginationState) => void` | — | Page or page-size change. |
+| `sorting` | `ColumnSortingState \| null` | — | Controlled sort; `undefined` leaves it to the table. |
+| `onSortChange` | `(sorting: ColumnSortingState \| null) => void` | — | Sort change made by the user. |
+| `manualSorting` | `boolean` | `false` | The server sorts: `data` is never reordered. |
 | `onSearchChange` | `(query: string) => void` | — | Search box change. |
 | `onVisibleRowsChange` | `(state: VisibleRowsState<TData>) => void` | — | Visible rows on mount and after each change. |
 | `tableWrapClassName` | `string` | — | Extra classes for the rows container. |
+| `printMode` | `"page" \| "all"` | — | Clean print of the page or of every filtered row. See [Printing](#printing). |
 | `className` | `string` | — | Extra classes for the root, after `gdy-table` and its flags. |
 | `classNames` | `DataTableClassNames` | — | One class per part. See [Class names per part](#class-names-per-part). |
 | `tableMinHeightClassName` | `string` | `"gdy-table-min-h-md"` | Minimum height class of the rows container. |
@@ -640,7 +710,8 @@ Own props of `DataTableProps<TData>`, in source order.
 | `groupEmptyValueLabel` | `string` | `"Sin valor"` | Label of the group of empty values. |
 
 `DataTableProps` also accepts every `DataViewProps` prop (`searchPlaceholder`, `createLabel`,
-`onCreate`, `emptyMessage`, `rowActions`, `archivedView`, `viewSwitch`, `aiButton`, `toggleGroups`,
+`onCreate`, `emptyMessage`, `loading`, `loadingRowCount`, `renderLoading`, `rowActions`, `archivedView`,
+`viewSwitch`, `aiButton`, `toggleGroups`,
 `headerSelectors`, `toolbarLayout`, `selectTheme`, `thinScrollbars`, `scrollbarColor`,
 `optionHoverColor`, `dateFilterRequireOperator`, `dateInputFormat`, `calendarMonthYearDropdown`,
 `calendarFromYear`, `calendarToYear`), documented in [toolbar.md](toolbar.md).

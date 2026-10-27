@@ -425,7 +425,8 @@ Props propias de `KanbanBoardProps<TData>`, en el orden del código fuente.
 | `columnBodyMaxHeight` | `number` | `480` | Altura máxima en píxeles del cuerpo de cada columna antes de hacer scroll. |
 
 `KanbanBoardProps` también acepta todas las props de `DataViewProps` (`searchPlaceholder`,
-`createLabel`, `onCreate`, `emptyMessage`, `rowActions`, `archivedView`, `viewSwitch`, `aiButton`,
+`createLabel`, `onCreate`, `emptyMessage`, `loading`, `loadingRowCount`, `renderLoading`, `rowActions`,
+`archivedView`, `viewSwitch`, `aiButton`,
 `toggleGroups`, `headerSelectors`, `toolbarLayout`, `selectTheme`, `thinScrollbars`, `scrollbarColor`,
 `optionHoverColor`, `dateFilterRequireOperator`, `dateInputFormat`, `calendarMonthYearDropdown`,
 `calendarFromYear`, `calendarToYear`), documentadas en [toolbar.es.md](toolbar.es.md). En el tablero,

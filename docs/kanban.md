@@ -415,7 +415,8 @@ Own props of `KanbanBoardProps<TData>`, in source order.
 | `columnBodyMaxHeight` | `number` | `480` | Maximum height in pixels of each column body before it scrolls. |
 
 `KanbanBoardProps` also accepts every `DataViewProps` prop (`searchPlaceholder`, `createLabel`,
-`onCreate`, `emptyMessage`, `rowActions`, `archivedView`, `viewSwitch`, `aiButton`, `toggleGroups`,
+`onCreate`, `emptyMessage`, `loading`, `loadingRowCount`, `renderLoading`, `rowActions`, `archivedView`,
+`viewSwitch`, `aiButton`, `toggleGroups`,
 `headerSelectors`, `toolbarLayout`, `selectTheme`, `thinScrollbars`, `scrollbarColor`,
 `optionHoverColor`, `dateFilterRequireOperator`, `dateInputFormat`, `calendarMonthYearDropdown`,
 `calendarFromYear`, `calendarToYear`), documented in [toolbar.md](toolbar.md). On the board
