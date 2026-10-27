@@ -8,21 +8,13 @@ import { GROUP_NONE_VALUE } from "./constants";
 import { buildGroupSelectOptions } from "./model/row-grouping";
 import type { TableModel } from "./model/use-table-core";
 
-const buildSearchChangeHandler =
-  <TData>({ settings, state, paging }: TableModel<TData>) =>
-  (value: string) => {
-    state.setSearch(value);
-    settings.onSearchChange?.(value);
-    if (settings.manualPagination) paging.setPageIndex(0);
-  };
-
 const selectGroupBy = <TData>(
   { settings, state, paging }: TableModel<TData>,
   next: string | null,
 ) => {
   state.setActiveGroupBy(next);
   state.setCollapsedGroups(new Set());
-  paging.setPageIndex(0);
+  paging.resetToFirstPage();
   settings.onGroupChange?.(next);
 };
 
@@ -52,7 +44,7 @@ const buildSearchToolbarProps = <TData>(model: TableModel<TData>) => {
     showSearch: flags.search,
     search: state.search,
     searchPlaceholder: settings.searchPlaceholder,
-    onSearchChange: buildSearchChangeHandler(model),
+    onSearchChange: state.changeSearch,
     showClearFilters: flags.filtering && state.hasActiveFilters,
     onClearFilters: state.clearFilters,
     showCreateButton: flags.createButton,
