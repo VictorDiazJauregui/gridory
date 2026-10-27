@@ -13,6 +13,7 @@ type TableDefaultKey =
   | "pageSizeOptions"
   | "defaultPageSize"
   | "manualPagination"
+  | "manualSorting"
   | "tableMinHeightClassName"
   | "scrollResetOnPageChange"
   | "stickyHeader"
@@ -36,6 +37,7 @@ const TABLE_PROP_DEFAULTS: Required<
   pageSizeOptions: DEFAULT_PAGE_SIZES,
   defaultPageSize: 50,
   manualPagination: false,
+  manualSorting: false,
   tableMinHeightClassName: "gdy-table-min-h-md",
   scrollResetOnPageChange: true,
   stickyHeader: true,

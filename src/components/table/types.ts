@@ -1,5 +1,5 @@
 import type { KeyboardEvent, MouseEvent } from "react";
-import type { ColumnDefinition, DataInput } from "../shared/data-model";
+import type { ColumnDefinition, ColumnSortingState, DataInput } from "../shared/data-model";
 import type { DataViewProps } from "../shared/data-view-props";
 
 export type {
@@ -154,6 +154,23 @@ export interface DataTableProps<TData> extends DataViewProps<TData> {
   serverPageCount?: number;
   /** Notifies page/pageSize changes so the consumer can refetch the page. */
   onPaginationChange?: (state: ManualPaginationState) => void;
+  /**
+   * Controlled sort. Pass it together with `onSortChange` to own the sort; `null` means no sort.
+   * Leave it `undefined` to let the table keep the sort, as before. Switching between both
+   * modes after mounting is not supported (a development warning reports it).
+   */
+  sorting?: ColumnSortingState | null;
+  /**
+   * Fires on every sort change made by the user (header click, filter menu, date "Clear"),
+   * controlled or not, with the next sort or `null`.
+   */
+  onSortChange?: (sorting: ColumnSortingState | null) => void;
+  /**
+   * The server sorts the rows: the table never reorders `data`, it only reports the sort through
+   * `onSortChange`. A sort change returns to the first page and calls `onPaginationChange` when the
+   * page was not already the first one. Defaults to `false`.
+   */
+  manualSorting?: boolean;
   /** Notifies search changes so the consumer can run a server-side query. */
   onSearchChange?: (query: string) => void;
   /**
@@ -162,6 +179,13 @@ export interface DataTableProps<TData> extends DataViewProps<TData> {
    * `filteredRows` is the current page. New row objects in `data` count as a change.
    */
   onVisibleRowsChange?: (state: VisibleRowsState<TData>) => void;
+  /**
+   * Prints a clean table: without toolbar, pagination and row actions column, and without the
+   * internal scroll that cuts rows. `"page"` prints the current page; `"all"` prints every filtered
+   * row, with every group expanded, and goes back to the page when printing ends (with
+   * `manualPagination` it prints the current page). Omit it to print as before.
+   */
+  printMode?: "page" | "all";
   /** Extra class(es) for the root element, added after `gdy-table` and its flags. */
   className?: string;
   classNames?: DataTableClassNames;

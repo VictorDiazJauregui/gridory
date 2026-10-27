@@ -2,12 +2,16 @@ import { useState } from "react";
 import { useArchivedMode } from "../../shared/controls/use-archived-mode";
 import { useColumnFilters } from "../../shared/controls/use-column-filters";
 import { useColumnSorting } from "../../shared/controls/use-column-sorting";
+import type { ColumnSortingState } from "../../shared/data-model";
 import type { TableSettings } from "../settings";
 import { useRowGroupingState } from "./use-row-grouping-state";
 
-export const useTableState = <TData>(settings: TableSettings<TData>) => {
+export const useTableState = <TData>(
+  settings: TableSettings<TData>,
+  onSortChange: (sorting: ColumnSortingState | null) => void,
+) => {
   const [search, setSearch] = useState("");
-  const columnSorting = useColumnSorting();
+  const columnSorting = useColumnSorting({ value: settings.sorting, onChange: onSortChange });
   const columnFilters = useColumnFilters();
   const rowGrouping = useRowGroupingState(settings);
   const archived = useArchivedMode(settings.archivedView);
