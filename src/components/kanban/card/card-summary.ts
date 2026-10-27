@@ -11,10 +11,11 @@ export const formatDateValue = (value: string) => {
 export const summarizeCard = <TData>(
   card: TData,
   fields: ColumnDefinition<TData>[],
+  untitledTitle: string,
 ) => {
   const [primaryField, secondaryField] = fields;
   const title =
-    normalizeToArray(primaryField?.accessor(card) ?? "").join(", ") || "Card";
+    normalizeToArray(primaryField?.accessor(card) ?? "").join(", ") || untitledTitle;
   const subtitle = secondaryField
     ? normalizeToArray(secondaryField.accessor(card)).join(", ")
     : "";

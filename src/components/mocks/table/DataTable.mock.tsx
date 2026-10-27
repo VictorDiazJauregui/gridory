@@ -1,4 +1,6 @@
 import { DataTable } from "../../table";
+import { isDemoBaseline } from "../../../demo/use-demo-baseline";
+import { ServerTableMock } from "./ServerTable.mock";
 import { CompanyDetailNotice } from "./CompanyDetailNotice";
 import { useCompanyDetail } from "./use-company-detail";
 import { useDataTableMockProps } from "./use-data-table-mock-props";
@@ -10,6 +12,7 @@ export const DataTableMock = () => {
     <>
       <CompanyDetailNotice detailId={detailId} onClose={closeCompany} />
       <DataTable {...props} />
+      {!isDemoBaseline() && <ServerTableMock />}
     </>
   );
 };

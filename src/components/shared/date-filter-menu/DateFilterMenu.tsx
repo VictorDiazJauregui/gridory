@@ -9,12 +9,13 @@ import { useDateFilterDraft } from "./use-date-filter-draft";
 export const DateFilterMenu = (props: DateFilterMenuProps) => {
   const settings = resolveDateFilterMenuSettings(props);
   const draft = useDateFilterDraft(settings);
+  const { labels } = settings;
   return (
     <div className="gdy-panel gdy-panel-date">
-      <DateSortSection sort={settings} />
-      <DateOperatorSection draft={draft} />
+      <DateSortSection sort={settings} labels={labels} />
+      <DateOperatorSection draft={draft} labels={labels} />
       <DateFilterDatesSection draft={draft} settings={settings} />
-      <DateFilterActions draft={draft} />
+      <DateFilterActions draft={draft} labels={labels} />
     </div>
   );
 };

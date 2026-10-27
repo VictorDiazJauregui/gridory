@@ -9,6 +9,7 @@ interface InlineSelectCellProps<TData> {
   value: string;
   highlight?: CellHighlight;
   selectTheme?: SelectTheme;
+  placeholder: string;
 }
 
 export const InlineSelectCell = <TData,>(
@@ -23,7 +24,7 @@ export const InlineSelectCell = <TData,>(
         options={options}
         value={valueExists ? String(value) : ""}
         onValueChange={(next) => column.onInlineEdit?.(row, next)}
-        placeholder="Seleccionar..."
+        placeholder={props.placeholder}
         triggerClassName="gdy-table-inline-select"
         triggerStyle={props.highlight?.style}
         theme={props.selectTheme}

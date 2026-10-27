@@ -4,6 +4,7 @@ import type {
   RowActions,
 } from "../data-model";
 import type { DataViewProps } from "../data-view-props";
+import type { DataViewLabels } from "../labels/data-view-labels";
 
 interface ArchivedToolbarSettings<TData> {
   archivedView?: ArchivedViewConfig;
@@ -34,7 +35,8 @@ export const pickToolbarPassThrough = <TData>({
   toolbarLayout,
   toolbarSlots,
   selectTheme,
-}: DataViewProps<TData>) => ({
+  labels,
+}: DataViewProps<TData> & { labels: DataViewLabels }) => ({
   viewSwitch,
   aiButton,
   toggleGroups,
@@ -42,4 +44,5 @@ export const pickToolbarPassThrough = <TData>({
   toolbarLayout,
   toolbarSlots,
   selectTheme,
+  labels,
 });

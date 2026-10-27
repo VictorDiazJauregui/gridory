@@ -16,7 +16,7 @@ The state selectors column lists the attributes the stylesheets combine with eac
 
 | Class | Kind | State selectors |
 |---|---|---|
-| `gdy-table` | styled | — |
+| `gdy-table` | styled | `[data-print-mode]` |
 | `gdy-table-actions-cell` | styled | `[data-align="center"]`, `[data-align="left"]` |
 | `gdy-table-actions-head-label` | styled | — |
 | `gdy-table-actions-icon` | hook only | — |
@@ -25,6 +25,9 @@ The state selectors column lists the attributes the stylesheets combine with eac
 | `gdy-table-cell-content` | styled | `[data-overflow="visible"]`, `[data-overflow="wrap"]` |
 | `gdy-table-empty-row` | hook only | — |
 | `gdy-table-fill` | styled | — |
+| `gdy-table-foot` | styled | — |
+| `gdy-table-foot-cell` | styled | `[data-align="center"]`, `[data-align="right"]` |
+| `gdy-table-foot-row` | hook only | — |
 | `gdy-table-grid` | styled | — |
 | `gdy-table-group-cell` | styled | — |
 | `gdy-table-group-chevron` | styled | — |
@@ -43,6 +46,7 @@ The state selectors column lists the attributes the stylesheets combine with eac
 | `gdy-table-head-trigger` | styled | `[data-align="center"]`, `[data-align="right"]` |
 | `gdy-table-inline-select` | styled | — |
 | `gdy-table-inline-select-wrap` | styled | — |
+| `gdy-table-loading-row` | hook only | — |
 | `gdy-table-max-h-lg` | utility | — |
 | `gdy-table-max-h-md` | utility | — |
 | `gdy-table-max-h-sm` | utility | — |
@@ -57,6 +61,8 @@ The state selectors column lists the attributes the stylesheets combine with eac
 | `gdy-table-pagination-right` | styled | — |
 | `gdy-table-pagination-text` | styled | — |
 | `gdy-table-row` | styled | `[data-clickable]` |
+| `gdy-table-skeleton` | styled | `[data-column-id="_actions"]` |
+| `gdy-table-skeleton-row` | hook only | — |
 | `gdy-table-sticky` | styled | — |
 | `gdy-table-wrap` | styled | — |
 
@@ -73,6 +79,7 @@ The state selectors column lists the attributes the stylesheets combine with eac
 | `gdy-kanban-card-main` | styled | — |
 | `gdy-kanban-card-menu-icon` | hook only | — |
 | `gdy-kanban-card-meta` | styled | — |
+| `gdy-kanban-card-skeleton` | styled | — |
 | `gdy-kanban-card-subtitle` | styled | — |
 | `gdy-kanban-card-title` | styled | — |
 | `gdy-kanban-card-value` | styled | — |
@@ -517,6 +524,7 @@ The state selectors column lists the attributes the stylesheets combine with eac
 | `gdy-search-icon` | styled | — |
 | `gdy-search-sm` | styled | — |
 | `gdy-search-sm-icon` | styled | — |
+| `gdy-skeleton` | styled | — |
 | `gdy-thin-scroll` | styled | — |
 | `gdy-toolbar` | styled | — |
 | `gdy-toolbar-clear` | hook only | — |
@@ -540,14 +548,19 @@ write when you override them; the reasons are in [Theming and styling](theming.m
 
 | Selector | Specificity |
 |---|---|
+| `.gdy-table-skeleton > .gdy-skeleton` | 0-2-0 |
+| `.gdy-table-skeleton[data-column-id="_actions"]` | 0-2-0 |
+| `.gdy-table-skeleton[data-column-id="_actions"] > .gdy-skeleton` | 0-3-0 |
 | `.gdy-table-cell.gdy-empty` | 0-2-0 |
 | `.gdy-table-row[data-clickable]` | 0-2-0 |
 | `.gdy-table-row[data-clickable]:hover .gdy-table-cell` | 0-4-0 |
 | `.gdy-table-row:focus-visible` | 0-2-0 |
 | `.gdy-table-head-cell[data-align="center"]` | 0-2-0 |
 | `.gdy-table-cell[data-align="center"]` | 0-2-0 |
+| `.gdy-table-foot-cell[data-align="center"]` | 0-2-0 |
 | `.gdy-table-head-cell[data-align="right"]` | 0-2-0 |
 | `.gdy-table-cell[data-align="right"]` | 0-2-0 |
+| `.gdy-table-foot-cell[data-align="right"]` | 0-2-0 |
 | `.gdy-table-head-trigger[data-align="center"]` | 0-2-0 |
 | `.gdy-table-head-trigger[data-align="right"]` | 0-2-0 |
 | `.gdy-table-cell-content[data-overflow="wrap"]` | 0-2-0 |
@@ -560,6 +573,18 @@ write when you override them; the reasons are in [Theming and styling](theming.m
 | `.gdy-table-fill .gdy-card` | 0-2-0 |
 | `.gdy-table-fill .gdy-table-wrap` | 0-2-0 |
 | `.gdy-table-sticky .gdy-table-head-cell` | 0-2-0 |
+| `.gdy-table-sticky .gdy-table-foot-cell` | 0-2-0 |
+| `.gdy-table[data-print-mode] .gdy-toolbar` | 0-3-0 |
+| `.gdy-table[data-print-mode] .gdy-table-pagination` | 0-3-0 |
+| `.gdy-table[data-print-mode] [data-column-id="_actions"]` | 0-3-0 |
+| `.gdy-table[data-print-mode]` | 0-2-0 |
+| `.gdy-table[data-print-mode] .gdy-card` | 0-3-0 |
+| `.gdy-table[data-print-mode] .gdy-table-wrap` | 0-3-0 |
+| `.gdy-table[data-print-mode] .gdy-table-head-cell` | 0-3-0 |
+| `.gdy-table[data-print-mode] .gdy-table-foot` | 0-3-0 |
+| `.gdy-table[data-print-mode] .gdy-table-foot-cell` | 0-3-0 |
+| `.gdy-table[data-print-mode] thead` | 0-2-1 |
+| `.gdy-table[data-print-mode] tr` | 0-2-1 |
 
 ## State attributes
 
@@ -577,12 +602,12 @@ Radix or react-day-picker follow those libraries.
 | `aria-selected` | `"true"` | Gridory | `gdy-listbox-option` |
 | `data-action-type` | `"create-card"`, `"create-row"`, `"custom"`, `"move-card"`, `"update-row"` | Gridory | no default rule |
 | `data-active` | present / absent | Gridory | `gdy-listbox-option` |
-| `data-align` | `"center"`, `"left"`, `"right"` | Gridory, Radix or react-day-picker | `gdy-table-actions-cell`, `gdy-table-cell`, `gdy-table-head-cell`, `gdy-table-head-trigger` |
+| `data-align` | `"center"`, `"left"`, `"right"` | Gridory, Radix or react-day-picker | `gdy-table-actions-cell`, `gdy-table-cell`, `gdy-table-foot-cell`, `gdy-table-head-cell`, `gdy-table-head-trigger` |
 | `data-alignment` | `"center"`, `"right"` | Gridory | `gdy-md-table-preview` |
 | `data-animated` | `"true"` | Gridory | `gdy-segmented`, `gdy-sidebar` |
 | `data-checked` | present / absent | Gridory | `gdy-option-check` |
 | `data-clickable` | present / absent | Gridory | `gdy-table-row` |
-| `data-column-id` | the column `id` | Gridory | no default rule |
+| `data-column-id` | the column `id` | Gridory | `gdy-table-skeleton` |
 | `data-compact` | `"true"` | Gridory | `gdy-sidebar-logo` |
 | `data-day` | the date of the day | Gridory | no default rule |
 | `data-diagram-state` | `"error"`, `"loading"`, `"ready"` | Gridory | `gdy-md-diagram` |
@@ -603,6 +628,7 @@ Radix or react-day-picker follow those libraries.
 | `data-label-position` | `"start"` | Gridory | `gdy-field` |
 | `data-language` | `"mermaid"` | Gridory | no default rule |
 | `data-list` | `"ordered"`, `"unordered"` | Gridory | no default rule |
+| `data-loading` | present / absent | Gridory | no default rule |
 | `data-math` | `"${tokens[index].markup === DISPLAY_MARKER ? "`, `"display"` | Gridory | no default rule |
 | `data-math-state` | `"error"`, `"loading"` | Gridory | `gdy-md-math` |
 | `data-measure-group` | present / absent | Gridory | no default rule |
@@ -614,6 +640,7 @@ Radix or react-day-picker follow those libraries.
 | `data-overflow` | `"visible"`, `"wrap"` | Gridory | `gdy-table-cell-content` |
 | `data-pinned` | `"false"`, `"true"` | Gridory | `gdy-sidebar` |
 | `data-placeholder` | present / absent | Gridory, Radix or react-day-picker | `gdy-country-select-value`, `gdy-phone-input-dial-code`, `gdy-select-trigger` |
+| `data-print-mode` | present / absent | Gridory | `gdy-table` |
 | `data-range-end` | present / absent | Gridory | `gdy-calendar-day`, `gdy-calendar-day-button` |
 | `data-range-middle` | present / absent | Gridory | `gdy-calendar-day`, `gdy-calendar-day-button` |
 | `data-range-start` | present / absent | Gridory | `gdy-calendar-day`, `gdy-calendar-day-button` |
@@ -983,7 +1010,10 @@ any ancestor overrides that part only. `--gdy-select-*` also mirror the `selectT
 | `--gdy-sidebar-tooltip-z` | `60` | sidebar |
 | `--gdy-sidebar-width` | `280px` | sidebar |
 | `--gdy-sidebar-z` | `40` | sidebar |
+| `--gdy-skeleton-bg` | `color-mix(in oklab, var(--gdy-foreground) 10%, transparent)` | shared |
+| `--gdy-skeleton-shine` | `color-mix(in oklab, var(--gdy-background) 60%, transparent)` | motion |
 | `--gdy-table-border` | `var(--gdy-border)` | table |
+| `--gdy-table-foot-bg` | `var(--gdy-table-head-bg, var(--gdy-muted))` | table |
 | `--gdy-table-group-bg` | `var(--gdy-accent)` | table |
 | `--gdy-table-head-bg` | `var(--gdy-muted)` | table |
 | `--gdy-table-head-fg` | `var(--gdy-muted-foreground)` | table |

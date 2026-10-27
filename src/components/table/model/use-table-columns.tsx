@@ -5,11 +5,16 @@ import { RowActionsMenu } from "../body/RowActionsMenu";
 import type { TableSettings } from "../settings";
 import { resolveActionsAlign } from "./cell-attributes";
 import { TableCellContent } from "../body/TableCellContent";
-import type { ColumnDefinition, RowActions } from "../types";
+import type { ColumnDefinition, DataTableLabels, RowActions } from "../types";
+
+interface CellSettings {
+  selectTheme?: SelectTheme;
+  labels: DataTableLabels;
+}
 
 const buildDataColumn = <TData,>(
   column: ColumnDefinition<TData>,
-  selectTheme?: SelectTheme,
+  { selectTheme, labels }: CellSettings,
 ): ColumnDef<TData> => ({
   id: column.id,
   size: column.width,
@@ -20,12 +25,14 @@ const buildDataColumn = <TData,>(
       column={column}
       row={row.original}
       selectTheme={selectTheme}
+      inlineSelectPlaceholder={labels.inlineSelectPlaceholder}
     />
   ),
 });
 
 const buildRowActionsColumn = <TData,>(
   rowActions: RowActions<TData>,
+  labels: DataTableLabels,
 ): ColumnDef<TData> => {
   const align = resolveActionsAlign(rowActions);
   return {
@@ -33,7 +40,7 @@ const buildRowActionsColumn = <TData,>(
     size: 56,
     header: "",
     meta: { alignment: { cells: align, header: align } },
-    cell: ({ row }) => <RowActionsMenu row={row.original} actions={rowActions} align={align} />,
+    cell: ({ row }) => <RowActionsMenu row={row.original} actions={rowActions} align={align} labels={labels} />,
   };
 };
 
@@ -41,18 +48,18 @@ export const useTableColumns = <TData,>(
   settings: TableSettings<TData>,
   activeGroupBy: string | null,
 ) => {
-  const { columns, rowActions, selectTheme } = settings;
+  const { columns, rowActions, selectTheme, labels } = settings;
   const showRowActions = settings.flags.rowActions;
   return useMemo<ColumnDef<TData>[]>(() => {
     const visibleColumns = activeGroupBy
       ? columns.filter((column) => column.id !== activeGroupBy)
       : columns;
     const tableColumns = visibleColumns.map((column) =>
-      buildDataColumn(column, selectTheme),
+      buildDataColumn(column, { selectTheme, labels }),
     );
     if (showRowActions && rowActions) {
-      tableColumns.push(buildRowActionsColumn(rowActions));
+      tableColumns.push(buildRowActionsColumn(rowActions, labels));
     }
     return tableColumns;
-  }, [columns, activeGroupBy, showRowActions, rowActions, selectTheme]);
+  }, [columns, activeGroupBy, showRowActions, rowActions, selectTheme, labels]);
 };

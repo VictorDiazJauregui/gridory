@@ -1,6 +1,7 @@
 import { useReactTable } from "@tanstack/react-table";
 import "./styles.css";
 import { cn } from "../../lib/cn";
+import { buildLoadingRootAttributes } from "../shared/loading/loading-state";
 import { resolveRootStyle } from "../shared/root-style";
 import { Toolbar } from "../shared/toolbar/Toolbar";
 import { buildPaginationProps } from "./pagination/pagination-props";
@@ -34,6 +35,8 @@ export const DataTable = <TData,>(props: DataTableProps<TData>) => {
     <div
       className={resolveRootClassName(core.settings)}
       style={resolveRootStyle(core.settings)}
+      data-print-mode={core.settings.printMode}
+      {...buildLoadingRootAttributes(core.settings.loading)}
     >
       <div className="gdy-scope gdy-card">
         <Toolbar {...buildToolbarProps(model)} />
@@ -53,6 +56,8 @@ export type {
   CellHighlight,
   ColumnAlign,
   ColumnDefinition,
+  ColumnFiltersState,
+  ColumnFooterContext,
   ColumnOverflow,
   DataTableClassNames,
   DataTableProps,
@@ -63,6 +68,7 @@ export type {
   RowClickEvent,
   RowGroupingResult,
   DataTableFeatures,
+  DataTableLabels,
   DataInput,
   ViewMode,
   ViewSwitchConfig,

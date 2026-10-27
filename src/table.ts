@@ -2,9 +2,11 @@ import "./styles/index.css";
 
 export { DataTable } from "./components/table";
 export type {
+  ColumnFiltersState,
   ColumnSortingState,
   DataTableClassNames,
   DataTableFeatures,
+  DataTableLabels,
   DataTableProps,
   GroupHeader,
   ManualPaginationState,
@@ -21,6 +23,7 @@ export type {
   CellHighlight,
   ColumnAlign,
   ColumnDefinition,
+  ColumnFooterContext,
   ColumnOverflow,
   DataInput,
   DateFilterOp,
@@ -43,6 +46,7 @@ export type {
   BuiltInActionId,
   BuiltInMenuRef,
   DataViewProps,
+  DataViewLabels,
   HeaderSelectConfig,
   MenuItem,
   MenuLabel,

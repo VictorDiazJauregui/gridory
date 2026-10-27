@@ -17,6 +17,10 @@ import { isDemoBaseline } from "../../../demo/use-demo-baseline";
 import { SEATS_SLOT } from "../company/demo-toolbar-slots";
 import { EmptyWithCreate } from "../company/EmptyWithCreate";
 import { readKanbanDemoClassNames } from "../company/demo-class-names";
+import { useLoadingToggle } from "../shared/use-loading-toggle";
+import { useDemoLanguage } from "../shared/demo-language";
+import { LANGUAGE_SLOT } from "../shared/demo-language-slot";
+import { localizeKanbanDemoProps } from "../shared/localize-demo-props";
 
 const KANBAN_CREATED_ROW: CreatedRowTemplate = {
   idPrefix: "kanban-new",
@@ -44,24 +48,25 @@ const useKanbanCardProps = () => {
   };
 };
 
-// The board has its own toolbarLayout, so the slot is listed there to choose its place.
-const KANBAN_SLOT_PROPS: Pick<KanbanBoardProps<MockCompanyRow>, "toolbarSlots" | "toolbarLayout"> = {
-  toolbarSlots: [SEATS_SLOT],
-  toolbarLayout: {
-    ...KANBAN_STATIC_PROPS.toolbarLayout,
-    right: ["brand", "archived", "group", "ai", "viewSwitch", "seats", "create"],
-  },
+// The board has its own toolbarLayout, so the slots are listed there to choose their place.
+const KANBAN_TOOLBAR_LAYOUT: KanbanBoardProps<MockCompanyRow>["toolbarLayout"] = {
+  ...KANBAN_STATIC_PROPS.toolbarLayout,
+  right: ["brand", "archived", "group", "ai", "viewSwitch", "seats", "loading", "language", "create"],
 };
 
 export const useKanbanMockProps = (): KanbanBoardProps<MockCompanyRow> => {
   const cardProps = useKanbanCardProps();
   const viewSwitch = useViewSwitch("kanban");
+  const loadingToggle = useLoadingToggle();
+  const language = useDemoLanguage();
   const baseProps = { ...KANBAN_STATIC_PROPS, ...cardProps, viewSwitch };
   if (isDemoBaseline()) return baseProps;
-  return {
+  return localizeKanbanDemoProps({
     ...baseProps,
-    ...KANBAN_SLOT_PROPS,
+    toolbarSlots: [SEATS_SLOT, loadingToggle.slot, LANGUAGE_SLOT],
+    toolbarLayout: KANBAN_TOOLBAR_LAYOUT,
+    loading: loadingToggle.loading,
     emptyMessage: <EmptyWithCreate onCreate={cardProps.onCreate} />,
     classNames: readKanbanDemoClassNames(),
-  };
+  }, language);
 };

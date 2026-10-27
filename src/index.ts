@@ -1,8 +1,10 @@
 export { DataTable } from "./table";
 export type {
+  ColumnFiltersState,
   ColumnSortingState,
   DataTableClassNames,
   DataTableFeatures,
+  DataTableLabels,
   DataTableProps,
   GroupHeader,
   ManualPaginationState,
@@ -16,6 +18,7 @@ export { KanbanBoard } from "./kanban";
 export type {
   KanbanBoardClassNames,
   KanbanBoardFeatures,
+  KanbanBoardLabels,
   KanbanBoardProps,
   KanbanCardClickEvent,
   KanbanCardRenderContext,
@@ -33,6 +36,7 @@ export type {
   CellHighlight,
   ColumnAlign,
   ColumnDefinition,
+  ColumnFooterContext,
   ColumnOverflow,
   DataInput,
   DateFilterOp,
@@ -54,6 +58,7 @@ export type {
   BuiltInActionId,
   BuiltInMenuRef,
   DataViewProps,
+  DataViewLabels,
   HeaderSelectConfig,
   MenuItem,
   MenuLabel,

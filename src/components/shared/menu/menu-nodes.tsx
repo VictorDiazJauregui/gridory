@@ -6,6 +6,13 @@ import {
   validateCustomRowActions,
   type RowAction,
 } from "./row-action";
+import type { DataViewLabels } from "../labels/data-view-labels";
+
+/** Defaults of the built-in actions; each `rowActions.*Label` wins over its key. */
+export type RowActionLabels = Pick<
+  DataViewLabels,
+  "editAction" | "archiveAction" | "unarchiveAction" | "deleteAction" | "historyAction"
+>;
 
 export type BuiltInActionId = (typeof BUILT_IN_ROW_ACTION_IDS)[number];
 
@@ -81,27 +88,27 @@ export type ResolvedMenuNode =
 
 type BuiltInRegistry = Record<BuiltInActionId, ResolvedActionNode | null>;
 
+interface BuiltInNodeInput<TData> {
+  row: TData;
+  actions: MenuActionsInput<TData>;
+  labels: RowActionLabels;
+}
+
 const isReservedId = (id: string) =>
   (BUILT_IN_ROW_ACTION_IDS as readonly string[]).includes(id);
 
-const buildEditNode = <TData,>(
-  row: TData,
-  actions: MenuActionsInput<TData>,
-): ResolvedActionNode | null => {
+const buildEditNode = <TData,>({ row, actions, labels }: BuiltInNodeInput<TData>): ResolvedActionNode | null => {
   if (actions.edit === false || !actions.onEdit) return null;
   return {
     type: "action",
     key: "edit",
     icon: <Pencil />,
-    label: actions.editLabel ?? "Editar",
+    label: actions.editLabel ?? labels.editAction,
     onSelect: () => actions.onEdit?.(row),
   };
 };
 
-const buildArchiveNode = <TData,>(
-  row: TData,
-  actions: MenuActionsInput<TData>,
-): ResolvedActionNode | null => {
+const buildArchiveNode = <TData,>({ row, actions, labels }: BuiltInNodeInput<TData>): ResolvedActionNode | null => {
   if (actions.archive === false) return null;
   if (!actions.onArchiveToggle && !actions.onArchive) return null;
   const isArchived = actions.getIsArchived?.(row) ?? false;
@@ -110,8 +117,8 @@ const buildArchiveNode = <TData,>(
     key: "archive",
     icon: isArchived ? <ArchiveRestore /> : <Archive />,
     label: isArchived
-      ? (actions.unarchiveLabel ?? "Desarchivar")
-      : (actions.archiveLabel ?? "Archivar"),
+      ? (actions.unarchiveLabel ?? labels.unarchiveAction)
+      : (actions.archiveLabel ?? labels.archiveAction),
     onSelect: () =>
       actions.onArchiveToggle
         ? actions.onArchiveToggle(row)
@@ -119,46 +126,35 @@ const buildArchiveNode = <TData,>(
   };
 };
 
-const buildRemoveNode = <TData,>(
-  row: TData,
-  actions: MenuActionsInput<TData>,
-): ResolvedActionNode | null => {
+const buildRemoveNode = <TData,>({ row, actions, labels }: BuiltInNodeInput<TData>): ResolvedActionNode | null => {
   if (actions.remove === false || !actions.onRemove) return null;
   return {
     type: "action",
     key: "remove",
     icon: <Trash2 />,
-    label: actions.deleteLabel ?? "Eliminar",
+    label: actions.deleteLabel ?? labels.deleteAction,
     variant: "destructive",
     onSelect: () => actions.onRemove?.(row),
   };
 };
 
-const buildHistoryNode = <TData,>(
-  row: TData,
-  actions: MenuActionsInput<TData>,
-): ResolvedActionNode | null => {
+const buildHistoryNode = <TData,>({ row, actions, labels }: BuiltInNodeInput<TData>): ResolvedActionNode | null => {
   if (actions.history === false || !actions.onHistory) return null;
   return {
     type: "action",
     key: "history",
     icon: <Clock3 />,
-    label: actions.historyLabel ?? "Ver historial",
+    label: actions.historyLabel ?? labels.historyAction,
     onSelect: () => actions.onHistory?.(row),
   };
 };
 
-const buildBuiltInRegistry = <TData,>(
-  row: TData,
-  actions: MenuActionsInput<TData>,
-): BuiltInRegistry => {
-  return {
-    edit: buildEditNode(row, actions),
-    archive: buildArchiveNode(row, actions),
-    remove: buildRemoveNode(row, actions),
-    history: buildHistoryNode(row, actions),
-  };
-};
+const buildBuiltInRegistry = <TData,>(input: BuiltInNodeInput<TData>): BuiltInRegistry => ({
+  edit: buildEditNode(input),
+  archive: buildArchiveNode(input),
+  remove: buildRemoveNode(input),
+  history: buildHistoryNode(input),
+});
 
 const toActionNode = <TData,>(
   row: TData,
@@ -237,11 +233,9 @@ const itemToNode = <TData,>(
   return toActionNode(row, item);
 };
 
-export const resolveMenuNodes = <TData,>(
-  row: TData,
-  actions: MenuActionsInput<TData>,
-): ResolvedMenuNode[] => {
-  const builtIns = buildBuiltInRegistry(row, actions);
+export const resolveMenuNodes = <TData,>(input: BuiltInNodeInput<TData>): ResolvedMenuNode[] => {
+  const { row, actions } = input;
+  const builtIns = buildBuiltInRegistry(input);
   if (actions.menuActions?.length) {
     validateMenuActions(actions.menuActions);
     return actions.menuActions

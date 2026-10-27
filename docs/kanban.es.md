@@ -280,6 +280,92 @@ menú de la tarjeta se renderiza debajo de tu markup, dentro de `gdy-kanban-card
 de la tarjeta con las acciones predefinidas de editar, archivar, eliminar e historial, más las tuyas.
 Las dos se comparten con la tabla y están documentadas en [toolbar.es.md](toolbar.es.md).
 
+### Textos e idioma
+
+Cualquier texto del tablero se reemplaza con `labels`, y `calendarLocale` cambia el idioma del
+calendario de los filtros. Los defaults están en español (decisión de producto); pasá solo las claves
+que quieras cambiar y el resto queda igual. Los textos con valores son funciones.
+
+```tsx
+import { enUS } from "date-fns/locale";
+
+const formatDate = new Intl.DateTimeFormat("en-US", { dateStyle: "medium" });
+
+<KanbanBoard
+  {...boardProps}
+  labels={{
+    searchPlaceholder: "Search deals...",
+    emptyColumn: "No deals",
+    emptyValue: "No stage",
+    formatCardDate: (value) => formatDate.format(new Date(`${value.slice(0, 10)}T00:00`)),
+  }}
+  calendarLocale={enUS}
+/>;
+```
+
+- **Prioridad.** Las props sueltas de antes (`searchPlaceholder`, `createLabel`, `emptyMessage`,
+  `groupSelectorLabel`, los `*Label` de `rowActions`, `archivedView.label` y `optionLabels`,
+  `viewSwitch.tableLabel` y `kanbanLabel`, `aiButton.label`) siguen funcionando y ganan sobre su clave.
+- **Memorizalo.** Guardá `labels` en una constante o en un `useMemo`.
+- **Los contenidos son tuyos.** Los títulos de los campos, las etiquetas de grupo y los valores de las
+  cards son textos de tu app.
+- **`calendarLocale`** funciona igual que en la tabla ([table.es.md](table.es.md#textos-e-idioma)); un
+  locale de `react-day-picker/locale` traduce además los nombres accesibles del calendario.
+
+Claves comunes con la tabla (`DataViewLabels`):
+
+| Clave | Default | Qué es | Prop suelta que gana |
+|---|---|---|---|
+| `searchPlaceholder` | `"Buscar..."` (kanban: `"Buscar cards..."`) | Placeholder del buscador | `searchPlaceholder` |
+| `createButton` | `"Nuevo"` | Botón de crear | `createLabel` |
+| `emptyMessage` | `"No se encontraron resultados"` | Ninguna fila o card coincide | `emptyMessage` |
+| `groupSelector` | `"Agrupar por"` | Prefijo y nombre accesible del selector de agrupar | `groupSelectorLabel` |
+| `clearFilters` | `"Limpiar filtros"` | Botón que limpia todos los filtros | — |
+| `archivedView` | `"Mostrar"` | Prefijo y nombre accesible del selector de archivados | `archivedView.label` |
+| `archivedActive` | `"Activos"` | Opción de archivados: activos | `archivedView.optionLabels.active` |
+| `archivedArchived` | `"Archivados"` | Opción de archivados: archivados | `archivedView.optionLabels.archived` |
+| `archivedAll` | `"Todos"` | Opción de archivados: todos | `archivedView.optionLabels.all` |
+| `viewSwitchTable` | `"Tabla"` | Cambio de vista: tabla | `viewSwitch.tableLabel` |
+| `viewSwitchKanban` | `"Kanban"` | Cambio de vista: kanban | `viewSwitch.kanbanLabel` |
+| `aiButton` | `"AI"` | Botón de IA | `aiButton.label` |
+| `rowActionsTrigger` | `"Opciones"` | Tooltip y nombre accesible del botón ⋯ | `rowActions.triggerLabel` |
+| `editAction` | `"Editar"` | Acción de editar | `rowActions.editLabel` |
+| `archiveAction` | `"Archivar"` | Acción de archivar | `rowActions.archiveLabel` |
+| `unarchiveAction` | `"Desarchivar"` | Acción de desarchivar | `rowActions.unarchiveLabel` |
+| `deleteAction` | `"Eliminar"` | Acción de eliminar | `rowActions.deleteLabel` |
+| `historyAction` | `"Ver historial"` | Acción de historial | `rowActions.historyLabel` |
+| `sortTitle` | `"Ordenar"` | Sección de orden de los menús | — |
+| `sortAscending` | `"Ascendente (A → Z)"` | Orden ascendente de una columna de valores | — |
+| `sortDescending` | `"Descendente (Z → A)"` | Orden descendente de una columna de valores | — |
+| `filterTitle` | `"Filtrar"` | Sección de filtro del menú de valores | — |
+| `selectAll(count)` | `"Seleccionar todo (n)"` | Marca todas las opciones listadas; `count` es cuántas hay | — |
+| `clearSelection` | `"Limpiar"` | Limpia la selección del menú de valores | — |
+| `filterSearchPlaceholder` | `"Buscar..."` | Buscador del menú de valores | — |
+| `valuesTitle` | `"Valores"` | Sección de valores del menú | — |
+| `noResults` | `"Sin resultados"` | Menú de valores sin opciones para la búsqueda | — |
+| `dateSortAscending` | `"Ascendente (antigua → reciente)"` | Orden ascendente de una fecha | — |
+| `dateSortDescending` | `"Descendente (reciente → antigua)"` | Orden descendente de una fecha | — |
+| `operatorTitle` | `"Operador"` | Sección de operador del menú de fecha | — |
+| `operatorAfter` | `"Mayor que (fecha posterior)"` | Operador "mayor que" | — |
+| `operatorBefore` | `"Menor que (fecha anterior)"` | Operador "menor que" | — |
+| `operatorBetween` | `"Entre (rango)"` | Operador "entre" | — |
+| `datesTitle` | `"Fechas"` | Sección de fechas del menú de fecha | — |
+| `dateClear` | `"Limpiar"` | Limpia el filtro de fecha | — |
+| `dateApply` | `"Aplicar"` | Aplica el filtro de fecha | — |
+| `pickDate` | `"Seleccionar fecha"` | Nombre accesible del botón del calendario (una fecha) | — |
+| `pickRange` | `"Seleccionar rango"` | Nombre accesible del botón del calendario (rango) | — |
+| `labeledValue(label, value)` | `` `${label}: ${value}` `` | Une un prefijo y su valor: "Agrupar por: Ninguno", "Mostrar: Activos", los selectores propios y la etiqueta de la card | — |
+
+Claves propias del kanban (`KanbanBoardLabels`):
+
+| Clave | Default | Qué es | Prop suelta que gana |
+|---|---|---|---|
+| `emptyColumn` | `"Sin cards"` | Caja de una columna sin cards | — |
+| `emptyValue` | `"Sin valor"` | Columna y etiqueta de las cards sin valor | — |
+| `untitledCard` | `"Card"` | Título de una card cuyo primer campo está vacío | — |
+| `cardFieldLabel(header)` | `` `${header}:` `` | Rótulo en negrita de cada campo de la card | — |
+| `formatCardDate(value)` | `"01/03/2026"` | Fecha de la card; recibe el valor crudo (`"2026-03-01"`) y devuelve tal cual lo que no empiece con `aaaa-mm-dd` | — |
+
 ## Eventos
 
 | Callback | Firma | Se dispara cuando |
@@ -406,6 +492,7 @@ Props propias de `KanbanBoardProps<TData>`, en el orden del código fuente.
 
 | Prop | Tipo | Por defecto | Descripción |
 |---|---|---|---|
+| `labels` | `Partial<KanbanBoardLabels>` | textos en español | Reemplaza cualquier texto. Ver [Textos e idioma](#textos-e-idioma). |
 | `fields` | `ColumnDefinition<TData>[]` | — | Campos con los que se busca, se filtra, se ordena y se renderizan las tarjetas (obligatoria). |
 | `data` | `DataInput<TData>` | — | Tarjetas: un array o un envoltorio de API (obligatoria). |
 | `groups` | `KanbanGroupOption<TData>[]` | — | Agrupaciones disponibles; el array no puede estar vacío (obligatoria). |
@@ -425,15 +512,18 @@ Props propias de `KanbanBoardProps<TData>`, en el orden del código fuente.
 | `columnBodyMaxHeight` | `number` | `480` | Altura máxima en píxeles del cuerpo de cada columna antes de hacer scroll. |
 
 `KanbanBoardProps` también acepta todas las props de `DataViewProps` (`searchPlaceholder`,
-`createLabel`, `onCreate`, `emptyMessage`, `rowActions`, `archivedView`, `viewSwitch`, `aiButton`,
+`createLabel`, `onCreate`, `emptyMessage`, `loading`, `loadingRowCount`, `renderLoading`, `rowActions`,
+`archivedView`, `viewSwitch`, `aiButton`,
 `toggleGroups`, `headerSelectors`, `toolbarLayout`, `selectTheme`, `thinScrollbars`, `scrollbarColor`,
 `optionHoverColor`, `dateFilterRequireOperator`, `dateInputFormat`, `calendarMonthYearDropdown`,
-`calendarFromYear`, `calendarToYear`), documentadas en [toolbar.es.md](toolbar.es.md). En el tablero,
+`calendarFromYear`, `calendarToYear`, `calendarLocale`), documentadas en [toolbar.es.md](toolbar.es.md). En el tablero,
 `searchPlaceholder` vale por defecto `"Buscar cards..."`, `createLabel` vale `"Nuevo"` y
 `emptyMessage` vale `"No se encontraron resultados"`.
 
 ### Tipos
 
+- `KanbanBoardLabels`: todos los textos del tablero, la forma de `labels` ([Textos e idioma](#textos-e-idioma)).
+  Extiende `DataViewLabels`, los textos que el tablero comparte con la tabla.
 - `KanbanGroupOption<TData>`: una agrupación, `{ id, label, accessor, setValue, values? }`.
 - `KanbanBoardFeatures`: los flags booleanos opcionales de `features` (`search`, `sorting`,
   `filtering`, `createButton`, `rowActions`, `groupSelector`, `dragAndDrop`).

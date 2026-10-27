@@ -8,6 +8,7 @@ interface TableCellContentProps<TData> {
   column: ColumnDefinition<TData>;
   row: TData;
   selectTheme?: SelectTheme;
+  inlineSelectPlaceholder: string;
 }
 
 const canInlineEdit = <TData,>(column: ColumnDefinition<TData>) =>
@@ -33,7 +34,7 @@ export const TableCellContent = <TData,>(
       data-overflow={column.overflow}
     >
       {canInlineEdit(column) ? (
-        <InlineSelectCell {...props} value={value} highlight={highlight} />
+        <InlineSelectCell {...props} value={value} highlight={highlight} placeholder={props.inlineSelectPlaceholder} />
       ) : (
         renderCellValue(column, row)
       )}

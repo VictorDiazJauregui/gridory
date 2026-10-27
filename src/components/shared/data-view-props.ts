@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { Locale } from "date-fns";
 import type {
   AiButtonConfig,
   ArchivedViewConfig,
@@ -21,6 +22,16 @@ export interface DataViewProps<TData> {
    * leave the empty state without text.
    */
   emptyMessage?: ReactNode;
+  /**
+   * Shows the loading state: placeholder rows (table) or cards (kanban) in place of the data,
+   * `aria-busy="true"` and `data-loading` on the root. The toolbar keeps working and the empty
+   * state is never shown meanwhile. Defaults to `false`.
+   */
+  loading?: boolean;
+  /** Placeholder rows of the table, or placeholder cards per kanban column. Defaults to `5`. */
+  loadingRowCount?: number;
+  /** Replaces the placeholders with your own content, in the same place. */
+  renderLoading?: () => ReactNode;
   rowActions?: RowActions<TData>;
   archivedView?: ArchivedViewConfig;
   viewSwitch?: ViewSwitchConfig;
@@ -99,4 +110,11 @@ export interface DataViewProps<TData> {
    * Defaults to the current year plus 10.
    */
   calendarToYear?: number;
+  /**
+   * Language of the filter calendar: month and weekday names and the month dropdown. Takes a
+   * `date-fns` locale (`import { enUS } from "date-fns/locale"`). A locale from
+   * `react-day-picker/locale` also translates the calendar's accessible names ("previous
+   * month", "choose the year"). Defaults to the Spanish `es` of `date-fns`.
+   */
+  calendarLocale?: Locale;
 }

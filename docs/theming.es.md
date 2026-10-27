@@ -160,7 +160,7 @@ tengan que alcanzarlos.
 
 | Familia | Ejemplos (fallback) |
 |---|---|
-| `--gdy-table-*` | `--gdy-table-head-bg` (`--gdy-muted`), `--gdy-table-border` (`--gdy-border`), `--gdy-table-row-hover-bg` (`--gdy-muted`), `--gdy-table-row-focus-ring` (`--gdy-ring`) |
+| `--gdy-table-*` | `--gdy-table-head-bg` (`--gdy-muted`), `--gdy-table-foot-bg` (`--gdy-table-head-bg`, luego `--gdy-muted`), `--gdy-table-border` (`--gdy-border`), `--gdy-table-row-hover-bg` (`--gdy-muted`), `--gdy-table-row-focus-ring` (`--gdy-ring`) |
 | `--gdy-kanban-*` | `--gdy-kanban-column-bg` (`--gdy-muted`), `--gdy-kanban-card-bg` (`--gdy-card`), `--gdy-kanban-drop-outline` (`--gdy-muted-foreground`) |
 | `--gdy-ai-*` | `--gdy-ai-accent` (`--gdy-primary`), `--gdy-ai-bg` (`--gdy-background`), `--gdy-ai-user-bubble-bg` (`--gdy-ai-accent` y después `--gdy-primary`) |
 | `--gdy-auth-*` | `--gdy-auth-bg` (`--gdy-card`), `--gdy-auth-submit-bg` (`--gdy-primary`), `--gdy-auth-input-focus-border` (`--gdy-ring`), `--gdy-auth-rule-met` (`--gdy-success`) |
@@ -172,6 +172,7 @@ tengan que alcanzarlos.
 | `--gdy-input-*` | `--gdy-input-bg` (`--gdy-muted`), `--gdy-input-border` (`--gdy-input`) |
 | `--gdy-panel-*` | `--gdy-panel-bg` (`--gdy-popover`), `--gdy-panel-border` (`--gdy-border`), `--gdy-panel-shadow` (`--gdy-shadow-md`) |
 | `--gdy-toolbar-*` | `--gdy-toolbar-border` (`--gdy-border`) |
+| `--gdy-skeleton-*` | `--gdy-skeleton-bg` (`color-mix(in oklab, var(--gdy-foreground) 10%, transparent)`), `--gdy-skeleton-shine` (`color-mix(in oklab, var(--gdy-background) 60%, transparent)`): los fantasmas de carga |
 | `--gdy-option-hover-bg` | `color-mix(in oklab, var(--gdy-foreground) 6%, var(--gdy-muted))` |
 | `--gdy-scrollbar-thumb` | `--gdy-input` |
 | `--gdy-select-*` | `--gdy-select-bg` (`--gdy-background`), `--gdy-select-border` (`--gdy-border`), `--gdy-select-radius` (`calc(var(--gdy-radius) - 2px)`) |
@@ -476,6 +477,8 @@ por su presencia (`[data-dragging]`), no por su valor. El resto toma los valores
 | `data-selected`, `data-checked` | `gdy-option-item`, `gdy-option-check` | Gridory | una opción marcada en un filtro por valores |
 | `data-dragging`, `data-drop-target` | `gdy-kanban-card`, `gdy-kanban-column` | Gridory | la tarjeta que se arrastra; la columna que tiene debajo |
 | `data-clickable` | `gdy-table-row` | Gridory | la tabla tiene `onRowClick` |
+| `data-loading`, `aria-busy="true"` | `gdy-table`, `gdy-kanban` | Gridory | la prop `loading` está activa |
+| `data-print-mode` | `gdy-table` | Gridory | `"page"` o `"all"`: la prop `printMode` |
 | `aria-pressed="true"` | `gdy-view-switch-btn`, `gdy-link-btn` | Gridory | vista activa, orden activo u operador activo en un panel de filtro |
 | `aria-expanded` | `gdy-table-group-toggle` | Gridory | `"false"` cuando el grupo está plegado |
 | `data-state` | `gdy-menu-content`, `gdy-popover-content`, `gdy-select-*`, `gdy-toggle-item` | Radix | `"open"` o `"closed"` en menú, popover y select; `"checked"` en un ítem de select; `"on"` en un ítem de toggle |
@@ -597,6 +600,8 @@ Con `prefers-reduced-motion: reduce` no se ejecuta ninguna.
 - El contenido de popovers y menús se desvanece al cerrarse (`gdy-pop-out`, 100 ms). El contenido del
   select se desmonta en cuanto se cierra, así que no tiene animación de salida.
 - El panel del asistente entra deslizándose desde el borde derecho (una transición de `transform` de 0.3 s).
+- Los fantasmas de carga (`gdy-skeleton`) muestran un brillo suave que recorre la barra
+  (`gdy-skeleton-shine`, 1.4 s, en bucle). Con movimiento reducido la barra queda quieta.
 - El indicador del control segmentado se desliza hasta la opción elegida (220 ms, fijados por
   `--gdy-segmented-duration`). Solo se animan los cambios posteriores al primer render.
   `animated={false}` lo apaga en un control (`data-animated="false"` en `gdy-segmented`); ver

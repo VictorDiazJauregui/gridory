@@ -1,8 +1,11 @@
 import "./styles.css";
 import { cn } from "../../lib/cn";
+import { buildLoadingRootAttributes } from "../shared/loading/loading-state";
 import { resolveRootStyle } from "../shared/root-style";
+import { useResolvedLabels } from "../shared/labels/use-resolved-labels";
 import { applyBoardDefaults, assertGroupConfiguration, type KanbanBoardView } from "./board-view";
 import { KanbanBoardBody } from "./board/KanbanBoardBody";
+import { KANBAN_BOARD_LABELS } from "./labels";
 import { KanbanFilterRow } from "./toolbar/KanbanFilterRow";
 import { KanbanToolbar } from "./toolbar/KanbanToolbar";
 import type { KanbanBoardProps } from "./types";
@@ -13,12 +16,13 @@ const resolveRootClassName = <TData,>(view: KanbanBoardView<TData>) =>
 
 export const KanbanBoard = <TData,>(props: KanbanBoardProps<TData>) => {
   assertGroupConfiguration(props.groups, props.defaultGroupId);
-  const view = applyBoardDefaults(props);
+  const view = applyBoardDefaults(props, useResolvedLabels(KANBAN_BOARD_LABELS, props.labels));
   const state = useKanbanBoardState(view);
   return (
     <div
       className={resolveRootClassName(view)}
       style={resolveRootStyle(view)}
+      {...buildLoadingRootAttributes(view.loading)}
     >
       <div className="gdy-scope gdy-card">
         <KanbanToolbar state={state} view={view} />
@@ -39,6 +43,7 @@ export type {
   RowActions,
   KanbanBoardClassNames,
   KanbanBoardFeatures,
+  KanbanBoardLabels,
   KanbanGroupOption,
   KanbanMoveEvent,
   KanbanCardClickEvent,

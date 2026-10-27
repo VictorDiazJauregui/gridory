@@ -1,6 +1,7 @@
 import type { KeyboardEvent, MouseEvent } from "react";
-import type { ColumnDefinition, DataInput } from "../shared/data-model";
+import type { ColumnDefinition, ColumnFiltersState, ColumnSortingState, DataInput } from "../shared/data-model";
 import type { DataViewProps } from "../shared/data-view-props";
+import type { DataViewLabels } from "../shared/labels/data-view-labels";
 
 export type {
   AiButtonConfig,
@@ -9,6 +10,8 @@ export type {
   CellHighlight,
   ColumnAlign,
   ColumnDefinition,
+  ColumnFiltersState,
+  ColumnFooterContext,
   ColumnOverflow,
   ColumnSortingState,
   DataInput,
@@ -99,9 +102,42 @@ export interface DataTableClassNames {
   pagination?: string;
   /** `gdy-empty` */
   empty?: string;
+  /** `gdy-table-foot`, the totals row group (`tfoot`) */
+  foot?: string;
+  /** `gdy-table-foot-cell` */
+  footCell?: string;
+}
+
+/** Every text of the table. Defaults in Spanish; pass the ones to replace with `labels`. */
+export interface DataTableLabels extends DataViewLabels {
+  /** Noun of the pagination summary. `"elementos"`. */
+  itemsName: string;
+  /** Pagination summary. `"0 elementos"` with no rows, otherwise `"Mostrando 1–25 de 53 elementos"`. */
+  showing: (range: { from: number; to: number; total: number; itemsName: string }) => string;
+  /** Text and accessible name of the page size selector. `"Elementos por página"`. */
+  pageSize: string;
+  /** Page position; `page` is `0` when there are no rows. `"Página 1 de 3"`. */
+  pageOf: (page: number, count: number) => string;
+  /** Accessible name of the previous page arrow. `"Página anterior"`. */
+  previousPage: string;
+  /** Accessible name of the next page arrow. `"Página siguiente"`. */
+  nextPage: string;
+  /** Placeholder of an inline `select` cell with no value. `"Seleccionar..."`. */
+  inlineSelectPlaceholder: string;
+  /** Group selector option that removes the grouping. `"Ninguno"`. */
+  groupNone: string;
+  /** Group of the rows with an empty value. `"Sin valor"`. */
+  groupEmptyValue: string;
 }
 
 export interface DataTableProps<TData> extends DataViewProps<TData> {
+  /**
+   * Replaces any text of the table; the keys you leave out keep their Spanish default. The
+   * older single-text props (`searchPlaceholder`, `createLabel`, `emptyMessage`, `label`,
+   * `groupSelectorLabel`, `groupNoneLabel`, `groupEmptyValueLabel`, the `rowActions`,
+   * `archivedView`, `viewSwitch` and `aiButton` labels) win over their key when both are set.
+   */
+  labels?: Partial<DataTableLabels>;
   columns: ColumnDefinition<TData>[];
   data: DataInput<TData>;
   normalizeRow?: (row: unknown, index: number) => TData;
@@ -154,6 +190,67 @@ export interface DataTableProps<TData> extends DataViewProps<TData> {
   serverPageCount?: number;
   /** Notifies page/pageSize changes so the consumer can refetch the page. */
   onPaginationChange?: (state: ManualPaginationState) => void;
+  /**
+   * Controlled page (0-based). Pass it together with `onPaginationChange`: `pageIndex={0}` goes back
+   * to the first page without remounting the table. While it is controlled, every page the table
+   * picks on its own (the first page after a search, filter, sort, grouping or archived-view change,
+   * or the last page when it is out of range) is reported through `onPaginationChange`; the out of
+   * range fix is not reported while `loading`. Leave it `undefined` to let the table keep the page.
+   */
+  pageIndex?: number;
+  /**
+   * Controlled page size; `defaultPageSize` is ignored while it is set. Changing it from outside goes
+   * back to the first page. A size missing from `pageSizeOptions` is added to the select while it is
+   * active. Leave it `undefined` to let the table keep the size.
+   */
+  pageSize?: number;
+  /**
+   * Controlled search query shown in the search box. Pass it together with `onSearchChange`, which
+   * only reports what the user types (not the changes of this prop).
+   */
+  search?: string;
+  /**
+   * Waits this many milliseconds without typing before calling `onSearchChange` (and, with
+   * `manualPagination`, before going back to the first page, so both arrive together). The box and
+   * the local search respond at once; with `search` controlled the box keeps what the user types and
+   * takes any other value the app sets. Omit it (or `0`) to report every keystroke, as before.
+   */
+  searchDebounceMs?: number;
+  /**
+   * Controlled sort. Pass it together with `onSortChange` to own the sort; `null` means no sort.
+   * Leave it `undefined` to let the table keep the sort, as before. Switching between both
+   * modes after mounting is not supported (a development warning reports it).
+   */
+  sorting?: ColumnSortingState | null;
+  /**
+   * Fires on every sort change made by the user (header click, filter menu, date "Clear"),
+   * controlled or not, with the next sort or `null`.
+   */
+  onSortChange?: (sorting: ColumnSortingState | null) => void;
+  /**
+   * The server sorts the rows: the table never reorders `data`, it only reports the sort through
+   * `onSortChange`. A sort change returns to the first page and calls `onPaginationChange` when the
+   * page was not already the first one. Defaults to `false`.
+   */
+  manualSorting?: boolean;
+  /**
+   * Controlled column filters (value and date filters). Pass it together with `onFiltersChange` to
+   * own them. Leave it `undefined` to let the table keep them, as before.
+   */
+  columnFilters?: ColumnFiltersState;
+  /**
+   * Fires when the user changes the active filters (a value menu, a date menu, "Clear filters"),
+   * controlled or not. It receives only the active ones: no column with an empty selection and no
+   * incomplete date filter.
+   */
+  onFiltersChange?: (filters: ColumnFiltersState) => void;
+  /**
+   * The server filters the rows: the table never filters `data`, it only reports the filters through
+   * `onFiltersChange`. A filter change returns to the first page and calls `onPaginationChange` when
+   * the page was not already the first one. Give each filterable column its `filterOptions`: without
+   * them the menu lists the values of the loaded rows plus the selected ones. Defaults to `false`.
+   */
+  manualFiltering?: boolean;
   /** Notifies search changes so the consumer can run a server-side query. */
   onSearchChange?: (query: string) => void;
   /**
@@ -162,6 +259,13 @@ export interface DataTableProps<TData> extends DataViewProps<TData> {
    * `filteredRows` is the current page. New row objects in `data` count as a change.
    */
   onVisibleRowsChange?: (state: VisibleRowsState<TData>) => void;
+  /**
+   * Prints a clean table: without toolbar, pagination and row actions column, and without the
+   * internal scroll that cuts rows. `"page"` prints the current page; `"all"` prints every filtered
+   * row, with every group expanded, and goes back to the page when printing ends (with
+   * `manualPagination` it prints the current page). Omit it to print as before.
+   */
+  printMode?: "page" | "all";
   /** Extra class(es) for the root element, added after `gdy-table` and its flags. */
   className?: string;
   classNames?: DataTableClassNames;

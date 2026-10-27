@@ -55,6 +55,33 @@
   padding: 9px 14px;
 }
 
+.gdy-table-skeleton > .gdy-skeleton {
+  width: 70%;
+}
+
+/* The row actions trigger is a 28px icon button: its placeholder keeps that size, so a
+   placeholder row is as tall as a row with actions. */
+.gdy-table-skeleton[data-column-id="_actions"] {
+  text-align: right;
+}
+
+.gdy-table-skeleton[data-column-id="_actions"] > .gdy-skeleton {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+}
+
+/* Totals row (column `footer`): the header look, a line above the totals and the same cell
+   padding as the rows, so each total sits under its column. */
+.gdy-table-foot-cell {
+  padding: 9px 14px;
+  border-top: 1px solid var(--gdy-table-border, var(--gdy-border));
+  background: var(--gdy-table-foot-bg, var(--gdy-table-head-bg, var(--gdy-muted)));
+  font-weight: 600;
+  text-align: left;
+  vertical-align: middle;
+}
+
 /* Empty-state cell: two classes (0-2-0) because .gdy-empty (shared.css) and
    .gdy-table-cell tie at 0-1-0 and the winner would depend on file order. */
 .gdy-table-cell.gdy-empty {
@@ -116,12 +143,14 @@
 /* Column alignment (`align` / `headerAlign`): data-align on th, td and the header trigger.
    The title and its sort icon move together and keep their order. */
 .gdy-table-head-cell[data-align="center"],
-.gdy-table-cell[data-align="center"] {
+.gdy-table-cell[data-align="center"],
+.gdy-table-foot-cell[data-align="center"] {
   text-align: center;
 }
 
 .gdy-table-head-cell[data-align="right"],
-.gdy-table-cell[data-align="right"] {
+.gdy-table-cell[data-align="right"],
+.gdy-table-foot-cell[data-align="right"] {
   text-align: right;
 }
 
@@ -330,4 +359,64 @@
   background: var(--gdy-table-head-bg, var(--gdy-muted));
   border-bottom: none;
   box-shadow: inset 0 -1px 0 var(--gdy-table-border, var(--gdy-border));
+}
+
+/* stickyHeader also pins the totals row to the bottom of the rows area. Same 0-2-0 specificity and
+   the same repaint of the collapsed border, here the top one, as the header. */
+.gdy-table-sticky .gdy-table-foot-cell {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  border-top: none;
+  box-shadow: inset 0 1px 0 var(--gdy-table-border, var(--gdy-border));
+}
+
+/* printMode: every rule hangs from [data-print-mode], so a table without the prop prints as
+   before. The toolbar, the pagination and the row actions column are of no use on paper, and
+   the internal scroll would cut the rows, so the rows area grows to its content. The header
+   repeats on every sheet and a row never splits between two. */
+@media print {
+  .gdy-table[data-print-mode] .gdy-toolbar,
+  .gdy-table[data-print-mode] .gdy-table-pagination,
+  .gdy-table[data-print-mode] [data-column-id="_actions"] {
+    display: none;
+  }
+
+  .gdy-table[data-print-mode],
+  .gdy-table[data-print-mode] .gdy-card {
+    display: block;
+    height: auto;
+  }
+
+  .gdy-table[data-print-mode] .gdy-table-wrap {
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .gdy-table[data-print-mode] .gdy-table-head-cell {
+    position: static;
+    box-shadow: none;
+  }
+
+  /* The totals print once, after the last row: a footer group would repeat them on every sheet,
+     as if each sheet added up to them. */
+  .gdy-table[data-print-mode] .gdy-table-foot {
+    display: table-row-group;
+  }
+
+  .gdy-table[data-print-mode] .gdy-table-foot-cell {
+    position: static;
+    border-top: 1px solid var(--gdy-table-border, var(--gdy-border));
+    box-shadow: none;
+  }
+
+  .gdy-table[data-print-mode] thead {
+    display: table-header-group;
+  }
+
+  .gdy-table[data-print-mode] tr {
+    break-inside: avoid;
+  }
 }

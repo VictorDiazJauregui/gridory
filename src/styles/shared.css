@@ -364,6 +364,17 @@
   color: var(--gdy-muted-foreground);
 }
 
+/* Loading placeholder: a bar as tall as a line of text, sitting on the text baseline box so a
+   placeholder row or card keeps the height of a real one. The shine lives in motion.css. */
+.gdy-skeleton {
+  display: inline-block;
+  width: 100%;
+  height: 0.75em;
+  vertical-align: middle;
+  border-radius: calc(var(--gdy-radius) - 4px);
+  background-color: var(--gdy-skeleton-bg, color-mix(in oklab, var(--gdy-foreground) 10%, transparent));
+}
+
 /* Date inputs and pickers */
 .gdy-date-range-inputs {
   display: grid;

@@ -1,13 +1,14 @@
 import { Calendar } from "../../ui/calendar/calendar";
 import { resolveCalendarCaption } from "./calendar-caption";
-import type { CalendarYearRange } from "./calendar-caption";
+import type { CalendarTexts, CalendarYearRange } from "./calendar-caption";
 import { DatePickerField } from "./DatePickerField";
 import { useSingleDatePicker } from "./use-single-date-picker";
 import type { SingleDatePickerOptions } from "./use-single-date-picker";
 
 interface DatePickerWithInputProps
   extends SingleDatePickerOptions,
-    CalendarYearRange {}
+    CalendarYearRange,
+    CalendarTexts {}
 
 export const DatePickerWithInput = (props: DatePickerWithInputProps) => {
   const { popover, field, calendar } = useSingleDatePicker(props);
@@ -16,9 +17,9 @@ export const DatePickerWithInput = (props: DatePickerWithInputProps) => {
     <DatePickerField
       field={field}
       popover={popover}
-      ariaLabel="Seleccionar fecha"
+      ariaLabel={props.ariaLabel}
     >
-      <Calendar mode="single" {...calendar} {...caption} />
+      <Calendar mode="single" locale={props.locale} {...calendar} {...caption} />
     </DatePickerField>
   );
 };

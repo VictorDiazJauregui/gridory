@@ -83,6 +83,38 @@ kanban, dentro de `div.gdy-empty`.
 />
 ```
 
+## Estado de carga
+
+`loading` avisa a la vista que sus datos están en camino. La tabla conserva la toolbar, el encabezado y
+la paginación, y pinta `loadingRowCount` filas fantasma (por defecto `5`) en lugar de las filas:
+`tr.gdy-table-skeleton-row` con una `td.gdy-table-cell.gdy-table-skeleton` por columna visible (incluida
+la de acciones), cada una con una barra `span.gdy-skeleton`. Comparten el relleno de una celda real, así
+que una fila fantasma mide lo mismo que una fila de datos. El kanban conserva la toolbar y la fila de
+filtros y pinta las columnas que ya conoce (de `group.values` o de los datos actuales) con su título
+real y sin el contador, cada una con `loadingRowCount` cards fantasma (`article.gdy-kanban-card-skeleton`);
+antes de los primeros datos, cuando no conoce ninguna columna, pinta tres columnas fantasma. Los
+fantasmas llevan `aria-hidden="true"`.
+
+Mientras carga, la raíz (`.gdy-table`, `.gdy-kanban`) lleva `aria-busy="true"` y `data-loading`, el
+estado vacío no se muestra nunca y la tabla no avisa `onVisibleRowsChange`: el próximo aviso llega con los
+datos nuevos, si cambiaron. Con filas ya en pantalla (por ejemplo, al cambiar de página en el servidor),
+los fantasmas las reemplazan hasta que `loading` vuelve a `false`. `renderLoading` reemplaza los
+fantasmas por tu propio contenido, en el mismo lugar: una `tr.gdy-table-loading-row` de ancho completo
+en la tabla, el viewport del tablero en el kanban. La barra toma su color de `--gdy-skeleton-bg` y su
+brillo de `--gdy-skeleton-shine` ([Temas](theming.es.md#tokens-de-componente)); el brillo solo se mueve
+sin movimiento reducido.
+
+```tsx
+<DataTable
+  columns={columns}
+  data={page.rows}
+  loading={isFetching}
+  loadingRowCount={10}
+  manualPagination
+  serverRowCount={page.total}
+/>
+```
+
 ## Filtros
 
 Una columna tiene menú de filtro cuando declara `filterable: true` y `features.filtering` está activo.
@@ -132,8 +164,12 @@ fecha activo.
 - `calendarMonthYearDropdown` (por defecto `true`) muestra desplegables de mes y año en la cabecera del
   calendario; con `false`, el mes aparece como texto fijo. Los años van de `calendarFromYear` (por
   defecto, el año actual menos 100) a `calendarToYear` (por defecto, el año actual más 10).
-- El calendario usa el locale español (nombres de meses y de días, semanas que empiezan el lunes).
-  Ninguna prop lo cambia.
+- El calendario usa el locale español (nombres de meses y de días, semanas que empiezan el lunes),
+  salvo que `calendarLocale` indique otro locale de `date-fns`. Un locale de `react-day-picker/locale`
+  traduce además los nombres accesibles del calendario.
+- Todos los textos de la barra y de los menús ("Limpiar filtros", "Ordenar", "Aplicar"…) se reemplazan
+  con `labels`: ver [table.es.md](table.es.md#textos-e-idioma) y
+  [kanban.es.md](kanban.es.md#textos-e-idioma).
 
 ### Limpiar filtros
 
@@ -379,6 +415,9 @@ Todos los tipos de esta sección se exportan desde `gridory`, `gridory/table` y 
 | `createLabel` | `string` | `"Nuevo"` | Texto del botón de crear. |
 | `onCreate` | `() => void` | — | Callback del botón de crear; el botón solo se renderiza si está definido. |
 | `emptyMessage` | `ReactNode` | `"No se encontraron resultados"` | Se muestra cuando ninguna fila o tarjeta coincide. Ver [Estado vacío](#estado-vacío). |
+| `loading` | `boolean` | `false` | Muestra los fantasmas en lugar de los datos. Ver [Estado de carga](#estado-de-carga). |
+| `loadingRowCount` | `number` | `5` | Filas fantasma de la tabla, o cards fantasma por columna del kanban. |
+| `renderLoading` | `() => ReactNode` | — | Tu propio contenido en lugar de los fantasmas. |
 | `rowActions` | `RowActions<TData>` | — | Menú de acciones de cada fila o tarjeta. |
 | `archivedView` | `ArchivedViewConfig` | — | Select activos/archivados/todos. |
 | `viewSwitch` | `ViewSwitchConfig` | — | Selector tabla/kanban. |
@@ -396,6 +435,7 @@ Todos los tipos de esta sección se exportan desde `gridory`, `gridory/table` y 
 | `calendarMonthYearDropdown` | `boolean` | `true` | Desplegables de mes y año en la cabecera del calendario. |
 | `calendarFromYear` | `number` | año actual menos 100 | Primer año del desplegable de años. |
 | `calendarToYear` | `number` | año actual más 10 | Último año del desplegable de años. |
+| `calendarLocale` | `Locale` (`date-fns`) | español (`es`) | Idioma del calendario de los filtros. |
 
 ### ToolbarLayout
 

@@ -15,7 +15,7 @@ export const KanbanColumns = <TData,>({
           key={value || "__empty_value__"}
           {...settings}
           value={value}
-          label={resolveColumnLabel(state.groupColumns, value)}
+          label={resolveColumnLabel(state.groupColumns, value, view.labels.emptyValue)}
           cards={state.cardsByGroup[value] ?? []}
         />
       ))}

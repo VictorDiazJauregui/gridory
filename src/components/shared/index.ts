@@ -20,6 +20,7 @@ export type {
 export { selectThemeToVars } from "./select-theme";
 export type { SelectTheme } from "./select-theme";
 export type { DataViewProps } from "./data-view-props";
+export type { DataViewLabels } from "./labels/data-view-labels";
 export { resolveToolbarClusters } from "./toolbar/toolbar-layout";
 export type { ToolbarLayout, ToolbarSide } from "./toolbar/toolbar-layout";
 export { DuplicateToolbarSlotError } from "./toolbar/toolbar-custom-slots";

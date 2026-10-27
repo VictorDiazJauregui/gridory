@@ -14,6 +14,7 @@ export const KanbanCardContent = <TData,>(props: KanbanCardProps<TData>) => {
       group={props.group}
       groupValue={props.groupValue}
       rowActions={rowActionsEnabled ? rowActions : undefined}
+      labels={props.labels}
     />
   );
 };

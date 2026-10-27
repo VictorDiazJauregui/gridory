@@ -12,6 +12,7 @@ export const TableValueFilterMenu = <TData,>({
       options={filterOptions[column.id] ?? []}
       selected={state.filters[column.id] ?? []}
       onSelectedChange={(next) => state.setFilter(column.id, next)}
+      labels={model.settings.labels}
       {...buildSortMenuProps(column, model)}
     />
   );

@@ -15,6 +15,11 @@ import { useViewSwitch } from "../company/use-view-switch";
 import { isDemoBaseline } from "../../../demo/use-demo-baseline";
 import { useTableHookProps } from "./use-table-hook-props";
 import { EmptyWithCreate } from "../company/EmptyWithCreate";
+import { useLoadingToggle } from "../shared/use-loading-toggle";
+import { readDemoPrintMode } from "./demo-print-mode";
+import { useDemoLanguage } from "../shared/demo-language";
+import { LANGUAGE_SLOT } from "../shared/demo-language-slot";
+import { localizeTableDemoProps } from "../shared/localize-demo-props";
 
 const TABLE_CREATED_ROW: CreatedRowTemplate = {
   idPrefix: "new",
@@ -47,7 +52,16 @@ export const useDataTableMockProps = (
   const rowProps = useTableRowProps();
   const viewSwitch = useViewSwitch("table");
   const hookProps = useTableHookProps(openCompany);
+  const loadingToggle = useLoadingToggle();
+  const language = useDemoLanguage();
   const baseProps = { ...TABLE_STATIC_PROPS, ...rowProps, viewSwitch };
   if (isDemoBaseline()) return baseProps;
-  return { ...baseProps, ...hookProps, emptyMessage: <EmptyWithCreate onCreate={rowProps.onCreate} /> };
+  return localizeTableDemoProps({
+    ...baseProps,
+    ...hookProps,
+    toolbarSlots: [...(hookProps.toolbarSlots ?? []), loadingToggle.slot, LANGUAGE_SLOT],
+    loading: loadingToggle.loading,
+    printMode: readDemoPrintMode(),
+    emptyMessage: <EmptyWithCreate onCreate={rowProps.onCreate} />,
+  }, language);
 };
