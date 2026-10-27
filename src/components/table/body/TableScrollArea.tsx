@@ -1,6 +1,7 @@
 import { cn } from "../../../lib/cn";
 import { TableBody } from "./TableBody";
 import { TableHead } from "../header/TableHead";
+import { TableFoot } from "../footer/TableFoot";
 import type { TableModelProps } from "../model/use-table-core";
 import type { TableSettings } from "../settings";
 
@@ -22,6 +23,7 @@ export const TableScrollArea = <TData,>({ model }: TableModelProps<TData>) => {
       <table className={cn("gdy-table-grid", settings.classNames?.table)}>
         <TableHead model={model} />
         <TableBody model={model} />
+        <TableFoot model={model} />
       </table>
     </div>
   );
