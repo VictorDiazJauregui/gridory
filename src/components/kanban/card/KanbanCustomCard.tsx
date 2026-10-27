@@ -19,7 +19,7 @@ export const KanbanCustomCard = <TData,>(
       {props.renderCard(card, { card, groupId: group.id, groupValue })}
       {props.rowActionsEnabled ? (
         <div className="gdy-kanban-card-actions">
-          <KanbanCardMenu card={card} rowActions={rowActions} />
+          <KanbanCardMenu card={card} rowActions={rowActions} labels={props.labels} />
         </div>
       ) : null}
     </>

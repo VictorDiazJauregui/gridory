@@ -1,4 +1,6 @@
 import type { Table } from "@tanstack/react-table";
+import { useResolvedLabels } from "../../shared/labels/use-resolved-labels";
+import { DATA_TABLE_LABELS } from "../labels";
 import { resolveTableSettings } from "../settings";
 import type { ColumnDefinition, DataTableProps } from "../types";
 import { useTablePaging } from "../pagination/use-table-paging";
@@ -12,7 +14,7 @@ import { useBindViewPaging, useViewChangeHandlers } from "./use-view-change-hand
 const NO_COLLAPSED_GROUPS = new Set<string>();
 
 export const useTableCore = <TData>(props: DataTableProps<TData>) => {
-  const settings = resolveTableSettings(props);
+  const settings = resolveTableSettings(props, useResolvedLabels(DATA_TABLE_LABELS, props.labels));
   const viewChange = useViewChangeHandlers(settings);
   const state = useTableState(settings, viewChange);
   const { rows, grouping } = useTableRows(settings, state);

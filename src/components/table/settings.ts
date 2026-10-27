@@ -1,15 +1,12 @@
+import type { ReactNode } from "react";
 import {
   applyPropDefaults,
   resolveCalendarYearDefaults,
 } from "../shared/prop-defaults";
 import { DEFAULT_FEATURES, DEFAULT_PAGE_SIZES } from "./constants";
-import type { DataTableFeatures, DataTableProps } from "./types";
+import type { DataTableFeatures, DataTableLabels, DataTableProps } from "./types";
 
-type TableDefaultKey =
-  | "searchPlaceholder"
-  | "createLabel"
-  | "emptyMessage"
-  | "label"
+type TableBehaviorKey =
   | "pageSizeOptions"
   | "defaultPageSize"
   | "manualPagination"
@@ -23,18 +20,9 @@ type TableDefaultKey =
   | "dateFilterRequireOperator"
   | "dateInputFormat"
   | "calendarMonthYearDropdown"
-  | "defaultGroupBy"
-  | "groupSelectorLabel"
-  | "groupNoneLabel"
-  | "groupEmptyValueLabel";
+  | "defaultGroupBy";
 
-const TABLE_PROP_DEFAULTS: Required<
-  Pick<DataTableProps<unknown>, TableDefaultKey>
-> = {
-  searchPlaceholder: "Buscar...",
-  createLabel: "Nuevo",
-  emptyMessage: "No se encontraron resultados",
-  label: "elementos",
+const TABLE_PROP_DEFAULTS: Required<Pick<DataTableProps<unknown>, TableBehaviorKey>> = {
   pageSizeOptions: DEFAULT_PAGE_SIZES,
   defaultPageSize: 50,
   manualPagination: false,
@@ -49,23 +37,35 @@ const TABLE_PROP_DEFAULTS: Required<
   dateInputFormat: "dd/mm/yyyy",
   calendarMonthYearDropdown: true,
   defaultGroupBy: null,
-  groupSelectorLabel: "Agrupar por",
-  groupNoneLabel: "Ninguno",
-  groupEmptyValueLabel: "Sin valor",
 };
+
+// The single-text props predate `labels`: they default to their key and still win over it.
+const textPropDefaults = (labels: DataTableLabels) => ({
+  searchPlaceholder: labels.searchPlaceholder,
+  createLabel: labels.createButton,
+  emptyMessage: labels.emptyMessage as ReactNode,
+  label: labels.itemsName,
+  groupSelectorLabel: labels.groupSelector,
+  groupNoneLabel: labels.groupNone,
+  groupEmptyValueLabel: labels.groupEmptyValue,
+});
 
 export type TableSettings<TData> = DataTableProps<TData> &
   typeof TABLE_PROP_DEFAULTS &
+  ReturnType<typeof textPropDefaults> &
   ReturnType<typeof resolveCalendarYearDefaults> & {
+    labels: DataTableLabels;
     flags: Required<DataTableFeatures>;
   };
 
 export const resolveTableSettings = <TData>(
   props: DataTableProps<TData>,
-): TableSettings<TData> => ({
-  ...applyPropDefaults(
-    { ...TABLE_PROP_DEFAULTS, ...resolveCalendarYearDefaults() },
-    props,
-  ),
-  flags: { ...DEFAULT_FEATURES, ...props.features },
-});
+  labels: DataTableLabels,
+): TableSettings<TData> => {
+  const defaults = { ...TABLE_PROP_DEFAULTS, ...textPropDefaults(labels), ...resolveCalendarYearDefaults() };
+  return {
+    ...applyPropDefaults(defaults, props),
+    labels,
+    flags: { ...DEFAULT_FEATURES, ...props.features },
+  };
+};

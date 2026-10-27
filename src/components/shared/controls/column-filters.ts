@@ -1,3 +1,4 @@
+import type { Locale } from "date-fns";
 import type { DateFilterState, DateInputFormat } from "../data-model";
 import { EMPTY_DATE_FILTER_STATE, hasDateFilterValue } from "./date-filter";
 
@@ -6,6 +7,7 @@ export interface CalendarSettings {
   calendarMonthYearDropdown: boolean;
   calendarFromYear: number;
   calendarToYear: number;
+  calendarLocale?: Locale;
 }
 
 export const hasColumnFilter = (
@@ -32,9 +34,11 @@ export const pickCalendarSettings = ({
   calendarMonthYearDropdown,
   calendarFromYear,
   calendarToYear,
+  calendarLocale,
 }: CalendarSettings): CalendarSettings => ({
   dateInputFormat,
   calendarMonthYearDropdown,
   calendarFromYear,
   calendarToYear,
+  calendarLocale,
 });

@@ -10,16 +10,18 @@ interface GroupColumnsInput<TData> {
   selectedGroup: KanbanGroupOption<TData>;
   cards: TData[];
   visibleCards: TData[];
+  emptyValueLabel: string;
 }
 
 export const useGroupColumns = <TData>({
   selectedGroup,
   cards,
   visibleCards,
+  emptyValueLabel,
 }: GroupColumnsInput<TData>) => {
   const groupColumns = useMemo(
-    () => collectGroupColumns(selectedGroup, cards),
-    [selectedGroup, cards],
+    () => collectGroupColumns(selectedGroup, cards, emptyValueLabel),
+    [selectedGroup, cards, emptyValueLabel],
   );
   const cardsByGroup = useMemo(
     () => groupCardsByValue(selectedGroup, groupColumns, visibleCards),

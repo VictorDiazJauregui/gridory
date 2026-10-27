@@ -12,7 +12,7 @@ export const useKanbanBoardState = <TData>(view: KanbanBoardView<TData>) => {
   const { cards, setCards, filterOptions } = useKanbanCards(view);
   const { selectedGroup, changeGroup } = useSelectedGroup(view);
   const visibleCards = useVisibleCards({ cards, view, ...controls });
-  const columns = useGroupColumns({ selectedGroup, cards, visibleCards });
+  const columns = useGroupColumns({ selectedGroup, cards, visibleCards, emptyValueLabel: view.labels.emptyValue });
   const mover = buildCardMover({ cards, setCards, selectedGroup, view });
   const drag = useCardDrag(view.flags.dragAndDrop);
   return {

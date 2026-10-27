@@ -1,11 +1,12 @@
 import type { CalendarSettings } from "../controls/column-filters";
+import type { DateFilterMenuLabels } from "../labels/data-view-labels";
 import { DatePickerWithInput } from "../date-pickers/DatePickerWithInput";
 import { DateRangePicker } from "../date-pickers/DateRangePicker";
 import type { DateFilterDraft } from "./use-date-filter-draft";
 
 interface DateFilterDatesSectionProps {
   draft: DateFilterDraft;
-  settings: CalendarSettings;
+  settings: CalendarSettings & { labels: Pick<DateFilterMenuLabels, "datesTitle" | "pickDate" | "pickRange"> };
 }
 
 const toPickerCalendar = (settings: CalendarSettings) => ({
@@ -13,12 +14,14 @@ const toPickerCalendar = (settings: CalendarSettings) => ({
   monthYearDropdown: settings.calendarMonthYearDropdown,
   fromYear: settings.calendarFromYear,
   toYear: settings.calendarToYear,
+  locale: settings.calendarLocale,
 });
 
 const DraftDatePicker = ({ draft, settings }: DateFilterDatesSectionProps) => (
   <DatePickerWithInput
     value={draft.tempState.date}
     onChange={(date) => draft.patch({ date })}
+    ariaLabel={settings.labels.pickDate}
     {...toPickerCalendar(settings)}
   />
 );
@@ -31,6 +34,7 @@ const DraftDateRangePicker = ({
     dateFrom={draft.tempState.dateFrom}
     dateTo={draft.tempState.dateTo}
     onChange={(dateFrom, dateTo) => draft.patch({ dateFrom, dateTo })}
+    ariaLabel={settings.labels.pickRange}
     {...toPickerCalendar(settings)}
   />
 );
@@ -40,7 +44,7 @@ export const DateFilterDatesSection = (props: DateFilterDatesSectionProps) => {
   if (op === "") return null;
   return (
     <div className="gdy-panel-section">
-      <p className="gdy-panel-title">Fechas</p>
+      <p className="gdy-panel-title">{props.settings.labels.datesTitle}</p>
       {(op === "gt" || op === "lt") && <DraftDatePicker {...props} />}
       {op === "bt" && <DraftDateRangePicker {...props} />}
     </div>

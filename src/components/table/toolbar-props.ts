@@ -25,11 +25,11 @@ const buildGroupSelector = <TData>(model: TableModel<TData>) => {
     return undefined;
   }
   return {
-    options: buildGroupSelectOptions(
-      state.groupOptions,
-      groupSelectorLabel,
-      groupNoneLabel,
-    ),
+    options: buildGroupSelectOptions(state.groupOptions, {
+      selectorLabel: groupSelectorLabel,
+      noneLabel: groupNoneLabel,
+      labeledValue: settings.labels.labeledValue,
+    }),
     value: state.activeGroupBy ?? GROUP_NONE_VALUE,
     onChange: (value: string) =>
       selectGroupBy(model, value === GROUP_NONE_VALUE ? null : value),

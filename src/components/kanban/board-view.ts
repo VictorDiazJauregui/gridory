@@ -7,6 +7,7 @@ import { DEFAULT_KANBAN_FEATURES } from "./constants";
 import type {
   DateInputFormat,
   KanbanBoardFeatures,
+  KanbanBoardLabels,
   KanbanBoardProps,
   KanbanGroupOption,
 } from "./types";
@@ -27,13 +28,14 @@ interface KanbanBoardDefaults {
 }
 
 export type KanbanBoardView<TData> = KanbanBoardProps<TData> &
-  KanbanBoardDefaults & { flags: Required<KanbanBoardFeatures> };
+  KanbanBoardDefaults & { labels: KanbanBoardLabels; flags: Required<KanbanBoardFeatures> };
 
-const resolveBoardDefaults = (): KanbanBoardDefaults => ({
-  groupSelectorLabel: "Agrupar por",
-  searchPlaceholder: "Buscar cards...",
-  createLabel: "Nuevo",
-  emptyMessage: "No se encontraron resultados",
+// The single-text props predate `labels`: they default to their key and still win over it.
+const resolveBoardDefaults = (labels: KanbanBoardLabels): KanbanBoardDefaults => ({
+  groupSelectorLabel: labels.groupSelector,
+  searchPlaceholder: labels.searchPlaceholder,
+  createLabel: labels.createButton,
+  emptyMessage: labels.emptyMessage,
   boardMinHeightClassName: "gdy-kanban-min-h-md",
   columnBodyMaxHeight: 480,
   thinScrollbars: true,
@@ -45,10 +47,14 @@ const resolveBoardDefaults = (): KanbanBoardDefaults => ({
 
 export const applyBoardDefaults = <TData>(
   props: KanbanBoardProps<TData>,
-): KanbanBoardView<TData> => ({
-  ...applyPropDefaults(resolveBoardDefaults(), props),
-  flags: { ...DEFAULT_KANBAN_FEATURES, ...props.features },
-});
+  labels: KanbanBoardLabels,
+): KanbanBoardView<TData> => {
+  return {
+    ...applyPropDefaults(resolveBoardDefaults(labels), props),
+    labels,
+    flags: { ...DEFAULT_KANBAN_FEATURES, ...props.features },
+  };
+};
 
 export const assertGroupConfiguration = <TData>(
   groups: KanbanGroupOption<TData>[],

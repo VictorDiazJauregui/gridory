@@ -8,6 +8,7 @@ import type {
   SortDirection,
 } from "../shared/data-model";
 import type { DataViewProps } from "../shared/data-view-props";
+import type { DataViewLabels } from "../shared/labels/data-view-labels";
 
 export type {
   AiButtonConfig,
@@ -102,7 +103,31 @@ export interface KanbanBoardClassNames {
   empty?: string;
 }
 
+/** Every text of the kanban. Defaults in Spanish; pass the ones to replace with `labels`. */
+export interface KanbanBoardLabels extends DataViewLabels {
+  /** Box of a column without cards. `"Sin cards"`. */
+  emptyColumn: string;
+  /** Column and card group of the cards with an empty value. `"Sin valor"`. */
+  emptyValue: string;
+  /** Title of a default card whose first field is empty. `"Card"`. */
+  untitledCard: string;
+  /** Bold label before each field of a default card. `` `${header}:` ``. */
+  cardFieldLabel: (header: string) => string;
+  /**
+   * Date field of a default card; receives the raw value (`"2026-03-01"`). Defaults to
+   * `"01/03/2026"`, and returns any value without a `yyyy-mm-dd` start as it is.
+   */
+  formatCardDate: (value: string) => string;
+}
+
 export interface KanbanBoardProps<TData> extends DataViewProps<TData> {
+  /**
+   * Replaces any text of the kanban; the keys you leave out keep their Spanish default. The
+   * older single-text props (`searchPlaceholder`, `createLabel`, `emptyMessage`,
+   * `groupSelectorLabel`, the `rowActions`, `archivedView`, `viewSwitch` and `aiButton`
+   * labels) win over their key when both are set.
+   */
+  labels?: Partial<KanbanBoardLabels>;
   fields: ColumnDefinition<TData>[];
   data: DataInput<TData>;
   groups: KanbanGroupOption<TData>[];

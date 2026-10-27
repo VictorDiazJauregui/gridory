@@ -1,7 +1,10 @@
 import { cn } from "../../../lib/cn";
 import type { SelectTheme } from "../../shared/select-theme";
+import type { DataTableLabels } from "../types";
 import { PaginationControls } from "./PaginationControls";
 import { PaginationSummary } from "./PaginationSummary";
+
+export type PaginationLabels = Pick<DataTableLabels, "showing" | "pageSize" | "pageOf" | "previousPage" | "nextPage">;
 
 export interface TablePaginationProps {
   enabled: boolean;
@@ -9,6 +12,7 @@ export interface TablePaginationProps {
   from: number;
   to: number;
   label: string;
+  labels: PaginationLabels;
   pageSize: number;
   pageSizeOptions: number[];
   onPageSizeChange: (size: number) => void;

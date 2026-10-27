@@ -23,7 +23,7 @@ export const KanbanColumnBody = <TData,>(props: KanbanColumnProps<TData>) => (
     style={{ maxHeight: `${props.columnBodyMaxHeight}px` }}
   >
     {props.cards.length === 0 ? (
-      <div className="gdy-kanban-empty-col">Sin cards</div>
+      <div className="gdy-kanban-empty-col">{props.cardSettings.labels.emptyColumn}</div>
     ) : (
       renderColumnCards(props)
     )}

@@ -1,5 +1,6 @@
 import type { ColumnFooterContext } from "../../table";
 import type { MockCompanyRow } from "../company/company-rows";
+import { translateWithCurrentLanguage } from "../shared/demo-dictionary";
 import { formatAmount, sumAmountsByCurrency, type MockCurrency } from "./company-amounts";
 
 // One line per currency: the column is narrow and a sum of USD and PEN makes no sense.
@@ -15,5 +16,7 @@ export const AmountFooter = ({ filteredRows }: ColumnFooterContext<MockCompanyRo
   );
 };
 
-export const TotalLabelFooter = ({ filteredRows }: ColumnFooterContext<MockCompanyRow>) =>
-  `Total (${filteredRows.length} ${filteredRows.length === 1 ? "empresa" : "empresas"})`;
+export const TotalLabelFooter = ({ filteredRows }: ColumnFooterContext<MockCompanyRow>) => {
+  const noun = translateWithCurrentLanguage(filteredRows.length === 1 ? "empresa" : "empresas");
+  return `Total (${filteredRows.length} ${noun})`;
+};

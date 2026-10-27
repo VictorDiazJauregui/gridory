@@ -159,8 +159,12 @@ day; "between" includes both ends. Rows with an empty value never match an activ
 - `calendarMonthYearDropdown` (default `true`) shows month and year dropdowns in the calendar
   header; `false` shows a static month label. The years run from `calendarFromYear` (default:
   current year minus 100) to `calendarToYear` (default: current year plus 10).
-- The calendar uses the Spanish locale (month and weekday names, weeks starting on Monday). No prop
-  changes it.
+- The calendar uses the Spanish locale (month and weekday names, weeks starting on Monday) unless
+  `calendarLocale` sets another `date-fns` locale. A locale from `react-day-picker/locale` also
+  translates the calendar's accessible names.
+- Every text of the toolbar and the menus (this page's "Limpiar filtros", "Ordenar", "Aplicar"…) is
+  replaceable with `labels`: see [table.md](table.md#texts-and-language) and
+  [kanban.md](kanban.md#texts-and-language).
 
 ### Clearing filters
 
@@ -419,6 +423,7 @@ Every type below is exported from `gridory`, `gridory/table` and `gridory/kanban
 | `calendarMonthYearDropdown` | `boolean` | `true` | Month and year dropdowns in the calendar header. |
 | `calendarFromYear` | `number` | current year minus 100 | First year of the year dropdown. |
 | `calendarToYear` | `number` | current year plus 10 | Last year of the year dropdown. |
+| `calendarLocale` | `Locale` (`date-fns`) | Spanish (`es`) | Language of the filter calendar. |
 
 ### ToolbarLayout
 

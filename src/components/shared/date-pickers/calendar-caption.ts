@@ -1,4 +1,11 @@
+import type { Locale } from "date-fns";
 import type { DayPickerProps } from "react-day-picker";
+
+/** Accessible name of the calendar button and language of the calendar (Spanish when unset). */
+export interface CalendarTexts {
+  ariaLabel: string;
+  locale?: Locale;
+}
 
 export interface CalendarYearRange {
   monthYearDropdown: boolean;

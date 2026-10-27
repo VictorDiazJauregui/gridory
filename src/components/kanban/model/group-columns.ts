@@ -9,13 +9,14 @@ export const getGroupValue = <TData>(
 export const collectGroupColumns = <TData>(
   group: KanbanGroupOption<TData>,
   cards: TData[],
+  emptyValueLabel: string,
 ): FilterOption[] => {
   if (group.values?.length) return group.values;
   const uniqueValues = new Map<string, string>();
   cards.forEach((card) => {
     const value = getGroupValue(group, card);
     if (!uniqueValues.has(value))
-      uniqueValues.set(value, value || "Sin valor");
+      uniqueValues.set(value, value || emptyValueLabel);
   });
   return Array.from(uniqueValues.entries())
     .map(([value, label]) => ({ value, label }))
@@ -48,9 +49,9 @@ export const mergeColumnValues = (
   return Array.from(new Set([...fromConfig, ...fromRows]));
 };
 
-export const resolveColumnLabel = (columns: FilterOption[], value: string) => {
+export const resolveColumnLabel = (columns: FilterOption[], value: string, emptyValueLabel: string) => {
   const configuredLabel = columns.find(
     (column) => column.value === value,
   )?.label;
-  return (configuredLabel ?? value) || "Sin valor";
+  return (configuredLabel ?? value) || emptyValueLabel;
 };

@@ -645,6 +645,103 @@ scroll area; `scrollbarColor` sets their thumb color (see [toolbar.md](toolbar.m
 </div>
 ```
 
+### Texts and language
+
+Every text of the table can be replaced with `labels`, and `calendarLocale` sets the language of the
+filter calendar. The defaults are Spanish (a product decision); pass only the keys you want to
+replace, the rest keep their default. Texts with values are functions.
+
+```tsx
+import { enUS } from "date-fns/locale";
+
+<DataTable
+  columns={columns}
+  data={invoices}
+  labels={{
+    searchPlaceholder: "Search...",
+    clearFilters: "Clear filters",
+    showing: ({ from, to, total, itemsName }) =>
+      total === 0 ? `0 ${itemsName}` : `Showing ${from}–${to} of ${total} ${itemsName}`,
+    pageOf: (page, count) => `Page ${page} of ${count}`,
+    itemsName: "invoices",
+  }}
+  calendarLocale={enUS}
+/>;
+```
+
+- **Priority.** The older single-text props (`searchPlaceholder`, `createLabel`, `emptyMessage`,
+  `label`, `groupSelectorLabel`, `groupNoneLabel`, `groupEmptyValueLabel`, the `*Label` of
+  `rowActions`, `archivedView.label` and `optionLabels`, `viewSwitch.tableLabel` and `kanbanLabel`,
+  `aiButton.label`) still work and win over their key.
+- **Memoize it.** Keep `labels` in a constant or a `useMemo`: a new object on every render rebuilds
+  the columns and menus each time.
+- **Contents are yours.** Column headers, cell values and your own toolbar controls are your texts:
+  translate them in your app.
+- **`calendarLocale`** takes a `date-fns` locale and changes the month and weekday names, the first
+  day of the week and the month dropdown. Without it the calendar is Spanish. A locale from
+  `react-day-picker/locale` (`import { enUS } from "react-day-picker/locale"`) also translates the
+  calendar's accessible names ("previous month", "choose the year"), which otherwise stay in English.
+- The date inputs show the `dateInputFormat` mask as placeholder (`"dd/mm/yyyy"`); set the mask your
+  users expect.
+
+Keys shared with the kanban (`DataViewLabels`):
+
+| Key | Default | Text | Single-text prop that wins |
+|---|---|---|---|
+| `searchPlaceholder` | `"Buscar..."` (kanban: `"Buscar cards..."`) | Search box placeholder | `searchPlaceholder` |
+| `createButton` | `"Nuevo"` | Create button | `createLabel` |
+| `emptyMessage` | `"No se encontraron resultados"` | No row or card matches | `emptyMessage` |
+| `groupSelector` | `"Agrupar por"` | Group selector prefix and accessible name | `groupSelectorLabel` |
+| `clearFilters` | `"Limpiar filtros"` | Button that clears every filter | — |
+| `archivedView` | `"Mostrar"` | Archived view selector prefix and accessible name | `archivedView.label` |
+| `archivedActive` | `"Activos"` | Archived view option: active | `archivedView.optionLabels.active` |
+| `archivedArchived` | `"Archivados"` | Archived view option: archived | `archivedView.optionLabels.archived` |
+| `archivedAll` | `"Todos"` | Archived view option: all | `archivedView.optionLabels.all` |
+| `viewSwitchTable` | `"Tabla"` | View switch: table | `viewSwitch.tableLabel` |
+| `viewSwitchKanban` | `"Kanban"` | View switch: kanban | `viewSwitch.kanbanLabel` |
+| `aiButton` | `"AI"` | AI button | `aiButton.label` |
+| `rowActionsTrigger` | `"Opciones"` | Tooltip and accessible name of the ⋯ button | `rowActions.triggerLabel` |
+| `editAction` | `"Editar"` | Built-in edit action | `rowActions.editLabel` |
+| `archiveAction` | `"Archivar"` | Built-in archive action | `rowActions.archiveLabel` |
+| `unarchiveAction` | `"Desarchivar"` | Built-in unarchive action | `rowActions.unarchiveLabel` |
+| `deleteAction` | `"Eliminar"` | Built-in delete action | `rowActions.deleteLabel` |
+| `historyAction` | `"Ver historial"` | Built-in history action | `rowActions.historyLabel` |
+| `sortTitle` | `"Ordenar"` | Sort section of the filter menus | — |
+| `sortAscending` | `"Ascendente (A → Z)"` | Ascending sort of a value column | — |
+| `sortDescending` | `"Descendente (Z → A)"` | Descending sort of a value column | — |
+| `filterTitle` | `"Filtrar"` | Filter section of the value menu | — |
+| `selectAll(count)` | `"Seleccionar todo (n)"` | Selects every listed option; `count` is how many are listed | — |
+| `clearSelection` | `"Limpiar"` | Clears the value menu selection | — |
+| `filterSearchPlaceholder` | `"Buscar..."` | Search box of the value menu | — |
+| `valuesTitle` | `"Valores"` | Values section of the value menu | — |
+| `noResults` | `"Sin resultados"` | Value menu with no option for the search | — |
+| `dateSortAscending` | `"Ascendente (antigua → reciente)"` | Ascending sort of a date column | — |
+| `dateSortDescending` | `"Descendente (reciente → antigua)"` | Descending sort of a date column | — |
+| `operatorTitle` | `"Operador"` | Operator section of the date menu | — |
+| `operatorAfter` | `"Mayor que (fecha posterior)"` | "After" operator | — |
+| `operatorBefore` | `"Menor que (fecha anterior)"` | "Before" operator | — |
+| `operatorBetween` | `"Entre (rango)"` | "Between" operator | — |
+| `datesTitle` | `"Fechas"` | Dates section of the date menu | — |
+| `dateClear` | `"Limpiar"` | Clears the date filter | — |
+| `dateApply` | `"Aplicar"` | Applies the date filter | — |
+| `pickDate` | `"Seleccionar fecha"` | Accessible name of the calendar button (one date) | — |
+| `pickRange` | `"Seleccionar rango"` | Accessible name of the calendar button (range) | — |
+| `labeledValue(label, value)` | `` `${label}: ${value}` `` | Joins a prefix and its value: "Agrupar por: Ninguno", "Mostrar: Activos", the header selectors and the kanban card tag | — |
+
+Table keys (`DataTableLabels`):
+
+| Key | Default | Text | Single-text prop that wins |
+|---|---|---|---|
+| `itemsName` | `"elementos"` | Noun of the pagination summary | `label` |
+| `showing({ from, to, total, itemsName })` | `"Mostrando 1–25 de 53 elementos"`; `"0 elementos"` with no rows | Pagination summary | — |
+| `pageSize` | `"Elementos por página"` | Text and accessible name of the page size select | — |
+| `pageOf(page, count)` | `"Página 1 de 3"` | Page position; `page` is `0` with no rows | — |
+| `previousPage` | `"Página anterior"` | Accessible name of the previous page arrow | — |
+| `nextPage` | `"Página siguiente"` | Accessible name of the next page arrow | — |
+| `inlineSelectPlaceholder` | `"Seleccionar..."` | Inline select cell with no value | — |
+| `groupNone` | `"Ninguno"` | "No grouping" option | `groupNoneLabel` |
+| `groupEmptyValue` | `"Sin valor"` | Group of the rows with an empty value | `groupEmptyValueLabel` |
+
 ## Events
 
 | Callback | Signature | Fires |
@@ -826,6 +923,7 @@ Own props of `DataTableProps<TData>`, in source order.
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
+| `labels` | `Partial<DataTableLabels>` | Spanish texts | Replaces any text. See [Texts and language](#texts-and-language). |
 | `columns` | `ColumnDefinition<TData>[]` | — | Column definitions (required). |
 | `data` | `DataInput<TData>` | — | Rows: an array or an API envelope (required). |
 | `normalizeRow` | `(row: unknown, index: number) => TData` | — | Maps each record of an envelope to `TData`. |
@@ -876,12 +974,14 @@ Own props of `DataTableProps<TData>`, in source order.
 `viewSwitch`, `aiButton`, `toggleGroups`,
 `headerSelectors`, `toolbarLayout`, `selectTheme`, `thinScrollbars`, `scrollbarColor`,
 `optionHoverColor`, `dateFilterRequireOperator`, `dateInputFormat`, `calendarMonthYearDropdown`,
-`calendarFromYear`, `calendarToYear`), documented in [toolbar.md](toolbar.md).
+`calendarFromYear`, `calendarToYear`, `calendarLocale`), documented in [toolbar.md](toolbar.md).
 
 ### Types
 
 All of them are exported from `gridory/table` and `gridory`.
 
+- `DataTableLabels`: every text of the table, the shape of `labels` ([Texts and language](#texts-and-language)).
+  It extends `DataViewLabels`, the texts the table shares with the kanban.
 - `DataTableFeatures`: the optional boolean flags of `features` (`search`, `sorting`, `filtering`,
   `pagination`, `rowActions`, `createButton`, `grouping`).
 - `GroupHeader`: `{ value: string; label: string; count: number }`, one group row.

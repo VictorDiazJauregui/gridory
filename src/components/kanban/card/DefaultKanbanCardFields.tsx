@@ -1,44 +1,47 @@
 import { normalizeToArray } from "../../shared/rows/row-pipeline";
-import { formatDateValue } from "./card-summary";
-import type { ColumnDefinition } from "../types";
+import type { ColumnDefinition, KanbanBoardLabels } from "../types";
+
+type CardFieldLabels = Pick<KanbanBoardLabels, "cardFieldLabel" | "formatCardDate">;
 
 interface DefaultKanbanCardFieldsProps<TData> {
   card: TData;
   fields: ColumnDefinition<TData>[];
+  labels: CardFieldLabels;
 }
 
-const renderExtraField = <TData,>(
-  card: TData,
-  field: ColumnDefinition<TData>,
-) => {
+interface CardFieldInput<TData> {
+  card: TData;
+  field: ColumnDefinition<TData>;
+  labels: CardFieldLabels;
+}
+
+const renderExtraField = <TData,>({ card, field, labels }: CardFieldInput<TData>) => {
   const value = normalizeToArray(field.accessor(card)).join(", ");
   if (!value) return null;
   return (
     <p key={field.id} className="gdy-kanban-card-value">
-      <strong className="gdy-kanban-card-value-label">{field.header}:</strong> {value}
+      <strong className="gdy-kanban-card-value-label">{labels.cardFieldLabel(field.header)}</strong> {value}
     </p>
   );
 };
 
-const renderDateField = <TData,>(
-  card: TData,
-  field?: ColumnDefinition<TData>,
-) => {
-  if (!field) return null;
-  return (
-    <p className="gdy-kanban-card-value">
-      <strong className="gdy-kanban-card-value-label">{field.header}:</strong>{" "}
-      {formatDateValue(normalizeToArray(field.accessor(card))[0] ?? "")}
-    </p>
-  );
-};
+const renderDateField = <TData,>({ card, field, labels }: CardFieldInput<TData>) => (
+  <p className="gdy-kanban-card-value">
+    <strong className="gdy-kanban-card-value-label">{labels.cardFieldLabel(field.header)}</strong>{" "}
+    {labels.formatCardDate(normalizeToArray(field.accessor(card))[0] ?? "")}
+  </p>
+);
 
 export const DefaultKanbanCardFields = <TData,>({
   card,
   fields,
-}: DefaultKanbanCardFieldsProps<TData>) => (
-  <>
-    {fields.slice(2, 4).map((field) => renderExtraField(card, field))}
-    {renderDateField(card, fields.find((field) => field.type === "date"))}
-  </>
-);
+  labels,
+}: DefaultKanbanCardFieldsProps<TData>) => {
+  const dateField = fields.find((field) => field.type === "date");
+  return (
+    <>
+      {fields.slice(2, 4).map((field) => renderExtraField({ card, field, labels }))}
+      {dateField ? renderDateField({ card, field: dateField, labels }) : null}
+    </>
+  );
+};

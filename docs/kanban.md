@@ -274,6 +274,91 @@ rendered under your markup, inside `gdy-kanban-card-actions`.
 menu with the built-in edit, archive, remove and history actions plus your own. Both are shared with
 the table and documented in [toolbar.md](toolbar.md).
 
+### Texts and language
+
+Every text of the board can be replaced with `labels`, and `calendarLocale` sets the language of the
+filter calendar. The defaults are Spanish (a product decision); pass only the keys you want to
+replace, the rest keep their default. Texts with values are functions.
+
+```tsx
+import { enUS } from "date-fns/locale";
+
+const formatDate = new Intl.DateTimeFormat("en-US", { dateStyle: "medium" });
+
+<KanbanBoard
+  {...boardProps}
+  labels={{
+    searchPlaceholder: "Search deals...",
+    emptyColumn: "No deals",
+    emptyValue: "No stage",
+    formatCardDate: (value) => formatDate.format(new Date(`${value.slice(0, 10)}T00:00`)),
+  }}
+  calendarLocale={enUS}
+/>;
+```
+
+- **Priority.** The older single-text props (`searchPlaceholder`, `createLabel`, `emptyMessage`,
+  `groupSelectorLabel`, the `*Label` of `rowActions`, `archivedView.label` and `optionLabels`,
+  `viewSwitch.tableLabel` and `kanbanLabel`, `aiButton.label`) still work and win over their key.
+- **Memoize it.** Keep `labels` in a constant or a `useMemo`.
+- **Contents are yours.** Field headers, group labels and card values are your texts.
+- **`calendarLocale`** works as in the table ([table.md](table.md#texts-and-language)); a locale from
+  `react-day-picker/locale` also translates the calendar's accessible names.
+
+Keys shared with the table (`DataViewLabels`):
+
+| Key | Default | Text | Single-text prop that wins |
+|---|---|---|---|
+| `searchPlaceholder` | `"Buscar..."` (kanban: `"Buscar cards..."`) | Search box placeholder | `searchPlaceholder` |
+| `createButton` | `"Nuevo"` | Create button | `createLabel` |
+| `emptyMessage` | `"No se encontraron resultados"` | No row or card matches | `emptyMessage` |
+| `groupSelector` | `"Agrupar por"` | Group selector prefix and accessible name | `groupSelectorLabel` |
+| `clearFilters` | `"Limpiar filtros"` | Button that clears every filter | — |
+| `archivedView` | `"Mostrar"` | Archived view selector prefix and accessible name | `archivedView.label` |
+| `archivedActive` | `"Activos"` | Archived view option: active | `archivedView.optionLabels.active` |
+| `archivedArchived` | `"Archivados"` | Archived view option: archived | `archivedView.optionLabels.archived` |
+| `archivedAll` | `"Todos"` | Archived view option: all | `archivedView.optionLabels.all` |
+| `viewSwitchTable` | `"Tabla"` | View switch: table | `viewSwitch.tableLabel` |
+| `viewSwitchKanban` | `"Kanban"` | View switch: kanban | `viewSwitch.kanbanLabel` |
+| `aiButton` | `"AI"` | AI button | `aiButton.label` |
+| `rowActionsTrigger` | `"Opciones"` | Tooltip and accessible name of the ⋯ button | `rowActions.triggerLabel` |
+| `editAction` | `"Editar"` | Built-in edit action | `rowActions.editLabel` |
+| `archiveAction` | `"Archivar"` | Built-in archive action | `rowActions.archiveLabel` |
+| `unarchiveAction` | `"Desarchivar"` | Built-in unarchive action | `rowActions.unarchiveLabel` |
+| `deleteAction` | `"Eliminar"` | Built-in delete action | `rowActions.deleteLabel` |
+| `historyAction` | `"Ver historial"` | Built-in history action | `rowActions.historyLabel` |
+| `sortTitle` | `"Ordenar"` | Sort section of the filter menus | — |
+| `sortAscending` | `"Ascendente (A → Z)"` | Ascending sort of a value column | — |
+| `sortDescending` | `"Descendente (Z → A)"` | Descending sort of a value column | — |
+| `filterTitle` | `"Filtrar"` | Filter section of the value menu | — |
+| `selectAll(count)` | `"Seleccionar todo (n)"` | Selects every listed option; `count` is how many are listed | — |
+| `clearSelection` | `"Limpiar"` | Clears the value menu selection | — |
+| `filterSearchPlaceholder` | `"Buscar..."` | Search box of the value menu | — |
+| `valuesTitle` | `"Valores"` | Values section of the value menu | — |
+| `noResults` | `"Sin resultados"` | Value menu with no option for the search | — |
+| `dateSortAscending` | `"Ascendente (antigua → reciente)"` | Ascending sort of a date column | — |
+| `dateSortDescending` | `"Descendente (reciente → antigua)"` | Descending sort of a date column | — |
+| `operatorTitle` | `"Operador"` | Operator section of the date menu | — |
+| `operatorAfter` | `"Mayor que (fecha posterior)"` | "After" operator | — |
+| `operatorBefore` | `"Menor que (fecha anterior)"` | "Before" operator | — |
+| `operatorBetween` | `"Entre (rango)"` | "Between" operator | — |
+| `datesTitle` | `"Fechas"` | Dates section of the date menu | — |
+| `dateClear` | `"Limpiar"` | Clears the date filter | — |
+| `dateApply` | `"Aplicar"` | Applies the date filter | — |
+| `pickDate` | `"Seleccionar fecha"` | Accessible name of the calendar button (one date) | — |
+| `pickRange` | `"Seleccionar rango"` | Accessible name of the calendar button (range) | — |
+| `labeledValue(label, value)` | `` `${label}: ${value}` `` | Joins a prefix and its value: "Agrupar por: Ninguno", "Mostrar: Activos", the header selectors and the kanban card tag | — |
+
+Kanban keys (`KanbanBoardLabels`):
+
+| Key | Default | Text | Single-text prop that wins |
+|---|---|---|---|
+| `emptyColumn` | `"Sin cards"` | Box of a column without cards | — |
+| `emptyValue` | `"Sin valor"` | Column and card tag of the cards with an empty value | — |
+| `untitledCard` | `"Card"` | Title of a default card whose first field is empty | — |
+| `cardFieldLabel(header)` | `` `${header}:` `` | Bold label before each field of a default card | — |
+| `formatCardDate(value)` | `"01/03/2026"` | Date field of a default card; gets the raw value (`"2026-03-01"`) and returns any value without a `yyyy-mm-dd` start as it is | — |
+
 ## Events
 
 | Callback | Signature | Fires |
@@ -396,6 +481,7 @@ Own props of `KanbanBoardProps<TData>`, in source order.
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
+| `labels` | `Partial<KanbanBoardLabels>` | Spanish texts | Replaces any text. See [Texts and language](#texts-and-language). |
 | `fields` | `ColumnDefinition<TData>[]` | — | Fields used to search, filter, sort and render the cards (required). |
 | `data` | `DataInput<TData>` | — | Cards: an array or an API envelope (required). |
 | `groups` | `KanbanGroupOption<TData>[]` | — | Available groupings; must not be empty (required). |
@@ -419,12 +505,14 @@ Own props of `KanbanBoardProps<TData>`, in source order.
 `viewSwitch`, `aiButton`, `toggleGroups`,
 `headerSelectors`, `toolbarLayout`, `selectTheme`, `thinScrollbars`, `scrollbarColor`,
 `optionHoverColor`, `dateFilterRequireOperator`, `dateInputFormat`, `calendarMonthYearDropdown`,
-`calendarFromYear`, `calendarToYear`), documented in [toolbar.md](toolbar.md). On the board
+`calendarFromYear`, `calendarToYear`, `calendarLocale`), documented in [toolbar.md](toolbar.md). On the board
 `searchPlaceholder` defaults to `"Buscar cards..."`, `createLabel` to `"Nuevo"` and `emptyMessage` to
 `"No se encontraron resultados"`.
 
 ### Types
 
+- `KanbanBoardLabels`: every text of the board, the shape of `labels` ([Texts and language](#texts-and-language)).
+  It extends `DataViewLabels`, the texts the board shares with the table.
 - `KanbanGroupOption<TData>`: one grouping, `{ id, label, accessor, setValue, values? }`.
 - `KanbanBoardFeatures`: the optional boolean flags of `features` (`search`, `sorting`, `filtering`,
   `createButton`, `rowActions`, `groupSelector`, `dragAndDrop`).
