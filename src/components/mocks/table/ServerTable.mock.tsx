@@ -2,13 +2,18 @@ import { useState } from "react";
 import { DataTable, type DataTableProps } from "../../table";
 import type { MockCompanyRow } from "../company/company-rows";
 import { DemoEventLog } from "../shared/DemoEventLog";
+import { useDemoText } from "../shared/demo-dictionary";
+import { useDemoLanguage } from "../shared/demo-language";
+import { localizeTableDemoProps } from "../shared/localize-demo-props";
 import { SERVER_COLUMNS } from "./server-columns";
 import { AutoRowsToggle, FirstPageButton } from "./ServerToolbarButtons";
 import { usePageSizeByHeight } from "./use-page-size-by-height";
 import { useServerTableDemo } from "./use-server-table-demo";
 
-const EVENT_LOG_DESCRIPTION =
-  "La tabla no busca, no ordena, no filtra ni pagina: avisa con onSearchChange (300 ms después de dejar de escribir), onSortChange, onFiltersChange y onPaginationChange, y el servidor simulado responde en 600 ms.";
+const EVENT_LOG_DESCRIPTION = {
+  es: "La tabla no busca, no ordena, no filtra ni pagina: avisa con onSearchChange (300 ms después de dejar de escribir), onSortChange, onFiltersChange y onPaginationChange, y el servidor simulado responde en 600 ms.",
+  en: "The table does not search, sort, filter or page: it reports onSearchChange (300 ms after typing stops), onSortChange, onFiltersChange and onPaginationChange, and the simulated server answers in 600 ms.",
+};
 
 type ServerTableDemo = ReturnType<typeof useServerTableDemo>;
 
@@ -62,15 +67,18 @@ export const ServerTableMock = () => {
   const [container, setContainer] = useState<HTMLDivElement | null>(null);
   const autoRows = useAutoRows(container);
   const demo = useServerTableDemo(autoRows.measured);
+  const language = useDemoLanguage();
+  const title = useDemoText()("Servidor simulado");
+  const tableProps = localizeTableDemoProps({ ...buildServerDataProps(demo, autoRows), ...buildServerControlProps(demo) }, language);
   return (
-    <section className="mt-6 flex flex-col gap-4 xl:flex-row xl:items-start" aria-label="Servidor simulado">
+    <section className="mt-6 flex flex-col gap-4 xl:flex-row xl:items-start" aria-label={title}>
       <div className="min-w-0 flex-1 space-y-2">
-        <h2 className="text-lg font-semibold">Servidor simulado</h2>
+        <h2 className="text-lg font-semibold">{title}</h2>
         <div ref={setContainer} className={autoRows.active ? "h-[60vh]" : undefined}>
-          <DataTable {...buildServerDataProps(demo, autoRows)} {...buildServerControlProps(demo)} />
+          <DataTable {...tableProps} />
         </div>
       </div>
-      <DemoEventLog events={demo.events} description={EVENT_LOG_DESCRIPTION} />
+      <DemoEventLog events={demo.events} description={EVENT_LOG_DESCRIPTION[language]} />
     </section>
   );
 };
