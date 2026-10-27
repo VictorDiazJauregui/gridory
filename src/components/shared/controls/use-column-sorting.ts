@@ -1,5 +1,5 @@
-import { useState } from "react";
 import type { ColumnSortingState, SortDirection } from "../data-model";
+import { useControllableState } from "../state/use-controllable-state";
 
 export const resolveSortDirection = (
   sorting: ColumnSortingState | null,
@@ -18,8 +18,16 @@ const nextSortCycle = (
   return null;
 };
 
-export const useColumnSorting = () => {
-  const [sorting, setSorting] = useState<ColumnSortingState | null>(null);
+export interface ColumnSortingControl {
+  /** Controlled sort; `undefined` keeps it internal, `null` means "no sort". */
+  value?: ColumnSortingState | null;
+  onChange?: (sorting: ColumnSortingState | null) => void;
+}
+
+export const useColumnSorting = (control: ColumnSortingControl = {}) => {
+  const [sorting, setSorting] = useControllableState<ColumnSortingState | null>({
+    ...control, defaultValue: null, name: "sorting",
+  });
   const sortBy = (id: string, direction: SortDirection) =>
     setSorting({ id, direction });
   const toggleColumnSort = (id: string, direction: SortDirection) =>

@@ -206,7 +206,8 @@ de los dos, se calcula con la longitud de `data`, así que pasa siempre uno de e
 además el total que muestra el resumen. `onPaginationChange({ pageIndex, pageSize })` se dispara cuando
 el usuario cambia de página o de tamaño de página; `onSearchChange(query)` se dispara en cada cambio de
 búsqueda, que además devuelve la tabla a la primera página. Los filtros por columna, el orden, el
-agrupado y la vista de archivados se siguen aplicando en local sobre las filas de la página actual.
+agrupado y la vista de archivados se siguen aplicando en local sobre las filas de la página actual;
+para ordenar en el servidor, usa `manualSorting` ([Estado controlado](#estado-controlado)).
 
 ```tsx
 <DataTable
@@ -220,6 +221,70 @@ agrupado y la vista de archivados se siguen aplicando en local sobre las filas d
   onPaginationChange={({ pageIndex, pageSize }) => fetchPage({ pageIndex, pageSize, query })}
   onSearchChange={(nextQuery) => fetchPage({ pageIndex: 0, pageSize, query: nextQuery })}
 />
+```
+
+### Estado controlado
+
+Parte del estado de la tabla puede manejarlo tu app. El patrón es el de un input de React: pasa el valor
+y su manejador `on…Change`, y la tabla muestra exactamente ese valor y solo avisa lo que hace el
+usuario; deja el valor en `undefined` y la tabla guarda el estado por su cuenta, como hasta ahora. `null`
+es un valor ("sin orden"), no "no controlado". Elige un modo para toda la vida de la tabla: cambiarlo
+después de montarla deja un aviso en consola en las builds de desarrollo.
+
+#### Orden
+
+- `sorting` (`ColumnSortingState | null`) fija el orden activo.
+- `onSortChange(sorting)` se dispara en cada cambio de orden que hace el usuario, controlado o no: clic
+  en el encabezado (ascendente, descendente, nada), los botones "Ordenar" de un menú de filtro y el botón
+  "Limpiar" de un filtro de fecha. No se dispara cuando cambia la prop `sorting`.
+- `manualSorting` (por defecto `false`) indica que ordena el servidor: la tabla nunca reordena `data` y
+  solo avisa el orden. Al cambiarlo vuelve a la primera página; `onPaginationChange({ pageIndex: 0, pageSize })`
+  se dispara solo si no estaba ya en la primera página, así un único pedido cubre los dos cambios.
+
+```tsx
+const [sorting, setSorting] = useState<ColumnSortingState | null>(null);
+const [page, setPage] = useState({ pageIndex: 0, pageSize: 25 });
+
+// Un solo efecto pide lo que haya cambiado: el orden, la página o los dos.
+useEffect(() => {
+  fetchInvoices({ ...page, sort: sorting }).then(setResult);
+}, [sorting, page]);
+
+<DataTable
+  columns={columns}
+  data={result.rows}
+  manualPagination
+  manualSorting
+  serverRowCount={result.total}
+  defaultPageSize={25}
+  sorting={sorting}
+  onSortChange={setSorting}
+  onPaginationChange={setPage}
+/>;
+```
+
+### Impresión
+
+`printMode` imprime una tabla limpia. Con la prop, la vista de impresión (Ctrl+P, `window.print()`)
+oculta la toolbar, la paginación y la columna de acciones entera (encabezado y celdas), deja crecer el
+área de filas hasta su contenido (sin scroll interno que corte filas ni encabezado fijo), repite el
+encabezado en cada hoja y nunca parte una fila entre dos hojas. La raíz lleva `data-print-mode`.
+
+- `"page"` imprime la página que está en pantalla.
+- `"all"` imprime todas las filas que pasan la búsqueda, los filtros y la vista de archivados, en el
+  orden de la pantalla. **Los grupos se imprimen desplegados, incluso los que están plegados en
+  pantalla.** Al terminar de imprimir, la tabla vuelve a la página y a los grupos plegados que tenía;
+  ni `onPaginationChange` ni `onVisibleRowsChange` se disparan por imprimir. La tabla pinta las filas
+  extra en el momento en que el navegador anuncia la impresión (`beforeprint`, o la media query
+  `print`), así que llegan a la hoja. Miles de filas tardan un momento en pintarse.
+- Con `manualPagination` la tabla solo tiene la página actual, así que `"all"` imprime esa página: si
+  necesitas todas en papel, carga antes todas las filas.
+
+Sin `printMode` no cambia nada: la tabla se imprime como hasta ahora. Para imprimir a tu manera, deja
+la prop afuera y escribe una hoja `@media print` sobre los [ganchos de estilo](style-hooks.es.md).
+
+```tsx
+<DataTable columns={columns} data={invoices} printMode="all" />
 ```
 
 ### Edición en línea
@@ -443,6 +508,7 @@ del thumb (consulta [toolbar.es.md](toolbar.es.md)).
 | `onGroupChange` | `(groupBy: string \| null) => void` | Cuando el usuario cambia el selector de agrupado; `null` significa "ninguno". No se dispara al montar. |
 | `onPaginationChange` | `(state: ManualPaginationState) => void` | Al pasar a la página anterior o siguiente, o al cambiar el tamaño de página, en los dos modos de paginación. |
 | `onSearchChange` | `(query: string) => void` | En cada cambio de la caja de búsqueda, en los dos modos de paginación. |
+| `onSortChange` | `(sorting: ColumnSortingState \| null) => void` | En cada cambio de orden que hace el usuario, controlado o no ([Estado controlado](#estado-controlado)). |
 | `onVisibleRowsChange` | `(state: VisibleRowsState<TData>) => void` | Al montar, y cada vez que la búsqueda, los filtros, el orden, el agrupado o la página cambian las filas visibles ([Filas visibles](#filas-visibles)). |
 | `ColumnDefinition.onInlineEdit` | `(row: TData, value: string) => void` | Al elegir una opción en una celda editable en línea. |
 
@@ -632,9 +698,13 @@ Props propias de `DataTableProps<TData>`, en el orden del código fuente.
 | `serverRowCount` | `number` | — | Total de filas en el servidor; de él salen el número de páginas y el total del resumen. |
 | `serverPageCount` | `number` | — | Total de páginas en el servidor; tiene prioridad sobre `serverRowCount`. |
 | `onPaginationChange` | `(state: ManualPaginationState) => void` | — | Cambio de página o de tamaño de página. |
+| `sorting` | `ColumnSortingState \| null` | — | Orden controlado; `undefined` lo deja en manos de la tabla. |
+| `onSortChange` | `(sorting: ColumnSortingState \| null) => void` | — | Cambio de orden hecho por el usuario. |
+| `manualSorting` | `boolean` | `false` | Ordena el servidor: `data` nunca se reordena. |
 | `onSearchChange` | `(query: string) => void` | — | Cambio en la caja de búsqueda. |
 | `onVisibleRowsChange` | `(state: VisibleRowsState<TData>) => void` | — | Filas visibles al montar y después de cada cambio. |
 | `tableWrapClassName` | `string` | — | Clases extra para el contenedor de filas. |
+| `printMode` | `"page" \| "all"` | — | Impresión limpia de la página o de todas las filas filtradas. Ver [Impresión](#impresión). |
 | `className` | `string` | — | Clases extra para la raíz, después de `gdy-table` y sus flags. |
 | `classNames` | `DataTableClassNames` | — | Una clase por parte. Ver [Clases por parte](#clases-por-parte). |
 | `tableMinHeightClassName` | `string` | `"gdy-table-min-h-md"` | Clase de altura mínima del contenedor de filas. |
@@ -650,7 +720,8 @@ Props propias de `DataTableProps<TData>`, en el orden del código fuente.
 | `groupEmptyValueLabel` | `string` | `"Sin valor"` | Etiqueta del grupo de valores vacíos. |
 
 `DataTableProps` también acepta todas las props de `DataViewProps` (`searchPlaceholder`, `createLabel`,
-`onCreate`, `emptyMessage`, `rowActions`, `archivedView`, `viewSwitch`, `aiButton`, `toggleGroups`,
+`onCreate`, `emptyMessage`, `loading`, `loadingRowCount`, `renderLoading`, `rowActions`, `archivedView`,
+`viewSwitch`, `aiButton`, `toggleGroups`,
 `headerSelectors`, `toolbarLayout`, `selectTheme`, `thinScrollbars`, `scrollbarColor`,
 `optionHoverColor`, `dateFilterRequireOperator`, `dateInputFormat`, `calendarMonthYearDropdown`,
 `calendarFromYear`, `calendarToYear`), documentadas en [toolbar.es.md](toolbar.es.md).

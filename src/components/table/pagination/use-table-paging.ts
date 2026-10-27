@@ -6,6 +6,13 @@ import { useScrollResetOnPageChange } from "./use-scroll-reset-on-page-change";
 import { useTablePagination } from "./use-table-pagination";
 import type { TableState } from "../model/use-table-state";
 import { useViewSnapshot } from "./use-view-snapshot";
+import { usePrintMedia } from "../model/use-print-media";
+
+// While `printMode="all"` prints, the page window is lifted: every filtered row is rendered.
+const withoutPagination = <TData>(settings: TableSettings<TData>): TableSettings<TData> => ({
+  ...settings,
+  flags: { ...settings.flags, pagination: false },
+});
 
 export const useTablePaging = <TData>(
   flatRows: TData[],
@@ -16,7 +23,9 @@ export const useTablePaging = <TData>(
   const viewSnapshot = useViewSnapshot(state);
   useResetPageOnChange(pagination, settings, viewSnapshot);
   const wrapRef = useScrollResetOnPageChange(pagination, settings, viewSnapshot);
-  const pagedRows = usePagedRows(flatRows, pagination, settings);
-  const range = computePageRange(flatRows.length, pagination, settings);
-  return { ...pagination, wrapRef, pagedRows, range };
+  const printingAllRows = usePrintMedia(settings.printMode === "all" && !settings.manualPagination);
+  const pageSettings = printingAllRows ? withoutPagination(settings) : settings;
+  const pagedRows = usePagedRows(flatRows, pagination, pageSettings);
+  const range = computePageRange(flatRows.length, pagination, pageSettings);
+  return { ...pagination, wrapRef, pagedRows, range, printingAllRows };
 };

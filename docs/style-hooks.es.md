@@ -16,7 +16,7 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 
 | Clase | Tipo | Selectores de estado |
 |---|---|---|
-| `gdy-table` | con estilos | — |
+| `gdy-table` | con estilos | `[data-print-mode]` |
 | `gdy-table-actions-cell` | con estilos | `[data-align="center"]`, `[data-align="left"]` |
 | `gdy-table-actions-head-label` | con estilos | — |
 | `gdy-table-actions-icon` | solo gancho | — |
@@ -43,6 +43,7 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-table-head-trigger` | con estilos | `[data-align="center"]`, `[data-align="right"]` |
 | `gdy-table-inline-select` | con estilos | — |
 | `gdy-table-inline-select-wrap` | con estilos | — |
+| `gdy-table-loading-row` | solo gancho | — |
 | `gdy-table-max-h-lg` | utilidad | — |
 | `gdy-table-max-h-md` | utilidad | — |
 | `gdy-table-max-h-sm` | utilidad | — |
@@ -57,6 +58,8 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-table-pagination-right` | con estilos | — |
 | `gdy-table-pagination-text` | con estilos | — |
 | `gdy-table-row` | con estilos | `[data-clickable]` |
+| `gdy-table-skeleton` | con estilos | `[data-column-id="_actions"]` |
+| `gdy-table-skeleton-row` | solo gancho | — |
 | `gdy-table-sticky` | con estilos | — |
 | `gdy-table-wrap` | con estilos | — |
 
@@ -73,6 +76,7 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-kanban-card-main` | con estilos | — |
 | `gdy-kanban-card-menu-icon` | solo gancho | — |
 | `gdy-kanban-card-meta` | con estilos | — |
+| `gdy-kanban-card-skeleton` | con estilos | — |
 | `gdy-kanban-card-subtitle` | con estilos | — |
 | `gdy-kanban-card-title` | con estilos | — |
 | `gdy-kanban-card-value` | con estilos | — |
@@ -517,6 +521,7 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-search-icon` | con estilos | — |
 | `gdy-search-sm` | con estilos | — |
 | `gdy-search-sm-icon` | con estilos | — |
+| `gdy-skeleton` | con estilos | — |
 | `gdy-thin-scroll` | con estilos | — |
 | `gdy-toolbar` | con estilos | — |
 | `gdy-toolbar-clear` | solo gancho | — |
@@ -540,6 +545,9 @@ hay que escribir para pisarlas; los motivos están en [Temas y estilos](theming.
 
 | Selector | Especificidad |
 |---|---|
+| `.gdy-table-skeleton > .gdy-skeleton` | 0-2-0 |
+| `.gdy-table-skeleton[data-column-id="_actions"]` | 0-2-0 |
+| `.gdy-table-skeleton[data-column-id="_actions"] > .gdy-skeleton` | 0-3-0 |
 | `.gdy-table-cell.gdy-empty` | 0-2-0 |
 | `.gdy-table-row[data-clickable]` | 0-2-0 |
 | `.gdy-table-row[data-clickable]:hover .gdy-table-cell` | 0-4-0 |
@@ -560,6 +568,15 @@ hay que escribir para pisarlas; los motivos están en [Temas y estilos](theming.
 | `.gdy-table-fill .gdy-card` | 0-2-0 |
 | `.gdy-table-fill .gdy-table-wrap` | 0-2-0 |
 | `.gdy-table-sticky .gdy-table-head-cell` | 0-2-0 |
+| `.gdy-table[data-print-mode] .gdy-toolbar` | 0-3-0 |
+| `.gdy-table[data-print-mode] .gdy-table-pagination` | 0-3-0 |
+| `.gdy-table[data-print-mode] [data-column-id="_actions"]` | 0-3-0 |
+| `.gdy-table[data-print-mode]` | 0-2-0 |
+| `.gdy-table[data-print-mode] .gdy-card` | 0-3-0 |
+| `.gdy-table[data-print-mode] .gdy-table-wrap` | 0-3-0 |
+| `.gdy-table[data-print-mode] .gdy-table-head-cell` | 0-3-0 |
+| `.gdy-table[data-print-mode] thead` | 0-2-1 |
+| `.gdy-table[data-print-mode] tr` | 0-2-1 |
 
 ## Atributos de estado
 
@@ -582,7 +599,7 @@ ponen Radix o react-day-picker siguen a esas librerías.
 | `data-animated` | `"true"` | Gridory | `gdy-segmented`, `gdy-sidebar` |
 | `data-checked` | presente / ausente | Gridory | `gdy-option-check` |
 | `data-clickable` | presente / ausente | Gridory | `gdy-table-row` |
-| `data-column-id` | el `id` de la columna | Gridory | sin regla por defecto |
+| `data-column-id` | el `id` de la columna | Gridory | `gdy-table-skeleton` |
 | `data-compact` | `"true"` | Gridory | `gdy-sidebar-logo` |
 | `data-day` | la fecha del día | Gridory | sin regla por defecto |
 | `data-diagram-state` | `"error"`, `"loading"`, `"ready"` | Gridory | `gdy-md-diagram` |
@@ -603,6 +620,7 @@ ponen Radix o react-day-picker siguen a esas librerías.
 | `data-label-position` | `"start"` | Gridory | `gdy-field` |
 | `data-language` | `"mermaid"` | Gridory | sin regla por defecto |
 | `data-list` | `"ordered"`, `"unordered"` | Gridory | sin regla por defecto |
+| `data-loading` | presente / ausente | Gridory | sin regla por defecto |
 | `data-math` | `"${tokens[index].markup === DISPLAY_MARKER ? "`, `"display"` | Gridory | sin regla por defecto |
 | `data-math-state` | `"error"`, `"loading"` | Gridory | `gdy-md-math` |
 | `data-measure-group` | presente / ausente | Gridory | sin regla por defecto |
@@ -614,6 +632,7 @@ ponen Radix o react-day-picker siguen a esas librerías.
 | `data-overflow` | `"visible"`, `"wrap"` | Gridory | `gdy-table-cell-content` |
 | `data-pinned` | `"false"`, `"true"` | Gridory | `gdy-sidebar` |
 | `data-placeholder` | presente / ausente | Gridory, Radix o react-day-picker | `gdy-country-select-value`, `gdy-phone-input-dial-code`, `gdy-select-trigger` |
+| `data-print-mode` | presente / ausente | Gridory | `gdy-table` |
 | `data-range-end` | presente / ausente | Gridory | `gdy-calendar-day`, `gdy-calendar-day-button` |
 | `data-range-middle` | presente / ausente | Gridory | `gdy-calendar-day`, `gdy-calendar-day-button` |
 | `data-range-start` | presente / ausente | Gridory | `gdy-calendar-day`, `gdy-calendar-day-button` |
@@ -983,6 +1002,8 @@ cualquier ancestro cambia solo esa parte. Los `--gdy-select-*` también reflejan
 | `--gdy-sidebar-tooltip-z` | `60` | sidebar |
 | `--gdy-sidebar-width` | `280px` | sidebar |
 | `--gdy-sidebar-z` | `40` | sidebar |
+| `--gdy-skeleton-bg` | `color-mix(in oklab, var(--gdy-foreground) 10%, transparent)` | shared |
+| `--gdy-skeleton-shine` | `color-mix(in oklab, var(--gdy-background) 60%, transparent)` | motion |
 | `--gdy-table-border` | `var(--gdy-border)` | table |
 | `--gdy-table-group-bg` | `var(--gdy-accent)` | table |
 | `--gdy-table-head-bg` | `var(--gdy-muted)` | table |

@@ -90,6 +90,29 @@
   .gdy-sidebar-overlay[data-state="closed"] {
     animation: gdy-fade-out var(--gdy-sidebar-duration, 200ms) ease-in;
   }
+
+  /* Loading placeholders: a soft shine sweeps the bar; with reduced motion the bar stays still. */
+  .gdy-skeleton {
+    background-image: linear-gradient(
+      90deg,
+      transparent,
+      var(--gdy-skeleton-shine, color-mix(in oklab, var(--gdy-background) 60%, transparent)),
+      transparent
+    );
+    background-size: 200% 100%;
+    background-repeat: no-repeat;
+    animation: gdy-skeleton-shine 1.4s ease-in-out infinite;
+  }
+}
+
+@keyframes gdy-skeleton-shine {
+  from {
+    background-position: 200% 0;
+  }
+
+  to {
+    background-position: -100% 0;
+  }
 }
 
 @keyframes gdy-sidebar-drawer-in {

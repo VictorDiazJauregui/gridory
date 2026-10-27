@@ -5,7 +5,8 @@ import type { VisibleRowsState } from "../types";
 import { buildVisibleRowsState, isSameVisibleRows } from "./visible-rows";
 
 interface VisibleRowsSources<TData> {
-  pageRows: TData[];
+  /** `null` while the rows on screen are not the page (printing every row): nothing is reported. */
+  pageRows: TData[] | null;
   filteredRows: TData[];
 }
 
@@ -15,14 +16,14 @@ export const useVisibleRowsChange = <TData>(
   { pageRows, filteredRows }: VisibleRowsSources<TData>,
   settings: TableSettings<TData>,
 ) => {
-  const { manualPagination, serverRowCount, onVisibleRowsChange } = settings;
+  const { manualPagination, serverRowCount, onVisibleRowsChange, loading } = settings;
   const callbackRef = useLatestRef(onVisibleRowsChange);
   const lastEmittedRef = useRef<VisibleRowsState<TData>>(undefined);
   useEffect(() => {
-    if (!callbackRef.current) return;
+    if (!callbackRef.current || loading || !pageRows) return;
     const next = buildVisibleRowsState({ pageRows, filteredRows, manualPagination, serverRowCount });
     if (isSameVisibleRows(lastEmittedRef.current, next)) return;
     lastEmittedRef.current = next;
     callbackRef.current(next);
-  }, [pageRows, filteredRows, manualPagination, serverRowCount, callbackRef]);
+  }, [pageRows, filteredRows, manualPagination, serverRowCount, loading, callbackRef]);
 };

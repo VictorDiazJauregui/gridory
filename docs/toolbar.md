@@ -81,6 +81,38 @@ inside `div.gdy-empty`.
 />
 ```
 
+## Loading state
+
+`loading` tells the view that its data is on the way. The table keeps its toolbar, header and
+pagination, and paints `loadingRowCount` placeholder rows (default `5`) in place of the rows:
+`tr.gdy-table-skeleton-row` with one `td.gdy-table-cell.gdy-table-skeleton` per visible column (the
+actions column included), each holding a bar `span.gdy-skeleton`. They share the padding of a real cell,
+so a placeholder row is as tall as a data row. The kanban keeps its toolbar and filter row and paints
+the columns it already knows (from `group.values` or from the current data) with their real title and
+without the count, each with `loadingRowCount` placeholder cards (`article.gdy-kanban-card-skeleton`);
+before the first data, when no column is known, it paints three placeholder columns. The placeholders
+carry `aria-hidden="true"`.
+
+While loading, the root (`.gdy-table`, `.gdy-kanban`) carries `aria-busy="true"` and `data-loading`,
+the empty state is never shown and the table does not report `onVisibleRowsChange`: the next report comes
+with the new data, if it changed. With rows already on screen (a page change on the server, for
+example) the placeholders replace them until `loading` is `false` again. `renderLoading` replaces the
+placeholders with your own content, in the same place: a full-width `tr.gdy-table-loading-row` in the
+table, the board viewport in the kanban. The bar takes its color from `--gdy-skeleton-bg` and its shine
+from `--gdy-skeleton-shine` ([Theming](theming.md#component-tokens)); the shine only moves without
+reduced motion.
+
+```tsx
+<DataTable
+  columns={columns}
+  data={page.rows}
+  loading={isFetching}
+  loadingRowCount={10}
+  manualPagination
+  serverRowCount={page.total}
+/>
+```
+
 ## Filters
 
 A column gets a filter menu when it sets `filterable: true` and `features.filtering` is on. In the
@@ -367,6 +399,9 @@ Every type below is exported from `gridory`, `gridory/table` and `gridory/kanban
 | `createLabel` | `string` | `"Nuevo"` | Create button text. |
 | `onCreate` | `() => void` | — | Create button handler; the button renders only when it is set. |
 | `emptyMessage` | `ReactNode` | `"No se encontraron resultados"` | Shown when no row or card matches. See [Empty state](#empty-state). |
+| `loading` | `boolean` | `false` | Shows the placeholders instead of the data. See [Loading state](#loading-state). |
+| `loadingRowCount` | `number` | `5` | Placeholder rows of the table, or placeholder cards per kanban column. |
+| `renderLoading` | `() => ReactNode` | — | Your own content in place of the placeholders. |
 | `rowActions` | `RowActions<TData>` | — | Actions menu of each row or card. |
 | `archivedView` | `ArchivedViewConfig` | — | Active/archived/all select. |
 | `viewSwitch` | `ViewSwitchConfig` | — | Table/kanban switch. |

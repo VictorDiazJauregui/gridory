@@ -21,6 +21,16 @@ export interface DataViewProps<TData> {
    * leave the empty state without text.
    */
   emptyMessage?: ReactNode;
+  /**
+   * Shows the loading state: placeholder rows (table) or cards (kanban) in place of the data,
+   * `aria-busy="true"` and `data-loading` on the root. The toolbar keeps working and the empty
+   * state is never shown meanwhile. Defaults to `false`.
+   */
+  loading?: boolean;
+  /** Placeholder rows of the table, or placeholder cards per kanban column. Defaults to `5`. */
+  loadingRowCount?: number;
+  /** Replaces the placeholders with your own content, in the same place. */
+  renderLoading?: () => ReactNode;
   rowActions?: RowActions<TData>;
   archivedView?: ArchivedViewConfig;
   viewSwitch?: ViewSwitchConfig;
