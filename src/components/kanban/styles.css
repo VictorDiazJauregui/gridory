@@ -165,6 +165,25 @@
   gap: 8px;
 }
 
+/* Loading placeholder card: the frame of a real card with three text bars. */
+.gdy-kanban-card-skeleton {
+  border: 1px solid var(--gdy-kanban-card-border, var(--gdy-border));
+  border-radius: 10px;
+  background: var(--gdy-kanban-card-bg, var(--gdy-card));
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.gdy-kanban-card-skeleton > .gdy-skeleton:last-child {
+  width: 60%;
+}
+
+.gdy-kanban-column-title > .gdy-skeleton {
+  width: 96px;
+}
+
 /* :where() keeps the specificity of the bare class, so a consumer rule on
    .gdy-kanban-card still overrides the cursor as it did before. */
 .gdy-kanban-card:where([data-draggable]) {

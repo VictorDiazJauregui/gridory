@@ -16,6 +16,8 @@
     "gdy-table-head-sort-icon",
     "gdy-table-body",
     "gdy-table-empty-row",
+    "gdy-table-skeleton-row",
+    "gdy-table-loading-row",
     "gdy-table-group-row",
     "gdy-table-pagination-icon",
     "gdy-table-actions-icon",
@@ -66,7 +68,8 @@
     "data-alignment",
     "data-diagram-state",
     "data-math-state",
-    "data-overflow"
+    "data-overflow",
+    "data-column-id"
   ],
   "runtimeAttributes": [
     "data-state",
