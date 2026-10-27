@@ -9,18 +9,22 @@ const resolvePageSizeOptions = <TData>(settings: TableSettings<TData>, pageSize:
   return [...options, pageSize].sort((first, second) => first - second);
 };
 
+const buildSummaryProps = <TData>({ settings, paging }: TableModel<TData>) => ({
+  totalRows: paging.range.totalRows,
+  from: paging.range.from,
+  to: paging.range.to,
+  label: settings.label,
+  labels: settings.labels,
+  pageSize: paging.pageSize,
+  pageSizeOptions: resolvePageSizeOptions(settings, paging.pageSize),
+  onPageSizeChange: paging.changePageSize,
+});
+
 export const buildPaginationProps = <TData>(model: TableModel<TData>) => {
   const { settings, paging } = model;
-  const { range } = paging;
   return {
+    ...buildSummaryProps(model),
     enabled: settings.flags.pagination,
-    totalRows: range.totalRows,
-    from: range.from,
-    to: range.to,
-    label: settings.label,
-    pageSize: paging.pageSize,
-    pageSizeOptions: resolvePageSizeOptions(settings, paging.pageSize),
-    onPageSizeChange: paging.changePageSize,
     pageIndex: paging.pageIndex,
     pageCount: paging.pageCount,
     onPrevPage: () => paging.goToPage(paging.pageIndex - 1),

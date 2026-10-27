@@ -1,6 +1,7 @@
 import type { KeyboardEvent, MouseEvent } from "react";
 import type { ColumnDefinition, ColumnFiltersState, ColumnSortingState, DataInput } from "../shared/data-model";
 import type { DataViewProps } from "../shared/data-view-props";
+import type { DataViewLabels } from "../shared/labels/data-view-labels";
 
 export type {
   AiButtonConfig,
@@ -107,7 +108,36 @@ export interface DataTableClassNames {
   footCell?: string;
 }
 
+/** Every text of the table. Defaults in Spanish; pass the ones to replace with `labels`. */
+export interface DataTableLabels extends DataViewLabels {
+  /** Noun of the pagination summary. `"elementos"`. */
+  itemsName: string;
+  /** Pagination summary. `"0 elementos"` with no rows, otherwise `"Mostrando 1–25 de 53 elementos"`. */
+  showing: (range: { from: number; to: number; total: number; itemsName: string }) => string;
+  /** Text and accessible name of the page size selector. `"Elementos por página"`. */
+  pageSize: string;
+  /** Page position; `page` is `0` when there are no rows. `"Página 1 de 3"`. */
+  pageOf: (page: number, count: number) => string;
+  /** Accessible name of the previous page arrow. `"Página anterior"`. */
+  previousPage: string;
+  /** Accessible name of the next page arrow. `"Página siguiente"`. */
+  nextPage: string;
+  /** Placeholder of an inline `select` cell with no value. `"Seleccionar..."`. */
+  inlineSelectPlaceholder: string;
+  /** Group selector option that removes the grouping. `"Ninguno"`. */
+  groupNone: string;
+  /** Group of the rows with an empty value. `"Sin valor"`. */
+  groupEmptyValue: string;
+}
+
 export interface DataTableProps<TData> extends DataViewProps<TData> {
+  /**
+   * Replaces any text of the table; the keys you leave out keep their Spanish default. The
+   * older single-text props (`searchPlaceholder`, `createLabel`, `emptyMessage`, `label`,
+   * `groupSelectorLabel`, `groupNoneLabel`, `groupEmptyValueLabel`, the `rowActions`,
+   * `archivedView`, `viewSwitch` and `aiButton` labels) win over their key when both are set.
+   */
+  labels?: Partial<DataTableLabels>;
   columns: ColumnDefinition<TData>[];
   data: DataInput<TData>;
   normalizeRow?: (row: unknown, index: number) => TData;

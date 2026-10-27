@@ -8,15 +8,20 @@ import type {
   RowGroupingResult,
 } from "../types";
 
+interface GroupSelectTexts {
+  selectorLabel: string;
+  noneLabel: string;
+  labeledValue: (label: string, value: string) => string;
+}
+
 export const buildGroupSelectOptions = (
   groupOptions: Array<{ id: string; label: string }>,
-  selectorLabel: string,
-  noneLabel: string,
+  texts: GroupSelectTexts,
 ): SelectOption[] => [
-  { value: GROUP_NONE_VALUE, label: `${selectorLabel}: ${noneLabel}` },
+  { value: GROUP_NONE_VALUE, label: texts.labeledValue(texts.selectorLabel, texts.noneLabel) },
   ...groupOptions.map((option) => ({
     value: option.id,
-    label: `${selectorLabel}: ${option.label}`,
+    label: texts.labeledValue(texts.selectorLabel, option.label),
   })),
 ];
 

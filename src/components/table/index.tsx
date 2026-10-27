@@ -68,6 +68,7 @@ export type {
   RowClickEvent,
   RowGroupingResult,
   DataTableFeatures,
+  DataTableLabels,
   DataInput,
   ViewMode,
   ViewSwitchConfig,
