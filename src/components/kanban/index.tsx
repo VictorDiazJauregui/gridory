@@ -1,5 +1,6 @@
 import "./styles.css";
 import { cn } from "../../lib/cn";
+import { buildLoadingRootAttributes } from "../shared/loading/loading-state";
 import { resolveRootStyle } from "../shared/root-style";
 import { applyBoardDefaults, assertGroupConfiguration, type KanbanBoardView } from "./board-view";
 import { KanbanBoardBody } from "./board/KanbanBoardBody";
@@ -19,6 +20,7 @@ export const KanbanBoard = <TData,>(props: KanbanBoardProps<TData>) => {
     <div
       className={resolveRootClassName(view)}
       style={resolveRootStyle(view)}
+      {...buildLoadingRootAttributes(view.loading)}
     >
       <div className="gdy-scope gdy-card">
         <KanbanToolbar state={state} view={view} />
