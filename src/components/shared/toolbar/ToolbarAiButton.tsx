@@ -3,10 +3,11 @@ import type { AiButtonConfig } from "../data-model";
 
 interface ToolbarAiButtonProps {
   config: AiButtonConfig;
+  defaultLabel: string;
 }
 
-export const ToolbarAiButton = ({ config }: ToolbarAiButtonProps) => {
-  const label = config.label ?? "AI";
+export const ToolbarAiButton = ({ config, defaultLabel }: ToolbarAiButtonProps) => {
+  const label = config.label ?? defaultLabel;
 
   return (
     <button

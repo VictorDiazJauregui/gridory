@@ -3,12 +3,13 @@ import type { FilterSelection } from "./use-filter-selection";
 
 interface FilterOptionListProps {
   selection: FilterSelection;
+  noResults: string;
 }
 
-export const FilterOptionList = ({ selection }: FilterOptionListProps) => (
+export const FilterOptionList = ({ selection, noResults }: FilterOptionListProps) => (
   <div className="gdy-option-list gdy-scroll">
     {selection.filteredOptions.length === 0 ? (
-      <p className="gdy-empty-sm">Sin resultados</p>
+      <p className="gdy-empty-sm">{noResults}</p>
     ) : (
       selection.filteredOptions.map((option) => (
         <FilterOptionItem

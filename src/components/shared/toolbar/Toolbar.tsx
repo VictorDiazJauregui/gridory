@@ -10,6 +10,7 @@ import type {
   SelectOption,
   ToggleGroupConfig,
 } from "../toolbar-controls";
+import type { DataViewLabels } from "../labels/data-view-labels";
 import type { SelectTheme } from "../select-theme";
 import { resolveToolbarClusters, type ToolbarLayout } from "./toolbar-layout";
 import { SimpleSelect } from "../../ui/select/select";
@@ -26,10 +27,23 @@ import {
   type ToolbarCustomSlot,
 } from "./toolbar-custom-slots";
 
-const DEFAULT_ARCHIVED_OPTION_LABELS: Record<ArchivedViewMode, string> = {
-  active: "Activos",
-  archived: "Archivados",
-  all: "Todos",
+export type ToolbarLabels = Pick<
+  DataViewLabels,
+  | "clearFilters"
+  | "archivedView"
+  | "archivedActive"
+  | "archivedArchived"
+  | "archivedAll"
+  | "viewSwitchTable"
+  | "viewSwitchKanban"
+  | "aiButton"
+  | "labeledValue"
+>;
+
+const ARCHIVED_OPTION_LABEL_KEYS: Record<ArchivedViewMode, "archivedActive" | "archivedArchived" | "archivedAll"> = {
+  active: "archivedActive",
+  archived: "archivedArchived",
+  all: "archivedAll",
 };
 
 const ARCHIVED_OPTION_ORDER: ArchivedViewMode[] = ["active", "archived", "all"];
@@ -64,30 +78,29 @@ interface ToolbarProps {
   toolbarLayout?: ToolbarLayout;
   toolbarSlots?: ToolbarCustomSlot[];
   selectTheme?: SelectTheme;
+  labels: ToolbarLabels;
   className?: string;
 }
 
 type ToolbarSlots = Record<string, ReactNode>;
 
-const prefixedOptions = (
-  options: SelectOption[],
-  prefix?: string,
-): SelectOption[] =>
+const prefixedOptions = (options: SelectOption[], labels: ToolbarLabels, prefix?: string): SelectOption[] =>
   prefix
     ? options.map((option) => ({
         value: option.value,
-        label: `${prefix}: ${option.label}`,
+        label: labels.labeledValue(prefix, option.label),
       }))
     : options;
 
+const resolveArchivedViewLabel = (props: ToolbarProps) => props.archivedViewLabel ?? props.labels.archivedView;
+
 const buildArchivedOptions = (props: ToolbarProps): SelectOption[] => {
-  const label = props.archivedViewLabel ?? "Mostrar";
+  const { labels } = props;
   const optionLabel = (mode: ArchivedViewMode) =>
-    props.archivedViewOptionLabels?.[mode] ??
-    DEFAULT_ARCHIVED_OPTION_LABELS[mode];
+    props.archivedViewOptionLabels?.[mode] ?? labels[ARCHIVED_OPTION_LABEL_KEYS[mode]];
   return ARCHIVED_OPTION_ORDER.map((mode) => ({
     value: mode,
-    label: `${label}: ${optionLabel(mode)}`,
+    label: labels.labeledValue(resolveArchivedViewLabel(props), optionLabel(mode)),
   }));
 };
 
@@ -101,7 +114,7 @@ const fillSearchSlots = (props: ToolbarProps, slots: ToolbarSlots) => {
       />
     );
   if (props.showClearFilters)
-    slots.clearFilters = <ToolbarClearFilters onClear={props.onClearFilters} />;
+    slots.clearFilters = <ToolbarClearFilters label={props.labels.clearFilters} onClear={props.onClearFilters} />;
 };
 
 const fillArchivedSlot = (props: ToolbarProps, slots: ToolbarSlots) => {
@@ -113,7 +126,7 @@ const fillArchivedSlot = (props: ToolbarProps, slots: ToolbarSlots) => {
       onValueChange={(value) =>
         props.onArchivedModeChange(value as ArchivedViewMode)
       }
-      ariaLabel={props.archivedViewLabel ?? "Mostrar"}
+      ariaLabel={resolveArchivedViewLabel(props)}
       theme={props.selectTheme}
     />
   );
@@ -134,9 +147,9 @@ const fillGroupSlot = (props: ToolbarProps, slots: ToolbarSlots) => {
 };
 
 const fillActionSlots = (props: ToolbarProps, slots: ToolbarSlots) => {
-  if (props.aiButton) slots.ai = <ToolbarAiButton config={props.aiButton} />;
+  if (props.aiButton) slots.ai = <ToolbarAiButton config={props.aiButton} defaultLabel={props.labels.aiButton} />;
   if (props.viewSwitch)
-    slots.viewSwitch = <ToolbarViewSwitch config={props.viewSwitch} />;
+    slots.viewSwitch = <ToolbarViewSwitch config={props.viewSwitch} labels={props.labels} />;
   if (props.showCreateButton && props.onCreate)
     slots.create = (
       <ToolbarCreateButton
@@ -164,7 +177,7 @@ const fillHeaderSelectorSlots = (props: ToolbarProps, slots: ToolbarSlots) => {
   (props.headerSelectors ?? []).forEach((selector) => {
     slots[selector.id] = (
       <SimpleSelect
-        options={prefixedOptions(selector.options, selector.label)}
+        options={prefixedOptions(selector.options, props.labels, selector.label)}
         value={selector.value}
         onValueChange={selector.onChange}
         placeholder={selector.placeholder ?? selector.label}

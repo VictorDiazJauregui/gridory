@@ -3,6 +3,8 @@ import type {
   DateInputFormat,
   SortDirection,
 } from "../data-model";
+import type { Locale } from "date-fns";
+import type { DateFilterMenuLabels } from "../labels/data-view-labels";
 import { EMPTY_DATE_FILTER_STATE } from "../controls/date-filter";
 import {
   applyPropDefaults,
@@ -22,7 +24,9 @@ export interface DateFilterMenuProps {
   calendarMonthYearDropdown: boolean;
   calendarFromYear: number;
   calendarToYear: number;
+  calendarLocale?: Locale;
   emptyState?: DateFilterState;
+  labels: DateFilterMenuLabels;
 }
 
 interface DateFilterMenuDefaults {
