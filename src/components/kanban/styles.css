@@ -58,6 +58,12 @@
   left: 0;
 }
 
+/* No room to the right of the button: the panel opens to its left (set when it opens). */
+.gdy-kanban-filter-menu-holder[data-align="end"] {
+  left: auto;
+  right: 0;
+}
+
 /* Board viewport */
 .gdy-kanban-board-wrap {
   overflow-x: auto;
@@ -138,6 +144,46 @@
   font-weight: 500;
   color: var(--gdy-muted-foreground);
   white-space: nowrap;
+}
+
+/* Collapse button of collapsibleColumns, before the title; the title then takes the free space, so the
+   header extra and the count stay together at the end. */
+.gdy-kanban-column-toggle {
+  flex: none;
+  /* Keeps the 28px target of an icon button without making the header taller than the 20px count. */
+  margin-block: -4px;
+}
+
+.gdy-kanban-column-toggle ~ .gdy-kanban-column-title {
+  flex: 1 1 auto;
+}
+
+/* Own content of renderColumnFooter: under the cards, outside their scroll. */
+.gdy-kanban-column-footer {
+  padding: 8px 10px;
+  border-top: 1px solid var(--gdy-kanban-column-border, var(--gdy-border));
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* A collapsed column: a strip as tall as the row, with the button, the count and the title top to bottom. */
+.gdy-kanban-column[data-collapsed] {
+  width: var(--gdy-kanban-column-collapsed-width, 44px);
+  min-width: var(--gdy-kanban-column-collapsed-width, 44px);
+  align-self: stretch;
+}
+
+.gdy-kanban-column[data-collapsed] .gdy-kanban-column-head {
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 8px 0;
+  border-bottom: 0;
+}
+
+.gdy-kanban-column[data-collapsed] .gdy-kanban-column-title {
+  writing-mode: vertical-rl;
+  order: 1;
 }
 
 .gdy-kanban-column-body {
@@ -284,4 +330,17 @@
   margin: 0;
   font-size: 12px;
   color: var(--gdy-secondary-foreground);
+}
+
+/* Read by screen readers only: what the "Move to" menu did with a card. */
+.gdy-kanban-live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
