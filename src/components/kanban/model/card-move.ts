@@ -59,9 +59,16 @@ interface CardMoverInput<TData> {
   inputCardsRef: RefObject<TData[]>;
 }
 
+/** Told what became of one move: the "Move to" menu announces it and keeps the focus on the card. */
+export interface CardMoveObserver<TData> {
+  onMoved: (event: KanbanMoveEvent<TData>) => void;
+  onReverted: (event: KanbanMoveEvent<TData>) => void;
+}
+
 interface PendingMove<TData> extends CardMoverInput<TData> {
   event: KanbanMoveEvent<TData>;
   inputCardsAtDrop: TData[];
+  observer?: CardMoveObserver<TData>;
 }
 
 const isPromiseLike = (result: CardMoveResult): result is Promise<void | boolean> =>
@@ -71,6 +78,7 @@ const isPromiseLike = (result: CardMoveResult): result is Promise<void | boolean
 const revertMove = <TData>(move: PendingMove<TData>) => {
   if (move.inputCardsRef.current !== move.inputCardsAtDrop) return;
   move.setCards(replaceCard(move.view.getCardId, move.event.cardId, move.event.card));
+  move.observer?.onReverted(move.event);
 };
 
 // Without onCardMoveError the error is thrown again, so it reaches the console and error monitoring.
@@ -91,17 +99,26 @@ const settlePendingMove = async <TData>(result: Promise<void | boolean>, move: P
   }
 };
 
-const buildMoveCard = <TData>(input: CardMoverInput<TData>) => (cardId: string, toValue: string) => {
-  const { cards, selectedGroup, view, pending } = input;
-  if (pending.pendingIds.has(cardId)) return;
-  const event = planCardMove({ cards, getCardId: view.getCardId, group: selectedGroup, cardId, toValue });
-  if (!event) return;
-  const result = view.onCardMove?.(event);
-  if (result === false) return;
-  input.setCards(replaceCard(view.getCardId, cardId, event.updatedCard));
-  if (!isPromiseLike(result)) return;
-  void settlePendingMove(result, { ...input, event, inputCardsAtDrop: input.inputCardsRef.current });
-};
+/** Moves a card to the column with that value; the observer hears whether it stayed. */
+export type MoveCard<TData> = (cardId: string, toValue: string, observer?: CardMoveObserver<TData>) => void;
+
+const buildMoveCard =
+  <TData>(input: CardMoverInput<TData>): MoveCard<TData> =>
+  (cardId, toValue, observer) => {
+    const { cards, selectedGroup, view, pending } = input;
+    if (pending.pendingIds.has(cardId)) return;
+    const event = planCardMove({ cards, getCardId: view.getCardId, group: selectedGroup, cardId, toValue });
+    if (!event) return;
+    const result = view.onCardMove?.(event);
+    if (result === false) {
+      observer?.onReverted(event);
+      return;
+    }
+    input.setCards(replaceCard(view.getCardId, cardId, event.updatedCard));
+    observer?.onMoved(event);
+    if (!isPromiseLike(result)) return;
+    void settlePendingMove(result, { ...input, event, inputCardsAtDrop: input.inputCardsRef.current, observer });
+  };
 
 export const buildCardMover = <TData>(input: CardMoverInput<TData>) => {
   const { cards, view } = input;
