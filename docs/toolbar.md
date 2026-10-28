@@ -576,6 +576,7 @@ Every type below is exported from `gridory`, `gridory/table` and `gridory/kanban
 | `triggerLabel` | `string` | `"Opciones"` | Accessible name and tooltip of the ⋯ button, in the table and the kanban. |
 | `columnLabel` | `string` | — | Table only. Header text of the actions column. See [Alignment](table.md#alignment). |
 | `align` | `"left" \| "center" \| "right"` | `"right"` | Table only. Alignment of the actions column header and button. |
+| `pinned` | `boolean` | `false` | Table only. Keeps the actions column at the right edge while the rows scroll sideways (56px, or 96px with `columnLabel`). See [Pinned columns](table.md#pinned-columns). |
 
 ### RowAction
 
