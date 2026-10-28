@@ -1,4 +1,5 @@
 import * as React from "react";
+import { ChevronRight } from "lucide-react";
 import { DropdownMenu as DropdownMenuPrimitive } from "radix-ui";
 
 import { cn } from "../../lib/cn";
@@ -81,11 +82,56 @@ const DropdownMenuSeparator = ({
   );
 }
 
+const DropdownMenuSub = ({
+  ...props
+}: React.ComponentProps<typeof DropdownMenuPrimitive.Sub>) => {
+  return <DropdownMenuPrimitive.Sub data-slot="dropdown-menu-sub" {...props} />;
+}
+
+const DropdownMenuSubTrigger = ({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<typeof DropdownMenuPrimitive.SubTrigger>) => {
+  return (
+    <DropdownMenuPrimitive.SubTrigger
+      data-slot="dropdown-menu-sub-trigger"
+      className={cn("gdy-menu-item gdy-menu-sub-trigger", className)}
+      {...props}
+    >
+      {children}
+      <ChevronRight className="gdy-menu-sub-chevron" aria-hidden="true" />
+    </DropdownMenuPrimitive.SubTrigger>
+  );
+}
+
+const DropdownMenuSubContent = ({
+  className,
+  sideOffset = 4,
+  collisionPadding = 8,
+  ...props
+}: React.ComponentProps<typeof DropdownMenuPrimitive.SubContent>) => {
+  return (
+    <DropdownMenuPrimitive.Portal>
+      <DropdownMenuPrimitive.SubContent
+        data-slot="dropdown-menu-sub-content"
+        sideOffset={sideOffset}
+        collisionPadding={collisionPadding}
+        className={cn("gdy-scope gdy-menu-content gdy-menu-sub-content", className)}
+        {...props}
+      />
+    </DropdownMenuPrimitive.Portal>
+  );
+}
+
 export {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 };
