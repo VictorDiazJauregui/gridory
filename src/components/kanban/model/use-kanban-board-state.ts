@@ -1,6 +1,7 @@
 import type { KanbanBoardView } from "../board-view";
 import { buildCardMover } from "./card-move";
 import { useBoardControls } from "./use-board-controls";
+import { buildDropPermission } from "./drop-permission";
 import { useCardDrag } from "./use-card-drag";
 import { useGroupColumns } from "./use-group-columns";
 import { useKanbanCards } from "./use-kanban-cards";
@@ -14,12 +15,19 @@ export const useKanbanBoardState = <TData>(view: KanbanBoardView<TData>) => {
   const { cards, setCards, filterOptions, inputCardsRef } = useKanbanCards(view);
   const { selectedGroup, changeGroup } = useSelectedGroup(view);
   const visibleCards = useVisibleCards({ cards, view, ...controls });
-  const columns = useGroupColumns({ selectedGroup, cards, visibleCards, emptyValueLabel: view.labels.emptyValue });
+  const columns = useGroupColumns({
+    selectedGroup,
+    cards,
+    visibleCards,
+    emptyValueLabel: view.labels.emptyValue,
+    groupAllCards: view.renderColumnHeaderExtra !== undefined,
+  });
   useVisibleCardsChange({ visibleCards, ...columns }, view);
   const pending = usePendingCards();
   const mover = buildCardMover({ cards, setCards, selectedGroup, view, pending, inputCardsRef });
-  const drag = useCardDrag(view.flags.dragAndDrop);
-  return { ...controls, ...columns, ...mover, filterOptions, selectedGroup, changeGroup, visibleCards, drag };
+  const isDropAllowed = buildDropPermission({ cards, group: selectedGroup, view });
+  const drag = useCardDrag({ enabled: view.flags.dragAndDrop, isDropAllowed, columnValues: columns.visibleColumnValues });
+  return { ...controls, ...columns, ...mover, filterOptions, selectedGroup, changeGroup, visibleCards, drag, isDropAllowed };
 };
 
 export type KanbanBoardState<TData> = ReturnType<
