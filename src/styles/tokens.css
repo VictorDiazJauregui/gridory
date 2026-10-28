@@ -1,23 +1,5 @@
-/*
- * Gridory design tokens.
- *
- * Base tokens (`--gdy-*`) carry the whole palette. Each one bridges to the
- * shadcn/ui variable of the same name when the consuming app defines it
- * (`var(--background, <default>)`), so an app built on shadcn tokens themes
- * Gridory automatically in light and dark mode, while any app can pin a value
- * by declaring the `--gdy-*` token itself.
- *
- * Declared with `:where()` (zero specificity): a plain `:root { … }` or
- * `.dark { … }` rule in the app always wins, whatever the stylesheet order.
- *
- * Light is the default. Dark applies under `.dark` or `[data-theme="dark"]`;
- * put it on <html> so portaled content (menus, selects, popovers) sees it.
- *
- * Component tokens (`--gdy-table-*`, `--gdy-kanban-*`, `--gdy-select-*`, …)
- * are never declared here. Components read them with a fallback to a base
- * token (`var(--gdy-table-head-bg, var(--gdy-muted))`), so an override on any
- * ancestor works and the theme resolves where it is used.
- */
+/* Base tokens bridge to the same-named shadcn/ui variable, inside :where() so any app rule wins. Dark applies
+   under .dark or [data-theme="dark"] on <html>; component tokens are only read here, with a fallback. */
 :where(:root) {
   --gdy-background: var(--background, oklch(1 0 0));
   --gdy-foreground: var(--foreground, oklch(0.145 0 0));

@@ -1,21 +1,5 @@
-/*
- * Motion: the library's time-based effects, kept in one file so a consumer can
- * override them by class or switch them off (for example
- * `.gdy-menu-content[data-state] { animation: none }`). Everything here is
- * gated behind `prefers-reduced-motion: no-preference`; the assistant's
- * "thinking" spinner lives in src/components/ai/styles.css and stays because
- * it reports progress rather than decorating.
- *
- * Floating surfaces (popover, menu and select content) fade and grow from
- * their anchor. Radix keeps the node mounted with data-state="closed" until
- * the exit animation ends, and its data-side picks the edge the surface enters
- * from. The custom properties are internal (always read with a fallback).
- *
- * The segmented control's indicator slides to the chosen option only while its
- * root carries data-animated="true" (the `animated` prop, on by default). The
- * sidebar's width follows the same attribute; its mobile drawer slides in from
- * the start edge and its overlay fades.
- */
+/* Every time-based effect lives here, gated by prefers-reduced-motion, so an app can override it by class.
+   The ai spinner stays in ai/styles.css: it reports progress. Radix unmounts surfaces after their exit. */
 @media (prefers-reduced-motion: no-preference) {
   .gdy-popover-content[data-state="open"],
   .gdy-menu-content[data-state="open"],

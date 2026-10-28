@@ -1,9 +1,4 @@
-/*
- * Phone input. Component tokens (`--gdy-phone-input-*`) are read with a
- * fallback to the base tokens and never declared here. States are attributes:
- * data-invalid on the box, aria-expanded on the prefix and data-placeholder on
- * the dial code while no country is chosen.
- */
+/* Tokens (`--gdy-phone-input-*`) are read with a fallback to the base tokens, never declared here. */
 
 /* One column that prefers the width token but may shrink to 0, so the field
    never pushes a narrow container wider, as a fixed width would on a phone. */
@@ -12,11 +7,8 @@
   grid-template-columns: minmax(0, var(--gdy-phone-input-width, 280px));
 }
 
-/* One piece: the box holds the border, the background and the focus, and both
-   parts stretch to its height. The border never changes its width, so
-   focusing a part never makes the field jump. Squeezed below the width of its
-   prefix, the box clips its parts instead of letting them spill past its edge;
-   the focus ring is its own inset shadow, so it is never clipped. */
+/* The box holds border, background and focus; its border width never changes, so focusing never jumps.
+   Squeezed below its prefix it clips its parts; the ring is its own inset shadow, so it is never clipped. */
 .gdy-phone-input {
   display: flex;
   overflow: hidden;

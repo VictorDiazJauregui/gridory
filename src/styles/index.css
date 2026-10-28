@@ -1,8 +1,5 @@
-/*
- * Order matters: tokens, reset, the primitives, the shared gdy-* layer the
- * module stylesheets build on, and the motion rules (gated by
- * prefers-reduced-motion). Each module imports its own stylesheet.
- */
+/* Order matters: tokens, reset, primitives, the shared gdy-* layer the modules build on, then motion
+   (gated by prefers-reduced-motion). Each module imports its own stylesheet. */
 @import "./tokens.css";
 @import "./preflight.css";
 @import "../components/ui/styles.css";

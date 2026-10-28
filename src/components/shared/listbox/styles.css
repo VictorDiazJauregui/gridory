@@ -1,9 +1,5 @@
-/*
- * Same specificity contract as src/components/ui/styles.css: one class per
- * base rule and the states as attribute selectors (0-2-0). The rules declare
- * their own box model, list reset and typography, so the list renders the
- * same with or without a gdy-scope ancestor.
- */
+/* Same specificity contract as src/components/ui/styles.css. The rules declare their own box model, list
+   reset and typography, so the list renders the same with or without a gdy-scope ancestor. */
 
 /* Shrinks inside a panel with a maximum height, so only the options scroll. */
 .gdy-listbox {
