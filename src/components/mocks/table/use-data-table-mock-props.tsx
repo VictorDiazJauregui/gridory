@@ -16,6 +16,7 @@ import { isDemoBaseline } from "../../../demo/use-demo-baseline";
 import { useTableHookProps } from "./use-table-hook-props";
 import { useRowSelectionDemo, withRowSelectionDemo } from "./use-row-selection-demo";
 import { useColumnVisibilityDemo, withColumnVisibilityDemo } from "./use-column-visibility-demo";
+import { withExpandableRowsDemo } from "./use-expandable-rows-demo";
 import { EmptyWithCreate } from "../company/EmptyWithCreate";
 import { useLoadingToggle } from "../shared/use-loading-toggle";
 import { readDemoPrintMode } from "./demo-print-mode";
@@ -73,6 +74,7 @@ export const useDataTableMockProps = (
   if (isDemoBaseline()) return baseProps;
   const emptyMessage = <EmptyWithCreate onCreate={rowProps.onCreate} />;
   const demoProps = withDemoControls({ ...baseProps, ...hookProps, emptyMessage }, loadingToggle);
-  const waveFourProps = withColumnVisibilityDemo(withRowSelectionDemo(demoProps, selectionDemo), visibilityDemo);
+  const firstBatchProps = withColumnVisibilityDemo(withRowSelectionDemo(demoProps, selectionDemo), visibilityDemo);
+  const waveFourProps = withExpandableRowsDemo(firstBatchProps);
   return localizeTableDemoProps(waveFourProps, language);
 };
