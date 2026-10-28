@@ -1,9 +1,7 @@
 #!/usr/bin/env node
 /**
- * Removes the side-effect CSS imports that tsc copies into dist/types/**\/*.d.ts.
- * The CSS is published through the JavaScript entries and gridory/styles.css, never
- * next to the declarations, so those imports point to files that do not exist and
- * break consumers that compile with skipLibCheck off. Runs right after build:types.
+ * The CSS ships through the JS entries and gridory/styles.css, so the CSS imports tsc copies into dist/types
+ * point to missing files and break consumers that compile with skipLibCheck off. Runs right after build:types.
  */
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";

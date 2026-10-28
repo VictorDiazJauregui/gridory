@@ -1,21 +1,12 @@
 /**
- * Gridory Tailwind presets.
- *
- * Map the library's design tokens (`--gdy-*` CSS custom properties, shipped with defaults for
- * light and dark mode in `gridory/styles.css`) to Tailwind theme keys, so your own markup (a
- * column `cell`, a `renderCard` output) can use the colors and radii the library renders with.
- *
- * - `createGridoryPreset({ prefix })` (recommended): utilities under a prefix (`bg-gdy-primary`,
- *   `rounded-gdy-lg`) that never collide with the keys of your project.
- * - The default export: the shadcn-style keys (`bg-primary`, `rounded-lg`). Deprecated.
+ * Map the `--gdy-*` tokens of `gridory/styles.css` to Tailwind keys, so your markup (a column `cell`, a
+ * `renderCard` output) uses the library's colors and radii. `createGridoryPreset({ prefix })` (recommended) adds
+ * prefixed utilities that never collide with your keys; the shadcn-style default export is deprecated.
  */
 
 /**
- * Builds a Tailwind color from a `--gdy-*` token. Plain utilities (`bg-primary`) emit the
- * variable as-is; opacity modifiers (`bg-primary/10`, `ring-ring/50`) blend the token with
- * `color-mix`, because a variable that holds a full color cannot take Tailwind's
- * `<alpha-value>` slot. Without this, Tailwind 3 silently drops the modifier and falls back to
- * its default (blue) ring color.
+ * Opacity modifiers (`bg-primary/10`) blend the token with `color-mix`: a variable holding a full color cannot
+ * take Tailwind's `<alpha-value>`, and Tailwind 3 would silently drop the modifier and fall back to a blue ring.
  *
  * @param {string} name token name without the `--gdy-` prefix
  */
@@ -72,10 +63,8 @@ const prefixRadii = (prefix) =>
   Object.fromEntries(Object.entries(RADII).map(([size, value]) => [`${prefix}-${size}`, value]));
 
 /**
- * Builds a preset whose utilities live under `prefix`: `bg-gdy-primary`,
- * `text-gdy-primary-foreground`, `border-gdy-border`, `outline-gdy-ring`, `rounded-gdy-lg`, and
- * opacity modifiers such as `bg-gdy-primary/10`. Everything goes into `theme.extend` under
- * new keys, so no color or radius of your project changes.
+ * Builds a preset whose utilities live under `prefix` (`bg-gdy-primary`, `rounded-gdy-lg`, `bg-gdy-primary/10`),
+ * all under new keys of `theme.extend`, so no color or radius of your project changes.
  *
  * @param {{ prefix?: string }} [options] `prefix` defaults to `"gdy"`
  * @returns {import('tailwindcss').Config}
@@ -97,9 +86,8 @@ export const createGridoryPreset = ({ prefix = "gdy" } = {}) => {
 };
 
 /**
- * The shadcn-style preset: `bg-primary`, `border-border`, `rounded-lg`… In a project that
- * defines those keys itself (shadcn) the project wins and the preset adds little, and in the
- * keys it does not define it mixes two palettes.
+ * The shadcn-style preset (`bg-primary`, `border-border`, `rounded-lg`…). Where a project defines those keys
+ * itself (shadcn) it wins and the preset adds little; in the keys it does not define, it mixes two palettes.
  *
  * @deprecated Use `createGridoryPreset()` (prefixed utilities). This preset is removed in 2.0.0.
  * @type {import('tailwindcss').Config}

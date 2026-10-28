@@ -73,9 +73,8 @@ const keepGridoryIconClasses = (icon: string) => {
   return `<svg class="${classes.join(" ")}"></svg>`;
 };
 
-// 1.1.0 adds data-column-id, data-row-id and the table's ⋯ aria-label on purpose, 1.2.0 the
-// pagination arrows' aria-label and 1.3.0 each kanban column's data-column-value; anything else
-// must stay byte for byte.
+// Added on purpose: data-column-id, data-row-id and the table's ⋯ aria-label (1.1.0), the arrows' aria-label
+// (1.2.0) and each kanban column's data-column-value (1.3.0). Anything else must stay byte for byte.
 export const normalizeBaselineHtml = (html: string) =>
   html
     .replace(ADDED_ATTRIBUTES, "")

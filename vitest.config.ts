@@ -6,10 +6,8 @@ import viteConfig from "./vite.config.ts";
 
 const BROWSER_TESTS = "src/test/**/*.browser.test.{ts,tsx}";
 
-// jsdom covers behaviour, ARIA and keyboard; it has no layout engine, so styles,
-// sizes and positions are checked in a real headless Chrome instead. It runs on
-// the installed Google Chrome (the GitHub runner ships one), so neither CI nor a
-// contributor downloads a browser.
+// jsdom has no layout engine, so styles, sizes and positions are checked in the installed Google Chrome,
+// headless (the GitHub runner ships one), so neither CI nor a contributor downloads a browser.
 const installedChrome = playwright({ launchOptions: { channel: "chrome" } });
 
 // Vitest's browser API cannot switch the CSS media type, so the print tests reach the Playwright
@@ -18,10 +16,8 @@ const emulateMedia: BrowserCommand<[media: "screen" | "print"]> = async ({ page 
   await page.emulateMedia({ media });
 };
 
-// Vitest's browser API cannot make the page a touch screen either: CDP turns on `(pointer: coarse)`, so
-// the kanban's "Move to" menu shows as on a phone. The session stays open, since closing it would undo
-// the emulation. Turning it off leaves Chrome reporting `(hover: none)` until the document reloads, so
-// only the test file that needs a touch screen should call it.
+// Nor a touch screen: CDP turns on `(pointer: coarse)`, and its session stays open since closing it undoes that.
+// Turning it off leaves `(hover: none)` until the page reloads, so only a file that needs touch calls it.
 const touchSessions = new WeakMap<object, CDPSession>();
 
 const emulateTouch: BrowserCommand<[enabled: boolean]> = async ({ page }, enabled) => {

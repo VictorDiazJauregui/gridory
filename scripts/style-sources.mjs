@@ -1,6 +1,5 @@
 /**
- * Shared readers for the style scripts: which files make up the library, how
- * class names and tokens are recognized in sources and stylesheets, and the
+ * Shared readers for the style scripts: the library's files, how class names and tokens are recognized, and the
  * allowlist of intentional exceptions (see docs/theming.md › Style audit).
  */
 import { readdirSync, readFileSync, statSync } from "node:fs";

@@ -1,9 +1,7 @@
 #!/usr/bin/env node
 /**
- * Writes docs/style-hooks.md and docs/style-hooks.es.md from the sources: every
- * gdy-* class, the state selectors it takes, every state attribute and every
- * token with its defaults or fallbacks. The catalog is generated so it cannot
- * drift from the stylesheets; `--check` fails when the committed files are stale.
+ * Writes docs/style-hooks.md and .es.md (classes, state selectors and attributes, tokens and their defaults)
+ * from the sources, so they cannot drift from the stylesheets; `--check` fails on stale committed files.
  */
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";

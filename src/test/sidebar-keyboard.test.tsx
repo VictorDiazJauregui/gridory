@@ -5,10 +5,8 @@ import type { MockInstance } from "vitest";
 import { findSidebarRoot, renderSidebar } from "./sidebar/render-sidebar";
 import type { SidebarFixtureOptions } from "./sidebar/render-sidebar";
 
-// Real timers on purpose: the tooltip positions itself asynchronously, and fake
-// timers that advance on their own let that update land while Testing Library
-// has the act environment switched off, which React reports as a warning.
-// The guard turns any such warning into a failure instead of log noise.
+// Real timers on purpose: with self-advancing fake timers, the async tooltip update lands while the act
+// environment is off and React warns. The guard turns any such warning into a failure instead of log noise.
 let consoleError: MockInstance<typeof console.error>;
 
 beforeEach(() => {
