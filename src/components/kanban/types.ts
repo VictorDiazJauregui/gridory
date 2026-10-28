@@ -63,12 +63,39 @@ export interface KanbanMoveEvent<TData> {
   toValue: string;
 }
 
+/** Argument of `canDrop`: the dragged card and the column it would land on. */
+export interface KanbanDropContext<TData> {
+  card: TData;
+  cardId: string;
+  /** `id` of the group the board is using, as in `onCardMove`. */
+  groupId: string;
+  fromValue: string;
+  toValue: string;
+}
+
 /** Payload of `onVisibleCardsChange`: the cards the user is looking at. */
 export interface KanbanVisibleCardsState<TData> {
   /** Cards that pass the search, the archived view and the filters, in sort order. */
   cards: TData[];
   /** Those cards per column value, one key per column on screen; `[]` for a column left empty. */
   byColumn: Record<string, TData[]>;
+}
+
+/** Argument of `renderColumnHeaderExtra`: one column of the current group and its cards. */
+export interface KanbanColumnHeaderContext<TData> {
+  /** Raw column value (`""` for the column of the cards without value). */
+  value: string;
+  /** Title shown in the column header. */
+  label: string;
+  /** `id` of the group the board is using, as in `onCardMove` and `onCardClick`. */
+  groupId: string;
+  /** Cards shown in the column: after the search, the archived view, the filters and the sort. */
+  cards: TData[];
+  /**
+   * Every card of the column the board holds, in data order, including the ones the search, the
+   * filters or the archived view hide.
+   */
+  allCards: TData[];
 }
 
 /** Payload of `onCardClick`. */
@@ -166,6 +193,13 @@ export interface KanbanBoardProps<TData> extends DataViewProps<TData> {
    * column. Without it the error is thrown again, as an unhandled rejection.
    */
   onCardMoveError?: (error: unknown, event: KanbanMoveEvent<TData>) => void;
+  /**
+   * Optional rule of where a card may go. Asked when a drag starts (every rejected column gets
+   * `data-drop-disabled` until the drag ends), on every dragover and again on drop; `false` keeps the
+   * card where it is. Never asked for the card's own column. Synchronous on purpose, since it runs many
+   * times per second: rules that need the server go in `onCardMove`.
+   */
+  canDrop?: (context: KanbanDropContext<TData>) => boolean;
   onCardClick?: (event: KanbanCardClickEvent<TData>) => void;
   /**
    * The visible cards changed: on mount, and whenever the search, the filters, the archived view,
@@ -174,6 +208,12 @@ export interface KanbanBoardProps<TData> extends DataViewProps<TData> {
    */
   onVisibleCardsChange?: (state: KanbanVisibleCardsState<TData>) => void;
   onGroupChange?: (groupId: string) => void;
+  /**
+   * Own content for each column header, rendered in `span.gdy-kanban-column-extra` between the title
+   * and the count. Returning `null`, `undefined` or a boolean renders no container. Not called while
+   * `loading`: the loading columns have no count either.
+   */
+  renderColumnHeaderExtra?: (context: KanbanColumnHeaderContext<TData>) => ReactNode;
   /**
    * Prefix of every option in the toolbar group selector and its accessible
    * label. Defaults to `"Agrupar por"`.
