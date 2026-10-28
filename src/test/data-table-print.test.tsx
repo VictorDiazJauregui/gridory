@@ -1,7 +1,7 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
 import { DataTable, type DataTableProps } from "../components/table";
-import { BASELINE_COLUMNS, BASELINE_ROWS, type BaselineRow } from "./baseline-fixture";
+import { BASELINE_COLUMNS, BASELINE_ROW_ACTIONS, BASELINE_ROWS, type BaselineRow } from "./baseline-fixture";
 
 type Listener = (event: MediaQueryListEvent) => void;
 
@@ -103,4 +103,23 @@ test("without matchMedia it follows the browser print events", () => {
   expect(dataRowNames(container)).toHaveLength(3);
   window.dispatchEvent(new Event("afterprint"));
   expect(dataRowNames(container)).toHaveLength(2);
+});
+
+test("while printing, the group row and an open detail span only the columns that print", () => {
+  const { container } = renderTable({
+    printMode: "page",
+    groupableColumnIds: ["status"],
+    defaultGroupBy: "status",
+    rowActions: BASELINE_ROW_ACTIONS,
+    renderExpandedRow: (row) => row.name,
+    defaultExpandedRowIds: ["b1"],
+  });
+  const spans = () =>
+    [".gdy-table-group-cell", ".gdy-table-expanded-cell"].map((selector) => container.querySelector(selector)?.getAttribute("colspan"));
+  const headerCount = container.querySelectorAll("thead th").length;
+  expect(spans()).toEqual([String(headerCount), String(headerCount)]);
+  printMedia.setPrinting(true);
+  expect(spans()).toEqual([String(headerCount - 2), String(headerCount - 2)]);
+  printMedia.setPrinting(false);
+  expect(spans()).toEqual([String(headerCount), String(headerCount)]);
 });

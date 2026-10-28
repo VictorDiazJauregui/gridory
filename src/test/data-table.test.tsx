@@ -191,3 +191,11 @@ test("edits a cell inline through its select", async () => {
   await user.click(await screen.findByRole("option", { name: "Pendiente" }));
   expect(onInlineEdit).toHaveBeenCalledWith(MOCK_COMPANY_ROWS[0], "Pendiente");
 });
+
+test("features.toolbar false leaves the table without its toolbar; any other value keeps it", () => {
+  const { container } = renderTable({ features: { toolbar: false, pagination: false } });
+  expect(container.querySelector(".gdy-toolbar")).toBeNull();
+  expect(container.querySelector(".gdy-table-grid")).not.toBeNull();
+  const kept = renderTable({ features: { toolbar: true } }).container;
+  expect(kept.querySelector(".gdy-toolbar")).not.toBeNull();
+});
