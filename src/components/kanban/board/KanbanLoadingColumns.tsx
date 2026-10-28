@@ -11,6 +11,8 @@ interface LoadingColumn {
   /** Undefined for the placeholder columns shown before the first data. */
   value?: string;
   label?: string;
+  /** A collapsed column stays a strip while loading, with no placeholder cards. */
+  collapsed?: boolean;
 }
 
 interface LoadingColumnProps extends LoadingColumn {
@@ -31,18 +33,22 @@ const resolveSectionProps = ({ value, hooks }: LoadingColumnProps) =>
     ? { className: cn("gdy-kanban-column", hooks.classNames?.column) }
     : buildColumnHookProps(value, hooks);
 
+const KanbanLoadingColumnBody = ({ cardCount, hooks }: LoadingColumnProps) => (
+  <div className={cn("gdy-kanban-column-body", hooks.classNames?.columnBody)}>
+    {buildPlaceholderKeys(cardCount).map((key) => (
+      <KanbanCardSkeleton key={key} />
+    ))}
+  </div>
+);
+
 const KanbanLoadingColumn = (props: LoadingColumnProps) => (
-  <section {...resolveSectionProps(props)}>
+  <section {...resolveSectionProps(props)} data-collapsed={props.collapsed || undefined}>
     <header className={cn("gdy-kanban-column-head", props.hooks.classNames?.columnHead)}>
       <span className="gdy-kanban-column-title" title={props.label}>
         {props.label ?? <SkeletonBar />}
       </span>
     </header>
-    <div className={cn("gdy-kanban-column-body", props.hooks.classNames?.columnBody)}>
-      {buildPlaceholderKeys(props.cardCount).map((key) => (
-        <KanbanCardSkeleton key={key} />
-      ))}
-    </div>
+    {props.collapsed ? null : <KanbanLoadingColumnBody {...props} />}
   </section>
 );
 
@@ -54,6 +60,7 @@ const resolveLoadingColumns = <TData,>({ state, view }: KanbanSectionProps<TData
   return values.map((value) => ({
     value,
     label: resolveColumnLabel(state.groupColumns, value, view.labels.emptyValue),
+    collapsed: state.collapse.isCollapsed(value),
   }));
 };
 

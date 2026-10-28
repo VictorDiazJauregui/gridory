@@ -11,7 +11,7 @@ interface GroupColumnsInput<TData> {
   cards: TData[];
   visibleCards: TData[];
   emptyValueLabel: string;
-  /** Only `renderColumnHeaderExtra` reads every card per column, so it is grouped only then. */
+  /** Every card per column is grouped only when something reads it. */
   groupAllCards: boolean;
 }
 

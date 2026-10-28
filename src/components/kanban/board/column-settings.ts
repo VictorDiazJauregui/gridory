@@ -8,6 +8,8 @@ import type {
 } from "../types";
 import type { CardDragState } from "../model/use-card-drag";
 import type { KanbanBoardState } from "../model/use-kanban-board-state";
+import type { MoveMenuState } from "../model/use-move-menu";
+import type { ColumnCollapse } from "../model/use-collapsed-columns";
 import type { ColumnHookSettings } from "./column-attributes";
 
 type CardCallbacks<TData> = Pick<
@@ -26,11 +28,14 @@ export interface KanbanCardSettings<TData> extends CardCallbacks<TData> {
   rowActionsEnabled: boolean;
   cardClassName?: string;
   labels: KanbanBoardLabels;
+  moveMenu: MoveMenuState;
 }
 
 export interface KanbanColumnSettings<TData> extends ColumnActions<TData> {
   groupId: string;
   renderColumnHeaderExtra?: KanbanBoardProps<TData>["renderColumnHeaderExtra"];
+  renderColumnFooter?: KanbanBoardProps<TData>["renderColumnFooter"];
+  collapse: ColumnCollapse;
   columnBodyMaxHeight: number;
   cardSettings: KanbanCardSettings<TData>;
   classNames?: KanbanBoardClassNames;
@@ -65,6 +70,7 @@ const buildCardSettings = <TData>(
   onCardClick: view.onCardClick,
   cardClassName: view.classNames?.card,
   labels: view.labels,
+  moveMenu: state.moveMenu,
 });
 
 export const buildColumnSettings = <TData>(
@@ -77,6 +83,8 @@ export const buildColumnSettings = <TData>(
   pendingIds: state.pendingIds,
   groupId: state.selectedGroup.id,
   renderColumnHeaderExtra: view.renderColumnHeaderExtra,
+  renderColumnFooter: view.renderColumnFooter,
+  collapse: state.collapse,
   columnBodyMaxHeight: view.columnBodyMaxHeight,
   cardSettings: buildCardSettings(state, view),
   classNames: view.classNames,
