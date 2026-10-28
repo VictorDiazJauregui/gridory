@@ -160,7 +160,7 @@ tengan que alcanzarlos.
 
 | Familia | Ejemplos (fallback) |
 |---|---|
-| `--gdy-table-*` | `--gdy-table-head-bg` (`--gdy-muted`), `--gdy-table-foot-bg` (`--gdy-table-head-bg`, luego `--gdy-muted`), `--gdy-table-border` (`--gdy-border`), `--gdy-table-row-hover-bg` (`--gdy-muted`), `--gdy-table-row-focus-ring` (`--gdy-ring`) |
+| `--gdy-table-*` | `--gdy-table-head-bg` (`--gdy-muted`), `--gdy-table-foot-bg` (`--gdy-table-head-bg`, luego `--gdy-muted`), `--gdy-table-border` (`--gdy-border`), `--gdy-table-row-hover-bg` (`--gdy-muted`), `--gdy-table-row-focus-ring` (`--gdy-ring`), `--gdy-table-row-selected-bg` (`--gdy-accent`), `--gdy-table-select-border` (`--gdy-muted-foreground`), `--gdy-table-select-bg` (`--gdy-background`), `--gdy-table-select-checked-bg` (`--gdy-primary`), `--gdy-table-select-check-fg` (`--gdy-primary-foreground`), `--gdy-table-select-focus-ring` (`--gdy-ring`), `--gdy-table-head-help-fg` (`--gdy-muted-foreground`), `--gdy-table-tooltip-bg` (`--gdy-foreground`), `--gdy-table-tooltip-fg` (`--gdy-background`), `--gdy-table-tooltip-z` (`60`) |
 | `--gdy-kanban-*` | `--gdy-kanban-column-bg` (`--gdy-muted`), `--gdy-kanban-card-bg` (`--gdy-card`), `--gdy-kanban-drop-outline` (`--gdy-muted-foreground`), `--gdy-kanban-drop-disabled-outline` (`--gdy-destructive`), `--gdy-kanban-column-collapsed-width` (`44px`) |
 | `--gdy-ai-*` | `--gdy-ai-accent` (`--gdy-primary`), `--gdy-ai-bg` (`--gdy-background`), `--gdy-ai-user-bubble-bg` (`--gdy-ai-accent` y después `--gdy-primary`) |
 | `--gdy-auth-*` | `--gdy-auth-bg` (`--gdy-card`), `--gdy-auth-submit-bg` (`--gdy-primary`), `--gdy-auth-input-focus-border` (`--gdy-ring`), `--gdy-auth-rule-met` (`--gdy-success`) |

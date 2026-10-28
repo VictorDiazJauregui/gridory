@@ -102,6 +102,12 @@ Each entry of `columns` is a `ColumnDefinition<TData>`.
 | `ignoreRowClick` | `boolean` | No gesture that starts in this column fires the row. See [Row click and row links](#row-click-and-row-links). Table only. |
 | `overflow` | `"ellipsis" \| "wrap" \| "visible"` | What the cells do with content wider than the column. Default `"ellipsis"`. See [Cell overflow](#cell-overflow). Table only. |
 | `footer` | `(context: ColumnFooterContext<TData>) => ReactNode` | Content of this column in the totals row. See [Totals row](#totals-row). Table only. |
+| `printValue` | `(row: TData) => string` | With `printMode`, the text the cell prints instead of its content. See [Printing](#printing). Table only. |
+| `hideable` | `boolean` | With `responsiveColumns`, the column may hide when it does not fit. See [Column visibility](#column-visibility). Table only. |
+| `priority` | `number` | With `responsiveColumns`, the lowest number hides first; implies `hideable`. Table only. |
+| `headerTooltip` | `string` | Help text behind a "?" next to the title. See [Header help and custom content](#header-help-and-custom-content). Table only. |
+| `headerTooltipPlacement` | `"before" \| "after" \| "edge"` | Where the "?" goes. Default `"after"` (`"before"` with a right-aligned header). Table only. |
+| `headerContent` | `ReactNode` | Replaces the visible title; `header` stays the accessible name and the menus' text. Table only. |
 
 Filter options are computed from every row in `data` (before search and filters), not only from the
 visible page. Columns with `type: "date"` never get a value list: their menu offers the operators
@@ -393,6 +399,32 @@ the prop out and write an `@media print` stylesheet over the [style hooks](style
 <DataTable columns={columns} data={invoices} printMode="all" />
 ```
 
+**Controls on paper.** A checkbox or a switch means nothing on paper, so with `printMode`:
+
+- The [row selection](#row-selection) column prints `"Sí"` or `"No"` in each row (`labels.printSelected`,
+  `labels.printNotSelected`) and `"Seleccionada"` in the header (`labels.printSelectionHeader`). Selected
+  rows print without their background, and the column widens from 44 to 112 px on paper so that header
+  fits.
+- A column with `printValue` prints that text instead of its content. The table cannot read the controls
+  your `cell` draws, so tell it what each one means:
+
+```tsx
+const columns: ColumnDefinition<Company>[] = [
+  {
+    id: "active",
+    header: "Active",
+    accessor: (row) => row.active,
+    cell: (row) => <Switch checked={row.active} onCheckedChange={(next) => setActive(row, next)} />,
+    printValue: (row) => (row.active ? "Yes" : "No"),
+  },
+];
+
+<DataTable columns={columns} data={companies} printMode="page" />;
+```
+
+The printed text sits in `span.gdy-table-print-value`, before the content it replaces; it is hidden on
+screen and only exists with `printMode`. A column without `printValue` prints its content, as on screen.
+
 ### Inline editing
 
 A column with a non-empty `inlineEditOptions` and an `onInlineEdit` callback renders its cells as a
@@ -615,6 +647,191 @@ const columns: ColumnDefinition<Quote>[] = [
 ];
 ```
 
+### Row selection
+
+`rowSelection` adds a checkbox column before the data columns: one checkbox per row and one in the header
+that marks every row of its scope. The table only reports the selected ids; what to do with them
+(export, delete, move) is up to your app, for instance with a toolbar slot.
+
+```tsx
+const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+<DataTable
+  columns={columns}
+  data={invoices}
+  getRowId={(row) => row.id}
+  rowSelection={{ selectedIds, onChange: setSelectedIds, selectAllScope: "filtered" }}
+  toolbarSlots={[
+    {
+      id: "export",
+      content: (
+        <button type="button" disabled={selectedIds.length === 0} onClick={() => exportInvoices(selectedIds)}>
+          Export ({selectedIds.length})
+        </button>
+      ),
+    },
+  ]}
+/>;
+```
+
+| Field | Type | Default | Description |
+|---|---|---|---|
+| `selectedIds` | `string[]` | — | Controlled selection; `undefined` leaves it to the table. |
+| `defaultSelectedIds` | `string[]` | `[]` | Initial selection when it is not controlled. |
+| `onChange` | `(selectedIds: string[]) => void` | — | Every change made by the user, and the drop of ids that left `data`. |
+| `selectAllScope` | `"page" \| "filtered"` | `"page"` | What the header checkbox marks: the rows of the current page (collapsed groups included), or every row that passes search, filters and the archived view. |
+| `isRowSelectable` | `(row: TData) => boolean` | — | `false` disables the row checkbox and leaves the row out of the header checkbox. |
+
+- **`getRowId` is required.** The selection keeps ids; without `getRowId` rows are keyed by index, which
+  changes with every sort or page, so the table throws `MissingRowIdError`. The id must not depend on the
+  index.
+- **The header checkbox** is checked when every selectable row of its scope is selected,
+  `aria-checked="mixed"` when only some are, and disabled when the scope has none. A click on a partial
+  one selects the whole scope; a click on a full one clears it.
+- **Pages and `data`.** The selection survives page changes, sorting and filters. When a selected row
+  leaves `data`, its id is dropped and `onChange` reports it.
+- **Server mode.** With `manualPagination`, `data` is only the current page: the table cannot tell a
+  deleted row from a row on another page, so it keeps every id and your app drops the ones that no longer
+  exist. `"filtered"` acts as `"page"` there (the table has no other rows), with a development warning.
+- **Clicks and keyboard.** A click anywhere in the checkbox column never fires `onRowClick` or the row
+  link. The checkboxes are reached with Tab and toggled with Space; Space on a focused row
+  ([`focusableRows`](#row-click-and-row-links) or `getRowHref`) toggles it too. `rowSelection` does not
+  make rows focusable.
+- **Markup.** Selected rows carry `data-selected` and `aria-selected="true"`, the rest
+  `aria-selected="false"`; `getRowAttributes` cannot overwrite them. Without `rowSelection` nothing of this
+  is rendered. The checkboxes are `button.gdy-table-select[role="checkbox"]`, with `data-state`
+  (`checked`, `unchecked`, `indeterminate`).
+- **Texts:** `labels.selectRow`, `labels.selectPageRows` and `labels.selectFilteredRows` (accessible
+  names), and the three printing texts above.
+
+Before, a checkbox column was a `cell` plus your own state, and the click on the checkbox opened the row:
+
+```diff
+- const [selected, setSelected] = useState(new Set<string>());
+- const selectColumn = {
+-   id: "select",
+-   header: "",
+-   accessor: () => "",
+-   ignoreRowClick: true,
+-   cell: (row) => <input type="checkbox" checked={selected.has(row.id)} onChange={() => toggle(row.id)} />,
+- };
+- <DataTable columns={[selectColumn, ...columns]} data={invoices} />
++ <DataTable columns={columns} data={invoices} getRowId={(row) => row.id} rowSelection={{ onChange: setSelectedIds }} />
+```
+
+### Column visibility
+
+Two layers decide which columns are on screen:
+
+1. **Your app**, with `columnVisibility`: `false` removes a column (header, cells, totals and loading
+   placeholders leave the markup), `true` pins it so the priority never hides it. A column not listed is
+   shown. It always wins.
+2. **The room left**, with `responsiveColumns`: as the rows container narrows, the table hides the
+   columns marked `hideable` or with a `priority` until the rest fits without horizontal scroll, and shows
+   them again as it widens.
+
+```tsx
+const columns: ColumnDefinition<Invoice>[] = [
+  { id: "customer", header: "Customer", accessor: (row) => row.customer, width: 220 },
+  { id: "total", header: "Total", accessor: (row) => row.total, width: 120, priority: 3 },
+  { id: "status", header: "Status", accessor: (row) => row.status, width: 140, priority: 2 },
+  { id: "notes", header: "Notes", accessor: (row) => row.notes, width: 280, hideable: true },
+];
+
+<DataTable
+  columns={columns}
+  data={invoices}
+  responsiveColumns
+  columnVisibility={{ notes: showNotes }}
+  onColumnVisibilityChange={(visibility, { hiddenByPriority }) => setHiddenCount(hiddenByPriority.length)}
+/>;
+```
+
+- **Which columns hide, and in what order.** A column without `hideable` and without `priority` never
+  hides, and neither do the checkbox and actions columns. When room runs out, the hideable columns without
+  a number go first, right to left; then the numbered ones, the lowest number first (on a tie, the
+  rightmost). In the example, narrowing hides Notes, then Status, then Total; Customer always stays.
+- **What a column counts.** Its `width`; without one, the measured width of its title with its sort and
+  filter icons (the cells already cut long text with "…"). The measure is kept while the column is hidden.
+  Give `width` to the columns whose content needs more than the title.
+- **Hidden by the priority, not removed.** Those cells stay in the markup with `data-hidden-by="priority"`
+  and `display: none`, so you can show them elsewhere, for example on paper:
+  `@media print { .gdy-table-cell[data-hidden-by="priority"] { display: table-cell; } }` (and the same for
+  `.gdy-table-head-cell` and `.gdy-table-foot-cell`). The columns your app hides with `columnVisibility`
+  leave the markup.
+- **`onColumnVisibilityChange(visibility, { hiddenByPriority })`** fires on mount and whenever the columns
+  on screen change: `true` or `false` per column id (a grouped column is `false`: it is not on screen) and
+  the ids the priority hid, in hiding order. Use it to say "3 columns hidden" or to show the missing values
+  in a detail view. **Do not feed it back into `columnVisibility`**: that would pin the hidden columns.
+- **Performance.** The table watches the rows container with one `ResizeObserver`, calculates at most once
+  per frame (the first time before painting, so the full table never flashes) and disconnects on unmount.
+  Without `responsiveColumns` nothing is observed.
+- A filter panel open on a column that hides is closed.
+
+Before, each app measured the container itself and rebuilt `columns`:
+
+```diff
+- const width = useContainerWidth(ref);
+- const shown = width < 600 ? columns.filter((column) => column.id !== "notes") : columns;
+- <div ref={ref}><DataTable columns={shown} data={invoices} /></div>
++ <DataTable columns={columns} data={invoices} responsiveColumns />
+```
+
+### Header help and custom content
+
+Two column fields enrich the header without touching `header`:
+
+- **`headerTooltip`** adds a "?" next to the title (`button.gdy-table-head-help`, named "Ayuda sobre
+  Monto" through `labels.columnHelp`). Its text opens in a tooltip on hover, on keyboard focus and on a
+  tap or click, so it also works on a phone; Escape, a tap outside or a second tap close it. The icon is a
+  button of its own, outside the header trigger, so it never sorts or opens the filter. Screen readers also
+  hear the text right after the title (`aria-describedby` on the trigger), whether the tooltip is open or
+  not.
+- **`headerTooltipPlacement`** picks where the icon goes: `"before"` (left of the title), `"after"` (right
+  of the title and its sort icon) or `"edge"` (against the cell edge opposite the title). Without it, it is
+  `"after"`, except with a right-aligned header, where it is `"before"` so the title and its sort icon stay
+  on the right edge, like the numbers below them.
+- **`headerContent`** replaces the visible title (an icon plus text, a badge). `header` stays the accessible
+  name of the trigger and the text of the group selector, the filter menus, the `title` tooltip and the
+  kanban, which can only show text. The sort and filter icons stay.
+
+```tsx
+const columns: ColumnDefinition<Invoice>[] = [
+  {
+    id: "amount",
+    header: "Amount",
+    accessor: (row) => row.amount,
+    align: "right",
+    headerTooltip: "Sum of the contracts in force, in their currency",
+  },
+  {
+    id: "country",
+    header: "Country",
+    accessor: (row) => row.country,
+    headerContent: (
+      <>
+        <Globe size={14} aria-hidden="true" /> Country
+      </>
+    ),
+  },
+];
+```
+
+**Why `header` is still a string.** The group selector, the menus and the kanban cards repeat it as plain
+text; a free `ReactNode` there would have nothing to show. A richer `header` is planned for the next major
+version; meanwhile `headerContent` covers the visible part.
+
+With `printMode` the "?" does not print. Without these fields the header markup is exactly the same as
+before. The tooltip reads `--gdy-table-tooltip-bg`, `--gdy-table-tooltip-fg` and `--gdy-table-tooltip-z`,
+and the icon `--gdy-table-head-help-fg`.
+
+Before, the "?" had to live inside `header`, which only takes text, so apps patched it in with CSS:
+
+```diff
+- .my-table th:nth-child(4) .gdy-table-head-label::after { content: " ⓘ"; }
++ { id: "amount", header: "Amount", accessor: (row) => row.amount, headerTooltip: "Sum of the contracts in force" }
+```
+
 ### Layout and scrolling
 
 By default the rows container (`gdy-table-wrap`) scrolls horizontally and grows with its content, with
@@ -741,6 +958,13 @@ Table keys (`DataTableLabels`):
 | `inlineSelectPlaceholder` | `"Seleccionar..."` | Inline select cell with no value | — |
 | `groupNone` | `"Ninguno"` | "No grouping" option | `groupNoneLabel` |
 | `groupEmptyValue` | `"Sin valor"` | Group of the rows with an empty value | `groupEmptyValueLabel` |
+| `selectRow` | `"Seleccionar fila"` | Accessible name of a row checkbox | — |
+| `selectPageRows` | `"Seleccionar las filas de la página"` | Accessible name of the header checkbox (`"page"`) | — |
+| `selectFilteredRows` | `"Seleccionar todas las filas filtradas"` | Accessible name of the header checkbox (`"filtered"`) | — |
+| `printSelected` | `"Sí"` | Printed for a selected row (`printMode`) | — |
+| `printNotSelected` | `"No"` | Printed for a row that is not selected (`printMode`) | — |
+| `printSelectionHeader` | `"Seleccionada"` | Printed in the header of the checkbox column (`printMode`) | — |
+| `columnHelp(header)` | `"Ayuda sobre Monto"` | Accessible name of the header help icon (`headerTooltip`) | — |
 
 ## Events
 
@@ -839,9 +1063,12 @@ selector.
 
 | Hook | Element | State attributes |
 |---|---|---|
-| `gdy-table-head-cell` | Header cell (`th`). | `data-column-id` with the `id` of its column; `data-align` with `headerAlign` or `align`. |
+| `gdy-table-head-cell` | Header cell (`th`). | `data-column-id` with the `id` of its column; `data-align` with `headerAlign` or `align`; `data-hidden-by="priority"` (also on `gdy-table-cell` and `gdy-table-foot-cell`) while `responsiveColumns` hides it. |
 | `gdy-table-head-trigger` | Button inside the header cell that opens the filter menu or cycles the sort. | `data-filtered` while the column has an active filter; `data-align` like its cell. |
-| `gdy-table-row` | Data row (`tr`). | `data-row-id` with the row id; `data-clickable` when `onRowClick` or `getRowHref` is set; `data-href` with the link; plus what `getRowAttributes` returns. Focusable rows take `:focus-visible`. |
+| `gdy-table-row` | Data row (`tr`). | `data-row-id` with the row id; `data-clickable` when `onRowClick` or `getRowHref` is set; `data-href` with the link; with `rowSelection`, `data-selected` and `aria-selected`; plus what `getRowAttributes` returns. Focusable rows take `:focus-visible`. |
+| `gdy-table-select` | Checkbox of the selection column (`rowSelection`); `gdy-table-select-indicator` holds its check or dash. | `data-state` (`checked`, `unchecked`, `indeterminate`), `aria-checked`, `disabled`. |
+| `gdy-table-print-value` | Text a cell prints instead of its content with `printMode` (selection, `printValue`). Hidden on screen. | — |
+| `gdy-table-head-help` | Help icon of a header with `headerTooltip`; its tooltip is `div.gdy-table-head-tooltip`, in a portal. `gdy-table-head-inner` takes `data-help-placement`. | `data-state` (`closed`, `delayed-open`, `instant-open`). |
 | `gdy-table-cell` | Data cell (`td`); `gdy-table-cell-content` wraps its content. | `data-column-id` with the `id` of its column; `data-align` with `align`. `gdy-table-cell-content` takes `data-overflow` with `overflow`. |
 | `gdy-table-actions-cell` | Box of the ⋯ button in the actions column; `gdy-table-actions-head-label` is the text of its header (`rowActions.columnLabel`). | `data-align` when `rowActions.align` or `columnLabel` is set. |
 | `gdy-table-group-row` | Group row; `gdy-table-group-cell` is its single cell. | — |
@@ -860,6 +1087,16 @@ scope is enough:
 | `--gdy-table-border` | `--gdy-border` | Cell, group cell and footer borders. |
 | `--gdy-table-row-hover-bg` | `--gdy-muted` | Hover of clickable rows. |
 | `--gdy-table-row-focus-ring` | `--gdy-ring` | Keyboard focus ring of a focusable row. |
+| `--gdy-table-row-selected-bg` | `--gdy-accent` | Background of a selected row (`rowSelection`). |
+| `--gdy-table-select-border` | `--gdy-muted-foreground` | Edge of an unchecked checkbox. |
+| `--gdy-table-select-bg` | `--gdy-background` | Fill of an unchecked checkbox. |
+| `--gdy-table-select-checked-bg` | `--gdy-primary` | Fill and edge of a checked or partial checkbox. |
+| `--gdy-table-select-check-fg` | `--gdy-primary-foreground` | Check and dash. |
+| `--gdy-table-select-focus-ring` | `--gdy-ring` | Keyboard focus ring of a checkbox. |
+| `--gdy-table-head-help-fg` | `--gdy-muted-foreground` | Header help icon. |
+| `--gdy-table-tooltip-bg` | `--gdy-foreground` | Header tooltip background. |
+| `--gdy-table-tooltip-fg` | `--gdy-background` | Header tooltip text. |
+| `--gdy-table-tooltip-z` | `60` | Header tooltip stacking, above the sticky header and the menus. |
 | `--gdy-table-group-bg` | `--gdy-accent` | Group row background. |
 
 ```css
@@ -956,6 +1193,10 @@ Own props of `DataTableProps<TData>`, in source order.
 | `normalizeRow` | `(row: unknown, index: number) => TData` | — | Maps each record of an envelope to `TData`. |
 | `getRowId` | `(row: TData, index: number) => string` | — | Stable row key. Without it rows are keyed by index. |
 | `features` | `DataTableFeatures` | all `true` | Capability flags. |
+| `rowSelection` | `RowSelectionConfig<TData>` | — | Checkbox column and selected ids. Requires `getRowId`. See [Row selection](#row-selection). |
+| `columnVisibility` | `Record<string, boolean>` | — | Columns the app removes (`false`) or pins (`true`). See [Column visibility](#column-visibility). |
+| `onColumnVisibilityChange` | `(visibility: Record<string, boolean>, details: ColumnVisibilityDetails) => void` | — | Columns on screen, on mount and on each change. |
+| `responsiveColumns` | `boolean` | `false` | Hides `hideable` and `priority` columns until the rest fits. |
 | `onRowClick` | `(row: TData, event: RowClickEvent) => void` | — | Row click handler; marks rows with `data-clickable`. |
 | `getRowHref` | `(row: TData) => string \| undefined` | — | Turns the row into a link (`data-href`). |
 | `focusableRows` | `boolean` | `false` (`true` with `getRowHref`) | Rows take the focus with Tab and fire with Enter. |
@@ -1027,3 +1268,8 @@ All of them are exported from `gridory/table` and `gridory`.
 - `RowAttributes`: the object `getRowAttributes` returns, with `data-*` and `aria-*` names only and
   `string | number | boolean | undefined` values.
 - `DataTableClassNames`: the optional classes per part of `classNames`.
+- `RowSelectionConfig<TData>`: the shape of `rowSelection` ([Row selection](#row-selection)).
+- `SelectAllScope`: `"page" | "filtered"`, what the header checkbox marks.
+- `ColumnVisibilityDetails`: `{ hiddenByPriority: string[] }`, the second argument of `onColumnVisibilityChange`.
+- `HeaderTooltipPlacement`: `"before" | "after" | "edge"`, the value of `headerTooltipPlacement`.
+- `MissingRowIdError` (a class, also exported): thrown when `rowSelection` has no `getRowId`.
