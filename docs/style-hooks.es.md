@@ -84,9 +84,10 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-kanban-card-title` | con estilos | — |
 | `gdy-kanban-card-value` | con estilos | — |
 | `gdy-kanban-card-value-label` | solo gancho | — |
-| `gdy-kanban-column` | con estilos | `[data-drop-target]` |
+| `gdy-kanban-column` | con estilos | `[data-drop-disabled]`, `[data-drop-target]` |
 | `gdy-kanban-column-body` | con estilos | — |
 | `gdy-kanban-column-count` | con estilos | — |
+| `gdy-kanban-column-extra` | con estilos | — |
 | `gdy-kanban-column-head` | con estilos | — |
 | `gdy-kanban-column-title` | con estilos | — |
 | `gdy-kanban-empty-col` | con estilos | — |
@@ -618,6 +619,7 @@ ponen Radix o react-day-picker siguen a esas librerías.
 | `data-disabled` | presente / ausente | Gridory, Radix o react-day-picker | `gdy-auth-google-slot`, `gdy-calendar-day`, `gdy-menu-item`, `gdy-select-item` |
 | `data-draggable` | presente / ausente | Gridory | `gdy-kanban-card` |
 | `data-dragging` | presente / ausente | Gridory | `gdy-kanban-card` |
+| `data-drop-disabled` | presente / ausente | Gridory | `gdy-kanban-column` |
 | `data-drop-target` | presente / ausente | Gridory | `gdy-kanban-column` |
 | `data-empty` | presente / ausente | Gridory | `gdy-ai-body` |
 | `data-filtered` | presente / ausente | Gridory | `gdy-kanban-filter-trigger` |
@@ -805,6 +807,8 @@ cualquier ancestro cambia solo esa parte. Los `--gdy-select-*` también reflejan
 | `--gdy-kanban-column-bg` | `var(--gdy-muted)` | kanban |
 | `--gdy-kanban-column-border` | `var(--gdy-border)` | kanban |
 | `--gdy-kanban-drop-bg` | `color-mix(in oklab, var(--gdy-foreground) 6%, var(--gdy-muted))` | kanban |
+| `--gdy-kanban-drop-disabled-bg` | `color-mix(in oklab, var(--gdy-destructive) 6%, var(--gdy-muted))` | kanban |
+| `--gdy-kanban-drop-disabled-outline` | `var(--gdy-destructive)` | kanban |
 | `--gdy-kanban-drop-outline` | `var(--gdy-muted-foreground)` | kanban |
 | `--gdy-listbox-check-color` | `var(--gdy-primary)` | country-select, phone-input, shared |
 | `--gdy-listbox-max-height` | `16rem` | shared |
