@@ -1,4 +1,5 @@
-import type { Row } from "@tanstack/react-table";
+import type { CellContext, Row } from "@tanstack/react-table";
+import { readInternalColumnMeta } from "../model/internal-column-meta";
 import { PrintValue } from "../body/PrintValue";
 import type { DataTableLabels } from "../types";
 import type { RowSelectionModel } from "./use-row-selection";
@@ -32,6 +33,13 @@ export const RowSelectCell = <TData,>(props: RowSelectCellProps<TData>) => {
       />
     </>
   );
+};
+
+/** The checkbox cell as the column renders it: the selection comes from the table meta. */
+export const TableSelectCell = <TData,>({ row, table }: Pick<CellContext<TData, unknown>, "row" | "table">) => {
+  const meta = readInternalColumnMeta(table);
+  if (!meta?.selection) return null;
+  return <RowSelectCell row={row} selection={meta.selection} labels={meta.labels} hasPrintMode={meta.hasPrintMode} />;
 };
 
 export const SelectHeaderContent = <TData,>({ selection, labels, hasPrintMode }: SelectCellSettings<TData>) => (
