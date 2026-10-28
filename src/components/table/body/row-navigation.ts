@@ -17,6 +17,7 @@ const UNSAFE_SCHEMES = ["javascript:", "data:", "vbscript:"];
 
 export interface RowNavigation<TData> {
   row: TData;
+  rowId: string;
   href?: string;
   config: TableRowConfig<TData>;
 }
@@ -83,8 +84,17 @@ const preventMiddleAutoscroll = <TData,>(navigation: RowNavigation<TData>) => (e
   if (navigation.href && event.button === MIDDLE_BUTTON && !isSkipped(navigation, event, true)) event.preventDefault();
 };
 
-const handleEnter = <TData,>(navigation: RowNavigation<TData>) => (event: KeyboardEvent<HTMLTableRowElement>) => {
-  if (event.key !== "Enter" || event.target !== event.currentTarget) return;
+const toggleRowSelection = <TData>(navigation: RowNavigation<TData>, event: KeyboardEvent<HTMLTableRowElement>) => {
+  const { selection } = navigation.config;
+  if (!selection?.isSelectable(navigation.row)) return;
+  event.preventDefault();
+  selection.toggleRow(navigation.rowId);
+};
+
+const handleRowKeys = <TData>(navigation: RowNavigation<TData>) => (event: KeyboardEvent<HTMLTableRowElement>) => {
+  if (event.target !== event.currentTarget) return;
+  if (event.key === " ") return toggleRowSelection(navigation, event);
+  if (event.key !== "Enter") return;
   event.preventDefault();
   runRowAction(navigation, event);
 };
@@ -94,6 +104,6 @@ export const buildRowHandlers = <TData,>(navigation: RowNavigation<TData>) => {
   const linkHandlers = navigation.href
     ? { onAuxClick: handleMiddleClick(navigation), onMouseDown: preventMiddleAutoscroll(navigation) }
     : {};
-  const keyHandlers = isRowFocusable(navigation) ? { onKeyDown: handleEnter(navigation), tabIndex: 0 } : {};
+  const keyHandlers = isRowFocusable(navigation) ? { onKeyDown: handleRowKeys(navigation), tabIndex: 0 } : {};
   return { onClick: handleClick(navigation), ...linkHandlers, ...keyHandlers };
 };

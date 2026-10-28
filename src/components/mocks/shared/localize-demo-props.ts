@@ -31,6 +31,7 @@ const formatUsDate = (value: string) => {
 const localizeStatusColumn = (column: CompanyColumn): Partial<CompanyColumn> => ({
   filterOptions: translateOptions(statusFilterOptions(column)),
   cell: column.inlineEditOptions ? column.cell : (row) => toEnglish(row.status),
+  printValue: column.printValue && ((row) => toEnglish(row.status)),
 });
 
 const localizeColumnContent = (column: CompanyColumn): Partial<CompanyColumn> => {
@@ -43,6 +44,7 @@ const localizeColumnContent = (column: CompanyColumn): Partial<CompanyColumn> =>
 const localizeColumn = (column: CompanyColumn): CompanyColumn => ({
   ...column,
   header: toEnglish(column.header),
+  headerTooltip: column.headerTooltip && toEnglish(column.headerTooltip),
   inlineEditOptions: translateOptions(column.inlineEditOptions),
   ...localizeColumnContent(column),
 });

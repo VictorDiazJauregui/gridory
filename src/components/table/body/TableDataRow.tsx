@@ -15,13 +15,13 @@ export const TableDataRow = <TData,>({ row, config }: TableDataRowProps<TData>) 
     <tr
       className={cn("gdy-table-row", config.classNames?.row, config.getRowClassName?.(row.original))}
       {...buildRowAttributes(row, config, href)}
-      {...buildRowHandlers({ row: row.original, href, config })}
+      {...buildRowHandlers({ row: row.original, rowId: row.id, href, config })}
     >
       {row.getVisibleCells().map((cell) => (
         <td
           key={cell.id}
           className={cn("gdy-table-cell", config.classNames?.cell)}
-          {...buildCellAttributes(cell.column.id, readColumnAlignment(cell.column.columnDef).cells)}
+          {...buildCellAttributes(cell.column.id, readColumnAlignment(cell.column.columnDef).cells, config.hiddenByPriority)}
         >
           {flexRender(cell.column.columnDef.cell, cell.getContext())}
         </td>

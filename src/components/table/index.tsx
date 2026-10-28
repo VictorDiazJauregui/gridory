@@ -12,6 +12,8 @@ import { buildToolbarProps } from "./toolbar-props";
 import type { DataTableProps } from "./types";
 import { useTableCore, type TableModel } from "./model/use-table-core";
 import { useTableOptions } from "./model/use-table-options";
+import { useResponsiveColumns } from "./columns/use-responsive-columns";
+import { useCloseHiddenFilterMenu, useColumnVisibilityReport } from "./columns/use-column-visibility-report";
 
 const resolveRootClassName = <TData,>(settings: TableSettings<TData>) => {
   const showStickyHeader =
@@ -27,16 +29,25 @@ const resolveRootClassName = <TData,>(settings: TableSettings<TData>) => {
   );
 };
 
-export const DataTable = <TData,>(props: DataTableProps<TData>) => {
+const useTableModel = <TData,>(props: DataTableProps<TData>): TableModel<TData> => {
   const core = useTableCore(props);
   const table = useReactTable(useTableOptions(core));
-  const model: TableModel<TData> = { ...core, table };
+  const hiddenByPriority = useResponsiveColumns({ settings: core.settings, table, wrapRef: core.paging.wrapRef });
+  const model = { ...core, table, hiddenByPriority };
+  useColumnVisibilityReport(model);
+  useCloseHiddenFilterMenu(model);
+  return model;
+};
+
+export const DataTable = <TData,>(props: DataTableProps<TData>) => {
+  const model = useTableModel(props);
+  const { settings } = model;
   return (
     <div
-      className={resolveRootClassName(core.settings)}
-      style={resolveRootStyle(core.settings)}
-      data-print-mode={core.settings.printMode}
-      {...buildLoadingRootAttributes(core.settings.loading)}
+      className={resolveRootClassName(settings)}
+      style={resolveRootStyle(settings)}
+      data-print-mode={settings.printMode}
+      {...buildLoadingRootAttributes(settings.loading)}
     >
       <div className="gdy-scope gdy-card">
         <Toolbar {...buildToolbarProps(model)} />
@@ -63,10 +74,14 @@ export type {
   DataTableProps,
   FilterOption,
   GroupHeader,
+  HeaderTooltipPlacement,
   RowActions,
   RowAttributes,
   RowClickEvent,
   RowGroupingResult,
+  ColumnVisibilityDetails,
+  RowSelectionConfig,
+  SelectAllScope,
   DataTableFeatures,
   DataTableLabels,
   DataInput,
@@ -75,6 +90,7 @@ export type {
   VisibleRowsState,
 } from "./types";
 
+export { MissingRowIdError } from "./selection/use-row-selection";
 export type {
   RowAction,
   RowActionEntry,

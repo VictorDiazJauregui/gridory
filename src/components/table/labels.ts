@@ -13,4 +13,11 @@ export const DATA_TABLE_LABELS: DataTableLabels = {
   inlineSelectPlaceholder: "Seleccionar...",
   groupNone: "Ninguno",
   groupEmptyValue: "Sin valor",
+  selectRow: "Seleccionar fila",
+  selectPageRows: "Seleccionar las filas de la página",
+  selectFilteredRows: "Seleccionar todas las filas filtradas",
+  printSelected: "Sí",
+  printNotSelected: "No",
+  printSelectionHeader: "Seleccionada",
+  columnHelp: (header) => `Ayuda sobre ${header}`,
 };

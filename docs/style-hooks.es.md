@@ -21,12 +21,12 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-table-actions-head-label` | con estilos | — |
 | `gdy-table-actions-icon` | solo gancho | — |
 | `gdy-table-body` | solo gancho | — |
-| `gdy-table-cell` | con estilos | `[data-align="center"]`, `[data-align="right"]` |
+| `gdy-table-cell` | con estilos | `[data-align="center"]`, `[data-align="right"]`, `[data-hidden-by="priority"]` |
 | `gdy-table-cell-content` | con estilos | `[data-overflow="visible"]`, `[data-overflow="wrap"]` |
 | `gdy-table-empty-row` | solo gancho | — |
 | `gdy-table-fill` | con estilos | — |
 | `gdy-table-foot` | con estilos | — |
-| `gdy-table-foot-cell` | con estilos | `[data-align="center"]`, `[data-align="right"]` |
+| `gdy-table-foot-cell` | con estilos | `[data-align="center"]`, `[data-align="right"]`, `[data-hidden-by="priority"]` |
 | `gdy-table-foot-row` | solo gancho | — |
 | `gdy-table-grid` | con estilos | — |
 | `gdy-table-group-cell` | con estilos | — |
@@ -37,12 +37,14 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-table-group-toggle` | con estilos | `[aria-expanded="false"]` |
 | `gdy-table-head` | solo gancho | — |
 | `gdy-table-head-arrow` | con estilos | — |
-| `gdy-table-head-cell` | con estilos | `[data-align="center"]`, `[data-align="right"]` |
+| `gdy-table-head-cell` | con estilos | `[data-align="center"]`, `[data-align="right"]`, `[data-column-id="_select"]`, `[data-hidden-by="priority"]` |
 | `gdy-table-head-filter-icon` | con estilos | — |
-| `gdy-table-head-inner` | con estilos | — |
+| `gdy-table-head-help` | con estilos | — |
+| `gdy-table-head-inner` | con estilos | `[data-help-placement="edge"]`, `[data-help-placement]` |
 | `gdy-table-head-label` | con estilos | — |
 | `gdy-table-head-row` | con estilos | — |
 | `gdy-table-head-sort-icon` | solo gancho | — |
+| `gdy-table-head-tooltip` | con estilos | — |
 | `gdy-table-head-trigger` | con estilos | `[data-align="center"]`, `[data-align="right"]` |
 | `gdy-table-inline-select` | con estilos | — |
 | `gdy-table-inline-select-wrap` | con estilos | — |
@@ -60,8 +62,11 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-table-pagination-left` | con estilos | — |
 | `gdy-table-pagination-right` | con estilos | — |
 | `gdy-table-pagination-text` | con estilos | — |
-| `gdy-table-row` | con estilos | `[data-clickable]` |
-| `gdy-table-skeleton` | con estilos | `[data-column-id="_actions"]` |
+| `gdy-table-print-value` | con estilos | — |
+| `gdy-table-row` | con estilos | `[data-clickable]`, `[data-selected]` |
+| `gdy-table-select` | con estilos | `[data-state="checked"]`, `[data-state="indeterminate"]` |
+| `gdy-table-select-indicator` | con estilos | — |
+| `gdy-table-skeleton` | con estilos | `[data-column-id="_actions"]`, `[data-column-id="_select"]` |
 | `gdy-table-skeleton-row` | solo gancho | — |
 | `gdy-table-sticky` | con estilos | — |
 | `gdy-table-wrap` | con estilos | — |
@@ -559,10 +564,28 @@ hay que escribir para pisarlas; los motivos están en [Temas y estilos](theming.
 | `.gdy-table-skeleton > .gdy-skeleton` | 0-2-0 |
 | `.gdy-table-skeleton[data-column-id="_actions"]` | 0-2-0 |
 | `.gdy-table-skeleton[data-column-id="_actions"] > .gdy-skeleton` | 0-3-0 |
+| `.gdy-table-skeleton[data-column-id="_select"] > .gdy-skeleton` | 0-3-0 |
 | `.gdy-table-cell.gdy-empty` | 0-2-0 |
 | `.gdy-table-row[data-clickable]` | 0-2-0 |
 | `.gdy-table-row[data-clickable]:hover .gdy-table-cell` | 0-4-0 |
+| `.gdy-table-row[data-selected] .gdy-table-cell` | 0-3-0 |
+| `.gdy-table-head-cell[data-column-id="_select"]` | 0-2-0 |
+| `.gdy-table-select[data-state="checked"]` | 0-2-0 |
+| `.gdy-table-select[data-state="indeterminate"]` | 0-2-0 |
+| `.gdy-table-select:focus-visible` | 0-2-0 |
+| `.gdy-table-select:disabled` | 0-2-0 |
+| `.gdy-table-head-cell[data-hidden-by="priority"]` | 0-2-0 |
+| `.gdy-table-cell[data-hidden-by="priority"]` | 0-2-0 |
+| `.gdy-table-foot-cell[data-hidden-by="priority"]` | 0-2-0 |
 | `.gdy-table-row:focus-visible` | 0-2-0 |
+| `.gdy-table-head-inner[data-help-placement]` | 0-2-0 |
+| `.gdy-table-head-inner[data-help-placement] > .gdy-table-head-trigger` | 0-3-0 |
+| `.gdy-table-head-inner[data-help-placement="edge"] > .gdy-table-head-trigger` | 0-3-0 |
+| `.gdy-table-head-cell[data-align="center"] > .gdy-table-head-inner[data-help-placement]` | 0-4-0 |
+| `.gdy-table-head-cell[data-align="right"] > .gdy-table-head-inner[data-help-placement]` | 0-4-0 |
+| `.gdy-table-head-help:hover` | 0-2-0 |
+| `.gdy-table-head-help[data-state$="open"]` | 0-2-0 |
+| `.gdy-table-head-help:focus-visible` | 0-2-0 |
 | `.gdy-table-head-cell[data-align="center"]` | 0-2-0 |
 | `.gdy-table-cell[data-align="center"]` | 0-2-0 |
 | `.gdy-table-foot-cell[data-align="center"]` | 0-2-0 |
@@ -594,6 +617,11 @@ hay que escribir para pisarlas; los motivos están en [Temas y estilos](theming.
 | `.gdy-table[data-print-mode] .gdy-table-foot-cell` | 0-3-0 |
 | `.gdy-table[data-print-mode] thead` | 0-2-1 |
 | `.gdy-table[data-print-mode] tr` | 0-2-1 |
+| `.gdy-table[data-print-mode] .gdy-table-print-value` | 0-3-0 |
+| `.gdy-table[data-print-mode] .gdy-table-print-value + *` | 0-3-0 |
+| `.gdy-table[data-print-mode] .gdy-table-row[data-selected] .gdy-table-cell` | 0-5-0 |
+| `.gdy-table[data-print-mode] .gdy-table-head-cell[data-column-id="_select"]` | 0-4-0 |
+| `.gdy-table[data-print-mode] .gdy-table-head-help` | 0-3-0 |
 
 ## Atributos de estado
 
@@ -617,7 +645,7 @@ ponen Radix o react-day-picker siguen a esas librerías.
 | `data-checked` | presente / ausente | Gridory | `gdy-option-check` |
 | `data-clickable` | presente / ausente | Gridory | `gdy-table-row` |
 | `data-collapsed` | presente / ausente | Gridory | `gdy-kanban-column` |
-| `data-column-id` | el `id` de la columna | Gridory | `gdy-table-skeleton` |
+| `data-column-id` | el `id` de la columna | Gridory | `gdy-table-head-cell`, `gdy-table-skeleton` |
 | `data-column-value` | presente / ausente | Gridory | sin regla por defecto |
 | `data-compact` | `"true"` | Gridory | `gdy-sidebar-logo` |
 | `data-day` | la fecha del día | Gridory | sin regla por defecto |
@@ -632,7 +660,9 @@ ponen Radix o react-day-picker siguen a esas librerías.
 | `data-form` | `"login"`, `"signup"` | Gridory | sin regla por defecto |
 | `data-fullscreen` | presente / ausente | Gridory | `gdy-md-editor` |
 | `data-header` | presente / ausente | Gridory | `gdy-md-table-preview-cell` |
+| `data-help-placement` | `"edge"` | Gridory | `gdy-table-head-inner` |
 | `data-hidden` | presente / ausente | Radix o react-day-picker | `gdy-calendar-day` |
+| `data-hidden-by` | `"priority"` | Gridory | `gdy-table-cell`, `gdy-table-foot-cell`, `gdy-table-head-cell` |
 | `data-highlighted` | presente / ausente | Radix o react-day-picker | `gdy-select-item` |
 | `data-hover-expand` | `"false"`, `"true"` | Gridory | `gdy-sidebar` |
 | `data-href` | presente / ausente | Gridory | sin regla por defecto |
@@ -659,12 +689,12 @@ ponen Radix o react-day-picker siguen a esas librerías.
 | `data-range-start` | presente / ausente | Gridory | `gdy-calendar-day`, `gdy-calendar-day-button` |
 | `data-role` | `"assistant"`, `"user"` | Gridory | `gdy-ai-bubble`, `gdy-ai-message` |
 | `data-row-id` | el id de la fila (`getRowId`) | Gridory | sin regla por defecto |
-| `data-selected` | presente / ausente | Gridory, Radix o react-day-picker | `gdy-calendar-day`, `gdy-option-item` |
+| `data-selected` | presente / ausente | Gridory, Radix o react-day-picker | `gdy-calendar-day`, `gdy-option-item`, `gdy-table-row` |
 | `data-selected-single` | presente / ausente | Gridory | `gdy-calendar-day-button` |
 | `data-side` | `"bottom"`, `"left"`, `"right"`, `"top"` | Radix o react-day-picker | `gdy-menu-content`, `gdy-popover-content`, `gdy-select-content` |
 | `data-size` | `"default"`, `"icon"`, `"icon-lg"`, `"icon-sm"`, `"icon-xs"`, `"lg"`, `"sm"`, `"xs"` | Gridory | `gdy-button` |
 | `data-slot-id` | el `id` del slot | Gridory | sin regla por defecto |
-| `data-state` | `"active"`, `"checked"`, `"closed"`, `"collapsed"`, `"expanded"`, `"on"`, `"open"` | Gridory, Radix o react-day-picker | `gdy-ai-sidebar`, `gdy-md-image-tab`, `gdy-md-picker-tab`, `gdy-md-tool`, `gdy-menu-content`, `gdy-menu-sub-trigger`, `gdy-popover-content`, `gdy-select-content`, `gdy-select-item`, `gdy-select-trigger`, `gdy-sidebar`, `gdy-sidebar-drawer`, `gdy-sidebar-overlay`, `gdy-toggle-item` |
+| `data-state` | `"active"`, `"checked"`, `"closed"`, `"collapsed"`, `"expanded"`, `"indeterminate"`, `"on"`, `"open"` | Gridory, Radix o react-day-picker | `gdy-ai-sidebar`, `gdy-md-image-tab`, `gdy-md-picker-tab`, `gdy-md-tool`, `gdy-menu-content`, `gdy-menu-sub-trigger`, `gdy-popover-content`, `gdy-select-content`, `gdy-select-item`, `gdy-select-trigger`, `gdy-sidebar`, `gdy-sidebar-drawer`, `gdy-sidebar-overlay`, `gdy-table-select`, `gdy-toggle-item` |
 | `data-status` | `"met"`, `"pending"`, `"unmet"` | Gridory | `gdy-auth-rule` |
 | `data-streaming` | presente / ausente | Gridory | sin regla por defecto |
 | `data-thinking` | presente / ausente | Gridory | sin regla por defecto |
@@ -1034,8 +1064,18 @@ cualquier ancestro cambia solo esa parte. Los `--gdy-select-*` también reflejan
 | `--gdy-table-group-bg` | `var(--gdy-accent)` | table |
 | `--gdy-table-head-bg` | `var(--gdy-muted)` | table |
 | `--gdy-table-head-fg` | `var(--gdy-muted-foreground)` | table |
+| `--gdy-table-head-help-fg` | `var(--gdy-muted-foreground)` | table |
 | `--gdy-table-row-focus-ring` | `var(--gdy-ring)` | table |
 | `--gdy-table-row-hover-bg` | `var(--gdy-muted)` | table |
+| `--gdy-table-row-selected-bg` | `var(--gdy-accent)` | table |
+| `--gdy-table-select-bg` | `var(--gdy-background)` | table |
+| `--gdy-table-select-border` | `var(--gdy-muted-foreground)` | table |
+| `--gdy-table-select-check-fg` | `var(--gdy-primary-foreground)` | table |
+| `--gdy-table-select-checked-bg` | `var(--gdy-primary)` | table |
+| `--gdy-table-select-focus-ring` | `var(--gdy-ring)` | table |
+| `--gdy-table-tooltip-bg` | `var(--gdy-foreground)` | table |
+| `--gdy-table-tooltip-fg` | `var(--gdy-background)` | table |
+| `--gdy-table-tooltip-z` | `60` | table |
 | `--gdy-toggle-active-bg` | `var(--gdy-background)` | ui |
 | `--gdy-toggle-bg` | `color-mix(in oklab, var(--gdy-muted) 50%, transparent)` | ui |
 | `--gdy-toolbar-border` | `var(--gdy-border)` | kanban, shared |

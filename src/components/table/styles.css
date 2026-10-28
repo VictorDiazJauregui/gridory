@@ -70,6 +70,12 @@
   border-radius: 8px;
 }
 
+.gdy-table-skeleton[data-column-id="_select"] > .gdy-skeleton {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+}
+
 /* Totals row (column `footer`): the header look, a line above the totals and the same cell
    padding as the rows, so each total sits under its column. */
 .gdy-table-foot-cell {
@@ -96,6 +102,64 @@
   background: var(--gdy-table-row-hover-bg, var(--gdy-muted));
 }
 
+/* Row selection (`rowSelection`): 0-3-0, under the 0-4-0 hover of a clickable row, so hovering it still shows. */
+.gdy-table-row[data-selected] .gdy-table-cell {
+  background: var(--gdy-table-row-selected-bg, var(--gdy-accent));
+}
+
+/* The width lives here, not inline, so printing can widen it for its header text. */
+.gdy-table-head-cell[data-column-id="_select"] {
+  width: 44px;
+}
+
+/* The border falls back to the muted text color, not --gdy-border: a control's edge needs 3:1 contrast. */
+.gdy-table-select {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: 1px solid var(--gdy-table-select-border, var(--gdy-muted-foreground));
+  border-radius: 4px;
+  background: var(--gdy-table-select-bg, var(--gdy-background));
+  color: var(--gdy-table-select-check-fg, var(--gdy-primary-foreground));
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.gdy-table-select[data-state="checked"],
+.gdy-table-select[data-state="indeterminate"] {
+  border-color: var(--gdy-table-select-checked-bg, var(--gdy-primary));
+  background: var(--gdy-table-select-checked-bg, var(--gdy-primary));
+}
+
+.gdy-table-select:focus-visible {
+  outline: 2px solid var(--gdy-table-select-focus-ring, var(--gdy-ring));
+  outline-offset: 2px;
+}
+
+.gdy-table-select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.gdy-table-select-indicator {
+  display: flex;
+}
+
+/* Columns `responsiveColumns` hid stay in the markup, so an app can bring them back elsewhere (on paper, say). */
+.gdy-table-head-cell[data-hidden-by="priority"],
+.gdy-table-cell[data-hidden-by="priority"],
+.gdy-table-foot-cell[data-hidden-by="priority"] {
+  display: none;
+}
+
+/* Text that replaces a cell on paper (`printMode`): the selection as "Sí"/"No", or a column `printValue`. */
+.gdy-table-print-value {
+  display: none;
+}
+
 /* Keyboard focus of a focusable row (`focusableRows`, `getRowHref`). The ring is drawn inside
    the row: the rows container scrolls (overflow) and would clip an outer one. */
 .gdy-table-row:focus-visible {
@@ -107,6 +171,67 @@
    (gdy-table-menu-holder is positioned against this element) */
 .gdy-table-head-inner {
   position: relative;
+}
+
+/* Header help (`headerTooltip`): the inner box becomes a row only then. The trigger shrinks to its content so
+   the icon sits next to the title; with "edge" it fills the cell and the icon lands on the far side. */
+.gdy-table-head-inner[data-help-placement] {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.gdy-table-head-inner[data-help-placement] > .gdy-table-head-trigger {
+  flex: 0 1 auto;
+  width: auto;
+  min-width: 0;
+}
+
+.gdy-table-head-inner[data-help-placement="edge"] > .gdy-table-head-trigger {
+  flex-grow: 1;
+}
+
+.gdy-table-head-cell[data-align="center"] > .gdy-table-head-inner[data-help-placement] {
+  justify-content: center;
+}
+
+.gdy-table-head-cell[data-align="right"] > .gdy-table-head-inner[data-help-placement] {
+  justify-content: flex-end;
+}
+
+.gdy-table-head-help {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--gdy-table-head-help-fg, var(--gdy-muted-foreground));
+  cursor: help;
+}
+
+.gdy-table-head-help:hover,
+.gdy-table-head-help[data-state$="open"] {
+  color: var(--gdy-foreground);
+}
+
+.gdy-table-head-help:focus-visible {
+  outline: 2px solid var(--gdy-ring);
+  outline-offset: 1px;
+}
+
+.gdy-table-head-tooltip {
+  z-index: var(--gdy-table-tooltip-z, 60);
+  max-width: 260px;
+  padding: 6px 10px;
+  border-radius: calc(var(--gdy-radius) - 4px);
+  background: var(--gdy-table-tooltip-bg, var(--gdy-foreground));
+  color: var(--gdy-table-tooltip-fg, var(--gdy-background));
+  font-size: 12px;
+  line-height: 1.4;
+  box-shadow: var(--gdy-shadow-md);
 }
 
 .gdy-table-head-trigger {
@@ -412,5 +537,25 @@
 
   .gdy-table[data-print-mode] tr {
     break-inside: avoid;
+  }
+
+  .gdy-table[data-print-mode] .gdy-table-print-value {
+    display: inline;
+  }
+
+  .gdy-table[data-print-mode] .gdy-table-print-value + * {
+    display: none;
+  }
+
+  .gdy-table[data-print-mode] .gdy-table-row[data-selected] .gdy-table-cell {
+    background: none;
+  }
+
+  .gdy-table[data-print-mode] .gdy-table-head-cell[data-column-id="_select"] {
+    width: 112px;
+  }
+
+  .gdy-table[data-print-mode] .gdy-table-head-help {
+    display: none;
   }
 }

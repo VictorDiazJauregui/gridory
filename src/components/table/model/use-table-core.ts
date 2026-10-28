@@ -4,6 +4,7 @@ import { DATA_TABLE_LABELS } from "../labels";
 import { resolveTableSettings } from "../settings";
 import type { ColumnDefinition, DataTableProps } from "../types";
 import { useTablePaging } from "../pagination/use-table-paging";
+import { useRowSelection } from "../selection/use-row-selection";
 import { useTableRows } from "./use-table-rows";
 import { useTableState } from "./use-table-state";
 import { useFilterOptions } from "./use-filter-options";
@@ -23,13 +24,18 @@ export const useTableCore = <TData>(props: DataTableProps<TData>) => {
   const reportedRows = paging.printingAllRows ? null : paging.pagedRows;
   useVisibleRowsChange({ pageRows: reportedRows, filteredRows: grouping.flatRows }, settings);
   const filterOptions = useFilterOptions(rows, settings, state.filters);
+  const selection = useRowSelection(settings, { allRows: rows, pageRows: paging.pagedRows, filteredRows: grouping.flatRows });
   const printState = paging.printingAllRows ? { ...state, collapsedGroups: NO_COLLAPSED_GROUPS } : state;
-  return { settings, state: printState, grouping, paging, filterOptions };
+  return { settings, state: printState, grouping, paging, filterOptions, selection };
 };
 
 export type TableCore<TData> = ReturnType<typeof useTableCore<TData>>;
 
-export type TableModel<TData> = TableCore<TData> & { table: Table<TData> };
+export type TableModel<TData> = TableCore<TData> & {
+  table: Table<TData>;
+  /** Ids `responsiveColumns` hid: still rendered, with `data-hidden-by="priority"`. */
+  hiddenByPriority: string[];
+};
 
 export interface TableModelProps<TData> {
   model: TableModel<TData>;

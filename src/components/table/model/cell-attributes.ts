@@ -3,9 +3,10 @@ import type { ColumnAlign, RowActions } from "../types";
 
 // Single source of the attributes every header and data cell of a column carries,
 // so the column hooks added later (alignment, overflow) land on th and td together.
-export const buildCellAttributes = (columnId: string, align?: ColumnAlign) => ({
+export const buildCellAttributes = (columnId: string, align?: ColumnAlign, hiddenByPriority?: readonly string[]) => ({
   "data-column-id": columnId,
   "data-align": align,
+  "data-hidden-by": hiddenByPriority?.includes(columnId) ? "priority" : undefined,
 });
 
 /** Alignment of a column's cells and of its header, kept apart so each can differ. */
