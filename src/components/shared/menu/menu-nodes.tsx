@@ -72,6 +72,8 @@ export interface ResolvedActionNode {
   label: string;
   variant?: "default" | "destructive";
   disabled?: boolean;
+  /** Second line under the label, linked with `aria-describedby` (why a disabled item is disabled). */
+  description?: string;
   onSelect: () => void;
 }
 
