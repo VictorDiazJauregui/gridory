@@ -21,12 +21,19 @@ The state selectors column lists the attributes the stylesheets combine with eac
 | `gdy-table-actions-head-label` | styled | — |
 | `gdy-table-actions-icon` | hook only | — |
 | `gdy-table-body` | hook only | — |
-| `gdy-table-cell` | styled | `[data-align="center"]`, `[data-align="right"]`, `[data-hidden-by="priority"]` |
+| `gdy-table-cell` | styled | `[data-align="center"]`, `[data-align="right"]`, `[data-column-id="_expand"]`, `[data-hidden-by="priority"]`, `[data-pinned]` |
 | `gdy-table-cell-content` | styled | `[data-overflow="visible"]`, `[data-overflow="wrap"]` |
 | `gdy-table-empty-row` | hook only | — |
+| `gdy-table-expand-chevron` | styled | — |
+| `gdy-table-expand-toggle` | styled | `[aria-expanded="true"]` |
+| `gdy-table-expanded-body` | styled | — |
+| `gdy-table-expanded-cell` | styled | — |
+| `gdy-table-expanded-content` | styled | — |
+| `gdy-table-expanded-panel` | styled | `[data-state="closed"]`, `[data-state="open"]` |
+| `gdy-table-expanded-row` | styled | — |
 | `gdy-table-fill` | styled | — |
 | `gdy-table-foot` | styled | — |
-| `gdy-table-foot-cell` | styled | `[data-align="center"]`, `[data-align="right"]`, `[data-hidden-by="priority"]` |
+| `gdy-table-foot-cell` | styled | `[data-align="center"]`, `[data-align="right"]`, `[data-hidden-by="priority"]`, `[data-pinned]` |
 | `gdy-table-foot-row` | hook only | — |
 | `gdy-table-grid` | styled | — |
 | `gdy-table-group-cell` | styled | — |
@@ -37,7 +44,7 @@ The state selectors column lists the attributes the stylesheets combine with eac
 | `gdy-table-group-toggle` | styled | `[aria-expanded="false"]` |
 | `gdy-table-head` | hook only | — |
 | `gdy-table-head-arrow` | styled | — |
-| `gdy-table-head-cell` | styled | `[data-align="center"]`, `[data-align="right"]`, `[data-column-id="_select"]`, `[data-hidden-by="priority"]` |
+| `gdy-table-head-cell` | styled | `[data-align="center"]`, `[data-align="right"]`, `[data-column-id="_expand"]`, `[data-column-id="_select"]`, `[data-hidden-by="priority"]`, `[data-pinned]` |
 | `gdy-table-head-filter-icon` | styled | — |
 | `gdy-table-head-help` | styled | — |
 | `gdy-table-head-inner` | styled | `[data-help-placement="edge"]`, `[data-help-placement]` |
@@ -66,10 +73,10 @@ The state selectors column lists the attributes the stylesheets combine with eac
 | `gdy-table-row` | styled | `[data-clickable]`, `[data-selected]` |
 | `gdy-table-select` | styled | `[data-state="checked"]`, `[data-state="indeterminate"]` |
 | `gdy-table-select-indicator` | styled | — |
-| `gdy-table-skeleton` | styled | `[data-column-id="_actions"]`, `[data-column-id="_select"]` |
+| `gdy-table-skeleton` | styled | `[data-column-id="_actions"]`, `[data-column-id="_expand"]`, `[data-column-id="_select"]` |
 | `gdy-table-skeleton-row` | hook only | — |
 | `gdy-table-sticky` | styled | — |
-| `gdy-table-wrap` | styled | — |
+| `gdy-table-wrap` | styled | `[data-has-pinned]`, `[data-pinning-suspended]`, `[data-scrolled-end]`, `[data-scrolled-start]` |
 
 ### Kanban
 
@@ -602,10 +609,28 @@ write when you override them; the reasons are in [Theming and styling](theming.m
 | `.gdy-table-actions-cell[data-align="center"]` | 0-2-0 |
 | `.gdy-table-group-toggle:hover` | 0-2-0 |
 | `.gdy-table-group-toggle[aria-expanded="false"] .gdy-table-group-chevron` | 0-3-0 |
+| `.gdy-table-head-cell[data-column-id="_expand"]` | 0-2-0 |
+| `.gdy-table-cell[data-column-id="_expand"]` | 0-2-0 |
+| `.gdy-table-expand-toggle:focus-visible` | 0-2-0 |
+| `.gdy-table-expand-toggle[aria-expanded="true"] > .gdy-table-expand-chevron` | 0-3-0 |
+| `.gdy-table-skeleton[data-column-id="_expand"] > .gdy-skeleton` | 0-3-0 |
+| `.gdy-table-expanded-panel[data-state="closed"]` | 0-2-0 |
 | `.gdy-table-fill .gdy-card` | 0-2-0 |
 | `.gdy-table-fill .gdy-table-wrap` | 0-2-0 |
 | `.gdy-table-sticky .gdy-table-head-cell` | 0-2-0 |
 | `.gdy-table-sticky .gdy-table-foot-cell` | 0-2-0 |
+| `:where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > * > tr) > .gdy-table-cell[data-pinned]` | 0-2-0 |
+| `:where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > * > tr) > .gdy-table-head-cell[data-pinned]` | 0-2-0 |
+| `:where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > * > tr) > .gdy-table-foot-cell[data-pinned]` | 0-2-0 |
+| `:where(.gdy-table-wrap[data-has-pinned] > .gdy-table-grid > thead > tr) > .gdy-table-head-cell:has(.gdy-table-menu-holder)` | 0-2-0 |
+| `:where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > tbody > tr:focus-visible) > .gdy-table-cell[data-pinned]` | 0-2-0 |
+| `:where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > tbody > tr:focus-visible) > .gdy-table-cell[data-pinned]:first-child` | 0-3-0 |
+| `:where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > tbody > tr:focus-visible) > .gdy-table-cell[data-pinned]:last-child` | 0-3-0 |
+| `:where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > * > tr) > [data-pinned-edge]::after` | 0-1-1 |
+| `:where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > * > tr) > [data-pinned="left"][data-pinned-edge]::after` | 0-2-1 |
+| `:where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > * > tr) > [data-pinned="right"][data-pinned-edge]::after` | 0-2-1 |
+| `:where(.gdy-table-wrap[data-has-pinned][data-scrolled-start]:not([data-pinning-suspended]) > .gdy-table-grid > * > tr) > [data-pinned="left"][data-pinned-edge]::after` | 0-2-1 |
+| `:where(.gdy-table-wrap[data-has-pinned][data-scrolled-end]:not([data-pinning-suspended]) > .gdy-table-grid > * > tr) > [data-pinned="right"][data-pinned-edge]::after` | 0-2-1 |
 | `.gdy-table[data-print-mode] .gdy-toolbar` | 0-3-0 |
 | `.gdy-table[data-print-mode] .gdy-table-pagination` | 0-3-0 |
 | `.gdy-table[data-print-mode] [data-column-id="_actions"]` | 0-3-0 |
@@ -622,6 +647,9 @@ write when you override them; the reasons are in [Theming and styling](theming.m
 | `.gdy-table[data-print-mode] .gdy-table-row[data-selected] .gdy-table-cell` | 0-5-0 |
 | `.gdy-table[data-print-mode] .gdy-table-head-cell[data-column-id="_select"]` | 0-4-0 |
 | `.gdy-table[data-print-mode] .gdy-table-head-help` | 0-3-0 |
+| `.gdy-table[data-print-mode] [data-column-id="_expand"]` | 0-3-0 |
+| `.gdy-table[data-print-mode] .gdy-table-expanded-row` | 0-3-0 |
+| `.gdy-table[data-print-mode] .gdy-table-expanded-panel` | 0-3-0 |
 
 ## State attributes
 
@@ -633,7 +661,7 @@ Radix or react-day-picker follow those libraries.
 | `aria-checked` | `"false"`, `"true"` | Gridory | `gdy-segmented-item` |
 | `aria-current` | `"location"`, `"page"` | Gridory | `gdy-md-outline-link`, `gdy-sidebar-item` |
 | `aria-disabled` | `"true"` | Radix or react-day-picker | `gdy-calendar-button-next`, `gdy-calendar-button-previous`, `gdy-listbox-option` |
-| `aria-expanded` | `"false"`, `"true"` | Gridory | `gdy-button`, `gdy-country-select-trigger`, `gdy-phone-input-prefix`, `gdy-table-group-toggle` |
+| `aria-expanded` | `"false"`, `"true"` | Gridory | `gdy-button`, `gdy-country-select-trigger`, `gdy-phone-input-prefix`, `gdy-table-expand-toggle`, `gdy-table-group-toggle` |
 | `aria-invalid` | `"true"` | Gridory | `gdy-auth-input`, `gdy-country-select-trigger`, `gdy-select-trigger` |
 | `aria-pressed` | `"true"` | Gridory | `gdy-link-btn`, `gdy-md-tool`, `gdy-md-view-option`, `gdy-view-switch-btn` |
 | `aria-selected` | `"true"` | Gridory | `gdy-listbox-option` |
@@ -645,7 +673,7 @@ Radix or react-day-picker follow those libraries.
 | `data-checked` | present / absent | Gridory | `gdy-option-check` |
 | `data-clickable` | present / absent | Gridory | `gdy-table-row` |
 | `data-collapsed` | present / absent | Gridory | `gdy-kanban-column` |
-| `data-column-id` | the column `id` | Gridory | `gdy-table-head-cell`, `gdy-table-skeleton` |
+| `data-column-id` | the column `id` | Gridory | `gdy-table-cell`, `gdy-table-head-cell`, `gdy-table-skeleton` |
 | `data-column-value` | present / absent | Gridory | no default rule |
 | `data-compact` | `"true"` | Gridory | `gdy-sidebar-logo` |
 | `data-day` | the date of the day | Gridory | no default rule |
@@ -656,9 +684,11 @@ Radix or react-day-picker follow those libraries.
 | `data-drop-disabled` | present / absent | Gridory | `gdy-kanban-column` |
 | `data-drop-target` | present / absent | Gridory | `gdy-kanban-column` |
 | `data-empty` | present / absent | Gridory | `gdy-ai-body` |
+| `data-expanded` | present / absent | Gridory | no default rule |
 | `data-filtered` | present / absent | Gridory | `gdy-kanban-filter-trigger` |
 | `data-form` | `"login"`, `"signup"` | Gridory | no default rule |
 | `data-fullscreen` | present / absent | Gridory | `gdy-md-editor` |
+| `data-has-pinned` | present / absent | Gridory | `gdy-table-wrap` |
 | `data-header` | present / absent | Gridory | `gdy-md-table-preview-cell` |
 | `data-help-placement` | `"edge"` | Gridory | `gdy-table-head-inner` |
 | `data-hidden` | present / absent | Radix or react-day-picker | `gdy-calendar-day` |
@@ -681,7 +711,9 @@ Radix or react-day-picker follow those libraries.
 | `data-outside` | present / absent | Radix or react-day-picker | `gdy-calendar-day` |
 | `data-overflow` | `"visible"`, `"wrap"` | Gridory | `gdy-table-cell-content` |
 | `data-pending` | present / absent | Gridory | `gdy-kanban-card` |
-| `data-pinned` | `"false"`, `"true"` | Gridory | `gdy-sidebar` |
+| `data-pinned` | `"false"`, `"true"` | Gridory | `gdy-sidebar`, `gdy-table-cell`, `gdy-table-foot-cell`, `gdy-table-head-cell` |
+| `data-pinned-edge` | present / absent | Gridory | no default rule |
+| `data-pinning-suspended` | present / absent | Gridory | `gdy-table-wrap` |
 | `data-placeholder` | present / absent | Gridory, Radix or react-day-picker | `gdy-country-select-value`, `gdy-phone-input-dial-code`, `gdy-select-trigger` |
 | `data-print-mode` | present / absent | Gridory | `gdy-table` |
 | `data-range-end` | present / absent | Gridory | `gdy-calendar-day`, `gdy-calendar-day-button` |
@@ -689,12 +721,14 @@ Radix or react-day-picker follow those libraries.
 | `data-range-start` | present / absent | Gridory | `gdy-calendar-day`, `gdy-calendar-day-button` |
 | `data-role` | `"assistant"`, `"user"` | Gridory | `gdy-ai-bubble`, `gdy-ai-message` |
 | `data-row-id` | the row id (`getRowId`) | Gridory | no default rule |
+| `data-scrolled-end` | present / absent | Gridory | `gdy-table-wrap` |
+| `data-scrolled-start` | present / absent | Gridory | `gdy-table-wrap` |
 | `data-selected` | present / absent | Gridory, Radix or react-day-picker | `gdy-calendar-day`, `gdy-option-item`, `gdy-table-row` |
 | `data-selected-single` | present / absent | Gridory | `gdy-calendar-day-button` |
 | `data-side` | `"bottom"`, `"left"`, `"right"`, `"top"` | Radix or react-day-picker | `gdy-menu-content`, `gdy-popover-content`, `gdy-select-content` |
 | `data-size` | `"default"`, `"icon"`, `"icon-lg"`, `"icon-sm"`, `"icon-xs"`, `"lg"`, `"sm"`, `"xs"` | Gridory | `gdy-button` |
 | `data-slot-id` | the slot `id` | Gridory | no default rule |
-| `data-state` | `"active"`, `"checked"`, `"closed"`, `"collapsed"`, `"expanded"`, `"indeterminate"`, `"on"`, `"open"` | Gridory, Radix or react-day-picker | `gdy-ai-sidebar`, `gdy-md-image-tab`, `gdy-md-picker-tab`, `gdy-md-tool`, `gdy-menu-content`, `gdy-menu-sub-trigger`, `gdy-popover-content`, `gdy-select-content`, `gdy-select-item`, `gdy-select-trigger`, `gdy-sidebar`, `gdy-sidebar-drawer`, `gdy-sidebar-overlay`, `gdy-table-select`, `gdy-toggle-item` |
+| `data-state` | `"active"`, `"checked"`, `"closed"`, `"collapsed"`, `"expanded"`, `"indeterminate"`, `"on"`, `"open"` | Gridory, Radix or react-day-picker | `gdy-ai-sidebar`, `gdy-md-image-tab`, `gdy-md-picker-tab`, `gdy-md-tool`, `gdy-menu-content`, `gdy-menu-sub-trigger`, `gdy-popover-content`, `gdy-select-content`, `gdy-select-item`, `gdy-select-trigger`, `gdy-sidebar`, `gdy-sidebar-drawer`, `gdy-sidebar-overlay`, `gdy-table-expanded-panel`, `gdy-table-select`, `gdy-toggle-item` |
 | `data-status` | `"met"`, `"pending"`, `"unmet"` | Gridory | `gdy-auth-rule` |
 | `data-streaming` | present / absent | Gridory | no default rule |
 | `data-thinking` | present / absent | Gridory | no default rule |
@@ -1060,11 +1094,21 @@ any ancestor overrides that part only. `--gdy-select-*` also mirror the `selectT
 | `--gdy-skeleton-bg` | `color-mix(in oklab, var(--gdy-foreground) 10%, transparent)` | shared |
 | `--gdy-skeleton-shine` | `color-mix(in oklab, var(--gdy-background) 60%, transparent)` | motion |
 | `--gdy-table-border` | `var(--gdy-border)` | table |
+| `--gdy-table-expand-duration` | `200ms` | motion |
+| `--gdy-table-expand-focus-ring` | `var(--gdy-ring)` | table |
+| `--gdy-table-expanded-bg` | `var(--gdy-background)` | table |
+| `--gdy-table-expanded-padding` | `12px 14px` | table |
 | `--gdy-table-foot-bg` | `var(--gdy-table-head-bg, var(--gdy-muted))` | table |
 | `--gdy-table-group-bg` | `var(--gdy-accent)` | table |
 | `--gdy-table-head-bg` | `var(--gdy-muted)` | table |
 | `--gdy-table-head-fg` | `var(--gdy-muted-foreground)` | table |
 | `--gdy-table-head-help-fg` | `var(--gdy-muted-foreground)` | table |
+| `--gdy-table-open-menu-z` | `4` | table |
+| `--gdy-table-pin-offset` | `0px` | table |
+| `--gdy-table-pinned-bg` | `var(--gdy-card)` | table |
+| `--gdy-table-pinned-corner-z` | `3` | table |
+| `--gdy-table-pinned-shadow` | `color-mix(in oklab, var(--gdy-foreground) 14%, transparent)` | table |
+| `--gdy-table-pinned-z` | `1` | table |
 | `--gdy-table-row-focus-ring` | `var(--gdy-ring)` | table |
 | `--gdy-table-row-hover-bg` | `var(--gdy-muted)` | table |
 | `--gdy-table-row-selected-bg` | `var(--gdy-accent)` | table |
@@ -1076,6 +1120,7 @@ any ancestor overrides that part only. `--gdy-select-*` also mirror the `selectT
 | `--gdy-table-tooltip-bg` | `var(--gdy-foreground)` | table |
 | `--gdy-table-tooltip-fg` | `var(--gdy-background)` | table |
 | `--gdy-table-tooltip-z` | `60` | table |
+| `--gdy-table-visible-width` | `100%` | table |
 | `--gdy-toggle-active-bg` | `var(--gdy-background)` | ui |
 | `--gdy-toggle-bg` | `color-mix(in oklab, var(--gdy-muted) 50%, transparent)` | ui |
 | `--gdy-toolbar-border` | `var(--gdy-border)` | kanban, shared |
