@@ -21,6 +21,9 @@ import { useLoadingToggle } from "../shared/use-loading-toggle";
 import { useDemoLanguage } from "../shared/demo-language";
 import { LANGUAGE_SLOT } from "../shared/demo-language-slot";
 import { localizeKanbanDemoProps } from "../shared/localize-demo-props";
+import type { RecordDemoEvent } from "../shared/use-demo-event-log";
+import { buildKanbanHookProps } from "./kanban-hook-props";
+import { useFavoriteCards } from "./use-favorite-cards";
 
 const KANBAN_CREATED_ROW: CreatedRowTemplate = {
   idPrefix: "kanban-new",
@@ -37,10 +40,12 @@ const useKanbanCardProps = () => {
     [cards, scope, brand],
   );
   const onCreate = useMockRowCreator(setCards, KANBAN_CREATED_ROW);
-  const onCardMove = (event: KanbanMoveEvent<MockCompanyRow>) =>
-    replaceRow(setCards, event.updatedCard);
+  const onCardMove = (event: KanbanMoveEvent<MockCompanyRow>) => replaceRow(setCards, event.updatedCard);
+  // Memoized so a re-render of the demo (the event log) does not count as new data mid-move.
+  const data = useMemo(() => ({ results: displayedCards }), [displayedCards]);
   return {
-    data: { results: displayedCards },
+    setCards,
+    data,
     onCreate,
     onCardMove,
     toggleGroups: [buildScopeToggleGroup(scope, setScope)],
@@ -54,8 +59,9 @@ const KANBAN_TOOLBAR_LAYOUT: KanbanBoardProps<MockCompanyRow>["toolbarLayout"] =
   right: ["brand", "archived", "group", "ai", "viewSwitch", "seats", "loading", "language", "create"],
 };
 
-export const useKanbanMockProps = (): KanbanBoardProps<MockCompanyRow> => {
-  const cardProps = useKanbanCardProps();
+export const useKanbanMockProps = (record: RecordDemoEvent): KanbanBoardProps<MockCompanyRow> => {
+  const { setCards, ...cardProps } = useKanbanCardProps();
+  const favorites = useFavoriteCards();
   const viewSwitch = useViewSwitch("kanban");
   const loadingToggle = useLoadingToggle();
   const language = useDemoLanguage();
@@ -68,5 +74,6 @@ export const useKanbanMockProps = (): KanbanBoardProps<MockCompanyRow> => {
     loading: loadingToggle.loading,
     emptyMessage: <EmptyWithCreate onCreate={cardProps.onCreate} />,
     classNames: readKanbanDemoClassNames(),
+    ...buildKanbanHookProps({ setCards, record, favorites }),
   }, language);
 };
