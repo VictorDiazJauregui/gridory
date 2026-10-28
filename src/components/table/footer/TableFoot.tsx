@@ -10,6 +10,7 @@ interface FootCellProps<TData> {
   context: ColumnFooterContext<TData>;
   loading: boolean;
   className?: string;
+  hiddenByPriority: readonly string[];
 }
 
 const renderFootContent = <TData,>({ column, context, loading }: FootCellProps<TData>) => {
@@ -20,7 +21,7 @@ const renderFootContent = <TData,>({ column, context, loading }: FootCellProps<T
 const TableFootCell = <TData,>(props: FootCellProps<TData>) => (
   <td
     className={cn("gdy-table-foot-cell", props.className)}
-    {...buildCellAttributes(props.column.id, props.column.alignment.cells)}
+    {...buildCellAttributes(props.column.id, props.column.alignment.cells, props.hiddenByPriority)}
   >
     {renderFootContent(props)}
   </td>
@@ -38,6 +39,7 @@ const TableFootRow = <TData,>({ model, columns }: TableModelProps<TData> & { col
           context={context}
           loading={Boolean(loading)}
           className={classNames?.footCell}
+          hiddenByPriority={model.hiddenByPriority}
         />
       ))}
     </tr>

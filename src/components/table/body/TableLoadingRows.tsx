@@ -3,6 +3,7 @@ import { buildPlaceholderKeys, resolveLoadingRowCount } from "../../shared/loadi
 import { SkeletonBar } from "../../shared/loading/SkeletonBar";
 import { buildCellAttributes, readColumnAlignment } from "../model/cell-attributes";
 import type { TableModelProps } from "../model/use-table-core";
+import { countRenderedColumns } from "../columns/rendered-columns";
 
 const TableSkeletonRows = <TData,>({ model }: TableModelProps<TData>) => {
   const columns = model.table.getVisibleLeafColumns();
@@ -12,7 +13,7 @@ const TableSkeletonRows = <TData,>({ model }: TableModelProps<TData>) => {
         <td
           key={column.id}
           className={cn("gdy-table-cell gdy-table-skeleton", model.settings.classNames?.cell)}
-          {...buildCellAttributes(column.id, readColumnAlignment(column.columnDef).cells)}
+          {...buildCellAttributes(column.id, readColumnAlignment(column.columnDef).cells, model.hiddenByPriority)}
         >
           <SkeletonBar />
         </td>
@@ -26,7 +27,7 @@ export const TableLoadingRows = <TData,>({ model }: TableModelProps<TData>) => {
   if (!renderLoading) return <TableSkeletonRows model={model} />;
   return (
     <tr className="gdy-table-loading-row">
-      <td className="gdy-table-cell" colSpan={model.table.options.columns.length}>
+      <td className="gdy-table-cell" colSpan={countRenderedColumns(model)}>
         {renderLoading()}
       </td>
     </tr>

@@ -44,6 +44,9 @@ export type ColumnAlign = "left" | "center" | "right";
 
 export type ColumnOverflow = "ellipsis" | "wrap" | "visible";
 
+/** Where the header help icon sits: left or right of the title, or at the cell edge opposite the title. */
+export type HeaderTooltipPlacement = "before" | "after" | "edge";
+
 export interface CellHighlight {
   className?: string;
   style?: CSSProperties;
@@ -99,6 +102,27 @@ export interface ColumnDefinition<TData> {
    * on screen. The totals row only renders when a visible column has `footer`.
    */
   footer?: (context: ColumnFooterContext<TData>) => ReactNode;
+  /**
+   * Table only. With `printMode`, the cell prints this text instead of its content (a switch as "Yes"/"No").
+   * Omit it to print the content, as on screen.
+   */
+  printValue?: (row: TData) => string;
+  /** Table only. With `responsiveColumns`, the column may hide when it does not fit. `priority` implies it. */
+  hideable?: boolean;
+  /**
+   * Table only. With `responsiveColumns`, the lowest number hides first. Hideable columns without one hide
+   * before every numbered column, right to left.
+   */
+  priority?: number;
+  /** Table only. Help text behind a "?" next to the title; it opens on hover, focus, tap or click. */
+  headerTooltip?: string;
+  /** Table only. Defaults to `"after"`, or `"before"` with a right-aligned header. */
+  headerTooltipPlacement?: HeaderTooltipPlacement;
+  /**
+   * Table only. Replaces the visible title in the header; `header` stays its accessible name and the text of the
+   * menus, the group selector and the kanban.
+   */
+  headerContent?: ReactNode;
 }
 
 /** Built-in and custom actions available per row (table) or per card (kanban). */

@@ -10,10 +10,12 @@ export const useTableOptions = <TData>({
   paging,
   settings,
   state,
+  selection,
 }: TableCore<TData>): TableOptions<TData> => {
-  const columns = useTableColumns(settings, state.activeGroupBy);
-  const { getRowId } = settings;
+  const columns = useTableColumns(settings, state.activeGroupBy, selection);
+  const { getRowId, columnVisibility } = settings;
   return {
+    ...(columnVisibility ? { state: { columnVisibility } } : {}),
     data: paging.pagedRows,
     columns,
     getCoreRowModel: getCoreRowModel(),
