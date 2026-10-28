@@ -42,10 +42,12 @@ export type {
   ColumnDefinition,
   RowActions,
   KanbanBoardClassNames,
+  KanbanColumnAttributes,
   KanbanBoardFeatures,
   KanbanBoardLabels,
   KanbanGroupOption,
   KanbanMoveEvent,
+  KanbanVisibleCardsState,
   KanbanCardClickEvent,
   KanbanBoardProps,
   DataInput,
@@ -53,7 +55,9 @@ export type {
 
 export type {
   RowAction,
+  RowActionEntry,
   RowActionPlacement,
+  RowActionSubmenu,
   RowActionVariant,
   BuiltInActionId,
   BuiltInMenuRef,

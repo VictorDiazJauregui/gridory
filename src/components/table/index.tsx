@@ -77,7 +77,9 @@ export type {
 
 export type {
   RowAction,
+  RowActionEntry,
   RowActionPlacement,
+  RowActionSubmenu,
   RowActionVariant,
 } from "../shared/menu/row-action";
 export type {
