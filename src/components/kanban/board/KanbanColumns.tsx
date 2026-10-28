@@ -17,6 +17,7 @@ export const KanbanColumns = <TData,>({
           value={value}
           label={resolveColumnLabel(state.groupColumns, value, view.labels.emptyValue)}
           cards={state.cardsByGroup[value] ?? []}
+          allCards={state.allCardsByGroup[value] ?? []}
         />
       ))}
     </div>

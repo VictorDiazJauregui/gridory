@@ -84,9 +84,10 @@ The state selectors column lists the attributes the stylesheets combine with eac
 | `gdy-kanban-card-title` | styled | — |
 | `gdy-kanban-card-value` | styled | — |
 | `gdy-kanban-card-value-label` | hook only | — |
-| `gdy-kanban-column` | styled | `[data-drop-target]` |
+| `gdy-kanban-column` | styled | `[data-drop-disabled]`, `[data-drop-target]` |
 | `gdy-kanban-column-body` | styled | — |
 | `gdy-kanban-column-count` | styled | — |
+| `gdy-kanban-column-extra` | styled | — |
 | `gdy-kanban-column-head` | styled | — |
 | `gdy-kanban-column-title` | styled | — |
 | `gdy-kanban-empty-col` | styled | — |
@@ -618,6 +619,7 @@ Radix or react-day-picker follow those libraries.
 | `data-disabled` | present / absent | Gridory, Radix or react-day-picker | `gdy-auth-google-slot`, `gdy-calendar-day`, `gdy-menu-item`, `gdy-select-item` |
 | `data-draggable` | present / absent | Gridory | `gdy-kanban-card` |
 | `data-dragging` | present / absent | Gridory | `gdy-kanban-card` |
+| `data-drop-disabled` | present / absent | Gridory | `gdy-kanban-column` |
 | `data-drop-target` | present / absent | Gridory | `gdy-kanban-column` |
 | `data-empty` | present / absent | Gridory | `gdy-ai-body` |
 | `data-filtered` | present / absent | Gridory | `gdy-kanban-filter-trigger` |
@@ -805,6 +807,8 @@ any ancestor overrides that part only. `--gdy-select-*` also mirror the `selectT
 | `--gdy-kanban-column-bg` | `var(--gdy-muted)` | kanban |
 | `--gdy-kanban-column-border` | `var(--gdy-border)` | kanban |
 | `--gdy-kanban-drop-bg` | `color-mix(in oklab, var(--gdy-foreground) 6%, var(--gdy-muted))` | kanban |
+| `--gdy-kanban-drop-disabled-bg` | `color-mix(in oklab, var(--gdy-destructive) 6%, var(--gdy-muted))` | kanban |
+| `--gdy-kanban-drop-disabled-outline` | `var(--gdy-destructive)` | kanban |
 | `--gdy-kanban-drop-outline` | `var(--gdy-muted-foreground)` | kanban |
 | `--gdy-listbox-check-color` | `var(--gdy-primary)` | country-select, phone-input, shared |
 | `--gdy-listbox-max-height` | `16rem` | shared |

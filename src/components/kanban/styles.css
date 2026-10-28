@@ -127,6 +127,19 @@
   padding: 0 7px;
 }
 
+/* Own content of renderColumnHeaderExtra: next to the count, never shrunk; the title gives way. */
+.gdy-kanban-column-extra {
+  margin-left: auto;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--gdy-muted-foreground);
+  white-space: nowrap;
+}
+
 .gdy-kanban-column-body {
   padding: 10px;
   display: flex;
@@ -142,6 +155,17 @@
     --gdy-kanban-drop-bg,
     color-mix(in oklab, var(--gdy-foreground) 6%, var(--gdy-muted))
   );
+}
+
+/* Written only when canDrop rejects the dragged card for this column; never with data-drop-target. */
+.gdy-kanban-column[data-drop-disabled] {
+  outline: 2px dashed var(--gdy-kanban-drop-disabled-outline, var(--gdy-destructive));
+  outline-offset: -4px;
+  background: var(
+    --gdy-kanban-drop-disabled-bg,
+    color-mix(in oklab, var(--gdy-destructive) 6%, var(--gdy-muted))
+  );
+  cursor: not-allowed;
 }
 
 .gdy-kanban-empty-col {

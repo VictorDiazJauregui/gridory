@@ -29,6 +29,8 @@ export interface KanbanCardSettings<TData> extends CardCallbacks<TData> {
 }
 
 export interface KanbanColumnSettings<TData> extends ColumnActions<TData> {
+  groupId: string;
+  renderColumnHeaderExtra?: KanbanBoardProps<TData>["renderColumnHeaderExtra"];
   columnBodyMaxHeight: number;
   cardSettings: KanbanCardSettings<TData>;
   classNames?: KanbanBoardClassNames;
@@ -39,6 +41,7 @@ export interface KanbanColumnProps<TData> extends KanbanColumnSettings<TData> {
   value: string;
   label: string;
   cards: TData[];
+  allCards: TData[];
 }
 
 export interface KanbanCardProps<TData> extends KanbanCardSettings<TData> {
@@ -72,6 +75,8 @@ export const buildColumnSettings = <TData>(
   moveCard: state.moveCard,
   resolveCardId: state.resolveCardId,
   pendingIds: state.pendingIds,
+  groupId: state.selectedGroup.id,
+  renderColumnHeaderExtra: view.renderColumnHeaderExtra,
   columnBodyMaxHeight: view.columnBodyMaxHeight,
   cardSettings: buildCardSettings(state, view),
   classNames: view.classNames,

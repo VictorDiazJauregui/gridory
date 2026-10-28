@@ -43,6 +43,8 @@ export type {
   RowActions,
   KanbanBoardClassNames,
   KanbanColumnAttributes,
+  KanbanColumnHeaderContext,
+  KanbanDropContext,
   KanbanBoardFeatures,
   KanbanBoardLabels,
   KanbanGroupOption,

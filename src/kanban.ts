@@ -4,6 +4,8 @@ export { KanbanBoard } from "./components/kanban";
 export type {
   KanbanBoardClassNames,
   KanbanColumnAttributes,
+  KanbanColumnHeaderContext,
+  KanbanDropContext,
   KanbanBoardFeatures,
   KanbanBoardLabels,
   KanbanBoardProps,

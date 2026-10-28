@@ -18,6 +18,8 @@ export { KanbanBoard } from "./kanban";
 export type {
   KanbanBoardClassNames,
   KanbanColumnAttributes,
+  KanbanColumnHeaderContext,
+  KanbanDropContext,
   KanbanBoardFeatures,
   KanbanBoardLabels,
   KanbanBoardProps,
