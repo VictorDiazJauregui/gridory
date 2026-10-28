@@ -387,6 +387,46 @@ personalizadas deben ser únicos, y también debe serlo el id de cada elemento d
 (separadores y títulos incluidos). Una colisión lanza `DuplicateRowActionError`, que se exporta igual
 que los tipos de abajo.
 
+### Texto e icono por fila, y submenús
+
+`label` e `icon` aceptan una función de la fila, así una sola acción se lee distinto en cada fila en
+lugar de dos acciones con `hidden` opuestos:
+
+```tsx
+const toggleFavorite: RowAction<Invoice> = {
+  id: "favorite",
+  label: (invoice) => (invoice.favorite ? "Quitar favorito" : "Marcar favorito"),
+  icon: (invoice) => (invoice.favorite ? <StarOff /> : <Star />),
+  onClick: (invoice) => post(invoice, "favorite"),
+};
+```
+
+Una entrada con `items` en lugar de `onClick` (`RowActionSubmenu`) abre un submenú con esas acciones.
+`items` también puede ser una función de la fila. Va en `customActions` o en `menuActions` como
+cualquier acción, acepta `label`, `icon`, `placement`, `disabled` y `hidden`, y solo contiene acciones
+simples (un nivel). Un submenú sin ninguna acción visible no se pinta. Las flechas pasan de un nivel a
+otro: derecha abre el submenú, izquierda lo cierra y Escape cierra todo el menú. El panel se abre del
+lado que tiene espacio y no se sale de la pantalla, también en un celular.
+
+```tsx
+const changeStatus: RowActionSubmenu<Invoice> = {
+  id: "status",
+  label: "Cambiar estado",
+  items: ["draft", "sent", "paid"].map((status) => ({
+    id: `status-${status}`,
+    label: status,
+    onClick: (invoice) => post(invoice, `status/${status}`),
+    hidden: (invoice) => invoice.status === status,
+  })),
+};
+
+const rowActions: RowActions<Invoice> = { customActions: [toggleFavorite, changeStatus] };
+```
+
+Los ids de un submenú comparten el espacio de nombres del menú: se validan con el resto, y uno
+repetido, o un id integrado, también lanza `DuplicateRowActionError`. El código que lee
+`action.label` de una `RowAction` como texto tiene que contemplar la forma de función.
+
 ## Estilo de los selects y barras de scroll
 
 `selectTheme` da estilo a todos los selects del componente: los de la toolbar (vista de archivados,
@@ -530,7 +570,7 @@ Todos los tipos de esta sección se exportan desde `gridory`, `gridory/table` y 
 | `onArchiveToggle` | `(row: TData) => void` | — | Activa la acción de archivar; tiene prioridad sobre `onArchive`. |
 | `getIsArchived` | `(row: TData) => boolean` | — | Estado de archivado: texto de la acción de archivar y vista de archivados. |
 | `archiveLabel`, `unarchiveLabel`, `deleteLabel`, `editLabel`, `historyLabel` | `string` | en español | Textos de las acciones integradas; los valores por defecto están en [Acciones de fila y de tarjeta](#acciones-de-fila-y-de-tarjeta). |
-| `customActions` | `RowAction<TData>[]` | — | Acciones extra alrededor de las integradas. |
+| `customActions` | `RowActionEntry<TData>[]` | — | Acciones extra (`RowAction`) y submenús (`RowActionSubmenu`) alrededor de las integradas. |
 | `menuActions` | `MenuItem<TData>[]` | — | Composición completa del menú; reemplaza `customActions`. |
 | `triggerLabel` | `string` | `"Opciones"` | Nombre accesible y tooltip del botón ⋯, en la tabla y en el kanban. |
 | `columnLabel` | `string` | — | Solo la tabla. Texto del encabezado de la columna de acciones. Ver [Alineación](table.es.md#alineación). |
@@ -541,19 +581,34 @@ Todos los tipos de esta sección se exportan desde `gridory`, `gridory/table` y 
 | Campo | Tipo | Por defecto | Descripción |
 |---|---|---|---|
 | `id` | `string` | — | Id único, distinto de los ids integrados. |
-| `label` | `string` | — | Texto del elemento. |
-| `icon` | `ReactNode` | — | Icono del elemento. |
+| `label` | `string \| ((row: TData) => string)` | — | Texto del elemento, fijo o por fila. |
+| `icon` | `ReactNode \| ((row: TData) => ReactNode)` | — | Icono del elemento, fijo o por fila. |
 | `onClick` | `(row: TData) => void` | — | Recibe la fila. |
 | `placement` | `RowActionPlacement` | `"bottom"` | `"top" \| "bottom"`; solo lo usa `customActions`. |
 | `variant` | `RowActionVariant` | `"default"` | `"default" \| "destructive"`. |
 | `disabled` | `(row: TData) => boolean` | — | Deshabilita el elemento para esa fila. |
 | `hidden` | `(row: TData) => boolean` | — | Quita el elemento para esa fila. |
 
+### RowActionSubmenu
+
+| Campo | Tipo | Por defecto | Descripción |
+|---|---|---|---|
+| `id` | `string` | — | Id único, distinto de los ids integrados. |
+| `label` | `string \| ((row: TData) => string)` | — | Texto de la entrada del submenú. |
+| `icon` | `ReactNode \| ((row: TData) => ReactNode)` | — | Icono de la entrada del submenú. |
+| `items` | `RowAction<TData>[] \| ((row: TData) => RowAction<TData>[])` | — | Acciones del submenú. |
+| `placement` | `RowActionPlacement` | `"bottom"` | `"top" \| "bottom"`; solo lo usa `customActions`. |
+| `disabled` | `(row: TData) => boolean` | — | Deshabilita la entrada para esa fila. |
+| `hidden` | `(row: TData) => boolean` | — | Quita la entrada para esa fila. |
+
+`RowActionEntry<TData>` es `RowAction<TData> | RowActionSubmenu<TData>`.
+
 ### MenuItem
 
 | Variante | Forma | Renderiza |
 |---|---|---|
 | Acción personalizada | `RowAction<TData> & { kind?: "action" }` | Un elemento del menú. |
+| Submenú | `RowActionSubmenu<TData> & { kind?: "submenu" }` | Una entrada que abre sus acciones en un submenú. |
 | `BuiltInMenuRef` | `{ kind: "builtin"; id: BuiltInActionId }` | La acción integrada, si está disponible. `BuiltInActionId` es `"edit" \| "archive" \| "remove" \| "history"` (`BUILT_IN_ROW_ACTION_IDS`). |
 | `MenuSeparator` | `{ kind: "separator"; id: string }` | Un separador. |
 | `MenuLabel` | `{ kind: "label"; id: string; label: string; className?: string }` | Un título. |
