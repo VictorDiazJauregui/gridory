@@ -18,12 +18,15 @@ type KanbanHookProps = Pick<
   | "rowActions"
   | "renderColumnHeaderExtra"
   | "canDrop"
+  | "getDropDisabledReason"
 >;
 
 interface KanbanHookInput {
   setCards: MockRowsUpdater;
   record: RecordDemoEvent;
   favorites: ReturnType<typeof useFavoriteCards>;
+  /** The demo pages each column: a saved move keeps the card loaded in its new column. */
+  keepMoved: (cardId: string) => void;
 }
 
 // The background goes through the column token, so no rule of the board changes.
@@ -36,14 +39,19 @@ const paintActiveColumn = (value: string) =>
 const canDropCompany = ({ groupId, fromValue, toValue }: KanbanDropContext<MockCompanyRow>) =>
   !(groupId === "status" && fromValue === "Activa" && toValue === "Archivada");
 
+// Shown under "Archivada" in the "Mover a…" menu of an active company.
+const explainRejectedDrop = ({ toValue }: KanbanDropContext<MockCompanyRow>) =>
+  toValue === "Archivada" ? "Primero tiene que pasar por Pendiente" : undefined;
+
 const summarizeMove = ({ cardId, fromValue, toValue }: KanbanMoveEvent<MockCompanyRow>) => ({ cardId, fromValue, toValue });
 
 // The demo stores the move only once the server accepts it; the board shows it meanwhile.
 const buildServerMove =
-  ({ setCards, record }: KanbanHookInput) =>
+  ({ setCards, record, keepMoved }: KanbanHookInput) =>
   async (event: KanbanMoveEvent<MockCompanyRow>) => {
     record("onCardMove", summarizeMove(event));
     await saveMoveOnServer(event);
+    keepMoved(event.cardId);
     replaceRow(setCards, event.updatedCard);
   };
 
@@ -72,4 +80,5 @@ export const buildKanbanHookProps = (input: KanbanHookInput): KanbanHookProps =>
   rowActions: buildRowActions(input),
   renderColumnHeaderExtra: renderColumnFeeTotals,
   canDrop: canDropCompany,
+  getDropDisabledReason: explainRejectedDrop,
 });

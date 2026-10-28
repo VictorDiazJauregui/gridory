@@ -89,6 +89,14 @@ const localizeGroup = (group: KanbanGroupOption<MockCompanyRow>) => ({
   values: translateOptions(group.values),
 });
 
+type DropReason = KanbanBoardProps<MockCompanyRow>["getDropDisabledReason"];
+
+const localizeDropReason = (explain: DropReason): DropReason =>
+  explain && ((context) => {
+    const reason = explain(context);
+    return reason && toEnglish(reason);
+  });
+
 export const localizeKanbanDemoProps = (props: KanbanBoardProps<MockCompanyRow>, language: DemoLanguage) => {
   if (language === "es") return props;
   return {
@@ -96,5 +104,6 @@ export const localizeKanbanDemoProps = (props: KanbanBoardProps<MockCompanyRow>,
     fields: props.fields.map(localizeColumn),
     groups: props.groups.map(localizeGroup),
     labels: { ...ENGLISH_KANBAN_LABELS, labeledValue: labeledValueInEnglish },
+    getDropDisabledReason: localizeDropReason(props.getDropDisabledReason),
   };
 };
