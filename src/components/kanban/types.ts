@@ -73,6 +73,12 @@ export interface KanbanDropContext<TData> {
   toValue: string;
 }
 
+/**
+ * When the "Move to" action of the card menu is offered (`moveMenu`): `"auto"` while
+ * `moveMenuMediaQuery` matches (a touch screen by default), `"always"` or `"never"`.
+ */
+export type KanbanMoveMenuMode = "auto" | "always" | "never";
+
 /** Payload of `onVisibleCardsChange`: the cards the user is looking at. */
 export interface KanbanVisibleCardsState<TData> {
   /** Cards that pass the search, the archived view and the filters, in sort order. */
@@ -97,6 +103,9 @@ export interface KanbanColumnHeaderContext<TData> {
    */
   allCards: TData[];
 }
+
+/** Argument of `renderColumnFooter`: the same column and cards as the header gets. */
+export type KanbanColumnFooterContext<TData> = KanbanColumnHeaderContext<TData>;
 
 /** Payload of `onCardClick`. */
 export interface KanbanCardClickEvent<TData> {
@@ -161,6 +170,16 @@ export interface KanbanBoardLabels extends DataViewLabels {
    * `"01/03/2026"`, and returns any value without a `yyyy-mm-dd` start as it is.
    */
   formatCardDate: (value: string) => string;
+  /** Card menu entry that opens the list of columns to move the card to. `"Mover a…"`. */
+  moveTo: string;
+  /** Announced to screen readers after a move from the menu. `` `Card movida a ${column}` ``. */
+  cardMovedTo: (column: string) => string;
+  /** Announced when that move is undone (`onCardMove` said no). `` `La card volvió a ${column}` ``. */
+  cardMoveReverted: (column: string) => string;
+  /** Accessible name and tooltip of the button that collapses a column. `` `Colapsar ${column}` ``. */
+  collapseColumn: (column: string) => string;
+  /** Accessible name and tooltip of the button that expands a collapsed column. `` `Expandir ${column}` ``. */
+  expandColumn: (column: string) => string;
 }
 
 export interface KanbanBoardProps<TData> extends DataViewProps<TData> {
@@ -200,6 +219,20 @@ export interface KanbanBoardProps<TData> extends DataViewProps<TData> {
    * times per second: rules that need the server go in `onCardMove`.
    */
   canDrop?: (context: KanbanDropContext<TData>) => boolean;
+  /**
+   * Why `canDrop` rejected a column, shown under that column in the "Move to" menu and linked with
+   * `aria-describedby`. Asked only for the columns `canDrop` rejected, and only when the menu opens.
+   */
+  getDropDisabledReason?: (context: KanbanDropContext<TData>) => string | undefined;
+  /**
+   * Adds "Move to" first in the card menu: a submenu with the other columns, for touch screens,
+   * keyboard and screen readers, where dragging does not work. `"auto"` (default) shows it while
+   * `moveMenuMediaQuery` matches. Moving from it goes through `canDrop` and `onCardMove` exactly like a
+   * drop. Never shown when `features.dragAndDrop` is off.
+   */
+  moveMenu?: KanbanMoveMenuMode;
+  /** Media query of `moveMenu="auto"`. Defaults to `"(pointer: coarse)"`; re-evaluated when it changes. */
+  moveMenuMediaQuery?: string;
   onCardClick?: (event: KanbanCardClickEvent<TData>) => void;
   /**
    * The visible cards changed: on mount, and whenever the search, the filters, the archived view,
@@ -214,6 +247,26 @@ export interface KanbanBoardProps<TData> extends DataViewProps<TData> {
    * `loading`: the loading columns have no count either.
    */
   renderColumnHeaderExtra?: (context: KanbanColumnHeaderContext<TData>) => ReactNode;
+  /**
+   * Own content at the bottom of each column, in `div.gdy-kanban-column-footer`, under the cards and
+   * outside their scroll (a "Load more" button, a total). Returning `null`, `undefined` or a boolean
+   * renders no container. Not called while `loading`, nor for a collapsed column.
+   */
+  renderColumnFooter?: (context: KanbanColumnFooterContext<TData>) => ReactNode;
+  /**
+   * Adds a button to each column header that collapses the column into a narrow strip with its title
+   * written vertically and its count; it still takes dropped cards. Defaults to `false`.
+   */
+  collapsibleColumns?: boolean;
+  /**
+   * Collapsed columns, by value (controlled). A value no column has, as when another group is active,
+   * changes nothing. Read only while `collapsibleColumns` is on.
+   */
+  collapsedColumns?: string[];
+  /** Columns collapsed at first, by value, when `collapsedColumns` is not passed. */
+  defaultCollapsedColumns?: string[];
+  /** The collapsed columns changed: receives the new list of values. */
+  onCollapsedColumnsChange?: (values: string[]) => void;
   /**
    * Prefix of every option in the toolbar group selector and its accessible
    * label. Defaults to `"Agrupar por"`.

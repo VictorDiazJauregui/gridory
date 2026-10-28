@@ -280,6 +280,21 @@
   margin-left: auto;
 }
 
+/* On a phone there may be no room for a submenu beside its menu on either side: it takes the width
+   Radix reports as available on the side it opens, and its texts wrap instead of leaving the screen. */
+.gdy-menu-sub-content {
+  min-width: min(9rem, var(--radix-dropdown-menu-content-available-width, 9rem));
+  max-width: var(--radix-dropdown-menu-content-available-width, none);
+}
+
+/* Second line of an item, under its label: why a "Move to" column is disabled. */
+.gdy-menu-item-description {
+  display: block;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: var(--gdy-muted-foreground);
+}
+
 /* ---------------------------------------------------------------- Select */
 .gdy-select-trigger {
   display: flex;

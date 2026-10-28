@@ -7,12 +7,15 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from "../../ui/dropdown-menu";
+import { DescribedMenuItem } from "./DescribedMenuItem";
 import type { ResolvedActionNode, ResolvedMenuNode, ResolvedSubmenuNode } from "./menu-nodes";
 
 const stopEvent = (event: { stopPropagation: () => void }) =>
   event.stopPropagation();
 
-const renderActionNode = (node: ResolvedActionNode) => (
+const renderActionNode = (node: ResolvedActionNode) => node.description ? (
+  <DescribedMenuItem key={node.key} node={node} />
+) : (
   <DropdownMenuItem
     key={node.key}
     variant={node.variant}

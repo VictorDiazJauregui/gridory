@@ -1,5 +1,6 @@
 import { playwright } from "@vitest/browser-playwright";
 import { defineConfig, mergeConfig } from "vitest/config";
+import type { CDPSession } from "playwright";
 import type { BrowserCommand } from "vitest/node";
 import viteConfig from "./vite.config.ts";
 
@@ -15,6 +16,18 @@ const installedChrome = playwright({ launchOptions: { channel: "chrome" } });
 // page of the provider above through this command.
 const emulateMedia: BrowserCommand<[media: "screen" | "print"]> = async ({ page }, media) => {
   await page.emulateMedia({ media });
+};
+
+// Vitest's browser API cannot make the page a touch screen either: CDP turns on `(pointer: coarse)`, so
+// the kanban's "Move to" menu shows as on a phone. The session stays open, since closing it would undo
+// the emulation. Turning it off leaves Chrome reporting `(hover: none)` until the document reloads, so
+// only the test file that needs a touch screen should call it.
+const touchSessions = new WeakMap<object, CDPSession>();
+
+const emulateTouch: BrowserCommand<[enabled: boolean]> = async ({ page }, enabled) => {
+  const session = touchSessions.get(page) ?? (await page.context().newCDPSession(page));
+  touchSessions.set(page, session);
+  await session.send("Emulation.setTouchEmulationEnabled", { enabled, maxTouchPoints: 5 });
 };
 
 const LAZY_EDITOR_DEPENDENCIES = [
@@ -65,7 +78,7 @@ export default mergeConfig(
               headless: true,
               viewport: { width: 1920, height: 1080 },
               instances: [{ browser: "chromium" }],
-              commands: { emulateMedia },
+              commands: { emulateMedia, emulateTouch },
             },
           },
         },

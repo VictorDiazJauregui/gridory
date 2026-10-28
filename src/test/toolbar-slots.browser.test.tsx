@@ -3,8 +3,7 @@ import { expect, test } from "vitest";
 import { DataTable } from "../components/table";
 import { BASELINE_COLUMNS, BASELINE_ROWS } from "./baseline-fixture";
 import { findRequiredElement } from "./browser/elements";
-import { applyScreen } from "./browser/environment";
-import type { ScreenName } from "./browser/environment";
+import { applyScreen, SCREENS } from "./browser/environment";
 import { measureBox, readStyle } from "./browser/measure";
 
 const TOOLBAR_GAP = 8;
@@ -37,22 +36,37 @@ const centerOf = (element: Element) => {
   return box.top + box.height / 2;
 };
 
-test.each(["desktop", "iphone14Pro"] as ScreenName[])(
-  "on %s a slot stays on one row, centered, 8px from its neighbors",
-  async (screen) => {
-    await applyScreen(screen);
-    const plain = renderToolbar(false);
-    const plainHeight = measureBox(plain.toolbar).height;
-    plain.unmount();
-    const { toolbar } = renderToolbar(true);
-    const [seats, actions] = ["seats", "actions"].map((id) =>
-      findRequiredElement(toolbar, `[data-slot-id="${id}"]`),
-    );
-    expect(measureBox(toolbar).height).toBe(plainHeight);
-    expect(Math.abs(centerOf(seats) - centerOf(toolbar))).toBeLessThanOrEqual(1);
-    expect(measureBox(actions).left - measureBox(seats).right).toBe(TOOLBAR_GAP);
-    expect(readStyle(actions, "display")).toBe("flex");
-    const [exportButton, shareButton] = actions.querySelectorAll("button");
-    expect(measureBox(shareButton).left - measureBox(exportButton).right).toBe(TOOLBAR_GAP);
-  },
-);
+const findSlots = (toolbar: Element) =>
+  ["seats", "actions"].map((id) => findRequiredElement(toolbar, `[data-slot-id="${id}"]`));
+
+// Each slot keeps its content on one row, 8px apart, wherever it lands.
+const expectOneRowSlots = (seats: Element, actions: Element) => {
+  expect(readStyle(actions, "display")).toBe("flex");
+  const [exportButton, shareButton] = actions.querySelectorAll("button");
+  expect(measureBox(shareButton).top).toBe(measureBox(exportButton).top);
+  expect(measureBox(shareButton).left - measureBox(exportButton).right).toBe(TOOLBAR_GAP);
+  expect(measureBox(seats).height).toBeLessThanOrEqual(measureBox(actions).height);
+};
+
+test("on desktop a slot stays on one row, centered, 8px from its neighbors, and the toolbar keeps its height", async () => {
+  await applyScreen("desktop");
+  const plain = renderToolbar(false);
+  const plainHeight = measureBox(plain.toolbar).height;
+  plain.unmount();
+  const { toolbar } = renderToolbar(true);
+  const [seats, actions] = findSlots(toolbar);
+  expect(measureBox(toolbar).height).toBe(plainHeight);
+  expect(Math.abs(centerOf(seats) - centerOf(toolbar))).toBeLessThanOrEqual(1);
+  expect(measureBox(actions).left - measureBox(seats).right).toBe(TOOLBAR_GAP);
+  expectOneRowSlots(seats, actions);
+});
+
+// On a phone the controls do not fit in one row: the toolbar wraps instead of widening the page.
+test("on iphone14Pro the slots keep one row each and the toolbar wraps inside the screen", async () => {
+  await applyScreen("iphone14Pro");
+  const { toolbar } = renderToolbar(true);
+  const [seats, actions] = findSlots(toolbar);
+  expectOneRowSlots(seats, actions);
+  expect(measureBox(toolbar).right).toBeLessThanOrEqual(SCREENS.iphone14Pro.width);
+  expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(SCREENS.iphone14Pro.width);
+});

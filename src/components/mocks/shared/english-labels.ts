@@ -72,4 +72,9 @@ export const ENGLISH_KANBAN_LABELS: KanbanBoardLabels = {
   untitledCard: "Untitled",
   cardFieldLabel: (header) => `${header}:`,
   formatCardDate: formatUsDate,
+  moveTo: "Move to…",
+  cardMovedTo: (column) => `Card moved to ${column}`,
+  cardMoveReverted: (column) => `The card went back to ${column}`,
+  collapseColumn: (column) => `Collapse ${column}`,
+  expandColumn: (column) => `Expand ${column}`,
 };

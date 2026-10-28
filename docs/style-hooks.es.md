@@ -50,7 +50,7 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-table-max-h-lg` | utilidad | — |
 | `gdy-table-max-h-md` | utilidad | — |
 | `gdy-table-max-h-sm` | utilidad | — |
-| `gdy-table-menu-holder` | con estilos | — |
+| `gdy-table-menu-holder` | con estilos | `[data-align="end"]` |
 | `gdy-table-min-h-lg` | utilidad | — |
 | `gdy-table-min-h-md` | utilidad | — |
 | `gdy-table-min-h-sm` | utilidad | — |
@@ -84,20 +84,23 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-kanban-card-title` | con estilos | — |
 | `gdy-kanban-card-value` | con estilos | — |
 | `gdy-kanban-card-value-label` | solo gancho | — |
-| `gdy-kanban-column` | con estilos | `[data-drop-disabled]`, `[data-drop-target]` |
+| `gdy-kanban-column` | con estilos | `[data-collapsed]`, `[data-drop-disabled]`, `[data-drop-target]` |
 | `gdy-kanban-column-body` | con estilos | — |
 | `gdy-kanban-column-count` | con estilos | — |
 | `gdy-kanban-column-extra` | con estilos | — |
+| `gdy-kanban-column-footer` | con estilos | — |
 | `gdy-kanban-column-head` | con estilos | — |
 | `gdy-kanban-column-title` | con estilos | — |
+| `gdy-kanban-column-toggle` | con estilos | — |
 | `gdy-kanban-empty-col` | con estilos | — |
 | `gdy-kanban-filter-arrow` | solo gancho | — |
 | `gdy-kanban-filter-icon` | solo gancho | — |
 | `gdy-kanban-filter-item` | con estilos | — |
-| `gdy-kanban-filter-menu-holder` | con estilos | — |
+| `gdy-kanban-filter-menu-holder` | con estilos | `[data-align="end"]` |
 | `gdy-kanban-filter-row` | con estilos | — |
 | `gdy-kanban-filter-trigger` | con estilos | `[data-filtered]` |
 | `gdy-kanban-filter-trigger-label` | con estilos | — |
+| `gdy-kanban-live` | con estilos | — |
 | `gdy-kanban-min-h-lg` | utilidad | — |
 | `gdy-kanban-min-h-md` | utilidad | — |
 | `gdy-kanban-min-h-sm` | utilidad | — |
@@ -448,11 +451,12 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-calendar-years-dropdown` | solo gancho | — |
 | `gdy-menu-content` | con estilos | `[data-side="bottom"]`, `[data-side="left"]`, `[data-side="right"]`, `[data-side="top"]`, `[data-state="closed"]`, `[data-state="open"]` |
 | `gdy-menu-item` | con estilos | `[data-disabled]`, `[data-variant="destructive"]` |
+| `gdy-menu-item-description` | con estilos | — |
 | `gdy-menu-item-label` | solo gancho | — |
 | `gdy-menu-label` | con estilos | — |
 | `gdy-menu-separator` | con estilos | — |
 | `gdy-menu-sub-chevron` | con estilos | — |
-| `gdy-menu-sub-content` | solo gancho | — |
+| `gdy-menu-sub-content` | con estilos | — |
 | `gdy-menu-sub-trigger` | con estilos | `[data-state="open"]` |
 | `gdy-popover-content` | con estilos | `[data-side="bottom"]`, `[data-side="left"]`, `[data-side="right"]`, `[data-side="top"]`, `[data-state="closed"]`, `[data-state="open"]` |
 | `gdy-select-content` | con estilos | `[data-side="bottom"]`, `[data-side="left"]`, `[data-side="right"]`, `[data-side="top"]`, `[data-state="open"]` |
@@ -567,6 +571,7 @@ hay que escribir para pisarlas; los motivos están en [Temas y estilos](theming.
 | `.gdy-table-foot-cell[data-align="right"]` | 0-2-0 |
 | `.gdy-table-head-trigger[data-align="center"]` | 0-2-0 |
 | `.gdy-table-head-trigger[data-align="right"]` | 0-2-0 |
+| `.gdy-table-menu-holder[data-align="end"]` | 0-2-0 |
 | `.gdy-table-cell-content[data-overflow="wrap"]` | 0-2-0 |
 | `.gdy-table-cell-content[data-overflow="visible"]` | 0-2-0 |
 | `.gdy-select-trigger.gdy-table-inline-select` | 0-2-0 |
@@ -606,11 +611,12 @@ ponen Radix o react-day-picker siguen a esas librerías.
 | `aria-selected` | `"true"` | Gridory | `gdy-listbox-option` |
 | `data-action-type` | `"create-card"`, `"create-row"`, `"custom"`, `"move-card"`, `"update-row"` | Gridory | sin regla por defecto |
 | `data-active` | presente / ausente | Gridory | `gdy-listbox-option` |
-| `data-align` | `"center"`, `"left"`, `"right"` | Gridory, Radix o react-day-picker | `gdy-table-actions-cell`, `gdy-table-cell`, `gdy-table-foot-cell`, `gdy-table-head-cell`, `gdy-table-head-trigger` |
+| `data-align` | `"center"`, `"end"`, `"left"`, `"right"` | Gridory, Radix o react-day-picker | `gdy-kanban-filter-menu-holder`, `gdy-table-actions-cell`, `gdy-table-cell`, `gdy-table-foot-cell`, `gdy-table-head-cell`, `gdy-table-head-trigger`, `gdy-table-menu-holder` |
 | `data-alignment` | `"center"`, `"right"` | Gridory | `gdy-md-table-preview` |
 | `data-animated` | `"true"` | Gridory | `gdy-segmented`, `gdy-sidebar` |
 | `data-checked` | presente / ausente | Gridory | `gdy-option-check` |
 | `data-clickable` | presente / ausente | Gridory | `gdy-table-row` |
+| `data-collapsed` | presente / ausente | Gridory | `gdy-kanban-column` |
 | `data-column-id` | el `id` de la columna | Gridory | `gdy-table-skeleton` |
 | `data-column-value` | presente / ausente | Gridory | sin regla por defecto |
 | `data-compact` | `"true"` | Gridory | `gdy-sidebar-logo` |
@@ -806,6 +812,7 @@ cualquier ancestro cambia solo esa parte. Los `--gdy-select-*` también reflejan
 | `--gdy-kanban-card-pending-opacity` | `0.6` | kanban |
 | `--gdy-kanban-column-bg` | `var(--gdy-muted)` | kanban |
 | `--gdy-kanban-column-border` | `var(--gdy-border)` | kanban |
+| `--gdy-kanban-column-collapsed-width` | `44px` | kanban |
 | `--gdy-kanban-drop-bg` | `color-mix(in oklab, var(--gdy-foreground) 6%, var(--gdy-muted))` | kanban |
 | `--gdy-kanban-drop-disabled-bg` | `color-mix(in oklab, var(--gdy-destructive) 6%, var(--gdy-muted))` | kanban |
 | `--gdy-kanban-drop-disabled-outline` | `var(--gdy-destructive)` | kanban |

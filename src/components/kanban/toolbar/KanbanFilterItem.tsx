@@ -1,4 +1,5 @@
 import { hasColumnFilter } from "../../shared/controls/column-filters";
+import { FilterMenuHolder } from "../../shared/controls/FilterMenuHolder";
 import type { KanbanFilterItemProps } from "./filter-item";
 import { KanbanDateFilterMenu } from "./KanbanDateFilterMenu";
 import { KanbanFilterTrigger } from "./KanbanFilterTrigger";
@@ -24,9 +25,9 @@ export const KanbanFilterItem = <TData,>(
         onToggle={() => state.toggleFilterMenu(field.id)}
       />
       {state.openFilterColumnId === field.id && (
-        <div className="gdy-kanban-filter-menu-holder" ref={filterMenuRef}>
+        <FilterMenuHolder className="gdy-kanban-filter-menu-holder" holderRef={filterMenuRef}>
           {renderFieldMenu(props)}
-        </div>
+        </FilterMenuHolder>
       )}
     </div>
   );

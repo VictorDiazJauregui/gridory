@@ -32,6 +32,12 @@ default the left side holds `search`, `clearFilters` and the custom controls who
 each in array order. Your own slots (`toolbarSlots`) go last on their side ([Your own
 slots](#your-own-slots)).
 
+The toolbar is one row while everything fits. On a narrow screen, such as a phone, the groups and
+their controls wrap to more rows (the right group stays aligned to the right) instead of making the
+page wider than the screen. A page wider than the screen also breaks the menus and the calendar on
+phones: their scroll lock measures a scrollbar as wide as the overflow and leaves the page with no
+width.
+
 `toolbarLayout` (`{ left?: string[]; right?: string[] }`) replaces the default layout. When it is
 set, only the listed ids render, on the side and in the order given. Unlisted ids do not render, the
 `position` of custom controls is ignored, unknown ids are ignored, and a listed control whose
@@ -119,6 +125,12 @@ A column gets a filter menu when it sets `filterable: true` and `features.filter
 table the menu opens from the column header. In the kanban a filter row under the toolbar shows one
 trigger per filterable field, labelled with its `header`. The menu closes on a click outside it or a
 second click on its trigger. Filters on different columns combine with AND.
+
+The menu opens under its trigger, to the right. When it does not fit there (a trigger near the right
+edge of a phone, or a header cell at the end of the table's scroll), it opens to the left, aligned with
+the trigger's right edge, and its holder (`gdy-table-menu-holder`, `gdy-kanban-filter-menu-holder`)
+carries `data-align="end"`; when not even that fits, it slides right just enough to keep 8px from the
+edge.
 
 ### Value filter
 
@@ -268,6 +280,7 @@ const countrySelector: HeaderSelectConfig = {
 absolute positioning. Each slot has an `id` and a `content` (`ReactNode`), and renders inside
 `div.gdy-toolbar-slot` with `data-slot-id` set to that id; `className` adds your class to that
 wrapper. The wrapper lays its content in one row, centered and 8px apart, like the built-in controls.
+On a narrow screen a whole slot moves to the next row of the toolbar; its content never splits.
 
 - Without `toolbarLayout`, a slot goes at the **end** of its `position` side (`"left"` or `"right"`,
   default `"right"`): on the right, after `create`. Slots keep their array order.

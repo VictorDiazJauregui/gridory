@@ -50,7 +50,7 @@ The state selectors column lists the attributes the stylesheets combine with eac
 | `gdy-table-max-h-lg` | utility | — |
 | `gdy-table-max-h-md` | utility | — |
 | `gdy-table-max-h-sm` | utility | — |
-| `gdy-table-menu-holder` | styled | — |
+| `gdy-table-menu-holder` | styled | `[data-align="end"]` |
 | `gdy-table-min-h-lg` | utility | — |
 | `gdy-table-min-h-md` | utility | — |
 | `gdy-table-min-h-sm` | utility | — |
@@ -84,20 +84,23 @@ The state selectors column lists the attributes the stylesheets combine with eac
 | `gdy-kanban-card-title` | styled | — |
 | `gdy-kanban-card-value` | styled | — |
 | `gdy-kanban-card-value-label` | hook only | — |
-| `gdy-kanban-column` | styled | `[data-drop-disabled]`, `[data-drop-target]` |
+| `gdy-kanban-column` | styled | `[data-collapsed]`, `[data-drop-disabled]`, `[data-drop-target]` |
 | `gdy-kanban-column-body` | styled | — |
 | `gdy-kanban-column-count` | styled | — |
 | `gdy-kanban-column-extra` | styled | — |
+| `gdy-kanban-column-footer` | styled | — |
 | `gdy-kanban-column-head` | styled | — |
 | `gdy-kanban-column-title` | styled | — |
+| `gdy-kanban-column-toggle` | styled | — |
 | `gdy-kanban-empty-col` | styled | — |
 | `gdy-kanban-filter-arrow` | hook only | — |
 | `gdy-kanban-filter-icon` | hook only | — |
 | `gdy-kanban-filter-item` | styled | — |
-| `gdy-kanban-filter-menu-holder` | styled | — |
+| `gdy-kanban-filter-menu-holder` | styled | `[data-align="end"]` |
 | `gdy-kanban-filter-row` | styled | — |
 | `gdy-kanban-filter-trigger` | styled | `[data-filtered]` |
 | `gdy-kanban-filter-trigger-label` | styled | — |
+| `gdy-kanban-live` | styled | — |
 | `gdy-kanban-min-h-lg` | utility | — |
 | `gdy-kanban-min-h-md` | utility | — |
 | `gdy-kanban-min-h-sm` | utility | — |
@@ -448,11 +451,12 @@ The state selectors column lists the attributes the stylesheets combine with eac
 | `gdy-calendar-years-dropdown` | hook only | — |
 | `gdy-menu-content` | styled | `[data-side="bottom"]`, `[data-side="left"]`, `[data-side="right"]`, `[data-side="top"]`, `[data-state="closed"]`, `[data-state="open"]` |
 | `gdy-menu-item` | styled | `[data-disabled]`, `[data-variant="destructive"]` |
+| `gdy-menu-item-description` | styled | — |
 | `gdy-menu-item-label` | hook only | — |
 | `gdy-menu-label` | styled | — |
 | `gdy-menu-separator` | styled | — |
 | `gdy-menu-sub-chevron` | styled | — |
-| `gdy-menu-sub-content` | hook only | — |
+| `gdy-menu-sub-content` | styled | — |
 | `gdy-menu-sub-trigger` | styled | `[data-state="open"]` |
 | `gdy-popover-content` | styled | `[data-side="bottom"]`, `[data-side="left"]`, `[data-side="right"]`, `[data-side="top"]`, `[data-state="closed"]`, `[data-state="open"]` |
 | `gdy-select-content` | styled | `[data-side="bottom"]`, `[data-side="left"]`, `[data-side="right"]`, `[data-side="top"]`, `[data-state="open"]` |
@@ -567,6 +571,7 @@ write when you override them; the reasons are in [Theming and styling](theming.m
 | `.gdy-table-foot-cell[data-align="right"]` | 0-2-0 |
 | `.gdy-table-head-trigger[data-align="center"]` | 0-2-0 |
 | `.gdy-table-head-trigger[data-align="right"]` | 0-2-0 |
+| `.gdy-table-menu-holder[data-align="end"]` | 0-2-0 |
 | `.gdy-table-cell-content[data-overflow="wrap"]` | 0-2-0 |
 | `.gdy-table-cell-content[data-overflow="visible"]` | 0-2-0 |
 | `.gdy-select-trigger.gdy-table-inline-select` | 0-2-0 |
@@ -606,11 +611,12 @@ Radix or react-day-picker follow those libraries.
 | `aria-selected` | `"true"` | Gridory | `gdy-listbox-option` |
 | `data-action-type` | `"create-card"`, `"create-row"`, `"custom"`, `"move-card"`, `"update-row"` | Gridory | no default rule |
 | `data-active` | present / absent | Gridory | `gdy-listbox-option` |
-| `data-align` | `"center"`, `"left"`, `"right"` | Gridory, Radix or react-day-picker | `gdy-table-actions-cell`, `gdy-table-cell`, `gdy-table-foot-cell`, `gdy-table-head-cell`, `gdy-table-head-trigger` |
+| `data-align` | `"center"`, `"end"`, `"left"`, `"right"` | Gridory, Radix or react-day-picker | `gdy-kanban-filter-menu-holder`, `gdy-table-actions-cell`, `gdy-table-cell`, `gdy-table-foot-cell`, `gdy-table-head-cell`, `gdy-table-head-trigger`, `gdy-table-menu-holder` |
 | `data-alignment` | `"center"`, `"right"` | Gridory | `gdy-md-table-preview` |
 | `data-animated` | `"true"` | Gridory | `gdy-segmented`, `gdy-sidebar` |
 | `data-checked` | present / absent | Gridory | `gdy-option-check` |
 | `data-clickable` | present / absent | Gridory | `gdy-table-row` |
+| `data-collapsed` | present / absent | Gridory | `gdy-kanban-column` |
 | `data-column-id` | the column `id` | Gridory | `gdy-table-skeleton` |
 | `data-column-value` | present / absent | Gridory | no default rule |
 | `data-compact` | `"true"` | Gridory | `gdy-sidebar-logo` |
@@ -806,6 +812,7 @@ any ancestor overrides that part only. `--gdy-select-*` also mirror the `selectT
 | `--gdy-kanban-card-pending-opacity` | `0.6` | kanban |
 | `--gdy-kanban-column-bg` | `var(--gdy-muted)` | kanban |
 | `--gdy-kanban-column-border` | `var(--gdy-border)` | kanban |
+| `--gdy-kanban-column-collapsed-width` | `44px` | kanban |
 | `--gdy-kanban-drop-bg` | `color-mix(in oklab, var(--gdy-foreground) 6%, var(--gdy-muted))` | kanban |
 | `--gdy-kanban-drop-disabled-bg` | `color-mix(in oklab, var(--gdy-destructive) 6%, var(--gdy-muted))` | kanban |
 | `--gdy-kanban-drop-disabled-outline` | `var(--gdy-destructive)` | kanban |

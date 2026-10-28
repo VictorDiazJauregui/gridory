@@ -180,6 +180,12 @@
   left: 0;
 }
 
+/* No room to the right of the header cell: the panel opens to its left (set when it opens). */
+.gdy-table-menu-holder[data-align="end"] {
+  left: auto;
+  right: 0;
+}
+
 /* Cells */
 .gdy-table-cell-content {
   overflow: hidden;

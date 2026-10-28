@@ -264,6 +264,7 @@ column for that card. The board asks:
 | The drag starts | Every column on screen that rejects the card gets `data-drop-disabled` right away, so the user sees where the card cannot go before getting there. The marks stay until the drag ends (drop or cancel). |
 | The pointer is over a column (`dragover`) | The board does not call `preventDefault`: the browser shows its "not allowed" cursor, the column carries `data-drop-disabled` and never `data-drop-target`, and dropping there is impossible. |
 | The card is dropped | It asks again, and moves nothing if the answer is `false`: `onCardMove` is not called. |
+| The "Mover a…" menu opens, and a column is picked | The column is disabled in the menu ([Moving without dragging](#moving-without-dragging)); picking asks again, as a drop does. |
 
 The card's own column is never asked: dropping there does nothing anyway, so it behaves as always.
 The rejected style reads `--gdy-kanban-drop-disabled-outline` (a dashed outline, falling back to
@@ -284,6 +285,61 @@ only read what the app already has. A rule that needs the server goes in `onCard
 send the card back ([Rejecting a move](#rejecting-a-move)). Together: `canDrop` stops the moves the app
 already knows are wrong, with no round trip and no flicker, and `onCardMove` handles the ones only the
 server can decide.
+
+### Moving without dragging
+
+Dragging uses the browser's native drag and drop, which does not work on phones and tablets, nor with
+the keyboard or a screen reader. `moveMenu` adds **"Mover a…"** as the first entry of each card's ⋯
+menu: a submenu with every other column on screen. Picking one moves the card exactly like a drop: the
+same `canDrop`, the same `onCardMove` event, the same pending state and the same revert.
+
+```ts
+moveMenu?: "auto" | "always" | "never"; // default "auto"
+moveMenuMediaQuery?: string;            // default "(pointer: coarse)"
+```
+
+| `moveMenu` | "Mover a…" shows |
+|---|---|
+| `"auto"` (default) | While `moveMenuMediaQuery` matches. The default `(pointer: coarse)` is a touch screen, so on a desktop with a mouse the card looks exactly as before. The board listens to the query: rotating a tablet or resizing a window shows or hides it. |
+| `"always"` | Always. Use it when keyboard and screen reader users on a desktop need it too: with a mouse plugged in, `"auto"` does not show it. |
+| `"never"` | Never. |
+
+It never shows while `features.dragAndDrop` is off: if the app turned moving off, the menu does not
+bring it back. `features.rowActions = false` only removes the app's actions. When a card had no menu
+(no `rowActions`, or `features.rowActions` off), the ⋯ button appears with "Mover a…" alone, also under
+a custom `renderCard`. "Mover a…" takes no action id: an action of your own with `id: "move"` keeps
+working, with `customActions` and with `menuActions` alike.
+
+```tsx
+// Also on narrow windows, where dragging across columns is awkward.
+<KanbanBoard {...boardProps} moveMenuMediaQuery="(pointer: coarse), (max-width: 768px)" />
+```
+
+In the submenu:
+
+- The card's own column is left out, and so is any column that is not on screen.
+- A column `canDrop` rejects is disabled. When the app gives a reason with `getDropDisabledReason`, it
+  is shown under the column name and linked with `aria-describedby`; that column stays reachable with
+  the arrow keys, so a screen reader reads why, but it cannot be picked.
+- The choice is checked again with `canDrop` when it is picked, as a drop is.
+- While the card waits for an `onCardMove` promise, "Mover a…" is disabled, as dragging is.
+
+```tsx
+<KanbanBoard
+  {...boardProps}
+  canDrop={({ fromValue, toValue }) => !(fromValue === "lead" && toValue === "won")}
+  getDropDisabledReason={({ toValue }) => (toValue === "won" ? "It has to go through Proposal first" : undefined)}
+/>
+```
+
+`getDropDisabledReason` gets the same context as `canDrop` and is asked only for the columns `canDrop`
+rejected, only when the menu opens: never while dragging.
+
+After a move from the menu, a polite live region (`div.gdy-kanban-live`, visible to screen readers
+only) announces `labels.cardMovedTo(column)`, "Card movida a Ganado", and the focus goes to the card's ⋯
+button in its new column, so a keyboard user keeps their place. If `onCardMove` then says no (`false`
+or a rejected promise), it announces `labels.cardMoveReverted(column)`, "La card volvió a Activa", and
+the focus follows the card back. The live region exists only while "Mover a…" is offered.
 
 ### Visible cards
 
@@ -350,6 +406,72 @@ title or the language changes:
 // Before: a portal into a header found by its text
 const head = [...document.querySelectorAll(".gdy-kanban-column-title")].find((node) => node.textContent === "Ganado");
 return head ? createPortal(<Total />, head.parentElement as HTMLElement) : null;
+```
+
+### Collapsible columns and footer
+
+With many columns the board scrolls sideways. `collapsibleColumns` adds a button before each column
+title that collapses the column into a narrow strip: the button, the count and the title written top
+to bottom, as tall as the row. A collapsed column hides its cards, its header content and its footer,
+and **still takes dropped cards** (and figures in [Moving without dragging](#moving-without-dragging)).
+
+```ts
+collapsibleColumns?: boolean;                        // default false
+collapsedColumns?: string[];                         // controlled, by column value
+defaultCollapsedColumns?: string[];                  // uncontrolled start
+onCollapsedColumnsChange?: (values: string[]) => void;
+```
+
+- The button carries `aria-expanded` and its accessible name is `labels.collapseColumn(column)`,
+  "Colapsar Activa", or `labels.expandColumn(column)`, "Expandir Activa". The collapsed column carries
+  `data-collapsed`.
+- Without `collapsedColumns` the board keeps the state (`defaultCollapsedColumns` sets the start) and
+  reports every change; with it, the app owns the list and the button only asks for the change.
+- The values are column values, whatever the active group: a value no column has, as when another
+  group is active, changes nothing, and the column collapses again when its group comes back.
+- While `loading`, a collapsed column stays a strip with no placeholder cards.
+- The strip is `--gdy-kanban-column-collapsed-width` wide (44px by default).
+
+```tsx
+const [collapsed, setCollapsed] = useState<string[]>(["archived"]);
+
+<KanbanBoard
+  {...boardProps}
+  collapsibleColumns
+  collapsedColumns={collapsed}
+  onCollapsedColumnsChange={(values) => {
+    setCollapsed(values);
+    savePreference("board-collapsed", values);
+  }}
+/>;
+```
+
+`renderColumnFooter` adds your own content at the bottom of each column, in
+`div.gdy-kanban-column-footer`, under the cards and outside their scroll, so it stays in view. It gets
+the same `{ value, label, groupId, cards, allCards }` as [`renderColumnHeaderExtra`](#column-header-content)
+(`KanbanColumnFooterContext<TData>`). Returning `null`, `undefined` or a boolean renders no
+container. It is not called while `loading`, so a footer never shows numbers of old data, nor for a
+collapsed column.
+
+The board does not page: a "Load more" per column is the app's, which passes the cards it has loaded
+and adds more when asked.
+
+```tsx
+const PAGE = 10;
+const [shown, setShown] = useState<Record<string, number>>({});
+const visibleDeals = useMemo(() => limitPerStage(deals, shown, PAGE), [deals, shown]);
+
+<KanbanBoard
+  {...boardProps}
+  data={visibleDeals}
+  renderColumnFooter={({ value, cards }) =>
+    cards.length < countByStage[value] ? (
+      <button type="button" onClick={() => setShown((s) => ({ ...s, [value]: (s[value] ?? PAGE) + PAGE }))}>
+        Load more ({cards.length} of {countByStage[value]})
+      </button>
+    ) : null
+  }
+/>;
 ```
 
 ### Card click
@@ -509,12 +631,17 @@ Kanban keys (`KanbanBoardLabels`):
 | `untitledCard` | `"Card"` | Title of a default card whose first field is empty | — |
 | `cardFieldLabel(header)` | `` `${header}:` `` | Bold label before each field of a default card | — |
 | `formatCardDate(value)` | `"01/03/2026"` | Date field of a default card; gets the raw value (`"2026-03-01"`) and returns any value without a `yyyy-mm-dd` start as it is | — |
+| `moveTo` | `"Mover a…"` | Card menu entry that opens the columns to move the card to | — |
+| `cardMovedTo(column)` | `` `Card movida a ${column}` `` | Announced to screen readers after a move from the menu | — |
+| `cardMoveReverted(column)` | `` `La card volvió a ${column}` `` | Announced when that move is undone | — |
+| `collapseColumn(column)` | `` `Colapsar ${column}` `` | Accessible name and tooltip of the button that collapses a column | — |
+| `expandColumn(column)` | `` `Expandir ${column}` `` | Accessible name and tooltip of the button that expands a collapsed column | — |
 
 ## Events
 
 | Callback | Signature | Fires |
 |---|---|---|
-| `onCardMove` | `(event: KanbanMoveEvent<TData>) => void \| boolean \| Promise<void \| boolean>` | A card is dropped on a column other than its own. See [Rejecting a move](#rejecting-a-move). |
+| `onCardMove` | `(event: KanbanMoveEvent<TData>) => void \| boolean \| Promise<void \| boolean>` | A card is dropped on a column other than its own, or moved there with "Mover a…". See [Rejecting a move](#rejecting-a-move). |
 | `onCardMoveError` | `(error: unknown, event: KanbanMoveEvent<TData>) => void` | The promise `onCardMove` returned rejected; the card is already back. |
 | `onCardClick` | `(event: KanbanCardClickEvent<TData>) => void` | A card is clicked (not at the end of a drag, not from its menu). |
 | `onVisibleCardsChange` | `(state: KanbanVisibleCardsState<TData>) => void` | On mount, and whenever the visible cards change. See [Visible cards](#visible-cards). |
@@ -578,16 +705,20 @@ viewport `div.gdy-kanban-board-wrap.gdy-scroll`. When no card is visible the vie
 | `gdy-kanban-filter-row` | Row of filter triggers under the toolbar. | — |
 | `gdy-kanban-filter-trigger` | Filter trigger of a field, with `gdy-kanban-filter-trigger-label`. | `data-filtered` while the field has a filter. |
 | `gdy-kanban-board` | Flex row of columns inside the viewport. | — |
-| `gdy-kanban-column` | Column (`section`), with its header `gdy-kanban-column-head`. | `data-column-value` with the column's raw value, always; `data-drop-target` while a card is dragged over it; `data-drop-disabled` while `canDrop` rejects the dragged card for it. |
+| `gdy-kanban-column` | Column (`section`), with its header `gdy-kanban-column-head`. | `data-column-value` with the column's raw value, always; `data-drop-target` while a card is dragged over it; `data-drop-disabled` while `canDrop` rejects the dragged card for it; `data-collapsed` while it is collapsed. |
 | `gdy-kanban-column-title` | Column label. | — |
 | `gdy-kanban-column-extra` | Own content of `renderColumnHeaderExtra`, between the title and the count; only rendered when there is content. | — |
+| `gdy-kanban-column-toggle` | Button that collapses and expands the column, before the title; only with `collapsibleColumns`. | `aria-expanded`. |
 | `gdy-kanban-column-count` | Card count badge. | — |
+| `gdy-kanban-column-footer` | Own content of `renderColumnFooter`, under the cards; only rendered when there is content. | — |
 | `gdy-kanban-column-body` | Scrolling list of cards; `gdy-kanban-empty-col` is its `"Sin cards"` placeholder. | — |
 | `gdy-kanban-card` | Card (`article`). | `data-draggable` while it can be dragged; `data-dragging` while it is dragged; `data-pending` (with `aria-busy`) while its move waits for `onCardMove`. |
 | `gdy-kanban-card-title` | Title of the default card; `gdy-kanban-card-subtitle` is its subtitle. | — |
 | `gdy-kanban-tag` | Group tag of the default card. | — |
 | `gdy-kanban-card-value` | `Header: value` and date lines of the default card. | — |
 | `gdy-kanban-card-actions` | Menu slot under a custom `renderCard`. | — |
+| `gdy-kanban-live` | Live region of the "Mover a…" menu, visible to screen readers only; rendered only while the menu is offered. | — |
+| `gdy-menu-item-description` | Second line of a menu item, under its label: the reason a "Mover a…" column is disabled. | — |
 
 The board reads these tokens. None is declared by default and each falls back to a base token, so
 declaring them on `:root`, on your dark theme scope or on any ancestor of the board is enough:
@@ -603,6 +734,7 @@ declaring them on `:root`, on your dark theme scope or on any ancestor of the bo
 | `--gdy-kanban-card-pending-opacity` | `0.6` | Opacity of a card whose move is pending. |
 | `--gdy-kanban-drop-disabled-outline` | `--gdy-destructive` | Dashed outline of a column `canDrop` rejects. |
 | `--gdy-kanban-drop-disabled-bg` | A tint of `--gdy-destructive` | Background of a column `canDrop` rejects. |
+| `--gdy-kanban-column-collapsed-width` | `44px` | Width of a collapsed column. |
 
 `boardWrapClassName` appends your own classes to the viewport. `boardMinHeightClassName` (default
 `"gdy-kanban-min-h-md"`) sets its minimum height with one of the built-in utilities,
@@ -705,13 +837,21 @@ Own props of `KanbanBoardProps<TData>`, in source order.
 | `getCardId` | `(card: TData, index: number) => string` | — | Unique, stable card id (required). |
 | `features` | `KanbanBoardFeatures` | all `true` | Capability flags. |
 | `renderCard` | `(card: TData, context: KanbanCardRenderContext<TData>) => ReactNode` | — | Custom card content. |
-| `onCardMove` | `(event: KanbanMoveEvent<TData>) => void \| boolean \| Promise<void \| boolean>` | — | Card dropped on another column; `false` or a promise can send it back. |
+| `onCardMove` | `(event: KanbanMoveEvent<TData>) => void \| boolean \| Promise<void \| boolean>` | — | Card dropped on another column, or moved with "Mover a…"; `false` or a promise can send it back. |
 | `onCardMoveError` | `(error: unknown, event: KanbanMoveEvent<TData>) => void` | — | Error of a rejected `onCardMove` promise. Without it the error is thrown again. |
 | `canDrop` | `(context: KanbanDropContext<TData>) => boolean` | — | Optional rule of where a card may go. See [Columns a card cannot go to](#columns-a-card-cannot-go-to). |
+| `getDropDisabledReason` | `(context: KanbanDropContext<TData>) => string \| undefined` | — | Why `canDrop` rejected a column, shown in the "Mover a…" menu. See [Moving without dragging](#moving-without-dragging). |
+| `moveMenu` | `KanbanMoveMenuMode` | `"auto"` | When the card menu offers "Mover a…". |
+| `moveMenuMediaQuery` | `string` | `"(pointer: coarse)"` | Media query of `moveMenu="auto"`. |
 | `onCardClick` | `(event: KanbanCardClickEvent<TData>) => void` | — | Card clicked. |
 | `onVisibleCardsChange` | `(state: KanbanVisibleCardsState<TData>) => void` | — | Visible cards on mount and after each change. |
 | `onGroupChange` | `(groupId: string) => void` | — | Group selector change. |
 | `renderColumnHeaderExtra` | `(context: KanbanColumnHeaderContext<TData>) => ReactNode` | — | Own content in each column header. See [Column header content](#column-header-content). |
+| `renderColumnFooter` | `(context: KanbanColumnFooterContext<TData>) => ReactNode` | — | Own content at the bottom of each column. See [Collapsible columns and footer](#collapsible-columns-and-footer). |
+| `collapsibleColumns` | `boolean` | `false` | Adds the button that collapses a column. |
+| `collapsedColumns` | `string[]` | — | Collapsed columns, by value (controlled). |
+| `defaultCollapsedColumns` | `string[]` | — | Columns collapsed at first (uncontrolled). |
+| `onCollapsedColumnsChange` | `(values: string[]) => void` | — | The collapsed columns changed. |
 | `groupSelectorLabel` | `string` | `"Agrupar por"` | Prefix of every group option and accessible name of the selector. |
 | `boardWrapClassName` | `string` | — | Extra classes for the board viewport. |
 | `className` | `string` | — | Extra classes for the root, after `gdy-kanban` and its flags. |
@@ -739,11 +879,15 @@ Own props of `KanbanBoardProps<TData>`, in source order.
   `createButton`, `rowActions`, `groupSelector`, `dragAndDrop`).
 - `KanbanMoveEvent<TData>`: `{ card, updatedCard, cardId, groupId, fromValue, toValue }`, the payload
   of `onCardMove`.
-- `KanbanDropContext<TData>`: `{ card, cardId, groupId, fromValue, toValue }`, the argument of `canDrop`.
+- `KanbanDropContext<TData>`: `{ card, cardId, groupId, fromValue, toValue }`, the argument of `canDrop`
+  and `getDropDisabledReason`.
+- `KanbanMoveMenuMode`: `"auto" | "always" | "never"`, the type of `moveMenu`.
 - `KanbanCardClickEvent<TData>`: `{ card, cardId, groupId, value }`, the payload of `onCardClick`.
 - `KanbanVisibleCardsState<TData>`: `{ cards, byColumn }`, the payload of `onVisibleCardsChange`.
 - `KanbanColumnHeaderContext<TData>`: `{ value, label, groupId, cards, allCards }`, the argument of
   `renderColumnHeaderExtra`.
+- `KanbanColumnFooterContext<TData>`: the same as `KanbanColumnHeaderContext<TData>`, the argument of
+  `renderColumnFooter`.
 - `KanbanCardRenderContext<TData>`: `{ card, groupId, groupValue }`, the second argument of
   `renderCard`.
 - `KanbanSortingState`: `{ id: string; direction: SortDirection }`, the active sort of a field.

@@ -5,6 +5,7 @@ import { resolveRootStyle } from "../shared/root-style";
 import { useResolvedLabels } from "../shared/labels/use-resolved-labels";
 import { applyBoardDefaults, assertGroupConfiguration, type KanbanBoardView } from "./board-view";
 import { KanbanBoardBody } from "./board/KanbanBoardBody";
+import { KanbanMoveAnnouncer } from "./board/KanbanMoveAnnouncer";
 import { KANBAN_BOARD_LABELS } from "./labels";
 import { KanbanFilterRow } from "./toolbar/KanbanFilterRow";
 import { KanbanToolbar } from "./toolbar/KanbanToolbar";
@@ -29,6 +30,7 @@ export const KanbanBoard = <TData,>(props: KanbanBoardProps<TData>) => {
         <KanbanFilterRow state={state} view={view} />
         <KanbanBoardBody state={state} view={view} />
       </div>
+      <KanbanMoveAnnouncer moveMenu={state.moveMenu} />
     </div>
   );
 };
@@ -43,12 +45,14 @@ export type {
   RowActions,
   KanbanBoardClassNames,
   KanbanColumnAttributes,
+  KanbanColumnFooterContext,
   KanbanColumnHeaderContext,
   KanbanDropContext,
   KanbanBoardFeatures,
   KanbanBoardLabels,
   KanbanGroupOption,
   KanbanMoveEvent,
+  KanbanMoveMenuMode,
   KanbanVisibleCardsState,
   KanbanCardClickEvent,
   KanbanBoardProps,

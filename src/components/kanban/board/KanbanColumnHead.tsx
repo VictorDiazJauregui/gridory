@@ -1,8 +1,11 @@
-import type { ReactNode } from "react";
 import { cn } from "../../../lib/cn";
 import type { KanbanColumnProps } from "./column-settings";
+import { KanbanColumnToggle } from "./KanbanColumnToggle";
+import { isRenderable } from "./renderable-content";
 
-const isRenderable = (content: ReactNode) => content !== null && content !== undefined && typeof content !== "boolean";
+interface KanbanColumnHeadProps<TData> extends KanbanColumnProps<TData> {
+  collapsed: boolean;
+}
 
 const KanbanColumnExtra = <TData,>(props: KanbanColumnProps<TData>) => {
   const { value, label, groupId, cards, allCards, renderColumnHeaderExtra } = props;
@@ -11,12 +14,14 @@ const KanbanColumnExtra = <TData,>(props: KanbanColumnProps<TData>) => {
   return <span className="gdy-kanban-column-extra">{extra}</span>;
 };
 
-export const KanbanColumnHead = <TData,>(props: KanbanColumnProps<TData>) => (
+// A collapsed column is a narrow strip: the own content of the header does not fit, so it is not asked.
+export const KanbanColumnHead = <TData,>(props: KanbanColumnHeadProps<TData>) => (
   <header className={cn("gdy-kanban-column-head", props.classNames?.columnHead)}>
+    {props.collapse.enabled ? <KanbanColumnToggle {...props} /> : null}
     <span className="gdy-kanban-column-title" title={props.label}>
       {props.label}
     </span>
-    <KanbanColumnExtra {...props} />
+    {props.collapsed ? null : <KanbanColumnExtra {...props} />}
     <span className="gdy-kanban-column-count">{props.cards.length}</span>
   </header>
 );
