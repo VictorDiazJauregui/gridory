@@ -14,6 +14,8 @@ import {
 import { useViewSwitch } from "../company/use-view-switch";
 import { isDemoBaseline } from "../../../demo/use-demo-baseline";
 import { useTableHookProps } from "./use-table-hook-props";
+import { useRowSelectionDemo, withRowSelectionDemo } from "./use-row-selection-demo";
+import { useColumnVisibilityDemo, withColumnVisibilityDemo } from "./use-column-visibility-demo";
 import { EmptyWithCreate } from "../company/EmptyWithCreate";
 import { useLoadingToggle } from "../shared/use-loading-toggle";
 import { readDemoPrintMode } from "./demo-print-mode";
@@ -47,22 +49,30 @@ const useTableRowProps = () => {
   };
 };
 
+type LoadingToggle = ReturnType<typeof useLoadingToggle>;
+
+// The demo's own toolbar controls (loading, language) and the print mode read from the URL.
+const withDemoControls = (props: DataTableProps<MockCompanyRow>, loadingToggle: LoadingToggle) => ({
+  ...props,
+  toolbarSlots: [...(props.toolbarSlots ?? []), loadingToggle.slot, LANGUAGE_SLOT],
+  loading: loadingToggle.loading,
+  printMode: readDemoPrintMode(),
+});
+
 export const useDataTableMockProps = (
   openCompany: (row: MockCompanyRow) => void,
 ): DataTableProps<MockCompanyRow> => {
   const { setRows, ...rowProps } = useTableRowProps();
   const viewSwitch = useViewSwitch("table");
   const hookProps = useTableHookProps(openCompany, setRows);
+  const selectionDemo = useRowSelectionDemo();
+  const visibilityDemo = useColumnVisibilityDemo();
   const loadingToggle = useLoadingToggle();
   const language = useDemoLanguage();
   const baseProps = { ...TABLE_STATIC_PROPS, ...rowProps, viewSwitch };
   if (isDemoBaseline()) return baseProps;
-  return localizeTableDemoProps({
-    ...baseProps,
-    ...hookProps,
-    toolbarSlots: [...(hookProps.toolbarSlots ?? []), loadingToggle.slot, LANGUAGE_SLOT],
-    loading: loadingToggle.loading,
-    printMode: readDemoPrintMode(),
-    emptyMessage: <EmptyWithCreate onCreate={rowProps.onCreate} />,
-  }, language);
+  const emptyMessage = <EmptyWithCreate onCreate={rowProps.onCreate} />;
+  const demoProps = withDemoControls({ ...baseProps, ...hookProps, emptyMessage }, loadingToggle);
+  const waveFourProps = withColumnVisibilityDemo(withRowSelectionDemo(demoProps, selectionDemo), visibilityDemo);
+  return localizeTableDemoProps(waveFourProps, language);
 };

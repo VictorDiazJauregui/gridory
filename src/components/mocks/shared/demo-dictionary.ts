@@ -48,6 +48,15 @@ const ENGLISH_DEMO_TEXTS: Record<string, string> = {
   "Aún no hay eventos.": "No events yet.",
   "Detalle de": "Details of",
   "Cerrar el detalle": "Close the details",
+  Exportar: "Export",
+  "Seleccionar todo": "Select all",
+  Página: "Page",
+  Filtradas: "Filtered",
+  "Ocultar Notas": "Hide Notes",
+  "Columnas ocultas": "Hidden columns",
+  "Suma de los contratos vigentes, en su moneda": "Sum of the contracts in force, in their currency",
+  "Fecha en que la empresa se dio de alta": "Date the company signed up",
+  "Activa, Pendiente o Archivada; se cambia desde la celda": "Active, Pending or Archived; change it from the cell",
 };
 
 export const translateDemoText = (text: string, language: DemoLanguage) =>

@@ -57,6 +57,13 @@ export const ENGLISH_TABLE_LABELS: DataTableLabels = {
   inlineSelectPlaceholder: "Select...",
   groupNone: "None",
   groupEmptyValue: "No value",
+  selectRow: "Select row",
+  selectPageRows: "Select the rows of the page",
+  selectFilteredRows: "Select every filtered row",
+  printSelected: "Yes",
+  printNotSelected: "No",
+  printSelectionHeader: "Selected",
+  columnHelp: (header) => `About ${header}`,
 };
 
 const formatUsDate = (value: string) => {
