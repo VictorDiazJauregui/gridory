@@ -199,7 +199,8 @@ Dropping a card on its own column does nothing. The board does not change the da
 store `updatedCard` in your state, as in the quick example, or the move is lost the next time `data`
 changes. While drag and drop is on, every card carries `data-draggable`, which is what gives it the
 `grab` cursor. While dragging, the card carries `data-dragging` and the column under the pointer
-carries `data-drop-target`.
+carries `data-drop-target`, or `data-drop-disabled` when [`canDrop`](#columns-a-card-cannot-go-to)
+rejects it.
 
 ### Rejecting a move
 
@@ -245,6 +246,45 @@ Memoize them (`useMemo`, `useCallback`) when the parent re-renders while a move 
 A promise that never settles leaves its card pending: the app owns the timeout. The rest of the
 board keeps working.
 
+### Columns a card cannot go to
+
+`canDrop` is **optional**. Without it every column accepts every card and no column is ever marked
+as not allowed, exactly as before. With it, the board asks before a card lands:
+
+```ts
+canDrop?: (context: KanbanDropContext<TData>) => boolean;
+```
+
+`KanbanDropContext<TData>` is `{ card, cardId, groupId, fromValue, toValue }`: the dragged card as the
+board holds it, its id, the active group and the two column values. Return `false` to forbid that
+column for that card. The board asks:
+
+| When | What happens with `false` |
+|---|---|
+| The drag starts | Every column on screen that rejects the card gets `data-drop-disabled` right away, so the user sees where the card cannot go before getting there. The marks stay until the drag ends (drop or cancel). |
+| The pointer is over a column (`dragover`) | The board does not call `preventDefault`: the browser shows its "not allowed" cursor, the column carries `data-drop-disabled` and never `data-drop-target`, and dropping there is impossible. |
+| The card is dropped | It asks again, and moves nothing if the answer is `false`: `onCardMove` is not called. |
+
+The card's own column is never asked: dropping there does nothing anyway, so it behaves as always.
+The rejected style reads `--gdy-kanban-drop-disabled-outline` (a dashed outline, falling back to
+`--gdy-destructive`) and `--gdy-kanban-drop-disabled-bg` (a tint of `--gdy-destructive`); set them, or
+write your own `.gdy-kanban-column[data-drop-disabled]` rule, to change it.
+
+```tsx
+<KanbanBoard
+  {...boardProps}
+  // A deal cannot jump from "lead" straight to "won": it has to go through "proposal".
+  canDrop={({ fromValue, toValue }) => !(fromValue === "lead" && toValue === "won")}
+  onCardMove={async ({ cardId, toValue }) => (await api.moveDeal(cardId, toValue)).ok}
+/>
+```
+
+`canDrop` is synchronous on purpose: it runs on every `dragover`, many times per second, so it should
+only read what the app already has. A rule that needs the server goes in `onCardMove`, which can still
+send the card back ([Rejecting a move](#rejecting-a-move)). Together: `canDrop` stops the moves the app
+already knows are wrong, with no round trip and no flicker, and `onCardMove` handles the ones only the
+server can decide.
+
 ### Visible cards
 
 `onVisibleCardsChange` hands you the cards the user is looking at, so the app can show a total or
@@ -275,7 +315,42 @@ const visible = deals.filter((deal) => matches(deal, search) && passes(deal, fil
 ```
 
 A number that belongs inside one column header is better rendered there, with the column header
-slot (`renderColumnHeaderExtra`), than sent through the app state and back.
+slot ([`renderColumnHeaderExtra`](#column-header-content)), than sent through the app state and back.
+
+### Column header content
+
+`renderColumnHeaderExtra` puts your own content in every column header, between the title and the
+count, inside `span.gdy-kanban-column-extra`. It receives a `KanbanColumnHeaderContext<TData>`:
+
+| Field | Content |
+|---|---|
+| `value` | Raw column value (`""` for the column of the cards without value). |
+| `label` | Title shown in the header. |
+| `groupId` | Id of the active group, as in `onCardMove` and `onCardClick`. |
+| `cards` | The cards the column shows: after the search, the archived view, the filters and the sort. Its length is the count. |
+| `allCards` | Every card of the column the board holds, in data order, including the ones the search, the filters or the archived view hide. |
+
+Returning `null`, `undefined` or a boolean renders no container, so a column can go without content.
+The content stays next to the count and does not shrink; a long title gives way with its ellipsis.
+One line of content does not make the header taller. It is not called while `loading`: the loading
+columns have no count either, and the content shows up with it when the data arrives. Without the
+prop the header is exactly as before.
+
+```tsx
+<KanbanBoard
+  {...boardProps}
+  renderColumnHeaderExtra={({ cards, allCards }) => `${formatMoney(sum(cards))} · ${formatMoney(sum(allCards))}`}
+/>
+```
+
+Before, an app had to find the header by its title and mount a portal into it, which breaks when the
+title or the language changes:
+
+```tsx
+// Before: a portal into a header found by its text
+const head = [...document.querySelectorAll(".gdy-kanban-column-title")].find((node) => node.textContent === "Ganado");
+return head ? createPortal(<Total />, head.parentElement as HTMLElement) : null;
+```
 
 ### Card click
 
@@ -503,8 +578,9 @@ viewport `div.gdy-kanban-board-wrap.gdy-scroll`. When no card is visible the vie
 | `gdy-kanban-filter-row` | Row of filter triggers under the toolbar. | — |
 | `gdy-kanban-filter-trigger` | Filter trigger of a field, with `gdy-kanban-filter-trigger-label`. | `data-filtered` while the field has a filter. |
 | `gdy-kanban-board` | Flex row of columns inside the viewport. | — |
-| `gdy-kanban-column` | Column (`section`), with its header `gdy-kanban-column-head`. | `data-column-value` with the column's raw value, always; `data-drop-target` while a card is dragged over it. |
+| `gdy-kanban-column` | Column (`section`), with its header `gdy-kanban-column-head`. | `data-column-value` with the column's raw value, always; `data-drop-target` while a card is dragged over it; `data-drop-disabled` while `canDrop` rejects the dragged card for it. |
 | `gdy-kanban-column-title` | Column label. | — |
+| `gdy-kanban-column-extra` | Own content of `renderColumnHeaderExtra`, between the title and the count; only rendered when there is content. | — |
 | `gdy-kanban-column-count` | Card count badge. | — |
 | `gdy-kanban-column-body` | Scrolling list of cards; `gdy-kanban-empty-col` is its `"Sin cards"` placeholder. | — |
 | `gdy-kanban-card` | Card (`article`). | `data-draggable` while it can be dragged; `data-dragging` while it is dragged; `data-pending` (with `aria-busy`) while its move waits for `onCardMove`. |
@@ -525,6 +601,8 @@ declaring them on `:root`, on your dark theme scope or on any ancestor of the bo
 | `--gdy-kanban-drop-bg` | A tint of `--gdy-muted` | Column background while it is a drop target. |
 | `--gdy-kanban-drop-outline` | `--gdy-muted-foreground` | Dashed outline of the drop target. |
 | `--gdy-kanban-card-pending-opacity` | `0.6` | Opacity of a card whose move is pending. |
+| `--gdy-kanban-drop-disabled-outline` | `--gdy-destructive` | Dashed outline of a column `canDrop` rejects. |
+| `--gdy-kanban-drop-disabled-bg` | A tint of `--gdy-destructive` | Background of a column `canDrop` rejects. |
 
 `boardWrapClassName` appends your own classes to the viewport. `boardMinHeightClassName` (default
 `"gdy-kanban-min-h-md"`) sets its minimum height with one of the built-in utilities,
@@ -629,9 +707,11 @@ Own props of `KanbanBoardProps<TData>`, in source order.
 | `renderCard` | `(card: TData, context: KanbanCardRenderContext<TData>) => ReactNode` | — | Custom card content. |
 | `onCardMove` | `(event: KanbanMoveEvent<TData>) => void \| boolean \| Promise<void \| boolean>` | — | Card dropped on another column; `false` or a promise can send it back. |
 | `onCardMoveError` | `(error: unknown, event: KanbanMoveEvent<TData>) => void` | — | Error of a rejected `onCardMove` promise. Without it the error is thrown again. |
+| `canDrop` | `(context: KanbanDropContext<TData>) => boolean` | — | Optional rule of where a card may go. See [Columns a card cannot go to](#columns-a-card-cannot-go-to). |
 | `onCardClick` | `(event: KanbanCardClickEvent<TData>) => void` | — | Card clicked. |
 | `onVisibleCardsChange` | `(state: KanbanVisibleCardsState<TData>) => void` | — | Visible cards on mount and after each change. |
 | `onGroupChange` | `(groupId: string) => void` | — | Group selector change. |
+| `renderColumnHeaderExtra` | `(context: KanbanColumnHeaderContext<TData>) => ReactNode` | — | Own content in each column header. See [Column header content](#column-header-content). |
 | `groupSelectorLabel` | `string` | `"Agrupar por"` | Prefix of every group option and accessible name of the selector. |
 | `boardWrapClassName` | `string` | — | Extra classes for the board viewport. |
 | `className` | `string` | — | Extra classes for the root, after `gdy-kanban` and its flags. |
@@ -659,8 +739,11 @@ Own props of `KanbanBoardProps<TData>`, in source order.
   `createButton`, `rowActions`, `groupSelector`, `dragAndDrop`).
 - `KanbanMoveEvent<TData>`: `{ card, updatedCard, cardId, groupId, fromValue, toValue }`, the payload
   of `onCardMove`.
+- `KanbanDropContext<TData>`: `{ card, cardId, groupId, fromValue, toValue }`, the argument of `canDrop`.
 - `KanbanCardClickEvent<TData>`: `{ card, cardId, groupId, value }`, the payload of `onCardClick`.
 - `KanbanVisibleCardsState<TData>`: `{ cards, byColumn }`, the payload of `onVisibleCardsChange`.
+- `KanbanColumnHeaderContext<TData>`: `{ value, label, groupId, cards, allCards }`, the argument of
+  `renderColumnHeaderExtra`.
 - `KanbanCardRenderContext<TData>`: `{ card, groupId, groupValue }`, the second argument of
   `renderCard`.
 - `KanbanSortingState`: `{ id: string; direction: SortDirection }`, the active sort of a field.
