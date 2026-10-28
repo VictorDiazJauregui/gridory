@@ -3,7 +3,7 @@ import { DEFAULT_SIDEBAR_TEXTS, SIDEBAR_DEFAULTS } from "../constants";
 import type { SidebarLayoutProps } from "../types";
 import { INITIAL_INTERACTION, reduceInteraction, resolveExpanded } from "./interaction-state";
 import type { SidebarContextValue } from "./sidebar-context";
-import { useMediaQuery } from "./use-media-query";
+import { useMediaQuery } from "../../shared/media/use-media-query";
 import { usePinnedState } from "./use-pinned-state";
 import { useRetainExpanded } from "./use-retain-expanded";
 
