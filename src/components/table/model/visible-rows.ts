@@ -1,3 +1,4 @@
+import { isSameRowList } from "../../shared/rows/same-row-list";
 import type { VisibleRowsState } from "../types";
 
 interface VisibleRowsInput<TData> {
@@ -13,9 +14,6 @@ export const buildVisibleRowsState = <TData>(input: VisibleRowsInput<TData>): Vi
   if (!manualPagination) return { pageRows, filteredRows, totalRows: filteredRows.length };
   return { pageRows, filteredRows: pageRows, totalRows: serverRowCount ?? pageRows.length };
 };
-
-const isSameRowList = <TData>(left: TData[], right: TData[]) =>
-  left.length === right.length && left.every((row, index) => row === right[index]);
 
 export const isSameVisibleRows = <TData>(
   previous: VisibleRowsState<TData> | undefined,

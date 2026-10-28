@@ -161,7 +161,7 @@ tengan que alcanzarlos.
 | Familia | Ejemplos (fallback) |
 |---|---|
 | `--gdy-table-*` | `--gdy-table-head-bg` (`--gdy-muted`), `--gdy-table-foot-bg` (`--gdy-table-head-bg`, luego `--gdy-muted`), `--gdy-table-border` (`--gdy-border`), `--gdy-table-row-hover-bg` (`--gdy-muted`), `--gdy-table-row-focus-ring` (`--gdy-ring`) |
-| `--gdy-kanban-*` | `--gdy-kanban-column-bg` (`--gdy-muted`), `--gdy-kanban-card-bg` (`--gdy-card`), `--gdy-kanban-drop-outline` (`--gdy-muted-foreground`) |
+| `--gdy-kanban-*` | `--gdy-kanban-column-bg` (`--gdy-muted`), `--gdy-kanban-card-bg` (`--gdy-card`), `--gdy-kanban-drop-outline` (`--gdy-muted-foreground`), `--gdy-kanban-drop-disabled-outline` (`--gdy-destructive`), `--gdy-kanban-column-collapsed-width` (`44px`) |
 | `--gdy-ai-*` | `--gdy-ai-accent` (`--gdy-primary`), `--gdy-ai-bg` (`--gdy-background`), `--gdy-ai-user-bubble-bg` (`--gdy-ai-accent` y después `--gdy-primary`) |
 | `--gdy-auth-*` | `--gdy-auth-bg` (`--gdy-card`), `--gdy-auth-submit-bg` (`--gdy-primary`), `--gdy-auth-input-focus-border` (`--gdy-ring`), `--gdy-auth-rule-met` (`--gdy-success`) |
 | `--gdy-segmented-*` | `--gdy-segmented-bg` (`--gdy-muted`), `--gdy-segmented-indicator-bg` (`--gdy-background`), `--gdy-segmented-item-active-color` (`--gdy-foreground`), `--gdy-segmented-focus-ring` (`--gdy-ring`), `--gdy-segmented-duration` (`220ms`) |
@@ -476,6 +476,7 @@ por su presencia (`[data-dragging]`), no por su valor. El resto toma los valores
 | `data-filtered` | `gdy-table-head-trigger`, `gdy-kanban-filter-trigger` | Gridory | la columna o el campo tiene un filtro activo |
 | `data-selected`, `data-checked` | `gdy-option-item`, `gdy-option-check` | Gridory | una opción marcada en un filtro por valores |
 | `data-dragging`, `data-drop-target` | `gdy-kanban-card`, `gdy-kanban-column` | Gridory | la tarjeta que se arrastra; la columna que tiene debajo |
+| `data-collapsed` | `gdy-kanban-column` | Gridory | la columna está colapsada (`collapsibleColumns`) |
 | `data-clickable` | `gdy-table-row` | Gridory | la tabla tiene `onRowClick` |
 | `data-loading`, `aria-busy="true"` | `gdy-table`, `gdy-kanban` | Gridory | la prop `loading` está activa |
 | `data-print-mode` | `gdy-table` | Gridory | `"page"` o `"all"`: la prop `printMode` |

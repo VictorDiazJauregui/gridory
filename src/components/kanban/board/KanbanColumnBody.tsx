@@ -13,6 +13,7 @@ const renderColumnCards = <TData,>(props: KanbanColumnProps<TData>) =>
         cardId={cardId}
         groupValue={props.value}
         drag={props.drag}
+        pending={props.pendingIds.has(cardId)}
       />
     );
   });

@@ -1,23 +1,24 @@
-import { cn } from "../../../lib/cn";
+import { buildColumnHookProps } from "./column-attributes";
 import type { KanbanColumnProps } from "./column-settings";
-import { buildColumnDropHandlers } from "./drag-handlers";
+import { buildColumnDropHandlers, buildColumnDropState } from "./drag-handlers";
 import { KanbanColumnBody } from "./KanbanColumnBody";
+import { KanbanColumnFooter } from "./KanbanColumnFooter";
+import { KanbanColumnHead } from "./KanbanColumnHead";
 
+// A collapsed column keeps its drop handlers: the strip still takes dropped cards.
 export const KanbanColumn = <TData,>(props: KanbanColumnProps<TData>) => {
-  const { value, label, cards, drag, moveCard, classNames } = props;
+  const { value, drag, moveCard, columnHooks, collapse } = props;
+  const collapsed = collapse.isCollapsed(value);
   return (
     <section
-      className={cn("gdy-kanban-column", classNames?.column)}
-      data-drop-target={drag.dragOverValue === value || undefined}
+      {...buildColumnHookProps(value, columnHooks)}
+      data-collapsed={collapsed || undefined}
+      {...buildColumnDropState(drag, value)}
       {...buildColumnDropHandlers({ drag, value, moveCard })}
     >
-      <header className={cn("gdy-kanban-column-head", classNames?.columnHead)}>
-        <span className="gdy-kanban-column-title" title={label}>
-          {label}
-        </span>
-        <span className="gdy-kanban-column-count">{cards.length}</span>
-      </header>
-      <KanbanColumnBody {...props} />
+      <KanbanColumnHead {...props} collapsed={collapsed} />
+      {collapsed ? null : <KanbanColumnBody {...props} />}
+      {collapsed ? null : <KanbanColumnFooter {...props} />}
     </section>
   );
 };

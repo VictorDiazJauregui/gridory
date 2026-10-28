@@ -1,16 +1,5 @@
-/*
- * Minimal reset scoped to the library's root elements.
- *
- * Every component root (and every content rendered through a portal) carries
- * the `gdy-scope` class, so these rules apply only inside Gridory and never
- * touch the consuming app. The scope is wrapped in `:where()` so it adds no
- * specificity: each rule weighs exactly what Tailwind's own preflight weighs
- * (a bare element selector), and any component class overrides it.
- *
- * It mirrors the parts of a modern preflight the components rely on:
- * border-box sizing, solid zero-width borders, inherited form typography and
- * unstyled buttons and lists. Nothing here depends on Tailwind.
- */
+/* Reset scoped to `gdy-scope`, carried by every component root and portal, so the app is never touched.
+   :where() adds no specificity: each rule weighs a bare element, like Tailwind's preflight; any class wins. */
 :where(.gdy-scope) {
   line-height: 1.5;
   -webkit-tap-highlight-color: transparent;

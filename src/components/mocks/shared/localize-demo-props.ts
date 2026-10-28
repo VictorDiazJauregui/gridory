@@ -1,13 +1,14 @@
 import { enUS } from "date-fns/locale";
 import type { DataTableProps } from "../../table";
 import type { KanbanBoardProps, KanbanGroupOption } from "../../kanban";
-import type { ColumnDefinition, FilterOption, RowActions } from "../../shared/data-model";
+import type { ColumnDefinition, FilterOption } from "../../shared/data-model";
 import type { HeaderSelectConfig, ToggleGroupConfig } from "../../shared/toolbar-controls";
 import type { MockCompanyRow } from "../company/company-rows";
 import { describeCompanyNoteInEnglish } from "../table/company-notes";
 import { translateDemoText } from "./demo-dictionary";
 import type { DemoLanguage } from "./demo-language";
 import { ENGLISH_KANBAN_LABELS, ENGLISH_TABLE_LABELS } from "./english-labels";
+import { localizeRowActions } from "./localize-row-actions";
 
 type Translate = (text: string) => string;
 type CompanyColumn = ColumnDefinition<MockCompanyRow>;
@@ -45,15 +46,6 @@ const localizeColumn = (column: CompanyColumn): CompanyColumn => ({
   inlineEditOptions: translateOptions(column.inlineEditOptions),
   ...localizeColumnContent(column),
 });
-
-const localizeRowActions = (actions: RowActions<MockCompanyRow> | undefined) =>
-  actions && {
-    ...actions,
-    columnLabel: actions.columnLabel && toEnglish(actions.columnLabel),
-    triggerLabel: actions.triggerLabel && toEnglish(actions.triggerLabel),
-    customActions: actions.customActions?.map((action) => ({ ...action, label: toEnglish(action.label) })),
-    menuActions: actions.menuActions?.map((item) => ("label" in item ? { ...item, label: toEnglish(item.label) } : item)),
-  };
 
 const localizeToggleGroup = (group: ToggleGroupConfig): ToggleGroupConfig => ({
   ...group,
@@ -97,6 +89,14 @@ const localizeGroup = (group: KanbanGroupOption<MockCompanyRow>) => ({
   values: translateOptions(group.values),
 });
 
+type DropReason = KanbanBoardProps<MockCompanyRow>["getDropDisabledReason"];
+
+const localizeDropReason = (explain: DropReason): DropReason =>
+  explain && ((context) => {
+    const reason = explain(context);
+    return reason && toEnglish(reason);
+  });
+
 export const localizeKanbanDemoProps = (props: KanbanBoardProps<MockCompanyRow>, language: DemoLanguage) => {
   if (language === "es") return props;
   return {
@@ -104,5 +104,6 @@ export const localizeKanbanDemoProps = (props: KanbanBoardProps<MockCompanyRow>,
     fields: props.fields.map(localizeColumn),
     groups: props.groups.map(localizeGroup),
     labels: { ...ENGLISH_KANBAN_LABELS, labeledValue: labeledValueInEnglish },
+    getDropDisabledReason: localizeDropReason(props.getDropDisabledReason),
   };
 };

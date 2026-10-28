@@ -18,7 +18,8 @@ export const openDiagramDialog = (canvas: HTMLElement, texts: MarkdownDiagramTex
   dialog.append(createCloseButton(dialog, texts.close), content);
   dialog.addEventListener("close", () => dialog.remove());
   dialog.addEventListener("click", (event) => event.target === dialog && dialog.close());
-  // Beside the preview, not inside it: its typography rules would reach the dialog, while the app's theme scope still does.
+  // Beside the preview, not inside it: its typography rules would reach the dialog,
+  // while the app's theme scope still does.
   const preview = canvas.closest(".gdy-md-preview");
   (preview?.parentElement ?? document.body).append(dialog);
   dialog.showModal();

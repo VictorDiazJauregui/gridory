@@ -38,6 +38,7 @@ const useTableRowProps = () => {
   );
   const onCreate = useMockRowCreator(setRows, TABLE_CREATED_ROW);
   return {
+    setRows,
     columns,
     data: { results: displayedRows },
     onCreate,
@@ -49,9 +50,9 @@ const useTableRowProps = () => {
 export const useDataTableMockProps = (
   openCompany: (row: MockCompanyRow) => void,
 ): DataTableProps<MockCompanyRow> => {
-  const rowProps = useTableRowProps();
+  const { setRows, ...rowProps } = useTableRowProps();
   const viewSwitch = useViewSwitch("table");
-  const hookProps = useTableHookProps(openCompany);
+  const hookProps = useTableHookProps(openCompany, setRows);
   const loadingToggle = useLoadingToggle();
   const language = useDemoLanguage();
   const baseProps = { ...TABLE_STATIC_PROPS, ...rowProps, viewSwitch };

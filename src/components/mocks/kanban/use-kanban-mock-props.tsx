@@ -21,6 +21,12 @@ import { useLoadingToggle } from "../shared/use-loading-toggle";
 import { useDemoLanguage } from "../shared/demo-language";
 import { LANGUAGE_SLOT } from "../shared/demo-language-slot";
 import { localizeKanbanDemoProps } from "../shared/localize-demo-props";
+import type { RecordDemoEvent } from "../shared/use-demo-event-log";
+import { buildKanbanHookProps } from "./kanban-hook-props";
+import { useFavoriteCards } from "./use-favorite-cards";
+import { useMoveMenuSelector } from "./use-move-menu-selector";
+import { useColumnPaging } from "./use-column-paging";
+import { buildColumnPagingProps } from "./column-paging-props";
 
 const KANBAN_CREATED_ROW: CreatedRowTemplate = {
   idPrefix: "kanban-new",
@@ -32,15 +38,16 @@ const useKanbanCardProps = () => {
   const [cards, setCards] = useState(MOCK_COMPANY_ROWS);
   const [scope, setScope] = useState("all");
   const [brand, setBrand] = useState("all");
-  const displayedCards = useMemo(
-    () => filterByValue(filterByScope(cards, scope), "brand", brand),
-    [cards, scope, brand],
-  );
+  const displayedCards = useMemo(() => filterByValue(filterByScope(cards, scope), "brand", brand), [cards, scope, brand]);
   const onCreate = useMockRowCreator(setCards, KANBAN_CREATED_ROW);
-  const onCardMove = (event: KanbanMoveEvent<MockCompanyRow>) =>
-    replaceRow(setCards, event.updatedCard);
+  const onCardMove = (event: KanbanMoveEvent<MockCompanyRow>) => replaceRow(setCards, event.updatedCard);
+  // Memoized so a re-render of the demo (the event log) does not count as new data mid-move.
+  const data = useMemo(() => ({ results: displayedCards }), [displayedCards]);
+  const paging = useColumnPaging(displayedCards);
   return {
-    data: { results: displayedCards },
+    setCards,
+    paging,
+    data,
     onCreate,
     onCardMove,
     toggleGroups: [buildScopeToggleGroup(scope, setScope)],
@@ -51,22 +58,26 @@ const useKanbanCardProps = () => {
 // The board has its own toolbarLayout, so the slots are listed there to choose their place.
 const KANBAN_TOOLBAR_LAYOUT: KanbanBoardProps<MockCompanyRow>["toolbarLayout"] = {
   ...KANBAN_STATIC_PROPS.toolbarLayout,
-  right: ["brand", "archived", "group", "ai", "viewSwitch", "seats", "loading", "language", "create"],
+  right: ["brand", "archived", "group", "moveMenu", "ai", "viewSwitch", "seats", "loading", "language", "create"],
 };
 
-export const useKanbanMockProps = (): KanbanBoardProps<MockCompanyRow> => {
-  const cardProps = useKanbanCardProps();
+export const useKanbanMockProps = (record: RecordDemoEvent): KanbanBoardProps<MockCompanyRow> => {
+  const { setCards, paging, ...cardProps } = useKanbanCardProps();
+  const favorites = useFavoriteCards();
   const viewSwitch = useViewSwitch("kanban");
   const loadingToggle = useLoadingToggle();
   const language = useDemoLanguage();
+  const moveMenu = useMoveMenuSelector();
   const baseProps = { ...KANBAN_STATIC_PROPS, ...cardProps, viewSwitch };
   if (isDemoBaseline()) return baseProps;
   return localizeKanbanDemoProps({
     ...baseProps,
+    ...moveMenu.withSelector(cardProps.headerSelectors),
+    ...buildColumnPagingProps(paging),
     toolbarSlots: [SEATS_SLOT, loadingToggle.slot, LANGUAGE_SLOT],
-    toolbarLayout: KANBAN_TOOLBAR_LAYOUT,
-    loading: loadingToggle.loading,
+    toolbarLayout: KANBAN_TOOLBAR_LAYOUT, loading: loadingToggle.loading,
     emptyMessage: <EmptyWithCreate onCreate={cardProps.onCreate} />,
     classNames: readKanbanDemoClassNames(),
+    ...buildKanbanHookProps({ setCards, record, favorites, keepMoved: paging.keepMoved }),
   }, language);
 };

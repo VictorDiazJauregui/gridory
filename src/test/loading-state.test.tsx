@@ -123,3 +123,19 @@ test("kanban: without loading, nothing new is rendered", () => {
   expect(container.querySelector(".gdy-kanban")).not.toHaveAttribute("aria-busy");
   expect(container.querySelector(".gdy-kanban-card-skeleton")).toBeNull();
 });
+
+test("kanban: a collapsed column stays a strip while loading, with no placeholder cards", () => {
+  const { container } = renderBoard({ loading: true, collapsibleColumns: true, defaultCollapsedColumns: ["Archivada"] });
+  const archived = container.querySelector('[data-column-value="Archivada"]') as HTMLElement;
+  expect(archived).toHaveAttribute("data-collapsed");
+  expect(archived.querySelector(".gdy-kanban-card-skeleton")).toBeNull();
+  expect(archived.querySelector(".gdy-kanban-column-title")).toHaveTextContent("Archivada");
+  expect(all(container, ".gdy-kanban-card-skeleton")).toHaveLength(10);
+});
+
+test("kanban: the column footer is not rendered while loading", () => {
+  const renderColumnFooter = vi.fn(() => "Cargar más");
+  const { container } = renderBoard({ loading: true, renderColumnFooter });
+  expect(container.querySelector(".gdy-kanban-column-footer")).toBeNull();
+  expect(renderColumnFooter).not.toHaveBeenCalled();
+});

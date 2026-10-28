@@ -1,14 +1,6 @@
-/*
- * Auth forms. Same specificity contract as src/components/ui/styles.css: one
- * class per base rule, states as attribute selectors (0-2-0) and overrides of
- * the button and select primitives at two classes (.gdy-button.gdy-auth-submit).
- *
- * Focus never paints outside a control: inputs, the select and the buttons
- * change their border and add an inset ring, so nothing overlaps the layout
- * around them.
- */
+/* Same specificity contract as src/components/ui/styles.css, primitive overrides at two classes. Focus never
+   paints outside a control: a border change plus an inset ring, so nothing overlaps the layout around it. */
 
-/* ------------------------------------------------------------------ Card */
 .gdy-auth {
   container-type: inline-size;
   display: flex;
@@ -51,7 +43,6 @@
   color: var(--gdy-auth-muted, var(--gdy-muted-foreground));
 }
 
-/* ------------------------------------------------------------------ Form */
 .gdy-auth-form {
   display: flex;
   flex-direction: column;
@@ -92,7 +83,6 @@
   color: var(--gdy-auth-required, var(--gdy-destructive));
 }
 
-/* ---------------------------------------------------------------- Inputs */
 .gdy-auth-input {
   display: block;
   inline-size: 100%;
@@ -221,7 +211,6 @@
   color: var(--gdy-auth-label, inherit);
 }
 
-/* ------------------------------------------------- Errors and field hints */
 .gdy-auth-error {
   color: var(--gdy-auth-error, var(--gdy-destructive));
   font-size: 0.75rem;
@@ -285,7 +274,6 @@
   height: 12px;
 }
 
-/* --------------------------------------------------------------- Buttons */
 .gdy-button.gdy-auth-submit {
   inline-size: 100%;
   block-size: var(--gdy-auth-button-height, 40px);
@@ -346,7 +334,6 @@
   pointer-events: none;
 }
 
-/* ----------------------------------------------------- Divider and links */
 /* Two lines around the label instead of one line masked by a background:
    nothing has to match the card color, whatever the theme. */
 .gdy-auth-divider {
@@ -387,7 +374,6 @@
   text-align: center;
 }
 
-/* ------------------------------------------------------- Touch and hover */
 /* Hover colors only where a pointer can hover: on a phone they would stick to
    the last button tapped until the next tap elsewhere. */
 @media (hover: hover) {

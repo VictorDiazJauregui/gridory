@@ -47,12 +47,8 @@ const observeChipRow = (observer: ResizeObserver, container: HTMLElement) => {
   for (const rowItem of rowItems) observer.observe(rowItem, { box: "border-box" });
 };
 
-/**
- * Number of chips that fit in one line of `containerRef`, measured before paint when the chips
- * change and again whenever the row or a chip resizes (width, font size, a web font loading).
- * Keyed by the chips, not by their count: swapping one country for another replaces a chip the
- * observer was not watching, and its new width must be measured too.
- */
+// Measured before paint when the chips change and whenever the row or a chip resizes (a web font loading).
+// Keyed by the chips, not their count: a swapped country is a new chip whose width must be measured too.
 export const useVisibleChipCount = (containerRef: RefObject<HTMLElement | null>, chipKeys: readonly string[]): number => {
   const chipCount = chipKeys.length;
   const chipsKey = chipKeys.join("\u0000");

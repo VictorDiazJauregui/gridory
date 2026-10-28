@@ -17,6 +17,11 @@ export type {
 export { KanbanBoard } from "./kanban";
 export type {
   KanbanBoardClassNames,
+  KanbanColumnAttributes,
+  KanbanColumnFooterContext,
+  KanbanColumnHeaderContext,
+  KanbanDropContext,
+  KanbanMoveMenuMode,
   KanbanBoardFeatures,
   KanbanBoardLabels,
   KanbanBoardProps,
@@ -26,6 +31,7 @@ export type {
   KanbanFiltersState,
   KanbanGroupOption,
   KanbanMoveEvent,
+  KanbanVisibleCardsState,
   KanbanSortingState,
 } from "./kanban";
 
@@ -64,7 +70,9 @@ export type {
   MenuLabel,
   MenuSeparator,
   RowAction,
+  RowActionEntry,
   RowActionPlacement,
+  RowActionSubmenu,
   RowActionVariant,
   SelectOption,
   SelectTheme,

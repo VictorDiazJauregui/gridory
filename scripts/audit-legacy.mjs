@@ -1,9 +1,7 @@
 #!/usr/bin/env node
 /**
- * Style contract audit, part 1: no legacy names, no literal colors outside
- * tokens.css, no component token without a fallback, no Tailwind leftovers
- * (see docs/theming.md › Style audit). Runs through `npm run audit:styles`
- * after the build.
+ * Style contract audit, part 1: no legacy names, no literal colors outside tokens.css, no component token
+ * without a fallback, no Tailwind leftovers (see docs/theming.md › Style audit). Runs after the build.
  */
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
@@ -24,7 +22,7 @@ const walk = (dir, accept) => {
 const rel = (file) => path.relative(root, file);
 const hasExt = (...exts) => (file) => exts.includes(path.extname(file));
 
-// 1. Legacy names --------------------------------------------------------------
+// 1. Legacy names
 const LEGACY = /\b(?:rdt|rkb|lui)-/i;
 const legacyFiles = [
   ...walk(path.join(root, "src"), hasExt(".ts", ".tsx", ".css", ".md")),
@@ -45,7 +43,7 @@ for (const file of legacyFiles) {
   });
 }
 
-// 2. Literal colors only in tokens.css ------------------------------------------
+// 2. Literal colors only in tokens.css
 const libraryCss = [
   ...walk(path.join(root, "src/styles"), hasExt(".css")),
   ...walk(path.join(root, "src/components"), hasExt(".css")),
@@ -66,7 +64,7 @@ for (const file of libraryCss) {
     });
 }
 
-// 3. Component tokens always carry a fallback ----------------------------------
+// 3. Component tokens always carry a fallback
 const tokensSource = readFileSync(path.join(root, "src/styles/tokens.css"), "utf8");
 const baseTokens = new Set(
   [...tokensSource.matchAll(/^\s*(--gdy-[a-z0-9-]+)\s*:/gm)].map((match) => match[1]),
@@ -90,7 +88,7 @@ for (const file of consumers) {
     });
 }
 
-// 4. No Tailwind leftovers ---------------------------------------------------------
+// 4. No Tailwind leftovers
 const TAILWIND_CSS = /--tw-|@tailwind\b|@config\b|@apply\b/;
 for (const file of libraryCss) {
   readFileSync(file, "utf8")
@@ -116,7 +114,6 @@ for (const name of TAILWIND_PACKAGES) {
   if (manifest.dependencies?.[name]) failures.push(`package.json: "${name}" is still a runtime dependency`);
 }
 
-// Report -----------------------------------------------------------------------
 if (failures.length > 0) {
   console.error(`audit-legacy: ${failures.length} problem(s)\n` + failures.map((f) => `  - ${f}`).join("\n"));
   process.exit(1);

@@ -1,11 +1,10 @@
 import type { CSSProperties, ReactNode } from "react";
-import type { RowAction } from "./menu/row-action";
+import type { RowActionEntry } from "./menu/row-action";
 import type { MenuItem } from "./menu/menu-nodes";
 
-/** Scalar values a column accessor may return. */
 export type Primitive = string | number | boolean | null | undefined;
 
-/** Operators available in date filters: greater than, less than, between. */
+/** Date filter operators: greater than, less than, between. */
 export type DateFilterOp = "gt" | "lt" | "bt";
 
 /** Display and manual-entry mask for date filter inputs. */
@@ -23,9 +22,8 @@ export interface ColumnSortingState {
 }
 
 /**
- * Rows accepted by `DataTable` and `KanbanBoard`: a plain array or a common
- * API envelope (`{ data | items | results | records | payload }`). Use
- * `normalizeRow` to map raw records to `TData`.
+ * A plain array or a common API envelope (`{ data | items | results | records | payload }`).
+ * Use `normalizeRow` to map raw records to `TData`.
  */
 export type DataInput<TData> =
   | TData[]
@@ -42,10 +40,8 @@ export interface FilterOption {
   label: string;
 }
 
-/** Horizontal alignment of a table column. */
 export type ColumnAlign = "left" | "center" | "right";
 
-/** What a table cell does with content wider than its column. */
 export type ColumnOverflow = "ellipsis" | "wrap" | "visible";
 
 export interface CellHighlight {
@@ -66,10 +62,7 @@ export interface ColumnFooterContext<TData> {
   totalRows: number;
 }
 
-/**
- * Field definition shared by `DataTable` (`columns`) and `KanbanBoard`
- * (`fields`): how to read, render, sort, search, filter and edit a value.
- */
+/** Field definition shared by `DataTable` (`columns`) and `KanbanBoard` (`fields`). */
 export interface ColumnDefinition<TData> {
   id: string;
   header: string;
@@ -85,29 +78,25 @@ export interface ColumnDefinition<TData> {
   onInlineEdit?: (row: TData, value: string) => void;
   valueHighlights?: Record<string, CellHighlight>;
   /**
-   * Table only (the kanban ignores it). Aligns the cells and the header (title and sort
-   * icon together, in that order) and renders `data-align` on the `th` and `td`. Omit it
-   * to keep the default left alignment and the markup unchanged.
+   * Table only. Aligns the cells and the header (title, then sort icon) and renders `data-align` on
+   * `th` and `td`. Omit it to keep the default left alignment and the markup unchanged.
    */
   align?: ColumnAlign;
   /** Table only. Aligns the header apart from the cells; defaults to `align`. */
   headerAlign?: ColumnAlign;
   /**
-   * Table only. No click, Ctrl/Cmd + click, middle click or Enter that starts inside this
-   * column's cells triggers the row (`onRowClick` or `getRowHref`). For columns of selects,
-   * links or text meant to be copied.
+   * Table only. A click (plain, Ctrl/Cmd or middle) or Enter starting in this column's cells does not
+   * trigger the row (`onRowClick`, `getRowHref`). For columns of selects, links or text to copy.
    */
   ignoreRowClick?: boolean;
   /**
-   * Table only; the kanban ignores it. `"ellipsis"` (default) cuts the content on one line,
-   * `"wrap"` breaks it over several lines and `"visible"` lets it overflow the cell. Leave it out
-   * to keep the markup unchanged (no `data-overflow`).
+   * Table only. `"ellipsis"` (default) cuts the content on one line, `"wrap"` breaks it over lines and
+   * `"visible"` lets it overflow the cell. Omit it to keep the markup unchanged (no `data-overflow`).
    */
   overflow?: ColumnOverflow;
   /**
-   * Table only; the kanban ignores it. Content of this column's cell in the totals row
-   * (`tfoot.gdy-table-foot`), computed from the rows on screen: `({ pageRows, filteredRows, totalRows })
-   * => ReactNode`. The row only renders when a visible column has `footer`.
+   * Table only. This column's cell in the totals row (`tfoot.gdy-table-foot`), computed from the rows
+   * on screen. The totals row only renders when a visible column has `footer`.
    */
   footer?: (context: ColumnFooterContext<TData>) => ReactNode;
 }
@@ -139,19 +128,15 @@ export interface RowActions<TData> {
   /** Accessible name and tooltip of the ⋯ button, in the table and the kanban. Defaults to `"Opciones"`. */
   triggerLabel?: string;
   /**
-   * Extra menu actions beyond the built-ins. Each needs a unique `id` (validated
-   * against `edit`/`archive`/`remove`/`history` and against other custom actions);
-   * `placement` renders it before (`"top"`) or after (`"bottom"`, default) the
-   * built-ins, preserving array order within each group. No separators are
-   * inserted; use `menuActions` for full control.
+   * Extra menu actions; every `id`, submenu ones included, must differ from the built-ins and each other.
+   * `placement` puts each before (`"top"`) or after (`"bottom"`, default) the built-ins, in array order.
+   * An entry with `items` opens a submenu. No separators are added; use `menuActions` for full control.
    */
-  customActions?: RowAction<TData>[];
+  customActions?: RowActionEntry<TData>[];
   /**
-   * Fully explicit, ordered menu composition. When provided it overrides
-   * `customActions`: built-ins are referenced by id (`{ kind: "builtin", id }`),
-   * separators (`{ kind: "separator", id }`) and headings
-   * (`{ kind: "label", id, label }`) are placed only where you add them, and
-   * every item's order and visibility is under your control.
+   * Explicit, ordered menu that overrides `customActions`: built-ins go by id (`{ kind: "builtin", id }`),
+   * and separators (`{ kind: "separator", id }`) and headings (`{ kind: "label", id, label }`) appear
+   * only where you add them.
    */
   menuActions?: MenuItem<TData>[];
 }
@@ -164,11 +149,10 @@ export interface DateFilterState {
   dateTo: string;
 }
 
-/** Every column filter of a table: the value filters and the date filters, by column id. */
 export interface ColumnFiltersState {
-  /** Selected values of each value-filter column. */
+  /** Selected values, by column id. */
   values: Record<string, string[]>;
-  /** Date filter of each date column. */
+  /** Date filter, by column id. */
   dates: Record<string, DateFilterState>;
 }
 

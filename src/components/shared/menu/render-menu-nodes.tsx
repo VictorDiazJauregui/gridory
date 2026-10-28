@@ -3,13 +3,19 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
 } from "../../ui/dropdown-menu";
-import type { ResolvedActionNode, ResolvedMenuNode } from "./menu-nodes";
+import { DescribedMenuItem } from "./DescribedMenuItem";
+import type { ResolvedActionNode, ResolvedMenuNode, ResolvedSubmenuNode } from "./menu-nodes";
 
 const stopEvent = (event: { stopPropagation: () => void }) =>
   event.stopPropagation();
 
-const renderActionNode = (node: ResolvedActionNode) => (
+const renderActionNode = (node: ResolvedActionNode) => node.description ? (
+  <DescribedMenuItem key={node.key} node={node} />
+) : (
   <DropdownMenuItem
     key={node.key}
     variant={node.variant}
@@ -22,6 +28,16 @@ const renderActionNode = (node: ResolvedActionNode) => (
   </DropdownMenuItem>
 );
 
+const renderSubmenuNode = (node: ResolvedSubmenuNode) => (
+  <DropdownMenuSub key={node.key}>
+    <DropdownMenuSubTrigger disabled={node.disabled} onClick={stopEvent}>
+      {node.icon}
+      <span className="gdy-menu-item-label">{node.label}</span>
+    </DropdownMenuSubTrigger>
+    <DropdownMenuSubContent>{node.children.map(renderActionNode)}</DropdownMenuSubContent>
+  </DropdownMenuSub>
+);
+
 const renderMenuNode = (node: ResolvedMenuNode) => {
   if (node.type === "separator")
     return <DropdownMenuSeparator key={node.key} />;
@@ -31,6 +47,7 @@ const renderMenuNode = (node: ResolvedMenuNode) => {
         {node.label}
       </DropdownMenuLabel>
     );
+  if (node.type === "submenu") return renderSubmenuNode(node);
   return renderActionNode(node);
 };
 

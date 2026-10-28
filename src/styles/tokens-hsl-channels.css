@@ -1,17 +1,6 @@
-/*
- * Optional bridge for apps whose shadcn/ui variables hold bare HSL channels
- * (`--primary: 222 47% 11%`, the shadcn v3 format). The default bridge in
- * tokens.css reads `var(--primary)` as a full color, which is invalid there.
- * This sheet wraps each of the 19 shadcn variables in `hsl()` instead.
- *
- * Import it after gridory/styles.css. It needs every one of those 19 variables:
- * a missing one leaves its token invalid. Apps whose variables are full colors
- * (oklch, hsl(), hex: shadcn v4) must not import it.
- *
- * Declared once for light and dark: a custom property resolves where it is
- * declared, so repeating it on `.dark` re-reads the dark channels there. Same
- * `:where()` as tokens.css, so a plain rule in the app still wins.
- */
+/* Optional bridge for shadcn v3 apps whose variables hold bare HSL channels (`--primary: 222 47% 11%`).
+   Import it after gridory/styles.css; all 19 shadcn variables must exist, or a token is left invalid.
+   Apps whose variables are full colors (oklch, hsl(), hex: shadcn v4) must not import it. */
 :where(:root, .dark, [data-theme="dark"]) {
   --gdy-background: hsl(var(--background));
   --gdy-foreground: hsl(var(--foreground));

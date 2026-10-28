@@ -17,11 +17,8 @@ const dayButtonAttributes = (
   ...rangeAttributes(modifiers),
 });
 
-/**
- * Own day button: the hook comes from `classNames.day_button`. Like the default
- * DayButton of react-day-picker, it takes the DOM focus when the picker marks
- * the day as focused (arrow keys, Home/End, PageUp/PageDown).
- */
+// Own day button for the `classNames.day_button` hook. Like react-day-picker's default, it takes the DOM
+// focus when the picker marks the day as focused (arrow keys, Home/End, PageUp/PageDown).
 const CalendarDayButton = ({
   className,
   day,

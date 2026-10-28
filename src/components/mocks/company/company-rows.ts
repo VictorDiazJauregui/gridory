@@ -6,6 +6,8 @@ export interface MockCompanyRow {
   apps: string[];
   status: "Activa" | "Archivada" | "Pendiente";
   createdAt: string;
+  /** Not shown as a column: the kanban demo adds it up in each column header. Created rows have none. */
+  monthlyFee?: number;
 }
 
 const BASE_COMPANY_ROWS: MockCompanyRow[] = [
@@ -223,7 +225,17 @@ const generateCompanyRows = (count: number, startId: number): MockCompanyRow[] =
     };
   });
 
+const FEE_STEPS = 9;
+const FEE_STEP = 40;
+const BASE_FEE = 120;
+
+// Spread over a few amounts so each column adds up to a different total, and the same on every load.
+const assignMonthlyFee = (row: MockCompanyRow, index: number): MockCompanyRow => ({
+  ...row,
+  monthlyFee: BASE_FEE + ((index * 7) % FEE_STEPS) * FEE_STEP,
+});
+
 export const MOCK_COMPANY_ROWS: MockCompanyRow[] = [
   ...BASE_COMPANY_ROWS,
   ...generateCompanyRows(60, 21),
-];
+].map(assignMonthlyFee);

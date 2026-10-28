@@ -17,10 +17,12 @@ export interface MarkdownEditorLimits {
   tableColumns: number;
 }
 
-/** The five callouts, written with GitHub's alert syntax: `info` is `> [!NOTE]`, `success` is `[!TIP]`, `important` is `[!IMPORTANT]`, `warning` is `[!WARNING]` and `error` is `[!CAUTION]`. */
+/**
+ * The five callouts, written with GitHub's alert syntax: `info` is `> [!NOTE]`, `success` is `[!TIP]`,
+ * `important` is `[!IMPORTANT]`, `warning` is `[!WARNING]` and `error` is `[!CAUTION]`.
+ */
 export type MarkdownAlertVariant = "info" | "success" | "important" | "warning" | "error";
 
-/** Texts the rendered HTML shows or announces. */
 /** Texts of the diagrams drawn from `mermaid` code blocks. */
 export interface MarkdownDiagramTexts {
   /** Accessible name of each diagram. */
@@ -247,7 +249,6 @@ export interface MarkdownClearDialogTexts {
   cancel: string;
 }
 
-/** Texts of the document outline panel. */
 export interface MarkdownOutlineTexts {
   /** Heading and accessible name of the panel. */
   title: string;
@@ -295,7 +296,6 @@ export interface MarkdownEditorState {
   changeView: (view: MarkdownEditorView) => void;
   fullscreen: boolean;
   changeFullscreen: (fullscreen: boolean) => void;
-  /** Whether the document outline panel is open. */
   outlineOpen: boolean;
   changeOutline: (open: boolean) => void;
   /** Opens one of the editor's dialogs by id, such as `"clear"`. */
@@ -329,9 +329,12 @@ export interface MarkdownEditorProviderProps {
   locale?: string;
   /** Replaces the date tool's text. */
   formatDateTime?: (date: Date, locale?: string) => string;
-  /** A preset (`"full"`, `"simple"`, `"minimal"`) or a list of tool ids and tool objects, with `"|"` between groups. */
+  /** A preset (`"full"`, `"simple"`, `"minimal"`) or tool ids and tool objects, `"|"` between groups. */
   tools?: MarkdownToolbarConfig;
-  /** Uploads an image picked in the dialog, pasted or dropped, and resolves with its URL. Without it, images come from URLs only. */
+  /**
+   * Uploads an image picked in the dialog, pasted or dropped, and resolves with its URL.
+   * Without it, images come from URLs only.
+   */
   onImageUpload?: ImageUploadHandler;
   /** MIME types the upload accepts; PNG, JPEG, GIF and WebP by default. */
   acceptedImageTypes?: readonly string[];
@@ -339,9 +342,15 @@ export interface MarkdownEditorProviderProps {
   maxImageBytes?: number;
   /** Largest table the table dialog creates; 20 rows by 10 columns by default. */
   limits?: Partial<MarkdownEditorLimits>;
-  /** Draws `mermaid` code blocks as diagrams; pass `mermaidDiagrams` from `gridory/markdown-editor/mermaid`. Without it they show as code. */
+  /**
+   * Draws `mermaid` code blocks as diagrams; pass `mermaidDiagrams` from `gridory/markdown-editor/mermaid`.
+   * Without it they show as code.
+   */
   diagrams?: MarkdownDiagramRenderer;
-  /** Draws `$…$` and `$$…$$` formulas; pass `katexFormulas` from `gridory/markdown-editor/katex`. Without it they show as text. */
+  /**
+   * Draws `$…$` and `$$…$$` formulas; pass `katexFormulas` from `gridory/markdown-editor/katex`.
+   * Without it they show as text.
+   */
   formulas?: MarkdownFormulaRenderer;
   /** Customizes the syntax guide; `false` removes its button. */
   guide?: false | MarkdownGuideConfig;

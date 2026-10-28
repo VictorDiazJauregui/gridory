@@ -14,10 +14,7 @@ export interface PhoneInputControlProps {
   onBlur?: () => void;
 }
 
-/**
- * The prefix, the number and the list, without the label and the error. Not
- * exported: the auth forms render it inside their own label and error.
- */
+/** Prefix, number and list, not exported: the auth forms render it inside their own label and error. */
 export const PhoneInputControl = ({ settings, control, name, onBlur }: PhoneInputControlProps) => {
   const view = usePhoneInput(settings);
   return (

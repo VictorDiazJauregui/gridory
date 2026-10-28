@@ -2,7 +2,6 @@ import { cn } from "../../../lib/cn";
 import type { FieldControlAttributes } from "../../shared/field/field-props";
 import type { PhoneInputView } from "../model/use-phone-input";
 
-/** The field's control attributes plus the form name of the number. */
 export type PhoneNumberAttributes = FieldControlAttributes & { name?: string };
 
 interface PhoneNumberInputProps {
@@ -11,9 +10,8 @@ interface PhoneNumberInputProps {
   onBlur?: () => void;
 }
 
-// type="tel" and not "number": a number input adds arrows and drops "+",
-// spaces and hyphens. The rule runs on the whole value in onChange, so pasted
-// text is filtered too; a key handler would miss it.
+// type="tel" and not "number": a number input adds arrows and drops "+", spaces and hyphens. The rule runs on
+// the whole value in onChange, so pasted text is filtered too; a key handler would miss it.
 export const PhoneNumberInput = ({ view, control, onBlur }: PhoneNumberInputProps) => (
   <input
     {...control}

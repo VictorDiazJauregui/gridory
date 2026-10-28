@@ -5,7 +5,9 @@ export {
 } from "./menu/row-action";
 export type {
   RowAction,
+  RowActionEntry,
   RowActionPlacement,
+  RowActionSubmenu,
   RowActionVariant,
 } from "./menu/row-action";
 export { resolveMenuNodes } from "./menu/menu-nodes";

@@ -9,7 +9,10 @@ export interface MarkdownDialogFrameProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   title: string;
-  /** Id of the form inside `children` that the submit button sends. Without it the dialog has no action buttons, as in pickers that insert on click. */
+  /**
+   * Id of the form inside `children` that the submit button sends.
+   * Without it the dialog has no action buttons, as in pickers that insert on click.
+   */
   formId?: string;
   submitLabel?: string;
   className?: string;

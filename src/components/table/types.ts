@@ -1,4 +1,5 @@
 import type { KeyboardEvent, MouseEvent } from "react";
+import type { ConsumerAttributes } from "../shared/attributes/consumer-attributes";
 import type { ColumnDefinition, ColumnFiltersState, ColumnSortingState, DataInput } from "../shared/data-model";
 import type { DataViewProps } from "../shared/data-view-props";
 import type { DataViewLabels } from "../shared/labels/data-view-labels";
@@ -56,16 +57,14 @@ export interface ManualPaginationState {
  * Extra attributes for a row. Only `data-*` and `aria-*` names are accepted, so a row can
  * never lose its handlers, its class or the attributes the table writes itself.
  */
-export type RowAttributes = Partial<
-  Record<`data-${string}` | `aria-${string}`, string | number | boolean | undefined>
->;
+export type RowAttributes = ConsumerAttributes;
 
 /** Event `onRowClick` receives: the mouse click, or Enter on a focused row (`focusableRows`). */
 export type RowClickEvent =
   | MouseEvent<HTMLTableRowElement>
   | KeyboardEvent<HTMLTableRowElement>;
 
-/** Payload of `onVisibleRowsChange`: what the user is looking at. */
+/** Payload of `onVisibleRowsChange`. */
 export interface VisibleRowsState<TData> {
   /** Rows of the current page in screen order, rows of collapsed groups included. */
   pageRows: TData[];
@@ -76,10 +75,9 @@ export interface VisibleRowsState<TData> {
 }
 
 /**
- * One class per part, added after the `gdy-*` hook of that part. `wrap` goes after
- * `tableMinHeightClassName`, `tableMaxHeightClassName` and `tableWrapClassName`, and `row` before
- * `getRowClassName`. `row` and `cell` are the data rows and cells; `empty` is the cell of the empty
- * state, which does not take `cell`.
+ * One class per part, added after its `gdy-*` hook. `wrap` goes after `tableMinHeightClassName`,
+ * `tableMaxHeightClassName` and `tableWrapClassName`, and `row` before `getRowClassName`. `row` and
+ * `cell` are the data rows and cells; `empty` is the empty-state cell, which does not take `cell`.
  */
 export interface DataTableClassNames {
   /** `gdy-table` */
@@ -132,10 +130,9 @@ export interface DataTableLabels extends DataViewLabels {
 
 export interface DataTableProps<TData> extends DataViewProps<TData> {
   /**
-   * Replaces any text of the table; the keys you leave out keep their Spanish default. The
-   * older single-text props (`searchPlaceholder`, `createLabel`, `emptyMessage`, `label`,
-   * `groupSelectorLabel`, `groupNoneLabel`, `groupEmptyValueLabel`, the `rowActions`,
-   * `archivedView`, `viewSwitch` and `aiButton` labels) win over their key when both are set.
+   * Replaces any text; omitted keys keep their Spanish default. Older single-text props win over their key:
+   * `searchPlaceholder`, `createLabel`, `emptyMessage`, `label`, `groupSelectorLabel`, `groupNoneLabel`,
+   * `groupEmptyValueLabel`, and the `rowActions`, `archivedView`, `viewSwitch` and `aiButton` labels.
    */
   labels?: Partial<DataTableLabels>;
   columns: ColumnDefinition<TData>[];
@@ -144,9 +141,8 @@ export interface DataTableProps<TData> extends DataViewProps<TData> {
   getRowId?: (row: TData, index: number) => string;
   features?: DataTableFeatures;
   /**
-   * Fires when a data row is clicked, or with Enter on a focusable row. A click that starts in a
-   * column with `ignoreRowClick` never fires it. With `getRowHref`, Ctrl/Cmd + click opens the
-   * link instead.
+   * Fires on a data row click, or Enter on a focusable row; never from a column with `ignoreRowClick`.
+   * With `getRowHref`, Ctrl/Cmd + click opens the link instead.
    */
   onRowClick?: (row: TData, event: RowClickEvent) => void;
   /**
@@ -161,27 +157,21 @@ export interface DataTableProps<TData> extends DataViewProps<TData> {
    * it is `false`. Rows with neither `onRowClick` nor `getRowHref` are never focusable.
    */
   focusableRows?: boolean;
-  /**
-   * Extra class(es) for a row, added after `gdy-table-row`. Called once per row and
-   * render, so keep it cheap.
-   */
+  /** Extra class(es) for a row, after `gdy-table-row`. Called once per row and render: keep it cheap. */
   getRowClassName?: (row: TData) => string | undefined;
   /**
-   * Extra `data-*` and `aria-*` attributes for a row. `undefined` omits an attribute and
-   * so does `false` on `data-*` (on `aria-*` it renders `"false"`). Names the table
-   * writes itself (`data-row-id`, `data-clickable`, `data-href`) are ignored. Called once per row and
-   * render, so keep it cheap.
+   * Extra `data-*` and `aria-*` attributes for a row. `undefined` omits one, and so does `false` on
+   * `data-*` (on `aria-*` it renders `"false"`). Names the table writes (`data-row-id`, `data-clickable`,
+   * `data-href`) are ignored. Called once per row and render, so keep it cheap.
    */
   getRowAttributes?: (row: TData) => RowAttributes;
   label?: string;
   pageSizeOptions?: number[];
   defaultPageSize?: number;
   /**
-   * Server-side (manual) pagination. When true the table renders exactly the
-   * `data` it receives (the current page) without slicing or counting locally,
-   * and derives the page count from `serverPageCount`/`serverRowCount`. Global
-   * search is delegated through `onSearchChange`. Column sort/filter still apply
-   * over the current page. Omit it to keep the default client-side behavior.
+   * Server-side pagination: `data` is the current page, rendered without slicing or counting, and the page
+   * count comes from `serverPageCount`/`serverRowCount`. Global search goes through `onSearchChange`;
+   * column sort and filters still apply over the current page. Omit it for client-side pagination.
    */
   manualPagination?: boolean;
   /** Total rows on the server; used to derive page count in manual mode. */
@@ -191,11 +181,9 @@ export interface DataTableProps<TData> extends DataViewProps<TData> {
   /** Notifies page/pageSize changes so the consumer can refetch the page. */
   onPaginationChange?: (state: ManualPaginationState) => void;
   /**
-   * Controlled page (0-based). Pass it together with `onPaginationChange`: `pageIndex={0}` goes back
-   * to the first page without remounting the table. While it is controlled, every page the table
-   * picks on its own (the first page after a search, filter, sort, grouping or archived-view change,
-   * or the last page when it is out of range) is reported through `onPaginationChange`; the out of
-   * range fix is not reported while `loading`. Leave it `undefined` to let the table keep the page.
+   * Controlled page (0-based), paired with `onPaginationChange`. Every page the table picks itself (the
+   * first after a search, filter, sort, grouping or archived-view change, or the last when out of range)
+   * is reported there, except the out-of-range fix while `loading`. `undefined` lets the table keep it.
    */
   pageIndex?: number;
   /**
@@ -210,10 +198,9 @@ export interface DataTableProps<TData> extends DataViewProps<TData> {
    */
   search?: string;
   /**
-   * Waits this many milliseconds without typing before calling `onSearchChange` (and, with
-   * `manualPagination`, before going back to the first page, so both arrive together). The box and
-   * the local search respond at once; with `search` controlled the box keeps what the user types and
-   * takes any other value the app sets. Omit it (or `0`) to report every keystroke, as before.
+   * Milliseconds without typing before calling `onSearchChange` (with `manualPagination`, the return to the
+   * first page waits too, so both arrive together). The box and the local search respond at once.
+   * Omit it (or `0`) to report every keystroke.
    */
   searchDebounceMs?: number;
   /**
@@ -245,10 +232,9 @@ export interface DataTableProps<TData> extends DataViewProps<TData> {
    */
   onFiltersChange?: (filters: ColumnFiltersState) => void;
   /**
-   * The server filters the rows: the table never filters `data`, it only reports the filters through
-   * `onFiltersChange`. A filter change returns to the first page and calls `onPaginationChange` when
-   * the page was not already the first one. Give each filterable column its `filterOptions`: without
-   * them the menu lists the values of the loaded rows plus the selected ones. Defaults to `false`.
+   * The server filters: `data` is never filtered, only reported via `onFiltersChange`; a change returns to
+   * the first page (via `onPaginationChange` when needed). Without `filterOptions`, a column menu lists the
+   * loaded rows' values plus the selected ones. Defaults to `false`.
    */
   manualFiltering?: boolean;
   /** Notifies search changes so the consumer can run a server-side query. */
@@ -260,10 +246,9 @@ export interface DataTableProps<TData> extends DataViewProps<TData> {
    */
   onVisibleRowsChange?: (state: VisibleRowsState<TData>) => void;
   /**
-   * Prints a clean table: without toolbar, pagination and row actions column, and without the
-   * internal scroll that cuts rows. `"page"` prints the current page; `"all"` prints every filtered
-   * row, with every group expanded, and goes back to the page when printing ends (with
-   * `manualPagination` it prints the current page). Omit it to print as before.
+   * Prints without toolbar, pagination, actions column or the internal scroll that cuts rows. `"page"`
+   * prints the current page; `"all"` every filtered row with its groups expanded, then returns to the page
+   * (with `manualPagination`, only the current page). Omit it to print as before.
    */
   printMode?: "page" | "all";
   /** Extra class(es) for the root element, added after `gdy-table` and its flags. */
@@ -272,32 +257,25 @@ export interface DataTableProps<TData> extends DataViewProps<TData> {
   tableWrapClassName?: string;
   tableMinHeightClassName?: string;
   /**
-   * Extra class(es) applied to the rows scroll container to cap its height
-   * (e.g. the built-in `gdy-table-max-h-sm|md|lg`), yielding a self-contained internal
-   * scroll region without a height-constrained parent. Appended after
-   * `tableMinHeightClassName` and before `tableWrapClassName`, so consumer
-   * overrides still win. Optional; when omitted the layout is unchanged.
+   * Class(es) that cap the height of the rows scroll container (e.g. the built-in `gdy-table-max-h-sm|md|lg`)
+   * for an internal scroll without a height-constrained parent. Goes after `tableMinHeightClassName` and
+   * before `tableWrapClassName`, so consumer overrides still win.
    */
   tableMaxHeightClassName?: string;
   /**
-   * Resets the rows scroll container to the top on any visible-page change:
-   * next/prev page, page-size change, or a search/filter/sort/group/archived
-   * change that returns to the first page (including when already on page 0).
-   * A no-op when the rows area does not scroll internally. Defaults to `true`.
+   * Scrolls the rows container to the top on any visible-page change: next/prev, page size, or a
+   * search/filter/sort/group/archived change back to the first page (even from page 0). Defaults to `true`.
    */
   scrollResetOnPageChange?: boolean;
   /**
-   * Pins the header row to the top of the rows scroll container via native
-   * `position: sticky`. Only takes effect together with an internal scroll region
-   * (`fillHeight` or `tableMaxHeightClassName`), so it never alters consumers that
-   * scroll the page. Defaults to `true`.
+   * Sticks the header row to the top of the rows scroll container, only with an internal scroll region
+   * (`fillHeight` or `tableMaxHeightClassName`), so a table that scrolls with the page is unaffected.
+   * Defaults to `true`.
    */
   stickyHeader?: boolean;
   /**
-   * Makes the table fill its parent's height: `.gdy-table`/`.gdy-card` become a flex
-   * column and `.gdy-table-wrap` becomes the internal vertical scroller
-   * (`flex:1; min-height:0; overflow-y:auto`). Requires a height-constrained
-   * parent. Defaults to `false`.
+   * Fills the parent's height: `.gdy-table`/`.gdy-card` become a flex column and `.gdy-table-wrap` the
+   * internal vertical scroller. Requires a height-constrained parent. Defaults to `false`.
    */
   fillHeight?: boolean;
   groupableColumnIds?: string[];

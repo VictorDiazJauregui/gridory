@@ -7,11 +7,8 @@ export interface IndicatorBox {
   height: number;
 }
 
-// Offsets instead of getBoundingClientRect: they are layout values, so a
-// transform on an ancestor (a panel that scales in) does not distort them, and
-// they ignore the root's scroll, as the absolutely positioned indicator does.
-// A hidden control measures 0 wide: it gets no box, so its indicator mounts
-// in place once shown instead of sliding in from the corner.
+// Offsets, not getBoundingClientRect: they ignore an ancestor's transform and the root's scroll, like the
+// indicator. A hidden control gets no box, so once shown its indicator mounts in place instead of sliding in.
 export const measureOptionBox = (option: HTMLElement | undefined): IndicatorBox | null => {
   if (!option || option.offsetWidth === 0) return null;
   return { x: option.offsetLeft, y: option.offsetTop, width: option.offsetWidth, height: option.offsetHeight };

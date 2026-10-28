@@ -32,9 +32,8 @@
   table-layout: fixed;
 }
 
-/* Header row, header cells (th) and data cells (td). Every cell rule is a
-   single class; the group cell (gdy-table-group-cell) has its own rule and
-   never carries gdy-table-cell. */
+/* Every cell rule is a single class; the group cell (gdy-table-group-cell) has its own rule
+   and never carries gdy-table-cell. */
 .gdy-table-head-row {
   background: var(--gdy-table-head-bg, var(--gdy-muted));
 }
@@ -162,9 +161,8 @@
   justify-content: flex-end;
 }
 
-/* Header text of the actions column (`rowActions.columnLabel`); it has no trigger, so it
-   repeats the header typography. As a block it gets its own line box, so the 12px text does not
-   inherit the taller line of the th and the header row keeps its height. */
+/* Header text of the actions column (`rowActions.columnLabel`): no trigger, so it repeats the header type.
+   As a block it has its own line box: the 12px text skips the th's taller line, keeping the row height. */
 .gdy-table-actions-head-label {
   display: block;
   color: var(--gdy-table-head-fg, var(--gdy-muted-foreground));
@@ -180,7 +178,12 @@
   left: 0;
 }
 
-/* Cells */
+/* No room to the right of the header cell: the panel opens to its left (set when it opens). */
+.gdy-table-menu-holder[data-align="end"] {
+  left: auto;
+  right: 0;
+}
+
 .gdy-table-cell-content {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -223,7 +226,6 @@
   justify-content: center;
 }
 
-/* Pagination footer */
 .gdy-table-pagination {
   border-top: 1px solid var(--gdy-table-border, var(--gdy-border));
   padding: 10px 12px;
@@ -327,9 +329,8 @@
   overflow-y: auto;
 }
 
-/* Public utilities for tableMaxHeightClassName: self-contained internal scroll
-   region (companion to fillHeight) that caps the rows area height without
-   needing a height-constrained parent. */
+/* Public utilities for tableMaxHeightClassName: they cap the rows area with an internal scroll and, unlike
+   fillHeight, need no height-constrained parent. */
 .gdy-table-max-h-sm {
   max-height: 320px;
   overflow-y: auto;
@@ -345,13 +346,8 @@
   overflow-y: auto;
 }
 
-/* stickyHeader: pin the header while the rows area scrolls internally. Root
-   flag + cell class (0-2-0) so it beats the base header cell by specificity,
-   never by file order; a consumer rule with the same two classes loaded later
-   still wins. With border-collapse the collapsed bottom border is dropped on a
-   sticky cell, so it is repainted as an identical 1px inset shadow; opaque
-   background prevents rows from showing through. z-index sits below the
-   filter/row dropdowns. */
+/* stickyHeader: root flag + cell class (0-2-0) beats the base cell by specificity. A sticky cell loses its
+   collapsed border, repainted as an inset shadow; the background is opaque, z-index under the dropdowns. */
 .gdy-table-sticky .gdy-table-head-cell {
   position: sticky;
   top: 0;
@@ -371,10 +367,8 @@
   box-shadow: inset 0 1px 0 var(--gdy-table-border, var(--gdy-border));
 }
 
-/* printMode: every rule hangs from [data-print-mode], so a table without the prop prints as
-   before. The toolbar, the pagination and the row actions column are of no use on paper, and
-   the internal scroll would cut the rows, so the rows area grows to its content. The header
-   repeats on every sheet and a row never splits between two. */
+/* printMode: every rule hangs from [data-print-mode], so a table without the prop prints as before. Toolbar,
+   pagination and row actions are useless on paper; the rows area grows, since its scroll would cut rows. */
 @media print {
   .gdy-table[data-print-mode] .gdy-toolbar,
   .gdy-table[data-print-mode] .gdy-table-pagination,

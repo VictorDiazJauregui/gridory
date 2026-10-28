@@ -32,7 +32,6 @@ const areSameRecords = <TValue>(
   return keys.every((key) => isSame(left[key], right[key]));
 };
 
-/** Compares two filter states by content, so a new object with the same filters is no change. */
 export const areColumnFiltersEqual = (left: ColumnFiltersState, right: ColumnFiltersState) =>
   areSameRecords(left.values, right.values, areSameValues) &&
   areSameRecords(left.dates, right.dates, areSameDates);

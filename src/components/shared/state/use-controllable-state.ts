@@ -38,11 +38,7 @@ const useCurrentValueRef = <TValue>(current: TValue) => {
   return valueRef;
 };
 
-/**
- * State that the consumer can own (`value` defined) or leave to the component. Updates
- * accept a value or an updater, resolve against the current value and only call
- * `onChange` when it really changes.
- */
+/** Controlled while `value` is defined; takes values or updaters and calls `onChange` only on a real change. */
 export const useControllableState = <TValue>(config: ControllableStateConfig<TValue>) => {
   const [ownValue, setOwnValue] = useState(config.defaultValue);
   const isControlled = config.value !== undefined;

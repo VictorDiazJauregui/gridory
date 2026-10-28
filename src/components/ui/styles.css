@@ -1,21 +1,9 @@
-/*
- * Specificity contract:
- *  - base rule: one class (0-1-0), so a class the host passes through
- *    `className` (or `triggerClassName`) and loads later wins;
- *  - variants (data-variant, data-size): wrapped in :where(), still 0-1-0;
- *  - states (data-state, data-highlighted, data-disabled, aria-*, the calendar
- *    day flags): plain attribute selectors, 0-2-0, so a state beats the base;
- *  - the only descendant rules target the icons a consumer renders inside a
- *    menu item or a toggle item (they arrive as ReactNode, without a class).
- * Portaled content (popover, menu, select) carries `gdy-scope` so the library
- * reset reaches the portal.
- */
+/* Specificity contract: base rule one class (0-1-0), so a later host className wins; variants in :where();
+   states as attributes (0-2-0); descendants only for consumer icons. Portals carry gdy-scope for the reset. */
 
-/* ---------------------------------------------------------------- Button */
-/* Self-contained: it also declares what the scoped reset would give a button
-   (box sizing, zero margin and padding, inherited font, pointer cursor), because
-   the assistant launcher renders in the host's toolbar, outside any gdy-scope
-   ancestor. Inside a scope these values are the ones the reset already set. */
+/* Button */
+/* Self-contained: it repeats what the scoped reset gives a button (box sizing, margins, font, cursor)
+   because the assistant launcher renders in the host's toolbar, outside any gdy-scope ancestor. */
 .gdy-button {
   box-sizing: border-box;
   display: inline-flex;
@@ -171,7 +159,7 @@
   height: 36px;
 }
 
-/* --------------------------------------------------------------- Popover */
+/* Popover */
 .gdy-popover-content {
   z-index: 50;
   display: flex;
@@ -192,7 +180,7 @@
   transform-origin: var(--radix-popover-content-transform-origin);
 }
 
-/* --------------------------------------------------------- Dropdown menu */
+/* Dropdown menu */
 .gdy-menu-content {
   z-index: 50;
   min-width: 9rem;
@@ -270,7 +258,32 @@
   background-color: var(--gdy-border);
 }
 
-/* ---------------------------------------------------------------- Select */
+/* A submenu trigger is a menu item; while its panel is open it keeps the focus look. */
+.gdy-menu-sub-trigger[data-state="open"] {
+  background-color: var(--gdy-menu-item-hover-bg, var(--gdy-accent));
+  color: var(--gdy-accent-foreground);
+}
+
+.gdy-menu-sub-chevron {
+  margin-left: auto;
+}
+
+/* On a phone there may be no room for a submenu beside its menu on either side: it takes the width
+   Radix reports as available on the side it opens, and its texts wrap instead of leaving the screen. */
+.gdy-menu-sub-content {
+  min-width: min(9rem, var(--radix-dropdown-menu-content-available-width, 9rem));
+  max-width: var(--radix-dropdown-menu-content-available-width, none);
+}
+
+/* Second line of an item, under its label: why a "Move to" column is disabled. */
+.gdy-menu-item-description {
+  display: block;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: var(--gdy-muted-foreground);
+}
+
+/* Select */
 .gdy-select-trigger {
   display: flex;
   height: 32px;
@@ -402,7 +415,7 @@
   cursor: default;
 }
 
-/* ---------------------------------------------------------- Toggle group */
+/* Toggle group */
 .gdy-toggle-group {
   display: inline-flex;
   align-items: center;
@@ -465,7 +478,7 @@
   pointer-events: none;
 }
 
-/* -------------------------------------------------------------- Calendar */
+/* Calendar */
 .gdy-calendar-root {
   width: fit-content;
   padding: 8px;

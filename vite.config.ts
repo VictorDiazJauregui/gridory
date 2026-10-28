@@ -14,10 +14,8 @@ const manifest = JSON.parse(
   readFileSync(path.join(rootDir, "package.json"), "utf8"),
 ) as PackageManifest;
 
-// Every runtime dependency and peer dependency stays outside the bundle so the
-// consumer's package manager installs a single copy of each (react, radix-ui,
-// @tanstack/react-table, openai, ...). Subpath imports such as
-// "react/jsx-runtime" or "date-fns/locale" are covered by the prefix check.
+// Every dependency and peer dependency stays out of the bundle so the consumer installs a single copy of each;
+// the prefix check also covers subpath imports such as "react/jsx-runtime" or "date-fns/locale".
 const externalPackages = [
   ...Object.keys(manifest.dependencies ?? {}),
   ...Object.keys(manifest.peerDependencies ?? {}),

@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 /**
- * Compiles a minimal consumer against dist/types with the strictest settings a
- * consumer can turn on (skipLibCheck off, noUncheckedSideEffectImports on), one
- * import per public entry of package.json `exports`. Runs after the build.
+ * Compiles a minimal consumer against dist/types with the strictest settings (skipLibCheck off,
+ * noUncheckedSideEffectImports on), one import per entry of package.json `exports`. Runs after the build.
  */
 import { execFileSync } from "node:child_process";
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";

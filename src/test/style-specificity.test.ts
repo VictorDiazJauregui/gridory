@@ -36,6 +36,7 @@ const TABLE_COMPOUND_RULES = {
   '.gdy-table-foot-cell[data-align="right"]': "0-2-0",
   '.gdy-table-head-trigger[data-align="center"]': "0-2-0",
   '.gdy-table-head-trigger[data-align="right"]': "0-2-0",
+  '.gdy-table-menu-holder[data-align="end"]': "0-2-0",
   '.gdy-table-cell-content[data-overflow="wrap"]': "0-2-0",
   '.gdy-table-cell-content[data-overflow="visible"]': "0-2-0",
   ".gdy-select-trigger.gdy-table-inline-select": "0-2-0",

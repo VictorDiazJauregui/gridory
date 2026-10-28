@@ -11,7 +11,6 @@ export interface EditorController {
   openGoToLine: () => void;
   readSelectedText: () => string;
   destroy: () => void;
-  /** The element that scrolls the source. */
   scrollElement: HTMLElement;
   /** The source line at the top edge of the visible area, 1-based, with the fraction already scrolled past. */
   readTopLine: () => number;

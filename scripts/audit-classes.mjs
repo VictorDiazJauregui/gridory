@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 /**
- * Style contract audit, part 2: the class hooks, the state attributes and the
- * stylesheet stay in sync (see docs/theming.md › Style audit). Needs
- * dist/gridory.css, so run it after `npm run build`.
+ * Style contract audit, part 2: class hooks, state attributes and stylesheet stay in sync
+ * (see docs/theming.md › Style audit). Needs dist/gridory.css, so run it after `npm run build`.
  */
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
@@ -46,7 +45,7 @@ const externalAttributes = new Set([
   ...allowlist.hostAttributes,
 ]);
 
-// 0. State classes are retired: states are data-* / ARIA attributes ----------
+// 0. State classes are retired: states are data-* / ARIA attributes
 for (const [name, files] of collect(librarySources, STATE_CLASS_IN_SOURCE)) {
   failures.push(`state class "${name}" in ${[...files].join(", ")}: use a data-* or ARIA attribute instead`);
 }
@@ -54,32 +53,31 @@ for (const name of collect([distCss], STATE_CLASS_IN_CSS).keys()) {
   failures.push(`rule ".${name}" in dist/gridory.css: state classes were replaced by attribute selectors`);
 }
 
-// 1. Every class the library writes has a rule (or is a declared hook) --------
+// 1. Every class the library writes has a rule (or is a declared hook)
 for (const [name, files] of usedByLibrary) {
   if (definedInDist.has(name) || hookOnly.has(name)) continue;
   failures.push(`class "${name}" is used in ${[...files].join(", ")} but has no rule in dist/gridory.css (give it a rule or list it in hookOnly)`);
 }
 
-// 2. Every rule is used (or is a documented public utility) ---------------------
+// 2. Every rule is used (or is a documented public utility)
 for (const name of definedInDist.keys()) {
   if (usedByLibrary.has(name) || publicUtilities.has(name)) continue;
   failures.push(`rule ".${name}" in dist/gridory.css is not emitted by any component (add it to publicUtilities if it is meant for consumers)`);
 }
 
-// 3. Public utilities really exist ---------------------------------------------
+// 3. Public utilities really exist
 for (const name of publicUtilities) {
   if (!definedInDist.has(name)) failures.push(`public utility "${name}" from the allowlist has no rule in dist/gridory.css`);
 }
 
-// 4. Hook-only classes are emitted and stay rule-less ---------------------------
+// 4. Hook-only classes are emitted and stay rule-less
 for (const name of hookOnly) {
   if (!usedByLibrary.has(name)) failures.push(`hook-only class "${name}" from the allowlist is not emitted by any component`);
   if (definedInDist.has(name)) failures.push(`hook-only class "${name}" now has a rule in dist/gridory.css; remove it from hookOnly`);
 }
 
-// 5. Attribute selectors resolve to something the library or Radix emits --------
-// data-* values are written literally in the components (data-slot="x"); aria-*
-// values come from booleans (aria-pressed={active}), so only the name is checked.
+// 5. Attribute selectors resolve to something the library or Radix emits
+// data-* values are literal (data-slot="x"); aria-* values come from booleans, so only the name is checked.
 const librarySourceText = librarySources
   .map((file) => stripComments(readFileSync(file, "utf8")))
   .join("\n");
@@ -108,7 +106,7 @@ for (const file of libraryStylesheets) {
   for (const match of text.matchAll(ATTR_IN_CSS)) checkAttributeSelector(path.relative(root, file), match);
 }
 
-// 6. Strict modules: every class literal is a gdy-* hook, no rdp-* survives ----
+// 6. Strict modules: every class literal is a gdy-* hook, no rdp-* survives
 const CLASS_LITERAL_CONTEXTS = [
   /className=\{?"([^"]*)"/g,
   /className=\{cn\(([\s\S]*?)\)\}/g,
@@ -137,7 +135,7 @@ for (const moduleName of strictModules) {
 }
 if (/\.rdp-/.test(readFileSync(distCss, "utf8"))) failures.push("dist/gridory.css still contains an .rdp-* rule");
 
-// 7. Mocks only use existing classes --------------------------------------------
+// 7. Mocks only use existing classes
 for (const [name, files] of usedByMocks) {
   if (!definedInDist.has(name)) failures.push(`mock class "${name}" in ${[...files].join(", ")} has no rule in dist/gridory.css`);
 }

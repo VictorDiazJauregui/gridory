@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
-// Without matchMedia (server rendering, jsdom) the sidebar renders its desktop form.
+// Without matchMedia (server rendering, jsdom) no query matches: the sidebar renders its desktop form
+// and the kanban hides its touch-only "Move to" menu.
 const matchesQuery = (query: string): boolean =>
   typeof window !== "undefined" && typeof window.matchMedia === "function" && window.matchMedia(query).matches;
 

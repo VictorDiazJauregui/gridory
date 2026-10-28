@@ -1,8 +1,7 @@
 import type { CSSProperties } from "react";
 
 /**
- * Global styling hooks for the reusable Select. Any provided value takes
- * precedence over CSS variables and, in turn, over the default theme tokens.
+ * Each value set here beats the Select's CSS variables, which in turn beat the theme tokens.
  * Colors accept any CSS color; `radius` accepts a number (px) or a CSS length.
  */
 export interface SelectTheme {

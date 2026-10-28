@@ -1,7 +1,5 @@
-/*
- * Same specificity contract as src/components/ui/styles.css: one class per base
- * rule. The outline keeps white flags visible on a white surface.
- */
+/* Same specificity contract as src/components/ui/styles.css: one class per base rule.
+   The outline keeps white flags visible on a white surface. */
 .gdy-country-flag {
   flex-shrink: 0;
   width: var(--gdy-country-flag-width, 20px);

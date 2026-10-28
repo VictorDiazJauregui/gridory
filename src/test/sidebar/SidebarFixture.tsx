@@ -48,7 +48,6 @@ const FixtureFooter = ({ withPin, footerBlock }: { withPin: boolean; footerBlock
   </SidebarFooter>
 );
 
-// Shared by the jsdom suites: a header, two items and a separator, a footer.
 export const SidebarFixture = ({ layout = {}, pinPlacement = "header", onSelect, footerBlock }: SidebarFixtureOptions) => (
   <SidebarLayout hoverOpenDelay={150} hoverCloseDelay={300} {...layout}>
     <Sidebar aria-label="Principal" mobileBarLogo={<span>Logo</span>}>

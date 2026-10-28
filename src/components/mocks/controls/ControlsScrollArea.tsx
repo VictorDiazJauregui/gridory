@@ -7,9 +7,8 @@ interface ControlsScrollAreaProps {
   children?: ReactNode;
 }
 
-// Sits at the bottom of the page on purpose: a control mounted here has little
-// room below it (its panel must open upwards) and a scrolling ancestor that can
-// clip a panel that is not portaled.
+// At the bottom of the page on purpose: a control here has little room below it (its panel must open upwards)
+// and a scrolling ancestor that can clip a panel that is not portaled.
 export const ControlsScrollArea = ({ children }: ControlsScrollAreaProps) => (
   <section aria-labelledby={HEADING_ID} className="rounded-lg border bg-card p-4">
     <h3 id={HEADING_ID} className="text-base font-semibold">Contenedor con scroll</h3>

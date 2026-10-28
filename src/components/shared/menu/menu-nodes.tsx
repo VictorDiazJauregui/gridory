@@ -1,10 +1,15 @@
 import type { ReactNode } from "react";
 import { Archive, ArchiveRestore, Clock3, Pencil, Trash2 } from "lucide-react";
+import { toEntryNode } from "./custom-action-nodes";
 import {
   BUILT_IN_ROW_ACTION_IDS,
   DuplicateRowActionError,
+  assertUniqueRowActionIds,
+  collectRowActionIds,
   validateCustomRowActions,
   type RowAction,
+  type RowActionEntry,
+  type RowActionSubmenu,
 } from "./row-action";
 import type { DataViewLabels } from "../labels/data-view-labels";
 
@@ -35,6 +40,7 @@ export interface MenuLabel {
 
 export type MenuItem<TData> =
   | (RowAction<TData> & { kind?: "action" })
+  | (RowActionSubmenu<TData> & { kind?: "submenu" })
   | BuiltInMenuRef
   | MenuSeparator
   | MenuLabel;
@@ -55,7 +61,7 @@ interface MenuActionsInput<TData> {
   deleteLabel?: string;
   editLabel?: string;
   historyLabel?: string;
-  customActions?: RowAction<TData>[];
+  customActions?: RowActionEntry<TData>[];
   menuActions?: MenuItem<TData>[];
 }
 
@@ -66,7 +72,18 @@ export interface ResolvedActionNode {
   label: string;
   variant?: "default" | "destructive";
   disabled?: boolean;
+  /** Second line under the label, linked with `aria-describedby` (why a disabled item is disabled). */
+  description?: string;
   onSelect: () => void;
+}
+
+export interface ResolvedSubmenuNode {
+  type: "submenu";
+  key: string;
+  icon: ReactNode;
+  label: string;
+  disabled?: boolean;
+  children: ResolvedActionNode[];
 }
 
 interface ResolvedSeparatorNode {
@@ -83,6 +100,7 @@ interface ResolvedLabelNode {
 
 export type ResolvedMenuNode =
   | ResolvedActionNode
+  | ResolvedSubmenuNode
   | ResolvedSeparatorNode
   | ResolvedLabelNode;
 
@@ -156,36 +174,23 @@ const buildBuiltInRegistry = <TData,>(input: BuiltInNodeInput<TData>): BuiltInRe
   history: buildHistoryNode(input),
 });
 
-const toActionNode = <TData,>(
-  row: TData,
-  action: RowAction<TData>,
-): ResolvedActionNode => {
-  return {
-    type: "action",
-    key: action.id,
-    icon: action.icon,
-    label: action.label,
-    variant: action.variant,
-    disabled: action.disabled?.(row) ?? false,
-    onSelect: () => action.onClick(row),
-  };
-};
+const isPresent = <TNode,>(node: TNode | null): node is TNode => node !== null;
 
 const customToNodes = <TData,>(
   row: TData,
-  actions: RowAction<TData>[],
+  actions: RowActionEntry<TData>[],
   placement: "top" | "bottom",
-): ResolvedActionNode[] => {
+): ResolvedMenuNode[] => {
   return actions
     .filter((action) => (action.placement ?? "bottom") === placement)
-    .filter((action) => !action.hidden?.(row))
-    .map((action) => toActionNode(row, action));
+    .map((action) => toEntryNode(row, action))
+    .filter(isPresent);
 };
 
 const resolveByPlacement = <TData,>(
   row: TData,
   builtIns: BuiltInRegistry,
-  custom: RowAction<TData>[],
+  custom: RowActionEntry<TData>[],
 ): ResolvedMenuNode[] => {
   const middle = BUILT_IN_ROW_ACTION_IDS.map((id) => builtIns[id]).filter(
     (node): node is ResolvedActionNode => node !== null,
@@ -197,22 +202,23 @@ const resolveByPlacement = <TData,>(
   ];
 };
 
-const isCustomAction = <TData,>(
+const isCustomEntry = <TData,>(
   item: MenuItem<TData>,
-): item is RowAction<TData> & { kind?: "action" } => {
-  return item.kind === undefined || item.kind === "action";
+): item is MenuItem<TData> & RowActionEntry<TData> => {
+  return item.kind === undefined || item.kind === "action" || item.kind === "submenu";
 };
 
-const validateMenuActions = <TData,>(
-  items: MenuItem<TData>[],
-): void => {
+const collectMenuItemIds = <TData,>(item: MenuItem<TData>, row: TData) => {
+  if (!isCustomEntry(item)) return [item.id];
+  const ids = collectRowActionIds(item, row);
+  const reservedId = ids.find(isReservedId);
+  if (reservedId) throw new DuplicateRowActionError(reservedId);
+  return ids;
+};
+
+const validateMenuActions = <TData,>(items: MenuItem<TData>[], row: TData): void => {
   const seenIds = new Set<string>();
-  for (const item of items) {
-    if (seenIds.has(item.id)) throw new DuplicateRowActionError(item.id);
-    if (isCustomAction(item) && isReservedId(item.id))
-      throw new DuplicateRowActionError(item.id);
-    seenIds.add(item.id);
-  }
+  items.forEach((item) => assertUniqueRowActionIds(collectMenuItemIds(item, row), seenIds));
 };
 
 const itemToNode = <TData,>(
@@ -229,15 +235,14 @@ const itemToNode = <TData,>(
       className: item.className,
     };
   if (item.kind === "builtin") return builtIns[item.id];
-  if (item.hidden?.(row)) return null;
-  return toActionNode(row, item);
+  return toEntryNode(row, item);
 };
 
 export const resolveMenuNodes = <TData,>(input: BuiltInNodeInput<TData>): ResolvedMenuNode[] => {
   const { row, actions } = input;
   const builtIns = buildBuiltInRegistry(input);
   if (actions.menuActions?.length) {
-    validateMenuActions(actions.menuActions);
+    validateMenuActions(actions.menuActions, row);
     return actions.menuActions
       .map((item) => itemToNode(row, builtIns, item))
       .filter((node): node is ResolvedMenuNode => node !== null);
@@ -245,6 +250,6 @@ export const resolveMenuNodes = <TData,>(input: BuiltInNodeInput<TData>): Resolv
   return resolveByPlacement(
     row,
     builtIns,
-    validateCustomRowActions(actions.customActions),
+    validateCustomRowActions(actions.customActions, row),
   );
 };

@@ -8,10 +8,7 @@ interface AIChatButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   label?: string;
 }
 
-/**
- * Rendered in the host's own toolbar, outside any Gridory root, so it carries
- * `gdy-scope` itself.
- */
+/** Rendered in the host's own toolbar, outside any Gridory root, so it carries `gdy-scope` itself. */
 export const AIChatButton = ({
   label = "AI",
   className,

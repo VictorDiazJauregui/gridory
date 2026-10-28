@@ -10,4 +10,9 @@ export const KANBAN_BOARD_LABELS: KanbanBoardLabels = {
   untitledCard: "Card",
   cardFieldLabel: (header) => `${header}:`,
   formatCardDate: formatDateValue,
+  moveTo: "Mover a…",
+  cardMovedTo: (column) => `Card movida a ${column}`,
+  cardMoveReverted: (column) => `La card volvió a ${column}`,
+  collapseColumn: (column) => `Colapsar ${column}`,
+  expandColumn: (column) => `Expandir ${column}`,
 };
