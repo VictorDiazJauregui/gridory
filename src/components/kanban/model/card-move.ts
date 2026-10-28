@@ -17,6 +17,9 @@ interface CardMovePlan<TData> {
   toValue: string;
 }
 
+export const findCardIndex = <TData>(cards: TData[], getCardId: CardIdResolver<TData>, cardId: string) =>
+  cards.findIndex((card, index) => getCardId(card, index) === cardId);
+
 export const planCardMove = <TData>({
   cards,
   getCardId,
@@ -24,9 +27,7 @@ export const planCardMove = <TData>({
   cardId,
   toValue,
 }: CardMovePlan<TData>): KanbanMoveEvent<TData> | null => {
-  const sourceIndex = cards.findIndex(
-    (card, index) => getCardId(card, index) === cardId,
-  );
+  const sourceIndex = findCardIndex(cards, getCardId, cardId);
   if (sourceIndex < 0) return null;
   const card = cards[sourceIndex];
   const fromValue = getGroupValue(group, card);
