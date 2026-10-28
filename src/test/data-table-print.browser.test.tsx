@@ -67,3 +67,22 @@ test("without printMode the print view keeps the toolbar, the pagination and the
   const wrap = findRequiredElement(container, ".gdy-table-wrap");
   expect(wrap.scrollHeight).toBeGreaterThan(wrap.clientHeight);
 });
+
+test("printed, the group row and an open detail end where the printed columns end", async () => {
+  const container = renderTable({
+    printMode: "page",
+    groupableColumnIds: ["status"],
+    defaultGroupBy: "status",
+    renderExpandedRow: (row) => row.name,
+    defaultExpandedRowIds: [MOCK_COMPANY_ROWS[0].id],
+  });
+  await emulateMediaType("print");
+  const rowRight = findRequiredElement(container, "tr.gdy-table-row").getBoundingClientRect().right;
+  const lastCell = [...findRequiredElement(container, "tr.gdy-table-row").querySelectorAll("td")]
+    .filter((cell) => getComputedStyle(cell).display !== "none")
+    .at(-1) as Element;
+  const printedRight = Math.round(lastCell.getBoundingClientRect().right);
+  expect(Math.round(findRequiredElement(container, ".gdy-table-group-cell").getBoundingClientRect().right)).toBe(printedRight);
+  expect(Math.round(findRequiredElement(container, ".gdy-table-expanded-cell").getBoundingClientRect().right)).toBe(printedRight);
+  expect(Math.round(rowRight)).toBeGreaterThanOrEqual(printedRight);
+});

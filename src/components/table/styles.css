@@ -434,6 +434,67 @@
   padding: 1px 8px;
 }
 
+/* Expandable rows (`renderExpandedRow`): the button column is as narrow as the 28px button, so its cells
+   trade the 14px side padding for 6px; the header width lives here, as for _select. */
+.gdy-table-head-cell[data-column-id="_expand"] {
+  width: 40px;
+}
+
+.gdy-table-head-cell[data-column-id="_expand"],
+.gdy-table-cell[data-column-id="_expand"] {
+  padding-inline: 6px;
+}
+
+.gdy-table-expand-toggle:focus-visible {
+  outline: 2px solid var(--gdy-table-expand-focus-ring, var(--gdy-ring));
+  outline-offset: -2px;
+}
+
+.gdy-table-expand-chevron {
+  color: var(--gdy-muted-foreground);
+}
+
+.gdy-table-expand-toggle[aria-expanded="true"] > .gdy-table-expand-chevron {
+  transform: rotate(90deg);
+}
+
+.gdy-table-skeleton[data-column-id="_expand"] > .gdy-skeleton {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+}
+
+.gdy-table-expanded-cell {
+  padding: 0;
+  border-bottom: 1px solid var(--gdy-table-border, var(--gdy-border));
+  background: var(--gdy-table-expanded-bg, var(--gdy-background));
+}
+
+/* The table can be wider than its container: the detail takes the width on screen and sticks to the left edge,
+   so it is always seen whole while the rows scroll sideways. */
+.gdy-table-expanded-panel {
+  position: sticky;
+  left: 0;
+  display: grid;
+  grid-template-rows: 1fr;
+  width: var(--gdy-table-visible-width, 100%);
+}
+
+.gdy-table-expanded-panel[data-state="closed"] {
+  grid-template-rows: 0fr;
+}
+
+/* A 0fr track only shrinks a box with no minimum height and nothing overflowing; the padding lives one level
+   down, since padding would keep its height. */
+.gdy-table-expanded-content {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.gdy-table-expanded-body {
+  padding: var(--gdy-table-expanded-padding, 12px 14px);
+}
+
 .gdy-table-fill {
   display: flex;
   flex-direction: column;
@@ -490,6 +551,106 @@
   z-index: 2;
   border-top: none;
   box-shadow: inset 0 1px 0 var(--gdy-table-border, var(--gdy-border));
+}
+
+/* Pinned columns (`pin`): every rule hangs from the rows container's own rows through child combinators, so a
+   table nested in a detail never inherits them, and it lets go with data-pinning-suspended (pins wider than half
+   the container). The :where() keeps a pinned cell at 0-2-0, under the selected (0-3-0) and hover (0-4-0) rows.
+   Screen only: on paper a pinned column is an ordinary one. */
+@media screen {
+  :where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > * > tr) > [data-pinned] {
+    position: sticky;
+    z-index: var(--gdy-table-pinned-z, 1);
+  }
+
+  :where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > * > tr) > [data-pinned="left"] {
+    left: var(--gdy-table-pin-offset, 0px);
+  }
+
+  :where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > * > tr) > [data-pinned="right"] {
+    right: var(--gdy-table-pin-offset, 0px);
+  }
+
+  /* A sticky cell loses its collapsed border, repainted as an inset shadow (as the sticky header does), over an
+     opaque surface so the scrolled cells never show through. */
+  :where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > * > tr) > .gdy-table-cell[data-pinned] {
+    border-bottom: none;
+    background: var(--gdy-table-pinned-bg, var(--gdy-card));
+    box-shadow: inset 0 -1px 0 var(--gdy-table-border, var(--gdy-border));
+  }
+
+  /* Header and totals cells cover both scroll directions: the corner stacks over the sticky header and foot (2). */
+  :where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > * > tr) > .gdy-table-head-cell[data-pinned] {
+    z-index: var(--gdy-table-pinned-corner-z, 3);
+    border-bottom: none;
+    background: var(--gdy-table-head-bg, var(--gdy-muted));
+    box-shadow: inset 0 -1px 0 var(--gdy-table-border, var(--gdy-border));
+  }
+
+  :where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > * > tr) > .gdy-table-foot-cell[data-pinned] {
+    z-index: var(--gdy-table-pinned-corner-z, 3);
+    border-top: none;
+    box-shadow: inset 0 1px 0 var(--gdy-table-border, var(--gdy-border));
+  }
+
+  /* The filter panel opens inside its header cell: that cell rises over the pinned corner while it is open. */
+  :where(.gdy-table-wrap[data-has-pinned] > .gdy-table-grid > thead > tr) > .gdy-table-head-cell:has(.gdy-table-menu-holder) {
+    z-index: var(--gdy-table-open-menu-z, 4);
+  }
+
+  /* A focused row draws its ring on the tr, which the opaque pinned cells cover: they repaint their part. */
+  :where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > tbody > tr:focus-visible) > .gdy-table-cell[data-pinned] {
+    box-shadow:
+      inset 0 2px 0 var(--gdy-table-row-focus-ring, var(--gdy-ring)),
+      inset 0 -2px 0 var(--gdy-table-row-focus-ring, var(--gdy-ring));
+  }
+
+  :where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > tbody > tr:focus-visible) > .gdy-table-cell[data-pinned]:first-child {
+    box-shadow:
+      inset 2px 0 0 var(--gdy-table-row-focus-ring, var(--gdy-ring)),
+      inset 0 2px 0 var(--gdy-table-row-focus-ring, var(--gdy-ring)),
+      inset 0 -2px 0 var(--gdy-table-row-focus-ring, var(--gdy-ring));
+  }
+
+  :where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > tbody > tr:focus-visible) > .gdy-table-cell[data-pinned]:last-child {
+    box-shadow:
+      inset -2px 0 0 var(--gdy-table-row-focus-ring, var(--gdy-ring)),
+      inset 0 2px 0 var(--gdy-table-row-focus-ring, var(--gdy-ring)),
+      inset 0 -2px 0 var(--gdy-table-row-focus-ring, var(--gdy-ring));
+  }
+
+  /* The shadow past the last pinned cell of each side, shown only while content scrolls under it. */
+  :where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > * > tr) > [data-pinned-edge]::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 10px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  :where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > * > tr) > [data-pinned="left"][data-pinned-edge]::after {
+    left: 100%;
+    background: linear-gradient(to right, var(--gdy-table-pinned-shadow, color-mix(in oklab, var(--gdy-foreground) 14%, transparent)), transparent);
+  }
+
+  :where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > * > tr) > [data-pinned="right"][data-pinned-edge]::after {
+    right: 100%;
+    background: linear-gradient(to left, var(--gdy-table-pinned-shadow, color-mix(in oklab, var(--gdy-foreground) 14%, transparent)), transparent);
+  }
+
+  :where(.gdy-table-wrap[data-has-pinned][data-scrolled-start]:not([data-pinning-suspended]) > .gdy-table-grid > * > tr) > [data-pinned="left"][data-pinned-edge]::after,
+  :where(.gdy-table-wrap[data-has-pinned][data-scrolled-end]:not([data-pinning-suspended]) > .gdy-table-grid > * > tr) > [data-pinned="right"][data-pinned-edge]::after {
+    opacity: 1;
+  }
+
+  /* A group row spans every column, so it scrolls with the table: its label stays on screen at the left. */
+  :where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > tbody > tr > .gdy-table-group-cell) > .gdy-table-group-toggle {
+    position: sticky;
+    left: 0;
+    width: var(--gdy-table-visible-width, 100%);
+  }
 }
 
 /* printMode: every rule hangs from [data-print-mode], so a table without the prop prints as before. Toolbar,
@@ -557,5 +718,20 @@
 
   .gdy-table[data-print-mode] .gdy-table-head-help {
     display: none;
+  }
+
+  .gdy-table[data-print-mode] [data-column-id="_expand"] {
+    display: none;
+  }
+
+  /* An open detail prints whole and in place; it may be taller than a sheet, so it can break across sheets. */
+  .gdy-table[data-print-mode] .gdy-table-expanded-row {
+    break-inside: auto;
+  }
+
+  .gdy-table[data-print-mode] .gdy-table-expanded-panel {
+    position: static;
+    width: auto;
+    transition: none;
   }
 }

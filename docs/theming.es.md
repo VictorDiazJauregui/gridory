@@ -160,7 +160,7 @@ tengan que alcanzarlos.
 
 | Familia | Ejemplos (fallback) |
 |---|---|
-| `--gdy-table-*` | `--gdy-table-head-bg` (`--gdy-muted`), `--gdy-table-foot-bg` (`--gdy-table-head-bg`, luego `--gdy-muted`), `--gdy-table-border` (`--gdy-border`), `--gdy-table-row-hover-bg` (`--gdy-muted`), `--gdy-table-row-focus-ring` (`--gdy-ring`), `--gdy-table-row-selected-bg` (`--gdy-accent`), `--gdy-table-select-border` (`--gdy-muted-foreground`), `--gdy-table-select-bg` (`--gdy-background`), `--gdy-table-select-checked-bg` (`--gdy-primary`), `--gdy-table-select-check-fg` (`--gdy-primary-foreground`), `--gdy-table-select-focus-ring` (`--gdy-ring`), `--gdy-table-head-help-fg` (`--gdy-muted-foreground`), `--gdy-table-tooltip-bg` (`--gdy-foreground`), `--gdy-table-tooltip-fg` (`--gdy-background`), `--gdy-table-tooltip-z` (`60`) |
+| `--gdy-table-*` | `--gdy-table-head-bg` (`--gdy-muted`), `--gdy-table-foot-bg` (`--gdy-table-head-bg`, luego `--gdy-muted`), `--gdy-table-border` (`--gdy-border`), `--gdy-table-row-hover-bg` (`--gdy-muted`), `--gdy-table-row-focus-ring` (`--gdy-ring`), `--gdy-table-row-selected-bg` (`--gdy-accent`), `--gdy-table-select-border` (`--gdy-muted-foreground`), `--gdy-table-select-bg` (`--gdy-background`), `--gdy-table-select-checked-bg` (`--gdy-primary`), `--gdy-table-select-check-fg` (`--gdy-primary-foreground`), `--gdy-table-select-focus-ring` (`--gdy-ring`), `--gdy-table-head-help-fg` (`--gdy-muted-foreground`), `--gdy-table-tooltip-bg` (`--gdy-foreground`), `--gdy-table-tooltip-fg` (`--gdy-background`), `--gdy-table-tooltip-z` (`60`), `--gdy-table-expanded-bg` (`--gdy-background`), `--gdy-table-expanded-padding` (`12px 14px`), `--gdy-table-expand-focus-ring` (`--gdy-ring`), `--gdy-table-expand-duration` (`200ms`), `--gdy-table-pinned-bg` (`--gdy-card`), `--gdy-table-pinned-shadow` (14% de `--gdy-foreground`), `--gdy-table-pinned-z` (`1`), `--gdy-table-pinned-corner-z` (`3`), `--gdy-table-open-menu-z` (`4`) |
 | `--gdy-kanban-*` | `--gdy-kanban-column-bg` (`--gdy-muted`), `--gdy-kanban-card-bg` (`--gdy-card`), `--gdy-kanban-drop-outline` (`--gdy-muted-foreground`), `--gdy-kanban-drop-disabled-outline` (`--gdy-destructive`), `--gdy-kanban-column-collapsed-width` (`44px`) |
 | `--gdy-ai-*` | `--gdy-ai-accent` (`--gdy-primary`), `--gdy-ai-bg` (`--gdy-background`), `--gdy-ai-user-bubble-bg` (`--gdy-ai-accent` y después `--gdy-primary`) |
 | `--gdy-auth-*` | `--gdy-auth-bg` (`--gdy-card`), `--gdy-auth-submit-bg` (`--gdy-primary`), `--gdy-auth-input-focus-border` (`--gdy-ring`), `--gdy-auth-rule-met` (`--gdy-success`) |
@@ -607,6 +607,9 @@ Con `prefers-reduced-motion: reduce` no se ejecuta ninguna.
   `--gdy-segmented-duration`). Solo se animan los cambios posteriores al primer render.
   `animated={false}` lo apaga en un control (`data-animated="false"` en `gdy-segmented`); ver
   [segmented-control.es.md](segmented-control.es.md#animación).
+- El detalle de una fila de la tabla (`renderExpandedRow`) crece de cero a su alto y su chevron gira
+  (200 ms, fijados por `--gdy-table-expand-duration`); un detalle que se abre al montar también crece
+  (`@starting-style`).
 - El menú lateral solo cambia su ancho (200 ms, fijados por `--gdy-sidebar-duration`) y desvanece los
   rótulos al mismo ritmo; `animated={false}` en `SidebarLayout` lo apaga. Su cajón móvil entra
   deslizándose desde el borde inicial y el velo aparece con un fundido (`gdy-sidebar-drawer-in`,

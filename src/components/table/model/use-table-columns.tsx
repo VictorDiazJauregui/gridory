@@ -1,11 +1,19 @@
 import { useMemo } from "react";
-import type { ColumnDef } from "@tanstack/react-table";
+import type { CellContext, ColumnDef } from "@tanstack/react-table";
 import type { SelectTheme } from "../../shared/select-theme";
 import { PrintValue } from "../body/PrintValue";
 import { RowActionsMenu } from "../body/RowActionsMenu";
-import { ACTIONS_COLUMN_ID, ACTIONS_COLUMN_WIDTH, SELECT_COLUMN_ID, SELECT_COLUMN_WIDTH } from "../columns/internal-columns";
-import { RowSelectCell, type SelectCellSettings } from "../selection/RowSelectCell";
-import type { RowSelectionModel } from "../selection/use-row-selection";
+import {
+  ACTIONS_COLUMN_ID,
+  ACTIONS_COLUMN_WIDTH,
+  EXPAND_COLUMN_ID,
+  EXPAND_COLUMN_WIDTH,
+  SELECT_COLUMN_ID,
+  SELECT_COLUMN_WIDTH,
+} from "../columns/internal-columns";
+import { orderByPin } from "../columns/pinned-columns";
+import { ExpandToggleCell } from "../expansion/ExpandToggleCell";
+import { TableSelectCell } from "../selection/RowSelectCell";
 import type { TableSettings } from "../settings";
 import { resolveActionsAlign } from "./cell-attributes";
 import { TableCellContent } from "../body/TableCellContent";
@@ -38,12 +46,28 @@ const buildDataColumn = <TData,>(
   ),
 });
 
-const buildSelectColumn = <TData,>(settings: SelectCellSettings<TData>): ColumnDef<TData> => ({
+// Module-level renderers keep each cell's component type across renders: a new closure would remount the
+// checkbox or the button on every toggle and drop its keyboard focus. Their state comes from the table meta.
+const renderSelectCell = <TData,>({ row, table }: CellContext<TData, unknown>) => <TableSelectCell row={row} table={table} />;
+
+const buildSelectColumn = <TData,>(): ColumnDef<TData> => ({
   id: SELECT_COLUMN_ID,
   size: SELECT_COLUMN_WIDTH,
   header: "",
   meta: { alignment: { cells: "center", header: "center" } },
-  cell: ({ row }) => <RowSelectCell row={row} {...settings} />,
+  cell: renderSelectCell,
+});
+
+const renderExpandToggleCell = <TData,>({ row, table }: CellContext<TData, unknown>) => (
+  <ExpandToggleCell row={row} table={table} />
+);
+
+const buildExpandColumn = <TData,>(): ColumnDef<TData> => ({
+  id: EXPAND_COLUMN_ID,
+  size: EXPAND_COLUMN_WIDTH,
+  header: "",
+  meta: { alignment: { cells: "center", header: "center" } },
+  cell: renderExpandToggleCell,
 });
 
 const buildRowActionsColumn = <TData,>(
@@ -66,21 +90,28 @@ const buildDataColumns = <TData,>(
   cellSettings: CellSettings,
 ) => {
   const visibleColumns = activeGroupBy ? columns.filter((column) => column.id !== activeGroupBy) : columns;
-  return visibleColumns.map((column) => buildDataColumn(column, cellSettings));
+  return orderByPin(visibleColumns).map((column) => buildDataColumn(column, cellSettings));
 };
+
+/** The columns the table adds before the data ones. */
+export interface InternalColumnFlags {
+  hasSelection: boolean;
+  hasExpansion: boolean;
+}
 
 export const useTableColumns = <TData,>(
   settings: TableSettings<TData>,
   activeGroupBy: string | null,
-  selection: RowSelectionModel<TData> | null,
+  { hasSelection, hasExpansion }: InternalColumnFlags,
 ) => {
   const { columns, rowActions, selectTheme, labels } = settings;
   const showRowActions = settings.flags.rowActions;
   const hasPrintMode = Boolean(settings.printMode);
   return useMemo<ColumnDef<TData>[]>(() => {
     const tableColumns = buildDataColumns(columns, activeGroupBy, { selectTheme, labels, hasPrintMode });
-    if (selection) tableColumns.unshift(buildSelectColumn({ selection, labels, hasPrintMode }));
+    if (hasExpansion) tableColumns.unshift(buildExpandColumn());
+    if (hasSelection) tableColumns.unshift(buildSelectColumn());
     if (showRowActions && rowActions) tableColumns.push(buildRowActionsColumn(rowActions, labels));
     return tableColumns;
-  }, [columns, activeGroupBy, showRowActions, rowActions, selectTheme, labels, hasPrintMode, selection]);
+  }, [columns, activeGroupBy, showRowActions, rowActions, selectTheme, labels, hasPrintMode, hasSelection, hasExpansion]);
 };

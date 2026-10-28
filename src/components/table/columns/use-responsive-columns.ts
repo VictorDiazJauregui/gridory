@@ -19,8 +19,14 @@ interface WidthSources {
   measuredWidths: Map<string, number>;
 }
 
+// A pinned column never hides: it is the one the app wants in sight while the rest scrolls.
 const isHideable = <TData,>(definition: ColumnDefinition<TData> | undefined, visibility?: Record<string, boolean>) =>
-  Boolean(definition && (definition.hideable || definition.priority !== undefined) && visibility?.[definition.id] !== true);
+  Boolean(
+    definition &&
+      !definition.pin &&
+      (definition.hideable || definition.priority !== undefined) &&
+      visibility?.[definition.id] !== true,
+  );
 
 // Without `width`, the column needs its title; the last measure stands in while it is hidden.
 const resolveColumnWidth = <TData,>(column: Column<TData>, definition: ColumnDefinition<TData> | undefined, sources: WidthSources) => {

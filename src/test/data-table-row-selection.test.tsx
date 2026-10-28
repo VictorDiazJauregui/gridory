@@ -1,4 +1,5 @@
 import { act, fireEvent, render, screen, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { useState } from "react";
 import { afterEach, expect, test, vi } from "vitest";
 import { DataTable, MissingRowIdError, type DataTableProps } from "../components/table";
@@ -248,4 +249,23 @@ test("the page of the header checkbox includes the rows of collapsed groups", ()
   fireEvent.click(container.querySelector(".gdy-table-group-toggle") as Element);
   fireEvent.click(pageCheckbox());
   expect(onChange.mock.lastCall?.[0]).toHaveLength(6);
+});
+
+test("Space on a focused checkbox keeps the focus there, so a second Space clears it", async () => {
+  const user = userEvent.setup();
+  renderTable({ rowSelection: {} });
+  rowCheckbox("Empresa 1").focus();
+  await user.keyboard(" ");
+  expect(rowCheckbox("Empresa 1")).toHaveAttribute("aria-checked", "true");
+  expect(document.activeElement).toBe(rowCheckbox("Empresa 1"));
+  await user.keyboard(" ");
+  expect(rowCheckbox("Empresa 1")).toHaveAttribute("aria-checked", "false");
+});
+
+test("selecting a row keeps the other cells mounted", () => {
+  const container = renderTable({ rowSelection: {} });
+  const cellContent = () => container.querySelector('[data-row-id="r2"] td[data-column-id="name"] > *');
+  const before = cellContent();
+  fireEvent.click(rowCheckbox("Empresa 1"));
+  expect(cellContent()).toBe(before);
 });

@@ -1,7 +1,7 @@
 import { cn } from "../../../lib/cn";
 import { SkeletonBar } from "../../shared/loading/SkeletonBar";
 import type { ColumnFooterContext } from "../../shared/data-model";
-import { buildCellAttributes } from "../model/cell-attributes";
+import { buildCellAttributes, type ColumnLayout } from "../model/cell-attributes";
 import type { TableModelProps } from "../model/use-table-core";
 import { buildFooterContext, resolveFooterColumns, type FooterColumn } from "./footer-columns";
 
@@ -10,7 +10,7 @@ interface FootCellProps<TData> {
   context: ColumnFooterContext<TData>;
   loading: boolean;
   className?: string;
-  hiddenByPriority: readonly string[];
+  layout: ColumnLayout;
 }
 
 const renderFootContent = <TData,>({ column, context, loading }: FootCellProps<TData>) => {
@@ -21,7 +21,7 @@ const renderFootContent = <TData,>({ column, context, loading }: FootCellProps<T
 const TableFootCell = <TData,>(props: FootCellProps<TData>) => (
   <td
     className={cn("gdy-table-foot-cell", props.className)}
-    {...buildCellAttributes(props.column.id, props.column.alignment.cells, props.hiddenByPriority)}
+    {...buildCellAttributes(props.column.id, props.column.alignment.cells, props.layout)}
   >
     {renderFootContent(props)}
   </td>
@@ -39,7 +39,7 @@ const TableFootRow = <TData,>({ model, columns }: TableModelProps<TData> & { col
           context={context}
           loading={Boolean(loading)}
           className={classNames?.footCell}
-          hiddenByPriority={model.hiddenByPriority}
+          layout={model}
         />
       ))}
     </tr>

@@ -98,6 +98,16 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* Pinned (the "Columnas fijas" table), the same tint must stay opaque, or the cells scrolling under it would show
+   through; :where() keeps it at 0-2-0, so a selected or hovered row still paints over it. */
+.gdy-table-head-cell[data-column-id="amount"]:where([data-pinned]) {
+  background: color-mix(in oklch, var(--gdy-primary) 5%, var(--gdy-table-head-bg, var(--gdy-muted)));
+}
+
+.gdy-table-cell[data-column-id="amount"]:where([data-pinned]) {
+  background: color-mix(in oklch, var(--gdy-primary) 5%, var(--gdy-card));
+}
+
 /* Table demo: archived rows marked through getRowAttributes, dimmed from a demo token. */
 :root {
   --demo-archived-row-opacity: 0.55;

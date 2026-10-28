@@ -10,6 +10,7 @@ export const DEFAULT_FEATURES: Required<DataTableFeatures> = {
   rowActions: true,
   createButton: true,
   grouping: true,
+  toolbar: true,
 };
 
 export const GROUP_NONE_VALUE = "__gdy_group_none__";

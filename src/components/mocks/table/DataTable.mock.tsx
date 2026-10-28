@@ -1,5 +1,6 @@
 import { DataTable } from "../../table";
 import { isDemoBaseline } from "../../../demo/use-demo-baseline";
+import { PinnedColumnsTableMock } from "./PinnedColumnsTable.mock";
 import { ServerTableMock } from "./ServerTable.mock";
 import { CompanyDetailNotice } from "./CompanyDetailNotice";
 import { useCompanyDetail } from "./use-company-detail";
@@ -12,6 +13,7 @@ export const DataTableMock = () => {
     <>
       <CompanyDetailNotice detailId={detailId} onClose={closeCompany} />
       <DataTable {...props} />
+      {!isDemoBaseline() && <PinnedColumnsTableMock />}
       {!isDemoBaseline() && <ServerTableMock />}
     </>
   );

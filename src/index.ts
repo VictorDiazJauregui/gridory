@@ -1,4 +1,4 @@
-export { DataTable, MissingRowIdError } from "./table";
+export { DataTable, MissingRowIdError, PinnedColumnWidthError } from "./table";
 export type {
   ColumnFiltersState,
   ColumnSortingState,
@@ -47,6 +47,7 @@ export type {
   ColumnDefinition,
   ColumnFooterContext,
   ColumnOverflow,
+  ColumnPin,
   DataInput,
   DateFilterOp,
   DateFilterState,

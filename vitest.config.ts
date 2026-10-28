@@ -16,6 +16,11 @@ const emulateMedia: BrowserCommand<[media: "screen" | "print"]> = async ({ page 
   await page.emulateMedia({ media });
 };
 
+// Nor `prefers-reduced-motion`: the animation tests switch it the same way.
+const emulateReducedMotion: BrowserCommand<[isReduced: boolean]> = async ({ page }, isReduced) => {
+  await page.emulateMedia({ reducedMotion: isReduced ? "reduce" : "no-preference" });
+};
+
 // Nor a touch screen: CDP turns on `(pointer: coarse)`, and its session stays open since closing it undoes that.
 // Turning it off leaves `(hover: none)` until the page reloads, so only a file that needs touch calls it.
 const touchSessions = new WeakMap<object, CDPSession>();
@@ -74,7 +79,7 @@ export default mergeConfig(
               headless: true,
               viewport: { width: 1920, height: 1080 },
               instances: [{ browser: "chromium" }],
-              commands: { emulateMedia, emulateTouch },
+              commands: { emulateMedia, emulateReducedMotion, emulateTouch },
             },
           },
         },

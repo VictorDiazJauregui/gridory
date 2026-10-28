@@ -108,6 +108,7 @@ Each entry of `columns` is a `ColumnDefinition<TData>`.
 | `headerTooltip` | `string` | Help text behind a "?" next to the title. See [Header help and custom content](#header-help-and-custom-content). Table only. |
 | `headerTooltipPlacement` | `"before" \| "after" \| "edge"` | Where the "?" goes. Default `"after"` (`"before"` with a right-aligned header). Table only. |
 | `headerContent` | `ReactNode` | Replaces the visible title; `header` stays the accessible name and the menus' text. Table only. |
+| `pin` | `"left" \| "right"` | Keeps the column at that edge while the rows scroll sideways. Needs `width`. See [Pinned columns](#pinned-columns). Table only. |
 
 Filter options are computed from every row in `data` (before search and filters), not only from the
 visible page. Columns with `type: "date"` never get a value list: their menu offers the operators
@@ -126,6 +127,7 @@ greater than, less than and between, with a calendar.
 | `rowActions` | `true` | Hides the row actions column even when `rowActions` is set. |
 | `createButton` | `true` | Hides the create button even when `onCreate` is set. |
 | `grouping` | `true` | Hides the group selector and renders the rows ungrouped. |
+| `toolbar` | `true` | `false` renders no toolbar at all (search box, slots and buttons included), for a table nested in a row detail. |
 
 ### Search
 
@@ -460,6 +462,8 @@ defaults to `align`.
 The row actions column has no definition of its own, so `rowActions` configures it:
 
 - `columnLabel`: header text (default none, an empty header).
+- `pinned`: keeps the actions column at the right edge while the rows scroll sideways. See
+  [Pinned columns](#pinned-columns).
 - `align`: alignment of that header and of the ⋯ button (default `"right"`).
 - `triggerLabel`: accessible name and tooltip of the ⋯ button (default `"Opciones"`). The kanban
   card menu takes it too.
@@ -719,6 +723,80 @@ Before, a checkbox column was a `cell` plus your own state, and the click on the
 + <DataTable columns={columns} data={invoices} getRowId={(row) => row.id} rowSelection={{ onChange: setSelectedIds }} />
 ```
 
+### Expandable rows
+
+`renderExpandedRow` adds a column with an expand button and, under each open row, a full-width detail with
+whatever it returns: contacts, a form, a chart or another `DataTable`. The table keeps which rows are open; the
+content, and loading it, is up to your app.
+
+```tsx
+<DataTable
+  columns={columns}
+  data={companies}
+  getRowId={(row) => row.id}
+  renderExpandedRow={(company) => (
+    <DataTable
+      columns={contactColumns}
+      data={company.contacts}
+      getRowId={(contact) => contact.id}
+      features={{ toolbar: false, filtering: false, pagination: false }}
+      tableMinHeightClassName=""
+    />
+  )}
+  canExpandRow={(company) => company.contacts.length > 0}
+/>;
+```
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `renderExpandedRow` | `(row: TData) => ReactNode` | — | Content of a row's detail. Without it nothing of this is rendered. |
+| `expandedRowIds` | `string[]` | — | Controlled open rows; `undefined` leaves them to the table. |
+| `defaultExpandedRowIds` | `string[]` | `[]` | Rows open on mount when they are not controlled. |
+| `onExpandedChange` | `(expandedRowIds: string[]) => void` | — | Every open or close made by the user, controlled or not. |
+| `canExpandRow` | `(row: TData) => boolean` | every row | `false` leaves the row without button and without detail. |
+
+- **`getRowId` is required.** Open rows are kept by id; without `getRowId` rows are keyed by index, which
+  changes with every sort or page, so the table throws `MissingRowIdError`. Ids of rows that leave `data`
+  are kept (an id without a row renders nothing); drop them in your app if you control the list.
+- **The button column** (`_expand`, 40px) goes after the checkbox column and before the data columns.
+  The button is `button.gdy-table-expand-toggle` with `aria-expanded` and, while open, `aria-controls` with
+  the id of the detail. Its accessible name is `labels.expandRow` (`"Mostrar detalle"`). A click on it, or
+  Enter and Space, never fires `onRowClick` or the row link; the rest of the row still does.
+- **The detail is not a row.** It is a sibling `tr.gdy-table-expanded-row` with one cell spanning the
+  columns on screen. Paging, the pagination summary, the totals row, the selection and
+  `onVisibleRowsChange` ignore it, and clicks and keys inside it never reach the row above. The detail is
+  mounted when it opens, so a closed row costs nothing.
+- **Pages and groups.** Open rows stay open across pages, sorting and filters. A collapsed group hides its
+  rows with their details, and they come back open when it expands.
+- **Sideways scroll.** When the table is wider than its container, the detail takes the visible width and
+  stays in place while the rows scroll, so it is always seen whole.
+- **Markup.** The open row carries `data-expanded`; `getRowAttributes` cannot overwrite it while
+  `renderExpandedRow` is set. While loading, the skeleton keeps the button column and no detail shows.
+- **Motion.** The detail grows from zero to its height and the chevron turns (200 ms, set by
+  `--gdy-table-expand-duration`); with `prefers-reduced-motion: reduce` it opens and closes at once. See
+  [theming.md](theming.md#motion).
+- **Printing** (`printMode`): open details print whole under their row, and the button column is left out,
+  like the actions column.
+- **A nested `DataTable`** works as is; `features={{ toolbar: false }}` drops its toolbar, which would
+  otherwise stay as an empty bar.
+
+Before, a detail was a `cell` with its own state, and it could only live inside one cell of the row:
+
+```diff
+- const [openId, setOpenId] = useState<string | null>(null);
+- const nameColumn = {
+-   ...columns[0],
+-   cell: (row) => (
+-     <>
+-       <button onClick={() => setOpenId(openId === row.id ? null : row.id)}>{row.name}</button>
+-       {openId === row.id && <Contacts company={row} />}
+-     </>
+-   ),
+- };
+- <DataTable columns={[nameColumn, ...columns.slice(1)]} data={companies} />
++ <DataTable columns={columns} data={companies} getRowId={(row) => row.id} renderExpandedRow={(row) => <Contacts company={row} />} />
+```
+
 ### Column visibility
 
 Two layers decide which columns are on screen:
@@ -775,6 +853,71 @@ Before, each app measured the container itself and rebuilt `columns`:
 - const shown = width < 600 ? columns.filter((column) => column.id !== "notes") : columns;
 - <div ref={ref}><DataTable columns={shown} data={invoices} /></div>
 + <DataTable columns={columns} data={invoices} responsiveColumns />
+```
+
+### Pinned columns
+
+`pin: "left"` or `pin: "right"` keeps a column at that edge while the rows scroll sideways, so the name of the
+row and its actions stay in sight on a wide table.
+
+```tsx
+const columns: ColumnDefinition<Invoice>[] = [
+  { id: "customer", header: "Customer", accessor: (row) => row.customer, width: 220, pin: "left" },
+  { id: "notes", header: "Notes", accessor: (row) => row.notes, width: 400 },
+  { id: "total", header: "Total", accessor: (row) => row.total, width: 140, pin: "right" },
+];
+
+<DataTable columns={columns} data={invoices} getRowId={(row) => row.id} rowActions={{ ...rowActions, columnLabel: "Actions" }} />;
+```
+
+- **`width` is required.** A pinned column sticks at the sum of the widths of the pinned columns before it,
+  so without `width` the table throws `PinnedColumnWidthError`. The offsets use the declared widths: when
+  the table is narrower than its container there is no sideways scroll, and nothing moves.
+- **Order.** Pinned columns move to their edge, each side in declaration order: in the example Customer is
+  first and Total last, whatever their place in `columns`. The rest keep their order.
+- **The table's own columns.** With any left pin, the checkbox (`rowSelection`) and expand
+  (`renderExpandedRow`) columns stick first, or the pinned column would cover them. With any right pin, the
+  actions column sticks last; `rowActions.pinned: true` pins it on its own. Pinned, the actions column
+  takes 56px, or 96px with `rowActions.columnLabel`; unpinned, it keeps no width, as before.
+- **Small screens.** A pinned column never hides by priority (`responsiveColumns`). When the pinned columns
+  take more than half of the container (a phone, a narrow window), they let go and scroll like the rest
+  until there is room: the container takes `data-pinning-suspended`.
+- **Background.** A pinned cell paints its own opaque surface, `--gdy-table-pinned-bg` (falling back to
+  `--gdy-card`), so the cells scrolling under it never show through. A background or an `opacity` set on
+  the row (`tr`) does not reach it: the cell covers the first and is not part of the second. Give the row a
+  token instead, or style the cells:
+
+  ```diff
+  - .invoice-row-overdue { background: #fef2f2; }
+  + .invoice-row-overdue { --gdy-table-pinned-bg: #fef2f2; }
+  + .invoice-row-overdue > .gdy-table-cell { background: #fef2f2; }
+  ```
+
+  Selected and hovered rows still paint over pinned cells.
+- **Edges and stacking.** The last pinned cell of each side carries `data-pinned-edge` and casts a shadow
+  (`--gdy-table-pinned-shadow`) while content scrolls under it: the container takes `data-scrolled-start`
+  when there is content under the left pins and `data-scrolled-end` when there is content under the right
+  ones. With the sticky header, the pinned header and totals cells are the corners and cover both
+  directions. Pinned cells stack at `--gdy-table-pinned-z` (`1`), the corners at
+  `--gdy-table-pinned-corner-z` (`3`) and a header with its filter open at `--gdy-table-open-menu-z`
+  (`4`); menus, the "?" tooltip and the selects open in a portal above all of them.
+- **Group, empty, loading and detail rows** span every column, so they scroll with the table; with pinned
+  columns the group label stays at the left edge, and a detail always takes the visible width
+  ([Expandable rows](#expandable-rows)).
+- **Markup.** Every cell of a pinned column (header, rows, totals and loading placeholders) carries
+  `data-pinned="left"` or `"right"` and its offset as `--gdy-table-pin-offset`; the rows container carries
+  `data-has-pinned`. Without `pin` or `rowActions.pinned`, none of this is rendered.
+- **Printing** turns pinned columns into ordinary ones: no sticky, no own surface, no shadow.
+- **Limits.** `left` and `right` are physical edges (no right-to-left layout), and only the header and the
+  totals row stick vertically. The scroll state is written straight on the container, one write per frame,
+  without a React render.
+
+Before, a sticky column took a class per cell, hand-written offsets and its own stacking:
+
+```diff
+- const stickyCell = { position: "sticky", left: 0, zIndex: 1, background: "white" };
+- { id: "customer", cell: (row) => <div style={stickyCell}>{row.customer}</div> }
++ { id: "customer", width: 220, pin: "left" }
 ```
 
 ### Header help and custom content
@@ -965,6 +1108,7 @@ Table keys (`DataTableLabels`):
 | `printNotSelected` | `"No"` | Printed for a row that is not selected (`printMode`) | — |
 | `printSelectionHeader` | `"Seleccionada"` | Printed in the header of the checkbox column (`printMode`) | — |
 | `columnHelp(header)` | `"Ayuda sobre Monto"` | Accessible name of the header help icon (`headerTooltip`) | — |
+| `expandRow` | `"Mostrar detalle"` | Accessible name of a row's expand button (`renderExpandedRow`) | — |
 
 ## Events
 
@@ -1071,6 +1215,9 @@ selector.
 | `gdy-table-head-help` | Help icon of a header with `headerTooltip`; its tooltip is `div.gdy-table-head-tooltip`, in a portal. `gdy-table-head-inner` takes `data-help-placement`. | `data-state` (`closed`, `delayed-open`, `instant-open`). |
 | `gdy-table-cell` | Data cell (`td`); `gdy-table-cell-content` wraps its content. | `data-column-id` with the `id` of its column; `data-align` with `align`. `gdy-table-cell-content` takes `data-overflow` with `overflow`. |
 | `gdy-table-actions-cell` | Box of the ⋯ button in the actions column; `gdy-table-actions-head-label` is the text of its header (`rowActions.columnLabel`). | `data-align` when `rowActions.align` or `columnLabel` is set. |
+| `gdy-table-expand-toggle` | Expand button of a row (`renderExpandedRow`), with its chevron `gdy-table-expand-chevron`. | `aria-expanded`; `aria-controls` while open. |
+| `gdy-table-expanded-row` | Detail row under an open row; its single cell is `gdy-table-expanded-cell`, holding `gdy-table-expanded-panel` (the animated box), `gdy-table-expanded-content` and `gdy-table-expanded-body` (the padding). | `data-state` (`open`, `closed`) on the panel; `data-expanded` on the open `gdy-table-row`. |
+| `gdy-table-wrap` | Rows scroll container. | With pinned columns, `data-has-pinned`, plus `data-scrolled-start`, `data-scrolled-end` and `data-pinning-suspended` while they apply. Every cell of a pinned column takes `data-pinned` (`left`, `right`), `--gdy-table-pin-offset` and, on the last one of its side, `data-pinned-edge`. |
 | `gdy-table-group-row` | Group row; `gdy-table-group-cell` is its single cell. | — |
 | `gdy-table-group-toggle` | Collapse button of a group, with `gdy-table-group-label` and `gdy-table-group-count`. | `aria-expanded`. |
 | `gdy-table-empty-row` | Row shown when no row matches; its cell is `gdy-table-cell gdy-empty`. | — |
@@ -1098,6 +1245,15 @@ scope is enough:
 | `--gdy-table-tooltip-fg` | `--gdy-background` | Header tooltip text. |
 | `--gdy-table-tooltip-z` | `60` | Header tooltip stacking, above the sticky header and the menus. |
 | `--gdy-table-group-bg` | `--gdy-accent` | Group row background. |
+| `--gdy-table-expanded-bg` | `--gdy-background` | Background of a row detail. |
+| `--gdy-table-expanded-padding` | `12px 14px` | Padding around a row detail. |
+| `--gdy-table-expand-focus-ring` | `--gdy-ring` | Keyboard focus ring of the expand button. |
+| `--gdy-table-expand-duration` | `200ms` | Opening and closing of a detail, and the turn of its chevron. |
+| `--gdy-table-pinned-bg` | `--gdy-card` | Surface of a pinned body cell. |
+| `--gdy-table-pinned-shadow` | 14% of `--gdy-foreground` | Shadow past the last pinned cell of a side. |
+| `--gdy-table-pinned-z` | `1` | Stacking of pinned cells. |
+| `--gdy-table-pinned-corner-z` | `3` | Stacking of pinned header and totals cells, over the sticky header (2). |
+| `--gdy-table-open-menu-z` | `4` | Stacking of a header cell while its filter panel is open, over the corners. |
 
 ```css
 :root {
@@ -1196,6 +1352,11 @@ Own props of `DataTableProps<TData>`, in source order.
 | `rowSelection` | `RowSelectionConfig<TData>` | — | Checkbox column and selected ids. Requires `getRowId`. See [Row selection](#row-selection). |
 | `columnVisibility` | `Record<string, boolean>` | — | Columns the app removes (`false`) or pins (`true`). See [Column visibility](#column-visibility). |
 | `onColumnVisibilityChange` | `(visibility: Record<string, boolean>, details: ColumnVisibilityDetails) => void` | — | Columns on screen, on mount and on each change. |
+| `renderExpandedRow` | `(row: TData) => ReactNode` | — | Expand button and full-width detail. Requires `getRowId`. See [Expandable rows](#expandable-rows). |
+| `expandedRowIds` | `string[]` | — | Controlled open rows. |
+| `defaultExpandedRowIds` | `string[]` | `[]` | Rows open on mount. |
+| `onExpandedChange` | `(expandedRowIds: string[]) => void` | — | Open or close made by the user. |
+| `canExpandRow` | `(row: TData) => boolean` | — | `false` leaves the row without button. |
 | `responsiveColumns` | `boolean` | `false` | Hides `hideable` and `priority` columns until the rest fits. |
 | `onRowClick` | `(row: TData, event: RowClickEvent) => void` | — | Row click handler; marks rows with `data-clickable`. |
 | `getRowHref` | `(row: TData) => string \| undefined` | — | Turns the row into a link (`data-href`). |
@@ -1251,7 +1412,7 @@ All of them are exported from `gridory/table` and `gridory`.
 - `DataTableLabels`: every text of the table, the shape of `labels` ([Texts and language](#texts-and-language)).
   It extends `DataViewLabels`, the texts the table shares with the kanban.
 - `DataTableFeatures`: the optional boolean flags of `features` (`search`, `sorting`, `filtering`,
-  `pagination`, `rowActions`, `createButton`, `grouping`).
+  `pagination`, `rowActions`, `createButton`, `grouping`, `toolbar`).
 - `GroupHeader`: `{ value: string; label: string; count: number }`, one group row.
 - `RowGroupingResult<TData>`: `{ flatRows: TData[]; headers: Map<number, GroupHeader> }`, the grouped
   rows with each header keyed by the index of its first row.
@@ -1272,4 +1433,7 @@ All of them are exported from `gridory/table` and `gridory`.
 - `SelectAllScope`: `"page" | "filtered"`, what the header checkbox marks.
 - `ColumnVisibilityDetails`: `{ hiddenByPriority: string[] }`, the second argument of `onColumnVisibilityChange`.
 - `HeaderTooltipPlacement`: `"before" | "after" | "edge"`, the value of `headerTooltipPlacement`.
-- `MissingRowIdError` (a class, also exported): thrown when `rowSelection` has no `getRowId`.
+- `ColumnPin`: `"left" | "right"`, the value of a column `pin`.
+- `PinnedColumnWidthError` (a class, also exported): thrown when a column has `pin` and no `width`.
+- `MissingRowIdError` (a class, also exported): thrown when `rowSelection` or `renderExpandedRow` has no
+  `getRowId`; its message names the prop.

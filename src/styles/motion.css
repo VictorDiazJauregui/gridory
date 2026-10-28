@@ -75,6 +75,21 @@
     animation: gdy-fade-out var(--gdy-sidebar-duration, 200ms) ease-in;
   }
 
+  /* Expandable rows: the detail grows from its 0fr track (from 0fr when it mounts open) and the chevron turns. */
+  .gdy-table-expanded-panel {
+    transition: grid-template-rows var(--gdy-table-expand-duration, 200ms) ease;
+  }
+
+  @starting-style {
+    .gdy-table-expanded-panel[data-state="open"] {
+      grid-template-rows: 0fr;
+    }
+  }
+
+  .gdy-table-expand-chevron {
+    transition: transform var(--gdy-table-expand-duration, 200ms) ease;
+  }
+
   /* Loading placeholders: a soft shine sweeps the bar; with reduced motion the bar stays still. */
   .gdy-skeleton {
     background-image: linear-gradient(

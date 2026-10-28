@@ -15,9 +15,14 @@ import {
   type RowIdentity,
 } from "./row-selection";
 
+const MISSING_ROW_ID_MESSAGES = {
+  rowSelection: "rowSelection needs getRowId: the selection keeps row ids, and index keys change with every sort or page.",
+  renderExpandedRow: "renderExpandedRow needs getRowId: open rows are kept by id, and index keys change with every sort or page.",
+};
+
 export class MissingRowIdError extends Error {
-  constructor() {
-    super("rowSelection needs getRowId: the selection keeps row ids, and index keys change with every sort or page.");
+  constructor(feature: keyof typeof MISSING_ROW_ID_MESSAGES = "rowSelection") {
+    super(MISSING_ROW_ID_MESSAGES[feature]);
     this.name = "MissingRowIdError";
   }
 }

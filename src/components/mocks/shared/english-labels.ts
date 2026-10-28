@@ -64,6 +64,7 @@ export const ENGLISH_TABLE_LABELS: DataTableLabels = {
   printNotSelected: "No",
   printSelectionHeader: "Selected",
   columnHelp: (header) => `About ${header}`,
+  expandRow: "Show details",
 };
 
 const formatUsDate = (value: string) => {
