@@ -7,7 +7,6 @@ interface FilterMenuHolderProps {
   children: ReactNode;
 }
 
-/** The anchored box of a column or field filter panel; placed inside the screen when it opens. */
 export const FilterMenuHolder = ({ className, holderRef, children }: FilterMenuHolderProps) => {
   useLayoutEffect(() => {
     if (holderRef.current) fitPanelInView(holderRef.current);

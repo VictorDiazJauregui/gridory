@@ -3,9 +3,8 @@ import { dirname, join, relative, resolve } from "node:path";
 import ts from "typescript";
 import { expect, test } from "vitest";
 
-// Every visible text of the table and the kanban goes through `labels`. This walks every file the
-// two components import and fails on a text written in the code: a JSX text, a text attribute or
-// a `??` fallback. Only the label defaults may hold the Spanish texts.
+// Every visible text of the table and the kanban goes through `labels`: this walks the files they import and
+// fails on a JSX text, text attribute or `??` fallback in the code. Only the label defaults hold Spanish texts.
 const COMPONENTS = resolve(__dirname, "../components");
 const ENTRY_FILES = ["table/index.tsx", "kanban/index.tsx"].map((file) => join(COMPONENTS, file));
 const LABEL_FILES = new Set(["shared/labels/data-view-labels.ts", "table/labels.ts", "kanban/labels.ts"]);

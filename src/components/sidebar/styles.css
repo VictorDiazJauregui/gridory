@@ -1,15 +1,5 @@
-/*
- * Sidebar. Component tokens (`--gdy-sidebar-*`) are read with a fallback to the
- * base tokens and never declared here; the width transition and the drawer's
- * slide live in src/styles/motion.css with the rest of the library's motion.
- *
- * States are attributes: data-state (collapsed or expanded), data-pinned,
- * data-hover-expand and data-mobile on the root, aria-current on the items.
- *
- * Nothing moves when the width changes: the icon column sits at the same x in
- * both states (the item's start padding centres it in the rail), every row keeps
- * its height, and labels only fade, clipped by the panel.
- */
+/* Tokens are read with a fallback, never declared here; the motion lives in src/styles/motion.css.
+   Nothing moves on a width change: icons keep their x, rows their height, and labels only fade, clipped. */
 
 /* The layout only arranges the sidebar and the page; it is not a gdy-scope, so
    the library reset never reaches the app's own content. */

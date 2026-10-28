@@ -1,19 +1,9 @@
-/*
- * Country select. Component tokens (`--gdy-country-select-*`) are read with a
- * fallback to the base tokens and never declared here. States are attributes:
- * aria-expanded and aria-invalid on the combobox, data-placeholder on an empty
- * value, data-multiple on the box in multiple mode and hidden on the chips
- * that do not fit.
- */
+/* Tokens (`--gdy-country-select-*`) are read with a fallback to the base tokens, never declared here. */
 
-/* Same height, border, radius and background as the auth inputs, so both live
-   in one form. The width token is written inline by the width prop; the box
-   never overflows a narrower container and truncates instead. isolation keeps
-   the chips' z-index inside the box, so a sticky header of the app still
-   covers them. */
-/* One column that prefers the width token but may shrink to 0: flex and grid
-   ancestors size the field to 240px when there is room, and never get pushed
-   wider than their container by it, as a fixed width would do on a phone. */
+/* The box matches the auth inputs so both share one form; the width prop writes the width token inline.
+   isolation keeps the chips' z-index inside the box, so a sticky header of the app still covers them. */
+/* One column that prefers the width token but may shrink to 0: flex and grid ancestors get 240px when there
+   is room and are never pushed wider than their container, as a fixed width would do on a phone. */
 .gdy-country-select-frame {
   display: grid;
   grid-template-columns: minmax(0, var(--gdy-country-select-width, 240px));
@@ -54,11 +44,8 @@
   outline: none;
 }
 
-/* Stretched over the whole box: a click anywhere but the clear button opens
-   the list, and the focus ring and the error border cover the full field.
-   It sits on the box border, so the ring is drawn inside and the box never
-   grows; the transparent outline shows only in forced colors mode, which
-   drops box-shadow. */
+/* Stretched over the box: any click but the clear button opens the list, and the ring and error border cover
+   the field. On the box border the ring stays inside; the outline shows only in forced colors mode. */
 .gdy-country-select-trigger::before {
   content: "";
   position: absolute;
@@ -137,9 +124,8 @@
   transform: rotate(180deg);
 }
 
-/* In multiple mode the combobox covers the whole box behind the chips, which
-   take the row in its place: a click on an empty spot or on a chip opens the
-   list, and only the chips' remove buttons take their own clicks. */
+/* In multiple mode the combobox covers the box behind the chips: a click on an empty spot or a chip opens
+   the list, and only the chips' remove buttons take their own clicks. */
 .gdy-country-select[data-multiple] > .gdy-country-select-trigger {
   position: absolute;
   inset: 0;

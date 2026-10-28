@@ -34,7 +34,6 @@ export const fieldAriaAttributes = (
 export const textValueOf = (field: ResolvedAuthField, shell: AuthShellView): string =>
   String(shell.form.values[field.name] ?? "");
 
-/** Props shared by every typed control: input, textarea and password. */
 export const textControlProps = (field: ResolvedAuthField, shell: AuthShellView) => ({
   ...fieldAriaAttributes(field, shell),
   id: shell.form.idFor(field.name),

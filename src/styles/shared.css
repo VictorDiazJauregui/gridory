@@ -1,13 +1,11 @@
-/* Card container of every module (wraps toolbar + content) */
 .gdy-card {
   border: 1px solid var(--gdy-border);
   border-radius: 10px;
   background: var(--gdy-card);
 }
 
-/* Toolbar. One row while everything fits; on a narrow screen the groups and their controls wrap to
-   more rows instead of making the page wider than the screen (a wider page also breaks the scroll lock
-   of the menus on phones). */
+/* On a narrow screen the toolbar wraps to more rows instead of widening the page, which would also break
+   the scroll lock of the menus on phones. */
 .gdy-toolbar {
   min-height: 40px;
   padding: 6px 12px;
@@ -46,7 +44,6 @@
   display: none;
 }
 
-/* View switch (table / kanban) */
 .gdy-view-switch {
   display: inline-flex;
   align-items: center;
@@ -78,7 +75,6 @@
   box-shadow: var(--gdy-shadow-sm);
 }
 
-/* Search box and text inputs */
 .gdy-search {
   position: relative;
 }
@@ -101,9 +97,8 @@
   font-size: 12px;
 }
 
-/* Focus: one 2px line drawn over the 1px border (negative offset), so the
-   border and the outline never read as a double border. Shared by every text
-   input of the library (search, checklist search, date inputs). */
+/* Focus: one 2px line over the 1px border (negative offset), so they never read as a double border.
+   Shared by every text input of the library (search, checklist search, date inputs). */
 .gdy-input:focus,
 .gdy-date-input:focus {
   outline: 2px solid var(--gdy-ring);
@@ -122,7 +117,6 @@
   padding-right: 28px;
 }
 
-/* Buttons */
 .gdy-btn {
   height: 32px;
   border-radius: 8px;
@@ -177,7 +171,6 @@
   height: 28px;
 }
 
-/* Square icon-only button (row menu, card menu, pagination arrows) */
 .gdy-icon-btn {
   width: 28px;
   height: 28px;
@@ -200,9 +193,8 @@
   cursor: not-allowed;
 }
 
-/* Filter panel (values and dates). Text defaults are explicit because the
-   table mounts the panel inside a <th> (browser bold, centered) and the
-   preflight makes buttons and inputs inherit font-weight. */
+/* Filter panel: explicit text defaults, because the table mounts it inside a <th> (bold, centered)
+   and the preflight makes buttons and inputs inherit font-weight. */
 .gdy-panel {
   width: fit-content;
   max-width: 280px;
@@ -291,7 +283,6 @@
   text-decoration: none;
 }
 
-/* Value checklist inside the filter panel */
 .gdy-search-sm {
   position: relative;
 }
@@ -363,7 +354,6 @@
   margin: 6px 0;
 }
 
-/* Empty state of a module (no rows / no cards) */
 .gdy-empty {
   text-align: center;
   padding: 34px 14px;
@@ -381,7 +371,6 @@
   background-color: var(--gdy-skeleton-bg, color-mix(in oklab, var(--gdy-foreground) 10%, transparent));
 }
 
-/* Date inputs and pickers */
 .gdy-date-range-inputs {
   display: grid;
   gap: 8px;
@@ -433,10 +422,8 @@
   color: var(--gdy-foreground);
 }
 
-/* Calendar popover: sits above the filter panels (table holder z 50, kanban
-   holder z 200), clips the (rectangular) calendar to the rounded corners and
-   drops the popover's default width and padding. Two classes (0-2-0) so it
-   beats .gdy-popover-content by specificity, never by stylesheet order. */
+/* Calendar popover: above the filter panels (table holder z 50, kanban holder z 200). Two classes (0-2-0)
+   beat the width and padding of .gdy-popover-content by specificity, never by stylesheet order. */
 .gdy-popover-content.gdy-calendar-popover {
   z-index: 220;
   overflow: hidden;

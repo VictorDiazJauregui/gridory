@@ -22,10 +22,7 @@ const readVisibleBounds = (element: HTMLElement): HorizontalBounds => {
   return { left: Math.max(screen.left, box.left), right: Math.min(screen.right, box.right) };
 };
 
-/**
- * Keeps a filter panel, opened under its button, inside the screen: when it does not fit to the right
- * it opens to the left (`data-align="end"`), and when not even then it slides right just enough.
- */
+/** No room on the right: opens to the left (`data-align="end"`); no room there either: slides right just enough. */
 export const fitPanelInView = (panel: HTMLElement) => {
   const anchor = panel.parentElement?.getBoundingClientRect();
   if (!anchor) return;

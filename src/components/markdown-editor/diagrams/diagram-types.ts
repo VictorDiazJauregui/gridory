@@ -4,7 +4,10 @@ export interface MermaidRenderer {
   render: (id: string, text: string) => Promise<{ svg: string }>;
 }
 
-/** Draws the `mermaid` code blocks of the preview. `mermaidDiagrams` from `gridory/markdown-editor/mermaid` is the ready-made one. */
+/**
+ * Draws the `mermaid` code blocks of the preview.
+ * `mermaidDiagrams` from `gridory/markdown-editor/mermaid` is the ready-made one.
+ */
 export interface MarkdownDiagramRenderer {
   /** Loads Mermaid; called once, when the first diagram shows up. */
   load: () => Promise<{ default: MermaidRenderer }>;

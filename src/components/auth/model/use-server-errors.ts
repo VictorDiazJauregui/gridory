@@ -8,10 +8,7 @@ interface EditedFields {
 
 const NO_EDITED_FIELDS = new Set<string>();
 
-/**
- * A server error (`fieldErrors`) hides once its field is edited, and comes
- * back as soon as the app passes a new `fieldErrors` object.
- */
+/** A `fieldErrors` entry hides once its field is edited, and returns with a new `fieldErrors` object. */
 export const useServerErrors = (fieldErrors: AuthFieldErrors | undefined) => {
   const [edited, setEdited] = useState<EditedFields>({ names: NO_EDITED_FIELDS });
   const editedNames = edited.source === fieldErrors ? edited.names : NO_EDITED_FIELDS;

@@ -1,7 +1,7 @@
 import type { MouseEvent, ReactNode } from "react";
 import type { PhoneInputValue } from "../phone-input/types";
 
-/** Value of a `tel` field: the country by its ISO code, so +1 tells Canada from the United States, and the number. */
+/** Value of a `tel` field: the number and the country by its ISO code, so +1 tells Canada from the US. */
 export type AuthPhoneValue = PhoneInputValue;
 export type AuthFieldValue = string | boolean | AuthPhoneValue;
 export type AuthFormValues = Record<string, AuthFieldValue>;

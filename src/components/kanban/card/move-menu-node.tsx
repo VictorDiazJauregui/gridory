@@ -29,7 +29,6 @@ const toDestinationNode = (entry: CardMoveEntry, column: FilterOption): Resolved
   };
 };
 
-/** "Move to ▸" with every other column on screen; null when there is nowhere else to go. */
 export const buildMoveMenuNode = (entry: CardMoveEntry): ResolvedSubmenuNode | null => {
   const destinations = entry.moveMenu.columns.filter((column) => column.value !== entry.groupValue);
   if (destinations.length === 0) return null;

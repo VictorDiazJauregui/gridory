@@ -1,18 +1,8 @@
-/*
- * Segmented control. Component tokens (`--gdy-segmented-*`) are read with a
- * fallback to the base tokens and never declared here; the indicator's slide
- * lives in src/styles/motion.css with the rest of the library's motion.
- *
- * States are attributes: aria-checked on the options and data-animated on the
- * root. Focus is drawn inside the option, so the root can clip its overflow
- * without cutting the ring and nothing around the control moves.
- */
+/* Component tokens (`--gdy-segmented-*`) are read with a fallback, never declared here; the slide is in
+   src/styles/motion.css. Focus is drawn inside the option, so the root clips overflow without cutting it. */
 
-/* When the options do not fit, the root scrolls them sideways itself: they
-   never shrink or wrap, and the page never scrolls sideways because of them.
-   isolation keeps the options' z-index inside the control, so a sticky header
-   of the app still covers them. The indicator variables are internal: the
-   component writes them inline, these are only the values before it measures. */
+/* Options that do not fit scroll inside the root, never the page; isolation keeps their z-index below a
+   sticky app header. The indicator variables are internal (written inline); these apply until it measures. */
 .gdy-segmented {
   --gdy-segmented-indicator-x: 0px;
   --gdy-segmented-indicator-y: 0px;

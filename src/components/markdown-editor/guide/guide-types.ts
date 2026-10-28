@@ -1,6 +1,5 @@
 export type MarkdownGuideTab = "write" | "insert";
 
-/** One topic of the syntax guide. */
 export interface MarkdownGuideSection {
   id: string;
   tab: MarkdownGuideTab;
@@ -8,7 +7,10 @@ export interface MarkdownGuideSection {
   description: string;
   /** Markdown shown as typed and as rendered, side by side. */
   examples: readonly string[];
-  /** Tools that write this syntax: their icons show next to the title, and the section shows only while one of them is in the toolbar. Leave it empty for a section that always shows. */
+  /**
+   * Tools that write this syntax: their icons show next to the title, and the section shows only while
+   * one of them is in the toolbar. Leave it empty for a section that always shows.
+   */
   toolIds: readonly string[];
 }
 

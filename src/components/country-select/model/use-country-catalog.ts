@@ -18,7 +18,6 @@ const useFlagSettings = ({ showFlags, flagUrl }: CountryCatalogSettings) =>
     [showFlags, flagUrl],
   );
 
-/** The localized countries, their list options and the flag settings they were built with. */
 export const useCountryCatalog = (settings: CountryCatalogSettings) => {
   const countries = buildCountryList(settings.locale);
   const flagSettings = useFlagSettings(settings);

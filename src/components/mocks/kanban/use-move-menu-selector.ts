@@ -23,7 +23,6 @@ export const useMoveMenuSelector = () => {
     },
     options: MOVE_MENU_OPTIONS,
   };
-  // The board props of the demo: the selector joins the other header selectors.
   const withSelector = (headerSelectors: HeaderSelectConfig[]) => ({
     headerSelectors: [...headerSelectors, selector],
     moveMenu: mode,

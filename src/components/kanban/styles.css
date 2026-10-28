@@ -8,7 +8,6 @@
   box-sizing: border-box;
 }
 
-/* Field filter row under the toolbar */
 .gdy-kanban-filter-row {
   padding: 10px 12px;
   border-bottom: 1px solid var(--gdy-toolbar-border, var(--gdy-border));
@@ -64,7 +63,6 @@
   right: 0;
 }
 
-/* Board viewport */
 .gdy-kanban-board-wrap {
   overflow-x: auto;
   padding: 12px;
@@ -90,7 +88,6 @@
   min-height: 100%;
 }
 
-/* Columns */
 .gdy-kanban-column {
   width: 320px;
   min-width: 320px;
@@ -224,7 +221,6 @@
   font-size: 12px;
 }
 
-/* Cards */
 .gdy-kanban-card {
   border: 1px solid var(--gdy-kanban-card-border, var(--gdy-border));
   border-radius: 10px;
@@ -235,7 +231,6 @@
   gap: 8px;
 }
 
-/* Loading placeholder card: the frame of a real card with three text bars. */
 .gdy-kanban-card-skeleton {
   border: 1px solid var(--gdy-kanban-card-border, var(--gdy-border));
   border-radius: 10px;

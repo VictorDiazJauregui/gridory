@@ -10,7 +10,8 @@ const FIGURE_INSET = 32;
 const MIN_DIAGRAM_WIDTH = 320;
 const HIDDEN_PREVIEW_WIDTH = 640;
 
-// A hidden preview, such as the closed tab on a phone, measures 0: the panels around it still tell the room it will get.
+// A hidden preview, such as the closed tab on a phone, measures 0:
+// the panels around it still tell the room it will get.
 const readAvailableWidth = (previewRoot: HTMLElement): number =>
   previewRoot.clientWidth || previewRoot.closest<HTMLElement>(".gdy-md-panels")?.clientWidth || HIDDEN_PREVIEW_WIDTH;
 
@@ -53,7 +54,8 @@ const mixHexColors = (tint: string, base: string, tintWeight: number): string =>
   return `#${mixed.map(toHexChannel).join("")}`;
 };
 
-// Mermaid derives task colors on its own and can put light text on a light bar: every task text takes the text color instead.
+// Mermaid derives task colors on its own and can put light text on a light bar:
+// every task text takes the text color instead.
 const toGanttVariables = (colors: DiagramColors): Record<string, string> => ({
   taskBkgColor: colors.node,
   taskBorderColor: colors.border,

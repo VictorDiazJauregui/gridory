@@ -1,4 +1,4 @@
-/** Widths in px of one row of chips, as laid out by the browser. */
+/** Widths in px, as laid out by the browser. */
 export interface ChipRowMeasure {
   chipWidths: readonly number[];
   availableWidth: number;
@@ -18,7 +18,7 @@ const countChipsWithin = (chipWidths: readonly number[], gap: number, rowLimit: 
   return chipWidths.length;
 };
 
-/** How many chips fit, in order. When some are left out, room is kept for the "+N" badge and its gap. */
+/** When some chips are left out, room is kept for the "+N" badge and its gap. */
 export const countVisibleChips = (measure: ChipRowMeasure): number => {
   const { chipWidths, availableWidth, moreBadgeWidth, gap } = measure;
   if (measureRowWidth(chipWidths, gap) <= availableWidth) return chipWidths.length;

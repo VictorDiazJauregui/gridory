@@ -1,4 +1,4 @@
-/** Where the pointer and the focus are, plus how many blocks hold the sidebar open. */
+/** `retainCount` is how many blocks hold the sidebar open. */
 export interface SidebarInteraction {
   pointerInside: boolean;
   focusInside: boolean;

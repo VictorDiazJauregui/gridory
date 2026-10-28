@@ -1,7 +1,6 @@
 /**
- * Specificity of the stylesheet rules, for the catalog (npm run docs:hooks). Most rules
- * are a single class (0-1-0); the catalog lists the ones that are not, so consumers know
- * which selector to write when they override a module.
+ * Specificity of the stylesheet rules for the catalog (npm run docs:hooks): it lists the rules that are not a
+ * single class (0-1-0), so consumers know which selector to write when they override a module.
  */
 const ZERO = [0, 0, 0];
 const ID = /#[\w-]+/g;

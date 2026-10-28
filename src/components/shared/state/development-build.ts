@@ -1,8 +1,7 @@
 declare const process: { env: { NODE_ENV?: string } };
 
-// The consumer's bundler replaces `process.env.NODE_ENV` with a literal, so the check has to be
-// written exactly like that. A browser loading the package without a bundler has no `process`:
-// that ReferenceError means "not a development build".
+// Bundlers replace `process.env.NODE_ENV` with a literal, so it is written exactly like that. Without a
+// bundler the browser has no `process`: that ReferenceError means "not a development build".
 const readNodeEnvironment = (): string | undefined => {
   try {
     return process.env.NODE_ENV;

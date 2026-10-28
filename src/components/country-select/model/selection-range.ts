@@ -1,7 +1,7 @@
 import type { CountryCode } from "../../shared/countries/country-codes";
 import { InvalidSelectionRangeError } from "../validation/selection-range-errors";
 
-/** Bounds of a multiple selection. A missing maximum is `Infinity`. */
+/** A missing maximum is `Infinity`. */
 export interface SelectionRange {
   minSelected: number;
   maxSelected: number;
@@ -19,7 +19,7 @@ export const hasReachedMaximum = (count: number, range: SelectionRange): boolean
 export const isBelowMinimum = (count: number, range: SelectionRange): boolean =>
   count > 0 && count < range.minSelected;
 
-/** Removes the country when chosen, appends it otherwise unless the maximum is reached. Never mutates. */
+/** At the maximum, a country not chosen yet is not appended. Never mutates. */
 export const toggleCountry = (
   selected: readonly CountryCode[],
   code: CountryCode,

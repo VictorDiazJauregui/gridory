@@ -17,15 +17,13 @@ export interface DataViewProps<TData> {
   createLabel?: string;
   onCreate?: () => void;
   /**
-   * Content shown when no row or card matches: text, or any node (an icon, a link, a "create
-   * the first one" button). Defaults to "No se encontraron resultados"; `null`, `false` or `""`
-   * leave the empty state without text.
+   * Shown when no row or card matches: text or any node (an icon, a link, a "create the first one" button).
+   * Defaults to "No se encontraron resultados"; `null`, `false` or `""` leave the empty state without text.
    */
   emptyMessage?: ReactNode;
   /**
-   * Shows the loading state: placeholder rows (table) or cards (kanban) in place of the data,
-   * `aria-busy="true"` and `data-loading` on the root. The toolbar keeps working and the empty
-   * state is never shown meanwhile. Defaults to `false`.
+   * Placeholder rows (table) or cards (kanban) replace the data, with `aria-busy="true"` and `data-loading`
+   * on the root. The toolbar keeps working and the empty state is never shown. Defaults to `false`.
    */
   loading?: boolean;
   /** Placeholder rows of the table, or placeholder cards per kanban column. Defaults to `5`. */
@@ -37,84 +35,60 @@ export interface DataViewProps<TData> {
   viewSwitch?: ViewSwitchConfig;
   aiButton?: AiButtonConfig;
   /**
-   * Custom segmented controls for the toolbar. Each emits its own event; use them
-   * to switch datasets/views beyond the table/kanban toggle. By default they sit
-   * on the right (before the fixed controls); set each one's `position` to move it.
+   * Segmented controls, each emitting its own event (e.g. to switch datasets beyond table/kanban).
+   * By default they sit on the right, before the fixed controls; each one's `position` moves it.
    */
   toggleGroups?: ToggleGroupConfig[];
   /**
-   * Extra generic header selects (besides group-by and archived). Each fires its
-   * own `onChange` so the consumer can react over the list. Default `position` is
-   * `"right"`.
+   * Extra header selects besides group-by and archived, each with its own `onChange`.
+   * Default `position` is `"right"`.
    */
   headerSelectors?: HeaderSelectConfig[];
   /**
-   * Explicit toolbar composition. When provided it is authoritative: only the
-   * listed slot ids render, on the given side and order (built-in ids: `search`,
-   * `clearFilters`, `archived`, `group`, `ai`, `viewSwitch`, `create`; plus each
-   * toggle/selector id, plus each `toolbarSlots` id). Omit it to keep the default
-   * layout, where each control honors its own `position` (default `"right"`).
+   * When set, only the listed slot ids render, on the given side and order. Built-in ids: `search`,
+   * `clearFilters`, `archived`, `group`, `ai`, `viewSwitch`, `create`, plus each toggle, selector and
+   * `toolbarSlots` id. Without it, each control honors its own `position` (default `"right"`).
    */
   toolbarLayout?: ToolbarLayout;
   /**
-   * Your own content in the toolbar (a counter, a button, a menu). Each slot renders in
-   * `div.gdy-toolbar-slot[data-slot-id]`; without `toolbarLayout` it goes at the end of
-   * its `position` side (default `"right"`). A repeated id, or one taken by a built-in
-   * slot, a toggle group or a header selector, throws `DuplicateToolbarSlotError`.
+   * Your own toolbar content, each in `div.gdy-toolbar-slot[data-slot-id]`; without `toolbarLayout` it goes
+   * at the end of its `position` side. A repeated or already taken id throws `DuplicateToolbarSlotError`.
    */
   toolbarSlots?: ToolbarCustomSlot[];
   /** Global styling for every styled select in the component (header + inline). */
   selectTheme?: SelectTheme;
-  /**
-   * Renders thin, light-gray scrollbars on every internal scroll area
-   * (rows/board viewport, option lists, capped-height regions). Cosmetic only.
-   * Defaults to `true`.
-   */
+  /** Thin, light-gray scrollbars on every internal scroll area. Cosmetic only. Defaults to `true`. */
   thinScrollbars?: boolean;
   /**
-   * Thumb color for the thin scrollbars, injected as the
-   * `--gdy-scrollbar-thumb` CSS variable. Any CSS color. Defaults to the
-   * `--gdy-input` token.
+   * Thumb color of the thin scrollbars (any CSS color), set as `--gdy-scrollbar-thumb`.
+   * Defaults to the `--gdy-input` token.
    */
   scrollbarColor?: string;
   /**
-   * Hover background for checklist option rows in the value filter menu,
-   * injected as the `--gdy-option-hover-bg` CSS variable. Defaults to a
-   * subtle tint of the `--gdy-muted` token.
+   * Hover background of the option rows in the value filter menu, set as `--gdy-option-hover-bg`.
+   * Defaults to a subtle tint of the `--gdy-muted` token.
    */
   optionHoverColor?: string;
   /**
-   * Requires the user to pick a date operator (greater/less/between) before the
-   * calendar input appears; no operator is preselected. Set to `false` to
-   * restore the legacy behavior where "greater than" is preselected.
-   * Defaults to `true`.
+   * The user picks a date operator (greater/less/between) before the calendar input appears. `false`
+   * restores the legacy behavior with "greater than" preselected. Defaults to `true`.
    */
   dateFilterRequireOperator?: boolean;
   /**
-   * Mask used by every date filter input for its placeholder, for rendering the
-   * selected date, and for parsing manually typed text. Defaults to `"dd/mm/yyyy"`.
+   * Mask of every date filter input: its placeholder, the selected date and the parsing of typed text.
+   * Defaults to `"dd/mm/yyyy"`.
    */
   dateInputFormat?: DateInputFormat;
-  /**
-   * Shows month + year dropdowns in the filter calendar header instead of a
-   * static month label, on the same row. Defaults to `true`.
-   */
+  /** Month and year dropdowns in the filter calendar header instead of a static label. Defaults to `true`. */
   calendarMonthYearDropdown?: boolean;
-  /**
-   * First selectable year in the calendar year dropdown.
-   * Defaults to the current year minus 100.
-   */
+  /** First year of the calendar year dropdown. Defaults to the current year minus 100. */
   calendarFromYear?: number;
-  /**
-   * Last selectable year in the calendar year dropdown.
-   * Defaults to the current year plus 10.
-   */
+  /** Last year of the calendar year dropdown. Defaults to the current year plus 10. */
   calendarToYear?: number;
   /**
-   * Language of the filter calendar: month and weekday names and the month dropdown. Takes a
-   * `date-fns` locale (`import { enUS } from "date-fns/locale"`). A locale from
-   * `react-day-picker/locale` also translates the calendar's accessible names ("previous
-   * month", "choose the year"). Defaults to the Spanish `es` of `date-fns`.
+   * Language of the filter calendar, as a `date-fns` locale (`import { enUS } from "date-fns/locale"`).
+   * One from `react-day-picker/locale` also translates its accessible names ("previous month").
+   * Defaults to the Spanish `es` of `date-fns`.
    */
   calendarLocale?: Locale;
 }

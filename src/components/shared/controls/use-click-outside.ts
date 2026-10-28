@@ -1,10 +1,6 @@
 import { useEffect, type RefObject } from "react";
 
-/**
- * Calls `onOutside` on any mousedown outside `ref`. Clicks inside the portaled
- * primitives (popover, calendar, Radix popper) count as inside so a filter
- * panel stays open while its date picker is in use.
- */
+/** Clicks in a portaled popover, calendar or Radix popper count as inside: a date picker keeps the panel open. */
 export const useClickOutside = (
   ref: RefObject<HTMLElement | null>,
   onOutside: () => void,

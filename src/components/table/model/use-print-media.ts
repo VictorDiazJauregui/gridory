@@ -23,7 +23,6 @@ const subscribeToPrint = (onChange: (printing: boolean) => void) => {
   };
 };
 
-/** Whether the page is being printed, while `enabled`. */
 export const usePrintMedia = (enabled: boolean) => {
   const [printing, setPrinting] = useState(readPrintMedia);
   useEffect(() => {

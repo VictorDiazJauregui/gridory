@@ -1,8 +1,7 @@
 import type { CountryCode } from "./country-codes";
 
-// E.164 calling codes as assigned by the ITU. Several countries share one (+1 covers the whole
-// North American Numbering Plan), so a country is always identified by its ISO code and its
-// dial code is derived from it. BV, HM and TF have no calling code assigned.
+// E.164 calling codes (ITU). Several countries share one (+1 is the North American Numbering Plan), so a
+// country is identified by its ISO code and its dial code derived from it. BV, HM and TF have none.
 export const DIAL_CODE_BY_COUNTRY: Partial<Record<CountryCode, string>> = {
   AD: "+376", AE: "+971", AF: "+93", AG: "+1", AI: "+1", AL: "+355", AM: "+374", AO: "+244",
   AQ: "+672", AR: "+54", AS: "+1", AT: "+43", AU: "+61", AW: "+297", AX: "+358", AZ: "+994",

@@ -8,10 +8,8 @@ interface DropPermissionInput<TData> {
   view: Pick<KanbanBoardProps<TData>, "getCardId" | "canDrop" | "getDropDisabledReason">;
 }
 
-/** Whether the card may land on the column with that value. */
 export type DropPermission = (cardId: string, toValue: string) => boolean;
 
-/** Why the card may not land on that column, when the app says so. */
 export type DropRejectionReason = (cardId: string, toValue: string) => string | undefined;
 
 // Null when there is nothing to ask: the card is gone, or the column is its own (dropping there does

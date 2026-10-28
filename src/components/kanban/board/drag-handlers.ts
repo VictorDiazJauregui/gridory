@@ -52,7 +52,6 @@ export const buildColumnDropHandlers = (input: ColumnDropInput) => {
   };
 };
 
-/** `data-drop-target` and `data-drop-disabled` of one column: never both at once. */
 export const buildColumnDropState = (drag: CardDragState, value: string) => {
   const rejected = drag.rejectedValues.has(value);
   return {

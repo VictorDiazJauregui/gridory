@@ -51,11 +51,8 @@ export interface SidebarViewProps {
   view: SidebarView;
 }
 
-/**
- * Refs travel beside the view, not inside it: the compiler-backed
- * `react-hooks/refs` rule treats any object holding a ref as a ref itself and
- * rejects every read of it during render.
- */
+// Refs travel beside the view, not inside it: the compiler-backed `react-hooks/refs` rule treats any object
+// holding a ref as a ref itself and rejects every read of it during render.
 export interface SidebarElements extends SidebarViewProps {
   inputRef: TextareaRef;
   messagesEndRef: RefObject<HTMLDivElement | null>;

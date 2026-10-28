@@ -25,7 +25,7 @@ export interface MarkdownTool {
   id: string;
   label: string;
   icon: ComponentType<MarkdownToolIconProps>;
-  /** CodeMirror-style key, `Mod` being ⌘ on macOS and Ctrl elsewhere: `"Mod-b"`, `"Mod-Shift-x"`, `"Mod-Alt-1"`. */
+  /** CodeMirror-style key, `Mod` being ⌘ on macOS and Ctrl elsewhere: `"Mod-b"`, `"Mod-Shift-x"`. */
   shortcut?: string;
   /** Runs on click or shortcut. Leave it out and give `items` for a tool that opens a menu. */
   run?: (context: ToolRunContext) => void;
