@@ -18,7 +18,6 @@ const useFlagSettings = ({ showFlags, flagUrl }: DialCodeCatalogSettings) =>
     [showFlags, flagUrl],
   );
 
-/** The localized countries that have a dial code, as list options, and the flag settings they use. */
 export const useDialCodeCatalog = (settings: DialCodeCatalogSettings) => {
   const countries = buildCountryList(settings.locale);
   const flagSettings = useFlagSettings(settings);

@@ -12,10 +12,7 @@ interface SelectionErrorInput {
   texts: Pick<CountrySelectTexts, "required" | "belowMinimum">;
 }
 
-/**
- * The control's own error, shown only once it was touched. Empty is an error
- * only when required; a selection below the minimum always is.
- */
+/** Shown only once touched. Empty is an error only when required; a selection below the minimum always is. */
 export const resolveOwnSelectionError = (input: SelectionErrorInput): string | null => {
   const { touched, required, selectedCount, range, texts } = input;
   if (!touched) return null;
@@ -24,6 +21,5 @@ export const resolveOwnSelectionError = (input: SelectionErrorInput): string | n
   return null;
 };
 
-/** The app's error always wins over the control's own one. */
 export const resolveDisplayedError = (appError: ReactNode, ownError: string | null): ReactNode =>
   hasVisibleContent(appError) ? appError : ownError;

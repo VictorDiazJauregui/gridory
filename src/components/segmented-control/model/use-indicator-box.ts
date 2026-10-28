@@ -8,17 +8,13 @@ const observeBorderBoxes = (observer: ResizeObserver, elements: HTMLElement[]) =
   for (const element of elements) observer.observe(element, { box: "border-box" });
 };
 
-// Options are keyed by value, so the same values render the same buttons: an
-// `options` array rebuilt on every render of the app must not re-create the
-// observer, while an added, removed or reordered option must.
+// Keyed by value: an `options` array rebuilt on every render of the app must not re-create the observer,
+// while an added, removed or reordered option must.
 const buildOptionsKey = (options: SegmentedOption[]): string =>
   options.map((option) => option.value).join("\u0000");
 
-/**
- * Box of the chosen option, measured before paint when the choice changes and
- * again whenever the root or any option resizes (font size, width, a web font
- * that finishes loading).
- */
+// Measured before paint when the choice changes, and again whenever the root or any option resizes
+// (font size, width, a web font that finishes loading).
 export const useIndicatorBox = (selectedIndex: number, options: SegmentedOption[]) => {
   const rootRef = useRef<HTMLDivElement>(null);
   const [indicatorBox, setIndicatorBox] = useState<IndicatorBox | null>(null);

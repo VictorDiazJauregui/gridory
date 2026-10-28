@@ -13,9 +13,8 @@ interface CountrySelectTriggerProps {
 const resolveTitle = ({ selectedCountries }: CountrySelectView): string | undefined =>
   selectedCountries.map((country) => country.name).join(", ") || undefined;
 
-// A button with role combobox: aria-required is not valid on a plain button.
-// Radix adds aria-expanded, aria-controls and aria-haspopup="dialog", which is
-// what opens: a dialog with the search box and the list.
+// A button with role combobox: aria-required is not valid on a plain button. Radix adds aria-expanded,
+// aria-controls and aria-haspopup="dialog", which is what opens: a dialog with the search box and the list.
 export const CountrySelectTrigger = ({ view, control }: CountrySelectTriggerProps) => (
   <FloatingPanelTrigger>
     <button

@@ -29,10 +29,8 @@ const SelectionControls = ({ view }: BoxPartProps) => {
   return <CountrySelectClear label={texts.clearSelection} className={resolvedProps.classNames?.clear} onClear={view.clearSelection} />;
 };
 
-// The whole box anchors the panel, so it aligns with and measures against the
-// full field. The clear button, the chips and the chevron are siblings of the
-// combobox: a button inside another one is invalid HTML. The frame holds the
-// width, so the field prefers it but can still shrink with its container.
+// The whole box anchors the panel, which measures against the full field. The buttons are siblings of the
+// combobox (nested buttons are invalid HTML). The frame holds the width, so the field can still shrink.
 export const CountrySelectBox = ({ view, control }: CountrySelectBoxProps) => {
   const { resolvedProps } = view;
   return (

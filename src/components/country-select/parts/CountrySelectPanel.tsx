@@ -11,9 +11,8 @@ interface CountrySelectPanelProps {
   labelling: AccessibleName;
 }
 
-// The list mounts with every opening, so it starts on the chosen country and
-// scrolls it into view. The limit status follows the list: the shared listbox
-// keeps its search box and options together.
+// The list mounts with every opening, so it starts on the chosen country and scrolls it into view. The limit
+// status follows the list: the shared listbox keeps its search box and options together.
 export const CountrySelectPanel = ({ view, labelling }: CountrySelectPanelProps) => {
   const { resolvedProps, texts } = view;
   return (

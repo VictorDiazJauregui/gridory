@@ -13,11 +13,8 @@ const withFieldError = (
   return message ? { ...nextErrors, [name]: message } : nextErrors;
 };
 
-/**
- * Errors appear when an edited field loses the focus or on submit, and only the
- * fields already showing one are revalidated while typing: the form never
- * scolds a field mid-edit, nor one the user merely tabbed through.
- */
+// Errors appear when an edited field loses the focus or on submit; while typing, only the fields showing one
+// revalidate: the form never scolds a field mid-edit, nor one the user merely tabbed through.
 export const useClientErrors = () => {
   const [errors, setErrors] = useState<AuthFieldErrors>({});
   const [revealed, setRevealed] = useState(false);
