@@ -21,7 +21,7 @@ export const TableDataRow = <TData,>({ row, config }: TableDataRowProps<TData>) 
         <td
           key={cell.id}
           className={cn("gdy-table-cell", config.classNames?.cell)}
-          {...buildCellAttributes(cell.column.id, readColumnAlignment(cell.column.columnDef).cells, config.hiddenByPriority)}
+          {...buildCellAttributes(cell.column.id, readColumnAlignment(cell.column.columnDef).cells, config)}
         >
           {flexRender(cell.column.columnDef.cell, cell.getContext())}
         </td>

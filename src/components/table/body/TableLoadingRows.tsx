@@ -13,7 +13,7 @@ const TableSkeletonRows = <TData,>({ model }: TableModelProps<TData>) => {
         <td
           key={column.id}
           className={cn("gdy-table-cell gdy-table-skeleton", model.settings.classNames?.cell)}
-          {...buildCellAttributes(column.id, readColumnAlignment(column.columnDef).cells, model.hiddenByPriority)}
+          {...buildCellAttributes(column.id, readColumnAlignment(column.columnDef).cells, model)}
         >
           <SkeletonBar />
         </td>
