@@ -1,4 +1,5 @@
 import type { KeyboardEvent, MouseEvent } from "react";
+import type { ConsumerAttributes } from "../shared/attributes/consumer-attributes";
 import type { ColumnDefinition, ColumnFiltersState, ColumnSortingState, DataInput } from "../shared/data-model";
 import type { DataViewProps } from "../shared/data-view-props";
 import type { DataViewLabels } from "../shared/labels/data-view-labels";
@@ -56,9 +57,7 @@ export interface ManualPaginationState {
  * Extra attributes for a row. Only `data-*` and `aria-*` names are accepted, so a row can
  * never lose its handlers, its class or the attributes the table writes itself.
  */
-export type RowAttributes = Partial<
-  Record<`data-${string}` | `aria-${string}`, string | number | boolean | undefined>
->;
+export type RowAttributes = ConsumerAttributes;
 
 /** Event `onRowClick` receives: the mouse click, or Enter on a focused row (`focusableRows`). */
 export type RowClickEvent =
