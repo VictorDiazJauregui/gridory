@@ -34,9 +34,8 @@ export const buildFieldControlAttributes = ({
   "aria-labelledby": naming["aria-labelledby"],
 });
 
-// Same precedence as the accessible name computation, so the labelling names what
-// the control announces. The label id is reached only after assertFieldHasAccessibleName
-// guaranteed that, without aria naming, the visible label is rendered.
+// Same precedence as the accessible name computation, so the labelling names what the control announces.
+// The label id is reached only after assertFieldHasAccessibleName guaranteed the visible label is rendered.
 export const resolveFieldLabelling = (naming: FieldNaming, labelId: string): AccessibleName => {
   const { "aria-label": ariaLabel, "aria-labelledby": ariaLabelledBy } = naming;
   if (ariaLabelledBy) return { "aria-labelledby": ariaLabelledBy };

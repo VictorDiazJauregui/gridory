@@ -7,7 +7,6 @@ const NO_BREAK_SPACE = "\u00a0";
 const resolveSpokenText = ({ text, count }: MoveMenuState["feedback"]["announcement"]) =>
   count % 2 === 0 ? `${text}${NO_BREAK_SPACE}` : text;
 
-/** Live region of the "Move to" menu; rendered only while the menu is offered. */
 export const KanbanMoveAnnouncer = ({ moveMenu }: { moveMenu: MoveMenuState }) => {
   if (!moveMenu.enabled) return null;
   const { announcement } = moveMenu.feedback;

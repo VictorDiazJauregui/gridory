@@ -77,7 +77,6 @@ export interface ResolvedActionNode {
   onSelect: () => void;
 }
 
-/** An entry that opens its actions in a nested panel. */
 export interface ResolvedSubmenuNode {
   type: "submenu";
   key: string;

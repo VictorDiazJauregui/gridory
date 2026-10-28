@@ -16,7 +16,6 @@ export type ColumnHookSettings = Pick<
   "classNames" | "getColumnClassName" | "getColumnAttributes"
 >;
 
-/** Class, value and consumer attributes of one column, real or loading placeholder. */
 export const buildColumnHookProps = (value: string, settings: ColumnHookSettings) => ({
   ...pickConsumerAttributes(settings.getColumnAttributes?.(value), RESERVED_COLUMN_ATTRIBUTES),
   className: cn("gdy-kanban-column", settings.classNames?.column, settings.getColumnClassName?.(value)),

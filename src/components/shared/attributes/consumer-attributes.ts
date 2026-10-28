@@ -1,8 +1,4 @@
-/**
- * Extra attributes a consumer adds to an element the library renders. Only `data-*` and `aria-*`
- * names are accepted, so the element never loses its handlers, its class or the attributes the
- * library writes itself.
- */
+/** Only `data-*` and `aria-*`, so consumers never override the element's handlers, class or own attributes. */
 export type ConsumerAttributes = Partial<
   Record<`data-${string}` | `aria-${string}`, string | number | boolean | undefined>
 >;

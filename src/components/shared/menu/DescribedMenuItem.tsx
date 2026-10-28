@@ -12,9 +12,8 @@ const resolveSelectState = (node: ResolvedActionNode) => ({
   onSelect: node.disabled ? preventSelect : node.onSelect,
 });
 
-// Radix skips a `disabled` item on the arrow keys, so a screen reader would never reach the reason. An
-// item with a description stays reachable instead, marked with aria-disabled and kept from selecting.
-// Its name is the label alone: the description sits inside the item but is read once, as description.
+// Radix skips a `disabled` item on arrow keys, hiding its reason: a described item stays reachable with
+// aria-disabled instead. Its name is the label alone; the description inside it is read once, as such.
 export const DescribedMenuItem = ({ node }: { node: ResolvedActionNode }) => {
   const labelId = useId();
   const descriptionId = useId();

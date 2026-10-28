@@ -8,7 +8,6 @@ const withoutId = (ids: ReadonlySet<string>, cardId: string) => {
   return next;
 };
 
-/** Ids of the cards whose move waits for the promise `onCardMove` returned. */
 export const usePendingCards = () => {
   const [pendingIds, setPendingIds] = useState<ReadonlySet<string>>(() => new Set());
   const markPending = useCallback((cardId: string) => setPendingIds((ids) => withId(ids, cardId)), []);

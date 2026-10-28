@@ -3,9 +3,8 @@ import type { ColumnFiltersState, ColumnSortingState } from "../../shared/data-m
 import type { PageNavigation } from "../pagination/use-table-pagination";
 import type { TableSettings } from "../settings";
 
-// The sort and filter state is created before the paging (the page count depends on the
-// resulting rows), so the handlers reach the paging through a ref the table fills once it exists.
-// A server-side sort or filter starts again from the first page, like the local one does.
+// Sort and filter exist before the paging (its page count depends on their rows): handlers reach it through
+// a ref filled later. A server-side sort or filter starts again from the first page, like the local one.
 export const useViewChangeHandlers = <TData>(settings: TableSettings<TData>) => {
   const pagingRef = useRef<PageNavigation | null>(null);
   const handleSortChange = (sorting: ColumnSortingState | null) => {

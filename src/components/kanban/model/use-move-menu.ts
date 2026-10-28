@@ -47,7 +47,6 @@ const buildMoveObserver = <TData>(
   };
 };
 
-/** The "Move to" action of the card menu: when it shows, where a card can go and how it moves. */
 export const useMoveMenu = <TData>(input: MoveMenuInput<TData>) => {
   const enabled = useMoveMenuEnabled(input.view);
   const feedback = useMoveFeedback();

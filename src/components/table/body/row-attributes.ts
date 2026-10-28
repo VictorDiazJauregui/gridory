@@ -6,7 +6,6 @@ export type TableRowConfig<TData> = Pick<
   DataTableProps<TData>,
   "onRowClick" | "getRowClassName" | "getRowAttributes" | "getRowHref" | "focusableRows" | "classNames"
 > & {
-  /** Ids of the columns with `ignoreRowClick`. */
   ignoredColumnIds: ReadonlySet<string>;
 };
 
