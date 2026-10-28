@@ -1,8 +1,9 @@
-import type { KanbanBoardProps, KanbanMoveEvent, KanbanVisibleCardsState } from "../../kanban";
+import type { KanbanBoardProps, KanbanDropContext, KanbanMoveEvent, KanbanVisibleCardsState } from "../../kanban";
 import type { MockCompanyRow } from "../company/company-rows";
 import { replaceRow, type MockRowsUpdater } from "../company/row-updates";
 import type { RecordDemoEvent } from "../shared/use-demo-event-log";
 import { buildStatusSubmenu } from "../company/status-submenu";
+import { renderColumnFeeTotals } from "./column-fee-totals";
 import { buildFavoriteAction } from "./favorite-action";
 import { KANBAN_STATIC_PROPS } from "./kanban-config";
 import { saveMoveOnServer } from "./simulated-move-server";
@@ -10,7 +11,13 @@ import type { useFavoriteCards } from "./use-favorite-cards";
 
 type KanbanHookProps = Pick<
   KanbanBoardProps<MockCompanyRow>,
-  "getColumnClassName" | "onCardMove" | "onCardMoveError" | "onVisibleCardsChange" | "rowActions"
+  | "getColumnClassName"
+  | "onCardMove"
+  | "onCardMoveError"
+  | "onVisibleCardsChange"
+  | "rowActions"
+  | "renderColumnHeaderExtra"
+  | "canDrop"
 >;
 
 interface KanbanHookInput {
@@ -24,6 +31,10 @@ const paintActiveColumn = (value: string) =>
   value === "Activa"
     ? "[--gdy-kanban-column-bg:theme(colors.emerald.50)] dark:[--gdy-kanban-column-bg:theme(colors.emerald.950)]"
     : undefined;
+
+// An active company cannot be archived directly: it goes through "Pendiente" first. Only by status.
+const canDropCompany = ({ groupId, fromValue, toValue }: KanbanDropContext<MockCompanyRow>) =>
+  !(groupId === "status" && fromValue === "Activa" && toValue === "Archivada");
 
 const summarizeMove = ({ cardId, fromValue, toValue }: KanbanMoveEvent<MockCompanyRow>) => ({ cardId, fromValue, toValue });
 
@@ -59,4 +70,6 @@ export const buildKanbanHookProps = (input: KanbanHookInput): KanbanHookProps =>
   onCardMoveError: buildMoveErrorReport(input.record),
   onVisibleCardsChange: (state) => input.record("onVisibleCardsChange", countVisibleCards(state)),
   rowActions: buildRowActions(input),
+  renderColumnHeaderExtra: renderColumnFeeTotals,
+  canDrop: canDropCompany,
 });
