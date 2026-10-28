@@ -3,10 +3,8 @@ import type { ReactNode } from "react";
 export type RowActionPlacement = "top" | "bottom";
 export type RowActionVariant = "default" | "destructive";
 
-/** Text of an action: fixed, or computed from the row the menu belongs to. */
 export type RowActionLabel<TData> = string | ((row: TData) => string);
 
-/** Icon of an action: fixed, or computed from the row the menu belongs to. */
 export type RowActionIcon<TData> = ReactNode | ((row: TData) => ReactNode);
 
 export interface RowAction<TData> {
@@ -21,8 +19,8 @@ export interface RowAction<TData> {
 }
 
 /**
- * An entry that opens one more level of actions instead of running one. A submenu holds plain
- * actions only (one level), and is not rendered when none of its actions is visible.
+ * Opens one more level of actions instead of running one. It holds plain actions only (one level)
+ * and is not rendered when none of its actions is visible.
  */
 export interface RowActionSubmenu<TData> {
   id: string;
@@ -34,7 +32,6 @@ export interface RowActionSubmenu<TData> {
   hidden?: (row: TData) => boolean;
 }
 
-/** What `customActions` holds: an action, or a submenu of actions. */
 export type RowActionEntry<TData> = RowAction<TData> | RowActionSubmenu<TData>;
 
 export const isRowActionSubmenu = <TData>(entry: RowActionEntry<TData>): entry is RowActionSubmenu<TData> =>
