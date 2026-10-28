@@ -73,7 +73,7 @@ The state selectors column lists the attributes the stylesheets combine with eac
 | `gdy-kanban` | styled | — |
 | `gdy-kanban-board` | styled | — |
 | `gdy-kanban-board-wrap` | styled | — |
-| `gdy-kanban-card` | styled | `[data-draggable]`, `[data-dragging]` |
+| `gdy-kanban-card` | styled | `[data-draggable]`, `[data-dragging]`, `[data-pending]` |
 | `gdy-kanban-card-actions` | styled | — |
 | `gdy-kanban-card-head` | styled | — |
 | `gdy-kanban-card-main` | styled | — |
@@ -450,6 +450,9 @@ The state selectors column lists the attributes the stylesheets combine with eac
 | `gdy-menu-item-label` | hook only | — |
 | `gdy-menu-label` | styled | — |
 | `gdy-menu-separator` | styled | — |
+| `gdy-menu-sub-chevron` | styled | — |
+| `gdy-menu-sub-content` | hook only | — |
+| `gdy-menu-sub-trigger` | styled | `[data-state="open"]` |
 | `gdy-popover-content` | styled | `[data-side="bottom"]`, `[data-side="left"]`, `[data-side="right"]`, `[data-side="top"]`, `[data-state="closed"]`, `[data-state="open"]` |
 | `gdy-select-content` | styled | `[data-side="bottom"]`, `[data-side="left"]`, `[data-side="right"]`, `[data-side="top"]`, `[data-state="open"]` |
 | `gdy-select-icon` | styled | — |
@@ -608,6 +611,7 @@ Radix or react-day-picker follow those libraries.
 | `data-checked` | present / absent | Gridory | `gdy-option-check` |
 | `data-clickable` | present / absent | Gridory | `gdy-table-row` |
 | `data-column-id` | the column `id` | Gridory | `gdy-table-skeleton` |
+| `data-column-value` | present / absent | Gridory | no default rule |
 | `data-compact` | `"true"` | Gridory | `gdy-sidebar-logo` |
 | `data-day` | the date of the day | Gridory | no default rule |
 | `data-diagram-state` | `"error"`, `"loading"`, `"ready"` | Gridory | `gdy-md-diagram` |
@@ -638,6 +642,7 @@ Radix or react-day-picker follow those libraries.
 | `data-multiple` | present / absent | Gridory | `gdy-country-select` |
 | `data-outside` | present / absent | Radix or react-day-picker | `gdy-calendar-day` |
 | `data-overflow` | `"visible"`, `"wrap"` | Gridory | `gdy-table-cell-content` |
+| `data-pending` | present / absent | Gridory | `gdy-kanban-card` |
 | `data-pinned` | `"false"`, `"true"` | Gridory | `gdy-sidebar` |
 | `data-placeholder` | present / absent | Gridory, Radix or react-day-picker | `gdy-country-select-value`, `gdy-phone-input-dial-code`, `gdy-select-trigger` |
 | `data-print-mode` | present / absent | Gridory | `gdy-table` |
@@ -651,7 +656,7 @@ Radix or react-day-picker follow those libraries.
 | `data-side` | `"bottom"`, `"left"`, `"right"`, `"top"` | Radix or react-day-picker | `gdy-menu-content`, `gdy-popover-content`, `gdy-select-content` |
 | `data-size` | `"default"`, `"icon"`, `"icon-lg"`, `"icon-sm"`, `"icon-xs"`, `"lg"`, `"sm"`, `"xs"` | Gridory | `gdy-button` |
 | `data-slot-id` | the slot `id` | Gridory | no default rule |
-| `data-state` | `"active"`, `"checked"`, `"closed"`, `"collapsed"`, `"expanded"`, `"on"`, `"open"` | Gridory, Radix or react-day-picker | `gdy-ai-sidebar`, `gdy-md-image-tab`, `gdy-md-picker-tab`, `gdy-md-tool`, `gdy-menu-content`, `gdy-popover-content`, `gdy-select-content`, `gdy-select-item`, `gdy-select-trigger`, `gdy-sidebar`, `gdy-sidebar-drawer`, `gdy-sidebar-overlay`, `gdy-toggle-item` |
+| `data-state` | `"active"`, `"checked"`, `"closed"`, `"collapsed"`, `"expanded"`, `"on"`, `"open"` | Gridory, Radix or react-day-picker | `gdy-ai-sidebar`, `gdy-md-image-tab`, `gdy-md-picker-tab`, `gdy-md-tool`, `gdy-menu-content`, `gdy-menu-sub-trigger`, `gdy-popover-content`, `gdy-select-content`, `gdy-select-item`, `gdy-select-trigger`, `gdy-sidebar`, `gdy-sidebar-drawer`, `gdy-sidebar-overlay`, `gdy-toggle-item` |
 | `data-status` | `"met"`, `"pending"`, `"unmet"` | Gridory | `gdy-auth-rule` |
 | `data-streaming` | present / absent | Gridory | no default rule |
 | `data-thinking` | present / absent | Gridory | no default rule |
@@ -796,6 +801,7 @@ any ancestor overrides that part only. `--gdy-select-*` also mirror the `selectT
 | `--gdy-input-border` | `var(--gdy-input)` | kanban, shared |
 | `--gdy-kanban-card-bg` | `var(--gdy-card)` | kanban |
 | `--gdy-kanban-card-border` | `var(--gdy-border)` | kanban |
+| `--gdy-kanban-card-pending-opacity` | `0.6` | kanban |
 | `--gdy-kanban-column-bg` | `var(--gdy-muted)` | kanban |
 | `--gdy-kanban-column-border` | `var(--gdy-border)` | kanban |
 | `--gdy-kanban-drop-bg` | `color-mix(in oklab, var(--gdy-foreground) 6%, var(--gdy-muted))` | kanban |

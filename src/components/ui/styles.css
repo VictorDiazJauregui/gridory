@@ -270,6 +270,16 @@
   background-color: var(--gdy-border);
 }
 
+/* A submenu trigger is a menu item; while its panel is open it keeps the focus look. */
+.gdy-menu-sub-trigger[data-state="open"] {
+  background-color: var(--gdy-menu-item-hover-bg, var(--gdy-accent));
+  color: var(--gdy-accent-foreground);
+}
+
+.gdy-menu-sub-chevron {
+  margin-left: auto;
+}
+
 /* ---------------------------------------------------------------- Select */
 .gdy-select-trigger {
   display: flex;
