@@ -5,18 +5,22 @@
   background: var(--gdy-card);
 }
 
-/* Toolbar */
+/* Toolbar. One row while everything fits; on a narrow screen the groups and their controls wrap to
+   more rows instead of making the page wider than the screen (a wider page also breaks the scroll lock
+   of the menus on phones). */
 .gdy-toolbar {
   min-height: 40px;
   padding: 6px 12px;
   border-bottom: 1px solid var(--gdy-toolbar-border, var(--gdy-border));
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 8px;
 }
 
 .gdy-toolbar-left {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 8px;
 }
@@ -24,11 +28,13 @@
 .gdy-toolbar-right {
   margin-left: auto;
   display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   align-items: center;
   gap: 8px;
 }
 
-/* One row, like the built-in controls: a slot never makes the toolbar taller. */
+/* One row, like the built-in controls: a slot never breaks its content into two lines. */
 .gdy-toolbar-slot {
   display: flex;
   align-items: center;

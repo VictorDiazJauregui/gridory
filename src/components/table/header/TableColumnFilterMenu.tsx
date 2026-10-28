@@ -1,3 +1,4 @@
+import { FilterMenuHolder } from "../../shared/controls/FilterMenuHolder";
 import { TableDateFilterMenu } from "./TableDateFilterMenu";
 import { TableValueFilterMenu } from "./TableValueFilterMenu";
 import type { TableColumnProps } from "../model/use-table-core";
@@ -8,12 +9,12 @@ export const TableColumnFilterMenu = <TData,>({
 }: TableColumnProps<TData>) => {
   const { filterMenuRef } = model.state;
   return (
-    <div className="gdy-table-menu-holder" ref={filterMenuRef}>
+    <FilterMenuHolder className="gdy-table-menu-holder" holderRef={filterMenuRef}>
       {column.type === "date" ? (
         <TableDateFilterMenu column={column} model={model} />
       ) : (
         <TableValueFilterMenu column={column} model={model} />
       )}
-    </div>
+    </FilterMenuHolder>
   );
 };
