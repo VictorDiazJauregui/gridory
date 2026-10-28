@@ -19,6 +19,7 @@ export type {
   VisibleRowsState,
 } from "./components/table/types";
 export { MissingRowIdError } from "./components/table/selection/use-row-selection";
+export { PinnedColumnWidthError } from "./components/table/columns/pinned-columns";
 
 export type {
   AiButtonConfig,
@@ -29,6 +30,7 @@ export type {
   ColumnDefinition,
   ColumnFooterContext,
   ColumnOverflow,
+  ColumnPin,
   DataInput,
   DateFilterOp,
   DateFilterState,
