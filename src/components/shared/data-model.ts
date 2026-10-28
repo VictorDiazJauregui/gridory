@@ -44,6 +44,9 @@ export type ColumnAlign = "left" | "center" | "right";
 
 export type ColumnOverflow = "ellipsis" | "wrap" | "visible";
 
+/** Table only. Edge a column sticks to while the rows scroll sideways. */
+export type ColumnPin = "left" | "right";
+
 /** Where the header help icon sits: left or right of the title, or at the cell edge opposite the title. */
 export type HeaderTooltipPlacement = "before" | "after" | "edge";
 
@@ -123,6 +126,11 @@ export interface ColumnDefinition<TData> {
    * menus, the group selector and the kanban.
    */
   headerContent?: ReactNode;
+  /**
+   * Table only. Keeps the column at that edge while the rows scroll sideways; it moves next to the other pinned
+   * columns of its side, in declaration order. Needs `width` (`PinnedColumnWidthError` otherwise).
+   */
+  pin?: ColumnPin;
 }
 
 /** Built-in and custom actions available per row (table) or per card (kanban). */
@@ -149,6 +157,11 @@ export interface RowActions<TData> {
    * `data-align` is rendered only when `align` or `columnLabel` is set.
    */
   align?: ColumnAlign;
+  /**
+   * Table only. Keeps the actions column at the right edge while the rows scroll sideways (it is pinned anyway
+   * when a column has `pin: "right"`). Pinned, it takes 56px, or 96px with `columnLabel`.
+   */
+  pinned?: boolean;
   /** Accessible name and tooltip of the ⋯ button, in the table and the kanban. Defaults to `"Opciones"`. */
   triggerLabel?: string;
   /**

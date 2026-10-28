@@ -20,4 +20,5 @@ export const DATA_TABLE_LABELS: DataTableLabels = {
   printNotSelected: "No",
   printSelectionHeader: "Seleccionada",
   columnHelp: (header) => `Ayuda sobre ${header}`,
+  expandRow: "Mostrar detalle",
 };

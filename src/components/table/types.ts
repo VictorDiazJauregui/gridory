@@ -1,4 +1,4 @@
-import type { KeyboardEvent, MouseEvent } from "react";
+import type { KeyboardEvent, MouseEvent, ReactNode } from "react";
 import type { ConsumerAttributes } from "../shared/attributes/consumer-attributes";
 import type { ColumnDefinition, ColumnFiltersState, ColumnSortingState, DataInput } from "../shared/data-model";
 import type { DataViewProps } from "../shared/data-view-props";
@@ -14,6 +14,7 @@ export type {
   ColumnFiltersState,
   ColumnFooterContext,
   ColumnOverflow,
+  ColumnPin,
   ColumnSortingState,
   HeaderTooltipPlacement,
   DataInput,
@@ -36,6 +37,8 @@ export interface DataTableFeatures {
   rowActions?: boolean;
   createButton?: boolean;
   grouping?: boolean;
+  /** `false` renders no toolbar at all, as a table nested in a row detail may need. Defaults to `true`. */
+  toolbar?: boolean;
 }
 
 export interface GroupHeader {
@@ -163,6 +166,8 @@ export interface DataTableLabels extends DataViewLabels {
   printSelectionHeader: string;
   /** Accessible name of the header help icon (`headerTooltip`). `"Ayuda sobre Monto"`. */
   columnHelp: (header: string) => string;
+  /** Accessible name of a row's expand button (`renderExpandedRow`); `aria-expanded` tells its state. `"Mostrar detalle"`. */
+  expandRow: string;
 }
 
 export interface DataTableProps<TData> extends DataViewProps<TData> {
@@ -182,6 +187,18 @@ export interface DataTableProps<TData> extends DataViewProps<TData> {
    * ids that leave `data` are dropped, except with `manualPagination`, where the app owns them.
    */
   rowSelection?: RowSelectionConfig<TData>;
+  /**
+   * Adds an expand button column and, under each open row, a full-width detail with this content. Requires
+   * `getRowId` (`MissingRowIdError` otherwise). The detail is not a row: paging and totals ignore it.
+   */
+  renderExpandedRow?: (row: TData) => ReactNode;
+  /** Controlled open rows, as ids from `getRowId`; `undefined` lets the table keep them. */
+  expandedRowIds?: string[];
+  defaultExpandedRowIds?: string[];
+  /** Fires when the user opens or closes a row, controlled or not. */
+  onExpandedChange?: (expandedRowIds: string[]) => void;
+  /** `false` leaves the row without expand button. Defaults to every row. */
+  canExpandRow?: (row: TData) => boolean;
   /** Columns the app shows (`true`) or removes (`false`); a column not listed is shown. Always wins over `priority`. */
   columnVisibility?: Record<string, boolean>;
   /**
