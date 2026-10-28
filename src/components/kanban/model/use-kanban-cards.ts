@@ -3,6 +3,7 @@ import {
   computeColumnFilterOptions,
   normalizeInputRows,
 } from "../../shared/rows/row-pipeline";
+import { useLatestRef } from "../../shared/use-latest-ref";
 import type { KanbanBoardProps } from "../types";
 
 export const useKanbanCards = <TData>({
@@ -22,5 +23,5 @@ export const useKanbanCards = <TData>({
     () => computeColumnFilterOptions(fields, cards),
     [fields, cards],
   );
-  return { cards, setCards, filterOptions };
+  return { cards, setCards, filterOptions, inputCardsRef: useLatestRef(inputCards) };
 };

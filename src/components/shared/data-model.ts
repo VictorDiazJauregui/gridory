@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
-import type { RowAction } from "./menu/row-action";
+import type { RowActionEntry } from "./menu/row-action";
 import type { MenuItem } from "./menu/menu-nodes";
 
 /** Scalar values a column accessor may return. */
@@ -142,10 +142,11 @@ export interface RowActions<TData> {
    * Extra menu actions beyond the built-ins. Each needs a unique `id` (validated
    * against `edit`/`archive`/`remove`/`history` and against other custom actions);
    * `placement` renders it before (`"top"`) or after (`"bottom"`, default) the
-   * built-ins, preserving array order within each group. No separators are
-   * inserted; use `menuActions` for full control.
+   * built-ins, preserving array order within each group. An entry with `items`
+   * (`RowActionSubmenu`) opens a submenu; the ids inside it are validated too. No
+   * separators are inserted; use `menuActions` for full control.
    */
-  customActions?: RowAction<TData>[];
+  customActions?: RowActionEntry<TData>[];
   /**
    * Fully explicit, ordered menu composition. When provided it overrides
    * `customActions`: built-ins are referenced by id (`{ kind: "builtin", id }`),

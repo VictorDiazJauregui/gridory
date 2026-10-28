@@ -195,6 +195,12 @@
   cursor: grabbing;
 }
 
+/* The move waits for the promise onCardMove returned: the card stays visible but cannot be dragged. */
+.gdy-kanban-card[data-pending] {
+  opacity: var(--gdy-kanban-card-pending-opacity, 0.6);
+  cursor: progress;
+}
+
 /* Menu slot appended under a custom renderCard */
 .gdy-kanban-card-actions {
   display: flex;

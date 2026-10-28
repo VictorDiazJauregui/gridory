@@ -2,15 +2,20 @@ import { cn } from "../../../lib/cn";
 import { buildPlaceholderKeys, resolveLoadingRowCount } from "../../shared/loading/loading-state";
 import { SkeletonBar } from "../../shared/loading/SkeletonBar";
 import { resolveColumnLabel } from "../model/group-columns";
+import { buildColumnHookProps, type ColumnHookSettings } from "./column-attributes";
 import type { KanbanSectionProps } from "../model/use-kanban-board-state";
-import type { KanbanBoardClassNames } from "../types";
 
 const PLACEHOLDER_COLUMN_COUNT = 3;
 
-interface LoadingColumnProps {
+interface LoadingColumn {
+  /** Undefined for the placeholder columns shown before the first data. */
+  value?: string;
   label?: string;
+}
+
+interface LoadingColumnProps extends LoadingColumn {
   cardCount: number;
-  classNames?: KanbanBoardClassNames;
+  hooks: ColumnHookSettings;
 }
 
 const KanbanCardSkeleton = () => (
@@ -21,35 +26,43 @@ const KanbanCardSkeleton = () => (
   </article>
 );
 
-const KanbanLoadingColumn = ({ label, cardCount, classNames }: LoadingColumnProps) => (
-  <section className={cn("gdy-kanban-column", classNames?.column)}>
-    <header className={cn("gdy-kanban-column-head", classNames?.columnHead)}>
-      <span className="gdy-kanban-column-title" title={label}>
-        {label ?? <SkeletonBar />}
+const resolveSectionProps = ({ value, hooks }: LoadingColumnProps) =>
+  value === undefined
+    ? { className: cn("gdy-kanban-column", hooks.classNames?.column) }
+    : buildColumnHookProps(value, hooks);
+
+const KanbanLoadingColumn = (props: LoadingColumnProps) => (
+  <section {...resolveSectionProps(props)}>
+    <header className={cn("gdy-kanban-column-head", props.hooks.classNames?.columnHead)}>
+      <span className="gdy-kanban-column-title" title={props.label}>
+        {props.label ?? <SkeletonBar />}
       </span>
     </header>
-    <div className={cn("gdy-kanban-column-body", classNames?.columnBody)}>
-      {buildPlaceholderKeys(cardCount).map((key) => (
+    <div className={cn("gdy-kanban-column-body", props.hooks.classNames?.columnBody)}>
+      {buildPlaceholderKeys(props.cardCount).map((key) => (
         <KanbanCardSkeleton key={key} />
       ))}
     </div>
   </section>
 );
 
-// The known columns keep their real title (no count: it is not known yet); before the first
-// data there is none, so placeholder columns stand in for them.
-const resolveLoadingLabels = <TData,>({ state, view }: KanbanSectionProps<TData>) => {
+// The known columns keep their real title and value (no count: it is not known yet); before the
+// first data there is none, so placeholder columns stand in for them.
+const resolveLoadingColumns = <TData,>({ state, view }: KanbanSectionProps<TData>): LoadingColumn[] => {
   const values = state.visibleColumnValues;
-  if (values.length === 0) return Array.from({ length: PLACEHOLDER_COLUMN_COUNT }, () => undefined);
-  return values.map((value) => resolveColumnLabel(state.groupColumns, value, view.labels.emptyValue));
+  if (values.length === 0) return Array.from({ length: PLACEHOLDER_COLUMN_COUNT }, () => ({}));
+  return values.map((value) => ({
+    value,
+    label: resolveColumnLabel(state.groupColumns, value, view.labels.emptyValue),
+  }));
 };
 
 export const KanbanLoadingColumns = <TData,>({ state, view }: KanbanSectionProps<TData>) => {
   const cardCount = resolveLoadingRowCount(view.loadingRowCount);
   return (
     <div className="gdy-kanban-board">
-      {resolveLoadingLabels({ state, view }).map((label, index) => (
-        <KanbanLoadingColumn key={label ?? `placeholder-${index}`} label={label} cardCount={cardCount} classNames={view.classNames} />
+      {resolveLoadingColumns({ state, view }).map((column, index) => (
+        <KanbanLoadingColumn key={column.value ?? `placeholder-${index}`} {...column} cardCount={cardCount} hooks={view} />
       ))}
     </div>
   );

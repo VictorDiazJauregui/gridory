@@ -203,6 +203,84 @@ que cambie `data`. Mientras el arrastre está activo, cada tarjeta lleva `data-d
 le da el cursor `grab`. Durante el arrastre, la tarjeta lleva `data-dragging` y la columna que está bajo
 el puntero lleva `data-drop-target`.
 
+### Rechazar un movimiento
+
+`onCardMove` puede decir que no. Lo que devuelve decide qué hace el tablero:
+
+| `onCardMove` devuelve | El tablero |
+|---|---|
+| Nada (`void`) o `true` | Mantiene el movimiento, como antes. |
+| `false` | No mueve la tarjeta. |
+| Una promesa | Mueve la tarjeta y espera. Mientras espera, la tarjeta lleva `data-pending` y `aria-busy="true"`, se ve atenuada y no se puede volver a arrastrar. Si la promesa se resuelve en `false` o se rechaza, la tarjeta vuelve a su columna y a su lugar; si no, se queda. |
+
+Se conservan la búsqueda, los filtros, el orden y el grupo activo: nada se vuelve a montar. Cuando
+una promesa se rechaza, `onCardMoveError(error, event)` recibe el error con la tarjeta ya de vuelta.
+Sin `onCardMoveError` el error se vuelve a lanzar, como rechazo sin manejar, para que la consola y tu
+monitoreo de errores lo sigan viendo; capturarlo en la app y devolver `false` es la forma silenciosa.
+
+```tsx
+<KanbanBoard
+  {...boardProps}
+  onCardMove={async ({ cardId, toValue, updatedCard }) => {
+    const saved = await api.moveDeal(cardId, toValue);
+    if (saved) setDeals((deals) => replaceDeal(deals, updatedCard));
+    return saved;
+  }}
+  onCardMoveError={(error) => toast.error(String(error))}
+/>
+```
+
+Antes, la única forma de deshacer un movimiento era forzar una nueva referencia de `data` o volver a
+montar el tablero con otro `key`, lo que también perdía la búsqueda y los filtros:
+
+```tsx
+// Antes: el remontado descarta la búsqueda, los filtros y el orden
+<KanbanBoard key={revision} {...boardProps} onCardMove={(event) => save(event).catch(() => setRevision((r) => r + 1))} />
+```
+
+Un `data` nuevo gana sobre la reversión: si `data` cambia mientras la promesa está pendiente, el
+tablero muestra los datos nuevos y no devuelve la tarjeta. El tablero compara por referencia las
+tarjetas que obtiene de `data` (y de `normalizeRow`), así que un `data={{ results: rows }}` o un
+`normalizeRow` escritos en línea cuentan como datos nuevos en cada render del padre, y además
+resincronizan el tablero en cada render. Memoizalos (`useMemo`, `useCallback`) cuando el padre se
+vuelve a renderizar con un movimiento pendiente.
+
+Una promesa que nunca se resuelve deja su tarjeta pendiente: el timeout lo decide la app. El resto del
+tablero sigue funcionando.
+
+### Tarjetas visibles
+
+`onVisibleCardsChange` te entrega las tarjetas que el usuario está viendo, para que la app muestre un
+total o exporte la lista sin leer el DOM ni repetir la búsqueda y los filtros:
+
+| Campo | Contenido |
+|---|---|
+| `cards` | Cada tarjeta que pasa la búsqueda, la vista de archivados y los filtros, en el orden activo. |
+| `byColumn` | Esas tarjetas por valor de columna, con una clave por cada columna en pantalla; una columna que la búsqueda o los filtros dejaron vacía llega con `[]`. |
+
+Se dispara al montar y cada vez que la búsqueda, un filtro, la vista de archivados, el grupo o un
+movimiento cambian las tarjetas que se ven, y nunca dos veces por el mismo resultado: compara las
+tarjetas una por una con el último aviso, así que un `data` en línea con los mismos objetos no lo
+vuelve a disparar. Nunca se dispara mientras `loading`; al terminar la carga avisa una vez si las
+tarjetas cambiaron.
+
+```tsx
+// Antes: repetir afuera la búsqueda y los filtros del tablero
+const visible = deals.filter((deal) => matches(deal, search) && passes(deal, filters));
+
+// Después
+<KanbanBoard
+  {...boardProps}
+  onVisibleCardsChange={({ cards, byColumn }) => {
+    setTotal(sumAmounts(cards));
+    setWonCount(byColumn.won?.length ?? 0);
+  }}
+/>;
+```
+
+Un número que va dentro de la cabecera de una columna conviene pintarlo ahí, con el espacio de la
+cabecera de columna (`renderColumnHeaderExtra`), en lugar de pasarlo por el estado de la app y volver.
+
 ### Clic en la tarjeta
 
 `onCardClick` recibe un `KanbanCardClickEvent<TData>`: `{ card, cardId, groupId, value }`, donde
@@ -370,8 +448,10 @@ Claves propias del kanban (`KanbanBoardLabels`):
 
 | Callback | Firma | Se dispara cuando |
 |---|---|---|
-| `onCardMove` | `(event: KanbanMoveEvent<TData>) => void` | Se suelta una tarjeta en una columna distinta de la suya. |
+| `onCardMove` | `(event: KanbanMoveEvent<TData>) => void \| boolean \| Promise<void \| boolean>` | Se suelta una tarjeta en una columna distinta de la suya. Ver [Rechazar un movimiento](#rechazar-un-movimiento). |
+| `onCardMoveError` | `(error: unknown, event: KanbanMoveEvent<TData>) => void` | La promesa que devolvió `onCardMove` se rechazó; la tarjeta ya volvió. |
 | `onCardClick` | `(event: KanbanCardClickEvent<TData>) => void` | Se hace clic en una tarjeta (no al terminar un arrastre ni desde su menú). |
+| `onVisibleCardsChange` | `(state: KanbanVisibleCardsState<TData>) => void` | Al montar, y cada vez que cambian las tarjetas visibles. Ver [Tarjetas visibles](#tarjetas-visibles). |
 | `onGroupChange` | `(groupId: string) => void` | El usuario elige otro grupo en el selector. No se dispara al montar. |
 | `onCreate` | `() => void` | Se hace clic en el botón de crear. El botón solo se renderiza si defines este callback. |
 | `rowActions.onEdit`, `onArchive`, `onArchiveToggle`, `onRemove`, `onHistory` | `(row: TData) => void` | Se elige la acción predefinida correspondiente en el menú de la tarjeta. |
@@ -395,6 +475,33 @@ se comparten con la tabla. Se configuran con `DataViewProps` y están documentad
 opción "ninguno" y no hay paginación, así que se renderizan todas las tarjetas que pasan la búsqueda,
 los filtros y la vista de archivados.
 
+### Una acción por estado, y submenús
+
+El `label` y el `icon` de una acción pueden depender de la tarjeta, y una entrada con `items` abre un
+submenú (`RowActionSubmenu`), en `customActions` y en `menuActions`. El par de acciones con `hidden`
+opuestos pasa a ser una sola acción:
+
+```tsx
+// Antes: dos acciones, una oculta en cada tarjeta
+customActions: [
+  { id: "favorite", label: "Marcar favorito", icon: <Star />, onClick: toggle, hidden: (deal) => deal.favorite },
+  { id: "unfavorite", label: "Quitar favorito", icon: <StarOff />, onClick: toggle, hidden: (deal) => !deal.favorite },
+]
+
+// Después: una acción, y los estados agrupados en un submenú
+customActions: [
+  {
+    id: "favorite",
+    label: (deal) => (deal.favorite ? "Quitar favorito" : "Marcar favorito"),
+    icon: (deal) => (deal.favorite ? <StarOff /> : <Star />),
+    onClick: toggle,
+  },
+  { id: "status", label: "Cambiar estado", items: STATUSES.map((status) => moveTo(status)) },
+]
+```
+
+Detalles, teclado y reglas de ids: [Texto e icono por fila, y submenús](toolbar.es.md#texto-e-icono-por-fila-y-submenús).
+
 ## Estilos
 
 El elemento raíz es `div.gdy-kanban`, que además lleva `gdy-thin-scroll` mientras `thinScrollbars`
@@ -407,11 +514,11 @@ tarjeta visible, el viewport contiene un único elemento `gdy-empty` con `emptyM
 | `gdy-kanban-filter-row` | Fila de botones de filtro bajo la toolbar. | — |
 | `gdy-kanban-filter-trigger` | Botón de filtro de un campo, con `gdy-kanban-filter-trigger-label`. | `data-filtered` mientras el campo tiene un filtro. |
 | `gdy-kanban-board` | Fila flex de columnas dentro del viewport. | — |
-| `gdy-kanban-column` | Columna (`section`), con su cabecera `gdy-kanban-column-head`. | `data-drop-target` mientras se arrastra una tarjeta encima. |
+| `gdy-kanban-column` | Columna (`section`), con su cabecera `gdy-kanban-column-head`. | `data-column-value` con el valor crudo de la columna, siempre; `data-drop-target` mientras se arrastra una tarjeta encima. |
 | `gdy-kanban-column-title` | Título de la columna. | — |
 | `gdy-kanban-column-count` | Contador de tarjetas. | — |
 | `gdy-kanban-column-body` | Lista de tarjetas con scroll; `gdy-kanban-empty-col` es su placeholder `"Sin cards"`. | — |
-| `gdy-kanban-card` | Tarjeta (`article`). | `data-draggable` mientras se puede arrastrar; `data-dragging` mientras se arrastra. |
+| `gdy-kanban-card` | Tarjeta (`article`). | `data-draggable` mientras se puede arrastrar; `data-dragging` mientras se arrastra; `data-pending` (con `aria-busy`) mientras su movimiento espera a `onCardMove`. |
 | `gdy-kanban-card-title` | Título de la tarjeta por defecto; `gdy-kanban-card-subtitle` es su subtítulo. | — |
 | `gdy-kanban-tag` | Etiqueta de grupo de la tarjeta por defecto. | — |
 | `gdy-kanban-card-value` | Líneas `Header: value` y línea de fecha de la tarjeta por defecto. | — |
@@ -429,6 +536,7 @@ ancestro del tablero:
 | `--gdy-kanban-card-border` | `--gdy-border` | Borde de la tarjeta. |
 | `--gdy-kanban-drop-bg` | Un tinte de `--gdy-muted` | Fondo de la columna mientras tiene una tarjeta arrastrada encima. |
 | `--gdy-kanban-drop-outline` | `--gdy-muted-foreground` | Contorno discontinuo de la columna de destino. |
+| `--gdy-kanban-card-pending-opacity` | `0.6` | Opacidad de una tarjeta con el movimiento pendiente. |
 
 `boardWrapClassName` agrega tus propias clases al viewport. `boardMinHeightClassName` (por defecto
 `"gdy-kanban-min-h-md"`) fija su altura mínima con una de las utilidades incluidas,
@@ -486,6 +594,37 @@ que la hoja ya define, como el fondo de la columna, gana la hoja que se carga ú
 después de `gridory/styles.css`, o definí desde la clase el token de esa parte
 (`[--gdy-kanban-column-bg:theme(colors.sky.50)]` en Tailwind).
 
+### Una columna distinta del resto
+
+Cada columna lleva `data-column-value` con su valor crudo (`""` para la columna de las tarjetas sin
+valor), también mientras `loading` muestra las columnas que ya conoce. Las columnas de relleno que
+se muestran antes de los primeros datos no llevan nada. Dos props llegan a una sola columna:
+
+- `getColumnClassName(value)` devuelve una clase para esa columna, que se suma después de
+  `gdy-kanban-column` y de `classNames.column`.
+- `getColumnAttributes(value)` devuelve atributos `data-*` y `aria-*` (`KanbanColumnAttributes`).
+  Cualquier otro nombre se descarta, `false` y `undefined` descartan un gancho `data-*` (un `aria-*`
+  conserva `false`), y también se descartan los nombres que el tablero escribe o va a escribir:
+  `data-drop-target`, `data-column-value`, `data-drop-disabled` y `data-collapsed`.
+
+Para pintar una columna, se cambia su token según su valor, sin tocar ninguna regla del tablero:
+
+```css
+.gdy-kanban-column[data-column-value="won"] {
+  --gdy-kanban-column-bg: #ecfdf5;
+}
+```
+
+Antes, la única forma era la posición de la columna, que se rompe en cuanto cambia el orden de las
+columnas o el grupo activo:
+
+```css
+/* Antes: depende de que "won" sea la cuarta columna */
+.gdy-kanban-column:nth-child(4) {
+  background: #ecfdf5;
+}
+```
+
 ## Referencia de props
 
 Props propias de `KanbanBoardProps<TData>`, en el orden del código fuente.
@@ -501,13 +640,17 @@ Props propias de `KanbanBoardProps<TData>`, en el orden del código fuente.
 | `getCardId` | `(card: TData, index: number) => string` | — | Id único y estable de la tarjeta (obligatoria). |
 | `features` | `KanbanBoardFeatures` | todos `true` | Flags de capacidades. |
 | `renderCard` | `(card: TData, context: KanbanCardRenderContext<TData>) => ReactNode` | — | Contenido personalizado de la tarjeta. |
-| `onCardMove` | `(event: KanbanMoveEvent<TData>) => void` | — | Tarjeta soltada en otra columna. |
+| `onCardMove` | `(event: KanbanMoveEvent<TData>) => void \| boolean \| Promise<void \| boolean>` | — | Tarjeta soltada en otra columna; `false` o una promesa pueden devolverla. |
+| `onCardMoveError` | `(error: unknown, event: KanbanMoveEvent<TData>) => void` | — | Error de una promesa de `onCardMove` rechazada. Sin esta prop el error se vuelve a lanzar. |
 | `onCardClick` | `(event: KanbanCardClickEvent<TData>) => void` | — | Clic en una tarjeta. |
+| `onVisibleCardsChange` | `(state: KanbanVisibleCardsState<TData>) => void` | — | Tarjetas visibles al montar y después de cada cambio. |
 | `onGroupChange` | `(groupId: string) => void` | — | Cambio en el selector de grupo. |
 | `groupSelectorLabel` | `string` | `"Agrupar por"` | Prefijo de cada opción de grupo y nombre accesible del selector. |
 | `boardWrapClassName` | `string` | — | Clases extra para el viewport del tablero. |
 | `className` | `string` | — | Clases extra para la raíz, después de `gdy-kanban` y sus flags. |
 | `classNames` | `KanbanBoardClassNames` | — | Una clase por parte. Ver [Clases por parte](#clases-por-parte). |
+| `getColumnClassName` | `(value: string) => string \| undefined` | — | Clase extra para una columna. Ver [Una columna distinta del resto](#una-columna-distinta-del-resto). |
+| `getColumnAttributes` | `(value: string) => KanbanColumnAttributes` | — | Atributos `data-*` y `aria-*` extra para una columna. |
 | `boardMinHeightClassName` | `string` | `"gdy-kanban-min-h-md"` | Clase de altura mínima del viewport del tablero. |
 | `columnBodyMaxHeight` | `number` | `480` | Altura máxima en píxeles del cuerpo de cada columna antes de hacer scroll. |
 
@@ -530,9 +673,11 @@ Props propias de `KanbanBoardProps<TData>`, en el orden del código fuente.
 - `KanbanMoveEvent<TData>`: `{ card, updatedCard, cardId, groupId, fromValue, toValue }`, el payload
   de `onCardMove`.
 - `KanbanCardClickEvent<TData>`: `{ card, cardId, groupId, value }`, el payload de `onCardClick`.
+- `KanbanVisibleCardsState<TData>`: `{ cards, byColumn }`, el payload de `onVisibleCardsChange`.
 - `KanbanCardRenderContext<TData>`: `{ card, groupId, groupValue }`, el segundo argumento de
   `renderCard`.
 - `KanbanSortingState`: `{ id: string; direction: SortDirection }`, el orden activo de un campo.
 - `KanbanFiltersState`: `Record<string, string[]>`, los valores seleccionados por id de campo.
 - `KanbanDateFiltersState`: `Record<string, DateFilterState>`, el filtro de fecha por id de campo.
 - `KanbanBoardClassNames`: las clases opcionales por parte de `classNames`.
+- `KanbanColumnAttributes`: los atributos `data-*` y `aria-*` que devuelve `getColumnAttributes`.

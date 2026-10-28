@@ -58,7 +58,7 @@ export const BASELINE_VIEW_PROPS = {
   headerSelectors: [BASELINE_HEADER_SELECTOR],
 };
 
-const ADDED_ATTRIBUTES = / data-(?:column|row)-id="[^"]*"/g;
+const ADDED_ATTRIBUTES = / data-(?:column-id|row-id|column-value)="[^"]*"/g;
 const ICON = /<svg\b[^>]*>[\s\S]*?<\/svg>/g;
 // The table's ⋯ button gains the aria-label the kanban's already had; the kanban's is kept.
 const TABLE_ACTIONS_ARIA_LABEL = / aria-label="Opciones"(?=[^>]*><svg class="gdy-table-actions-icon")/g;
@@ -73,8 +73,9 @@ const keepGridoryIconClasses = (icon: string) => {
   return `<svg class="${classes.join(" ")}"></svg>`;
 };
 
-// 1.1.0 adds data-column-id, data-row-id and the table's ⋯ aria-label on purpose, and 1.2.0
-// the pagination arrows' aria-label; anything else must stay byte for byte.
+// 1.1.0 adds data-column-id, data-row-id and the table's ⋯ aria-label on purpose, 1.2.0 the
+// pagination arrows' aria-label and 1.3.0 each kanban column's data-column-value; anything else
+// must stay byte for byte.
 export const normalizeBaselineHtml = (html: string) =>
   html
     .replace(ADDED_ATTRIBUTES, "")

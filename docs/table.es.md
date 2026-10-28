@@ -812,6 +812,33 @@ final de cada fila (acciones integradas de editar, archivar, eliminar e historia
 `menuActions`) se comparten con el kanban. Se configuran con `DataViewProps` y están documentados en
 [toolbar.es.md](toolbar.es.md).
 
+### Una acción por estado, y submenús
+
+El `label` y el `icon` de una acción pueden depender de la fila, y una entrada con `items` abre un
+submenú (`RowActionSubmenu`), en `customActions` y en `menuActions`. El par de acciones con `hidden`
+opuestos pasa a ser una sola acción:
+
+```tsx
+// Antes: dos acciones, una oculta en cada fila
+customActions: [
+  { id: "favorite", label: "Marcar favorito", icon: <Star />, onClick: toggle, hidden: (deal) => deal.favorite },
+  { id: "unfavorite", label: "Quitar favorito", icon: <StarOff />, onClick: toggle, hidden: (deal) => !deal.favorite },
+]
+
+// Después: una acción, y los estados agrupados en un submenú
+customActions: [
+  {
+    id: "favorite",
+    label: (deal) => (deal.favorite ? "Quitar favorito" : "Marcar favorito"),
+    icon: (deal) => (deal.favorite ? <StarOff /> : <Star />),
+    onClick: toggle,
+  },
+  { id: "status", label: "Cambiar estado", items: STATUSES.map((status) => moveTo(status)) },
+]
+```
+
+Detalles, teclado y reglas de ids: [Texto e icono por fila, y submenús](toolbar.es.md#texto-e-icono-por-fila-y-submenús).
+
 ## Estilos
 
 El elemento raíz es `div.gdy-table`, que además lleva las clases `gdy-table-fill` (con `fillHeight`),

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { ConsumerAttributes } from "../shared/attributes/consumer-attributes";
 import type {
   ColumnDefinition,
   DataInput,
@@ -62,6 +63,14 @@ export interface KanbanMoveEvent<TData> {
   toValue: string;
 }
 
+/** Payload of `onVisibleCardsChange`: the cards the user is looking at. */
+export interface KanbanVisibleCardsState<TData> {
+  /** Cards that pass the search, the archived view and the filters, in sort order. */
+  cards: TData[];
+  /** Those cards per column value, one key per column on screen; `[]` for a column left empty. */
+  byColumn: Record<string, TData[]>;
+}
+
 /** Payload of `onCardClick`. */
 export interface KanbanCardClickEvent<TData> {
   card: TData;
@@ -76,6 +85,13 @@ export interface KanbanCardRenderContext<TData> {
   groupId: string;
   groupValue: string;
 }
+
+/**
+ * Extra attributes for a column (`getColumnAttributes`). Only `data-*` and `aria-*` names are
+ * accepted; the ones the board writes (`data-drop-target`, `data-column-value`,
+ * `data-drop-disabled`, `data-collapsed`) are dropped.
+ */
+export type KanbanColumnAttributes = ConsumerAttributes;
 
 /**
  * One class per part, added after the `gdy-*` hook of that part. `board` goes after
@@ -139,8 +155,24 @@ export interface KanbanBoardProps<TData> extends DataViewProps<TData> {
     card: TData,
     context: KanbanCardRenderContext<TData>,
   ) => ReactNode;
-  onCardMove?: (event: KanbanMoveEvent<TData>) => void;
+  /**
+   * A card was dropped on another column. Return `false`, or a promise that resolves to `false` or
+   * rejects, to send the card back to its column; while the promise is pending the card carries
+   * `data-pending` and `aria-busy` and cannot be dragged. Returning nothing keeps the move.
+   */
+  onCardMove?: (event: KanbanMoveEvent<TData>) => void | boolean | Promise<void | boolean>;
+  /**
+   * Receives the error of a promise from `onCardMove` that rejected, after the card is back in its
+   * column. Without it the error is thrown again, as an unhandled rejection.
+   */
+  onCardMoveError?: (error: unknown, event: KanbanMoveEvent<TData>) => void;
   onCardClick?: (event: KanbanCardClickEvent<TData>) => void;
+  /**
+   * The visible cards changed: on mount, and whenever the search, the filters, the archived view,
+   * the group or a move changes which cards are shown. Never while `loading`; once more when it ends
+   * if the cards changed.
+   */
+  onVisibleCardsChange?: (state: KanbanVisibleCardsState<TData>) => void;
   onGroupChange?: (groupId: string) => void;
   /**
    * Prefix of every option in the toolbar group selector and its accessible
@@ -150,6 +182,13 @@ export interface KanbanBoardProps<TData> extends DataViewProps<TData> {
   /** Extra class(es) for the root element, added after `gdy-kanban` and its flags. */
   className?: string;
   classNames?: KanbanBoardClassNames;
+  /**
+   * Extra class(es) for one column, added after `gdy-kanban-column` and `classNames.column`. Receives
+   * the raw column value (`""` for the column of the cards without value).
+   */
+  getColumnClassName?: (value: string) => string | undefined;
+  /** Extra `data-*` and `aria-*` attributes for one column. Receives the raw column value. */
+  getColumnAttributes?: (value: string) => KanbanColumnAttributes;
   boardWrapClassName?: string;
   boardMinHeightClassName?: string;
   columnBodyMaxHeight?: number;

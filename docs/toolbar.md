@@ -375,6 +375,46 @@ Ids are checked when a menu renders. A custom action may not use a built-in id
 be unique, and every `menuActions` item id (separators and labels included) must be unique. A
 collision throws `DuplicateRowActionError`, exported like the types below.
 
+### Text and icon per row, and submenus
+
+`label` and `icon` take a function of the row, so one action can read differently on each row
+instead of two actions with opposite `hidden`:
+
+```tsx
+const toggleFavorite: RowAction<Invoice> = {
+  id: "favorite",
+  label: (invoice) => (invoice.favorite ? "Remove favorite" : "Mark favorite"),
+  icon: (invoice) => (invoice.favorite ? <StarOff /> : <Star />),
+  onClick: (invoice) => post(invoice, "favorite"),
+};
+```
+
+An entry with `items` instead of `onClick` (`RowActionSubmenu`) opens a submenu with those actions.
+`items` can also be a function of the row. It goes in `customActions` or in `menuActions` like any
+action, takes `label`, `icon`, `placement`, `disabled` and `hidden`, and holds plain actions only (one
+level). A submenu with no visible action is not rendered. The arrow keys move between the levels:
+right opens the submenu, left closes it and Escape closes the whole menu. The panel opens on the side
+with room and stays on screen, also on a phone.
+
+```tsx
+const changeStatus: RowActionSubmenu<Invoice> = {
+  id: "status",
+  label: "Change status",
+  items: ["draft", "sent", "paid"].map((status) => ({
+    id: `status-${status}`,
+    label: status,
+    onClick: (invoice) => post(invoice, `status/${status}`),
+    hidden: (invoice) => invoice.status === status,
+  })),
+};
+
+const rowActions: RowActions<Invoice> = { customActions: [toggleFavorite, changeStatus] };
+```
+
+The ids inside a submenu share the menu's namespace: they are checked with the rest and a repeated
+one, or a built-in id, throws `DuplicateRowActionError` too. Code that reads `action.label` of a
+`RowAction` as text has to handle the function form.
+
 ## Select styling and scrollbars
 
 `selectTheme` styles every select of the component: the toolbar selects (archived view, group
@@ -518,7 +558,7 @@ Every type below is exported from `gridory`, `gridory/table` and `gridory/kanban
 | `onArchiveToggle` | `(row: TData) => void` | — | Enables the archive action; wins over `onArchive`. |
 | `getIsArchived` | `(row: TData) => boolean` | — | Archived state: archive label and archived view. |
 | `archiveLabel`, `unarchiveLabel`, `deleteLabel`, `editLabel`, `historyLabel` | `string` | Spanish | Built-in texts; defaults in [Row and card actions](#row-and-card-actions). |
-| `customActions` | `RowAction<TData>[]` | — | Extra actions around the built-ins. |
+| `customActions` | `RowActionEntry<TData>[]` | — | Extra actions (`RowAction`) and submenus (`RowActionSubmenu`) around the built-ins. |
 | `menuActions` | `MenuItem<TData>[]` | — | Full menu composition; overrides `customActions`. |
 | `triggerLabel` | `string` | `"Opciones"` | Accessible name and tooltip of the ⋯ button, in the table and the kanban. |
 | `columnLabel` | `string` | — | Table only. Header text of the actions column. See [Alignment](table.md#alignment). |
@@ -529,19 +569,34 @@ Every type below is exported from `gridory`, `gridory/table` and `gridory/kanban
 | Field | Type | Default | Description |
 |---|---|---|---|
 | `id` | `string` | — | Unique id, not a built-in id. |
-| `label` | `string` | — | Item text. |
-| `icon` | `ReactNode` | — | Item icon. |
+| `label` | `string \| ((row: TData) => string)` | — | Item text, fixed or per row. |
+| `icon` | `ReactNode \| ((row: TData) => ReactNode)` | — | Item icon, fixed or per row. |
 | `onClick` | `(row: TData) => void` | — | Called with the row. |
 | `placement` | `RowActionPlacement` | `"bottom"` | `"top" \| "bottom"`; used by `customActions` only. |
 | `variant` | `RowActionVariant` | `"default"` | `"default" \| "destructive"`. |
 | `disabled` | `(row: TData) => boolean` | — | Disables the item for that row. |
 | `hidden` | `(row: TData) => boolean` | — | Drops the item for that row. |
 
+### RowActionSubmenu
+
+| Field | Type | Default | Description |
+|---|---|---|---|
+| `id` | `string` | — | Unique id, not a built-in id. |
+| `label` | `string \| ((row: TData) => string)` | — | Text of the submenu entry. |
+| `icon` | `ReactNode \| ((row: TData) => ReactNode)` | — | Icon of the submenu entry. |
+| `items` | `RowAction<TData>[] \| ((row: TData) => RowAction<TData>[])` | — | Actions of the submenu. |
+| `placement` | `RowActionPlacement` | `"bottom"` | `"top" \| "bottom"`; used by `customActions` only. |
+| `disabled` | `(row: TData) => boolean` | — | Disables the entry for that row. |
+| `hidden` | `(row: TData) => boolean` | — | Drops the entry for that row. |
+
+`RowActionEntry<TData>` is `RowAction<TData> | RowActionSubmenu<TData>`.
+
 ### MenuItem
 
 | Variant | Shape | Renders |
 |---|---|---|
 | Custom action | `RowAction<TData> & { kind?: "action" }` | A menu item. |
+| Submenu | `RowActionSubmenu<TData> & { kind?: "submenu" }` | An entry that opens its actions in a submenu. |
 | `BuiltInMenuRef` | `{ kind: "builtin"; id: BuiltInActionId }` | The built-in, when available. `BuiltInActionId` is `"edit" \| "archive" \| "remove" \| "history"` (`BUILT_IN_ROW_ACTION_IDS`). |
 | `MenuSeparator` | `{ kind: "separator"; id: string }` | A divider. |
 | `MenuLabel` | `{ kind: "label"; id: string; label: string; className?: string }` | A heading. |

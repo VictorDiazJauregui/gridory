@@ -3,16 +3,45 @@ import type { ReactNode } from "react";
 export type RowActionPlacement = "top" | "bottom";
 export type RowActionVariant = "default" | "destructive";
 
+/** Text of an action: fixed, or computed from the row the menu belongs to. */
+export type RowActionLabel<TData> = string | ((row: TData) => string);
+
+/** Icon of an action: fixed, or computed from the row the menu belongs to. */
+export type RowActionIcon<TData> = ReactNode | ((row: TData) => ReactNode);
+
 export interface RowAction<TData> {
   id: string;
-  label: string;
-  icon?: ReactNode;
+  label: RowActionLabel<TData>;
+  icon?: RowActionIcon<TData>;
   onClick: (row: TData) => void;
   placement?: RowActionPlacement;
   variant?: RowActionVariant;
   disabled?: (row: TData) => boolean;
   hidden?: (row: TData) => boolean;
 }
+
+/**
+ * An entry that opens one more level of actions instead of running one. A submenu holds plain
+ * actions only (one level), and is not rendered when none of its actions is visible.
+ */
+export interface RowActionSubmenu<TData> {
+  id: string;
+  label: RowActionLabel<TData>;
+  icon?: RowActionIcon<TData>;
+  items: RowAction<TData>[] | ((row: TData) => RowAction<TData>[]);
+  placement?: RowActionPlacement;
+  disabled?: (row: TData) => boolean;
+  hidden?: (row: TData) => boolean;
+}
+
+/** What `customActions` holds: an action, or a submenu of actions. */
+export type RowActionEntry<TData> = RowAction<TData> | RowActionSubmenu<TData>;
+
+export const isRowActionSubmenu = <TData>(entry: RowActionEntry<TData>): entry is RowActionSubmenu<TData> =>
+  "items" in entry;
+
+export const resolveSubmenuItems = <TData>(submenu: RowActionSubmenu<TData>, row: TData) =>
+  typeof submenu.items === "function" ? submenu.items(row) : submenu.items;
 
 export const BUILT_IN_ROW_ACTION_IDS = [
   "edit",
@@ -31,14 +60,23 @@ export class DuplicateRowActionError extends Error {
   }
 }
 
+// The ids inside a submenu share one namespace with the rest of the menu.
+export const collectRowActionIds = <TData>(entry: RowActionEntry<TData>, row: TData): string[] =>
+  isRowActionSubmenu(entry) ? [entry.id, ...resolveSubmenuItems(entry, row).map((item) => item.id)] : [entry.id];
+
+export const assertUniqueRowActionIds = (ids: string[], seenIds: Set<string>) => {
+  for (const id of ids) {
+    if (seenIds.has(id)) throw new DuplicateRowActionError(id);
+    seenIds.add(id);
+  }
+};
+
 export const validateCustomRowActions = <TData>(
-  actions: RowAction<TData>[] | undefined,
-): RowAction<TData>[] => {
+  actions: RowActionEntry<TData>[] | undefined,
+  row: TData,
+): RowActionEntry<TData>[] => {
   if (!actions?.length) return [];
   const seenIds = new Set<string>(BUILT_IN_ROW_ACTION_IDS);
-  for (const action of actions) {
-    if (seenIds.has(action.id)) throw new DuplicateRowActionError(action.id);
-    seenIds.add(action.id);
-  }
+  actions.forEach((action) => assertUniqueRowActionIds(collectRowActionIds(action, row), seenIds));
   return actions;
-}
+};

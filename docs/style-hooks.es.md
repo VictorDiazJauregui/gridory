@@ -73,7 +73,7 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-kanban` | con estilos | — |
 | `gdy-kanban-board` | con estilos | — |
 | `gdy-kanban-board-wrap` | con estilos | — |
-| `gdy-kanban-card` | con estilos | `[data-draggable]`, `[data-dragging]` |
+| `gdy-kanban-card` | con estilos | `[data-draggable]`, `[data-dragging]`, `[data-pending]` |
 | `gdy-kanban-card-actions` | con estilos | — |
 | `gdy-kanban-card-head` | con estilos | — |
 | `gdy-kanban-card-main` | con estilos | — |
@@ -450,6 +450,9 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-menu-item-label` | solo gancho | — |
 | `gdy-menu-label` | con estilos | — |
 | `gdy-menu-separator` | con estilos | — |
+| `gdy-menu-sub-chevron` | con estilos | — |
+| `gdy-menu-sub-content` | solo gancho | — |
+| `gdy-menu-sub-trigger` | con estilos | `[data-state="open"]` |
 | `gdy-popover-content` | con estilos | `[data-side="bottom"]`, `[data-side="left"]`, `[data-side="right"]`, `[data-side="top"]`, `[data-state="closed"]`, `[data-state="open"]` |
 | `gdy-select-content` | con estilos | `[data-side="bottom"]`, `[data-side="left"]`, `[data-side="right"]`, `[data-side="top"]`, `[data-state="open"]` |
 | `gdy-select-icon` | con estilos | — |
@@ -608,6 +611,7 @@ ponen Radix o react-day-picker siguen a esas librerías.
 | `data-checked` | presente / ausente | Gridory | `gdy-option-check` |
 | `data-clickable` | presente / ausente | Gridory | `gdy-table-row` |
 | `data-column-id` | el `id` de la columna | Gridory | `gdy-table-skeleton` |
+| `data-column-value` | presente / ausente | Gridory | sin regla por defecto |
 | `data-compact` | `"true"` | Gridory | `gdy-sidebar-logo` |
 | `data-day` | la fecha del día | Gridory | sin regla por defecto |
 | `data-diagram-state` | `"error"`, `"loading"`, `"ready"` | Gridory | `gdy-md-diagram` |
@@ -638,6 +642,7 @@ ponen Radix o react-day-picker siguen a esas librerías.
 | `data-multiple` | presente / ausente | Gridory | `gdy-country-select` |
 | `data-outside` | presente / ausente | Radix o react-day-picker | `gdy-calendar-day` |
 | `data-overflow` | `"visible"`, `"wrap"` | Gridory | `gdy-table-cell-content` |
+| `data-pending` | presente / ausente | Gridory | `gdy-kanban-card` |
 | `data-pinned` | `"false"`, `"true"` | Gridory | `gdy-sidebar` |
 | `data-placeholder` | presente / ausente | Gridory, Radix o react-day-picker | `gdy-country-select-value`, `gdy-phone-input-dial-code`, `gdy-select-trigger` |
 | `data-print-mode` | presente / ausente | Gridory | `gdy-table` |
@@ -651,7 +656,7 @@ ponen Radix o react-day-picker siguen a esas librerías.
 | `data-side` | `"bottom"`, `"left"`, `"right"`, `"top"` | Radix o react-day-picker | `gdy-menu-content`, `gdy-popover-content`, `gdy-select-content` |
 | `data-size` | `"default"`, `"icon"`, `"icon-lg"`, `"icon-sm"`, `"icon-xs"`, `"lg"`, `"sm"`, `"xs"` | Gridory | `gdy-button` |
 | `data-slot-id` | el `id` del slot | Gridory | sin regla por defecto |
-| `data-state` | `"active"`, `"checked"`, `"closed"`, `"collapsed"`, `"expanded"`, `"on"`, `"open"` | Gridory, Radix o react-day-picker | `gdy-ai-sidebar`, `gdy-md-image-tab`, `gdy-md-picker-tab`, `gdy-md-tool`, `gdy-menu-content`, `gdy-popover-content`, `gdy-select-content`, `gdy-select-item`, `gdy-select-trigger`, `gdy-sidebar`, `gdy-sidebar-drawer`, `gdy-sidebar-overlay`, `gdy-toggle-item` |
+| `data-state` | `"active"`, `"checked"`, `"closed"`, `"collapsed"`, `"expanded"`, `"on"`, `"open"` | Gridory, Radix o react-day-picker | `gdy-ai-sidebar`, `gdy-md-image-tab`, `gdy-md-picker-tab`, `gdy-md-tool`, `gdy-menu-content`, `gdy-menu-sub-trigger`, `gdy-popover-content`, `gdy-select-content`, `gdy-select-item`, `gdy-select-trigger`, `gdy-sidebar`, `gdy-sidebar-drawer`, `gdy-sidebar-overlay`, `gdy-toggle-item` |
 | `data-status` | `"met"`, `"pending"`, `"unmet"` | Gridory | `gdy-auth-rule` |
 | `data-streaming` | presente / ausente | Gridory | sin regla por defecto |
 | `data-thinking` | presente / ausente | Gridory | sin regla por defecto |
@@ -796,6 +801,7 @@ cualquier ancestro cambia solo esa parte. Los `--gdy-select-*` también reflejan
 | `--gdy-input-border` | `var(--gdy-input)` | kanban, shared |
 | `--gdy-kanban-card-bg` | `var(--gdy-card)` | kanban |
 | `--gdy-kanban-card-border` | `var(--gdy-border)` | kanban |
+| `--gdy-kanban-card-pending-opacity` | `0.6` | kanban |
 | `--gdy-kanban-column-bg` | `var(--gdy-muted)` | kanban |
 | `--gdy-kanban-column-border` | `var(--gdy-border)` | kanban |
 | `--gdy-kanban-drop-bg` | `color-mix(in oklab, var(--gdy-foreground) 6%, var(--gdy-muted))` | kanban |

@@ -799,6 +799,33 @@ AI button, table/kanban switch, create button, custom toggle groups and header s
 archive, remove and history actions plus `customActions` and `menuActions`) are shared with the kanban.
 They are configured through `DataViewProps` and documented in [toolbar.md](toolbar.md).
 
+### One action per state, and submenus
+
+An action's `label` and `icon` can depend on the row, and an entry with `items` opens a submenu
+(`RowActionSubmenu`), in `customActions` and in `menuActions`. The pair of actions with opposite
+`hidden` becomes one action:
+
+```tsx
+// Before: two actions, one of them hidden on each row
+customActions: [
+  { id: "favorite", label: "Mark favorite", icon: <Star />, onClick: toggle, hidden: (deal) => deal.favorite },
+  { id: "unfavorite", label: "Remove favorite", icon: <StarOff />, onClick: toggle, hidden: (deal) => !deal.favorite },
+]
+
+// After: one action, and the statuses grouped in a submenu
+customActions: [
+  {
+    id: "favorite",
+    label: (deal) => (deal.favorite ? "Remove favorite" : "Mark favorite"),
+    icon: (deal) => (deal.favorite ? <StarOff /> : <Star />),
+    onClick: toggle,
+  },
+  { id: "status", label: "Change status", items: STATUSES.map((status) => moveTo(status)) },
+]
+```
+
+Details, keyboard and id rules: [Text and icon per row, and submenus](toolbar.md#text-and-icon-per-row-and-submenus).
+
 ## Styling
 
 The root element is `div.gdy-table`, which also carries the flags `gdy-table-fill` (with `fillHeight`),
