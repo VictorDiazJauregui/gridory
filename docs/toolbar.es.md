@@ -33,6 +33,12 @@ defecto) y después `archived`, `group`, `ai`, `viewSwitch` y `create`. Los grup
 que los selectores del encabezado, cada uno en el orden de su array. Tus slots propios (`toolbarSlots`) van al
 final de su lado ([Slots propios](#slots-propios)).
 
+La toolbar va en una fila mientras todo entra. En una pantalla angosta, como la de un celular, los
+grupos y sus controles pasan a más filas (el grupo derecho sigue alineado a la derecha) en lugar de dejar
+la página más ancha que la pantalla. Una página más ancha que la pantalla también rompe los menús y el
+calendario en los celulares: su bloqueo de scroll mide una barra de scroll tan ancha como el desborde y
+deja la página sin ancho.
+
 `toolbarLayout` (`{ left?: string[]; right?: string[] }`) reemplaza la disposición por defecto. Si lo
 defines, solo se renderizan los ids listados, en el lado y el orden que indiques. Los ids que no
 aparecen no se renderizan, la `position` de los controles personalizados se ignora, los ids
@@ -121,6 +127,11 @@ Una columna tiene menú de filtro cuando declara `filterable: true` y `features.
 En la tabla, el menú se abre desde el encabezado de la columna. En el kanban, una fila de filtros bajo la
 toolbar muestra un botón por cada campo filtrable, con su `header` como texto. El menú se cierra con un
 clic fuera de él o con un segundo clic en su botón. Los filtros de columnas distintas se combinan con AND.
+
+El menú se abre debajo de su botón, hacia la derecha. Si ahí no entra (un botón cerca del borde derecho
+de un celular, o un encabezado al final del scroll de la tabla), se abre hacia la izquierda, alineado con
+el borde derecho del botón, y su contenedor (`gdy-table-menu-holder`, `gdy-kanban-filter-menu-holder`)
+lleva `data-align="end"`; si tampoco así entra, se corre lo justo para quedar a 8px del borde.
 
 ### Filtro de valores
 
@@ -276,7 +287,8 @@ const countrySelector: HeaderSelectConfig = {
 posicionamiento absoluto. Cada slot tiene un `id` y un `content` (`ReactNode`), y se renderiza dentro de
 `div.gdy-toolbar-slot` con `data-slot-id` igual a ese id; `className` suma tu clase a ese envoltorio. El
 envoltorio pone su contenido en una fila, centrado y con 8px de separación, igual que los controles
-integrados.
+integrados. En una pantalla angosta, el slot entero pasa a la fila siguiente de la toolbar; su contenido
+nunca se parte.
 
 - Sin `toolbarLayout`, un slot va al **final** del lado de su `position` (`"left"` o `"right"`, por
   defecto `"right"`): a la derecha, después de `create`. Los slots respetan el orden de su array.
