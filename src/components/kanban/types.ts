@@ -184,10 +184,9 @@ export interface KanbanBoardLabels extends DataViewLabels {
 
 export interface KanbanBoardProps<TData> extends DataViewProps<TData> {
   /**
-   * Replaces any text of the kanban; the keys you leave out keep their Spanish default. The
-   * older single-text props (`searchPlaceholder`, `createLabel`, `emptyMessage`,
-   * `groupSelectorLabel`, the `rowActions`, `archivedView`, `viewSwitch` and `aiButton`
-   * labels) win over their key when both are set.
+   * Replaces any text of the kanban; the keys you leave out keep their Spanish default. The older
+   * single-text props (`searchPlaceholder`, `createLabel`, `emptyMessage`, `groupSelectorLabel`, the
+   * `rowActions`, `archivedView`, `viewSwitch` and `aiButton` labels) win over their key when both are set.
    */
   labels?: Partial<KanbanBoardLabels>;
   fields: ColumnDefinition<TData>[];
@@ -213,10 +212,9 @@ export interface KanbanBoardProps<TData> extends DataViewProps<TData> {
    */
   onCardMoveError?: (error: unknown, event: KanbanMoveEvent<TData>) => void;
   /**
-   * Optional rule of where a card may go. Asked when a drag starts (every rejected column gets
-   * `data-drop-disabled` until the drag ends), on every dragover and again on drop; `false` keeps the
-   * card where it is. Never asked for the card's own column. Synchronous on purpose, since it runs many
-   * times per second: rules that need the server go in `onCardMove`.
+   * Where a card may go; `false` keeps it in place. Asked on drag start (rejected columns get
+   * `data-drop-disabled` until the drag ends), on every dragover and on drop, never for its own column.
+   * Synchronous on purpose, as it runs many times per second: rules that need the server go in `onCardMove`.
    */
   canDrop?: (context: KanbanDropContext<TData>) => boolean;
   /**
@@ -225,10 +223,9 @@ export interface KanbanBoardProps<TData> extends DataViewProps<TData> {
    */
   getDropDisabledReason?: (context: KanbanDropContext<TData>) => string | undefined;
   /**
-   * Adds "Move to" first in the card menu: a submenu with the other columns, for touch screens,
-   * keyboard and screen readers, where dragging does not work. `"auto"` (default) shows it while
-   * `moveMenuMediaQuery` matches. Moving from it goes through `canDrop` and `onCardMove` exactly like a
-   * drop. Never shown when `features.dragAndDrop` is off.
+   * Adds "Move to" first in the card menu: a submenu with the other columns, for touch, keyboard and screen
+   * readers, where dragging does not work. `"auto"` (default) shows it while `moveMenuMediaQuery` matches.
+   * It goes through `canDrop` and `onCardMove` like a drop. Never shown when `features.dragAndDrop` is off.
    */
   moveMenu?: KanbanMoveMenuMode;
   /** Media query of `moveMenu="auto"`. Defaults to `"(pointer: coarse)"`; re-evaluated when it changes. */
@@ -267,10 +264,7 @@ export interface KanbanBoardProps<TData> extends DataViewProps<TData> {
   defaultCollapsedColumns?: string[];
   /** The collapsed columns changed: receives the new list of values. */
   onCollapsedColumnsChange?: (values: string[]) => void;
-  /**
-   * Prefix of every option in the toolbar group selector and its accessible
-   * label. Defaults to `"Agrupar por"`.
-   */
+  /** Prefix of each toolbar group selector option and its accessible label. Defaults to `"Agrupar por"`. */
   groupSelectorLabel?: string;
   /** Extra class(es) for the root element, added after `gdy-kanban` and its flags. */
   className?: string;
