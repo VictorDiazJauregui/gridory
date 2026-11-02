@@ -11,11 +11,15 @@ import { DataTable, type DataTableProps } from "../components/table";
 type TableProps = Partial<DataTableProps<MockCompanyRow>>;
 
 const STATUS_OPTIONS = [{ value: "Otra", label: "Otra" }];
-const COLUMNS = buildCompanyColumns({ appsWidth: 120, statusSearchable: false }).map((column) =>
+const COLUMNS = buildCompanyColumns({ appsWidth: 120, statusSearchable: false });
+const INLINE_EDIT_COLUMNS = COLUMNS.map((column) =>
   column.id === "status" ? { ...column, inlineEditOptions: STATUS_OPTIONS, onInlineEdit: () => {} } : column,
 );
 
-const PAGE_COUNT = Math.ceil(MOCK_COMPANY_ROWS.length / 25);
+// Most tests read texts, not rows: a short page keeps each render cheap.
+const SHORT_PAGE_SIZE = 5;
+const PAGINATED_PAGE_SIZE = 25;
+const PAGE_COUNT = Math.ceil(MOCK_COMPANY_ROWS.length / PAGINATED_PAGE_SIZE);
 
 const renderTable = (props: TableProps = {}) =>
   render(
@@ -29,7 +33,7 @@ const renderTable = (props: TableProps = {}) =>
       aiButton={{ onClick: () => {} }}
       onCreate={() => {}}
       groupableColumnIds={["status"]}
-      defaultPageSize={25}
+      defaultPageSize={SHORT_PAGE_SIZE}
       {...props}
     />,
   ).container;
@@ -38,7 +42,7 @@ const renderEnglishTable = (props: TableProps = {}) =>
   renderTable({ labels: ENGLISH_TABLE_LABELS, calendarLocale: enUS, ...props });
 
 const openMenu = (container: HTMLElement, header: string) => {
-  fireEvent.click(screen.getByRole("button", { name: header }));
+  fireEvent.click(within(container.querySelector("thead") as HTMLElement).getByRole("button", { name: header }));
   return container.querySelector(".gdy-panel") as HTMLElement;
 };
 
@@ -60,7 +64,7 @@ test("a full English labels object translates the toolbar", () => {
 });
 
 test("a full English labels object translates the pagination", () => {
-  const container = renderEnglishTable();
+  const container = renderEnglishTable({ defaultPageSize: PAGINATED_PAGE_SIZE });
   const pagination = container.querySelector(".gdy-table-pagination") as HTMLElement;
   expect(pagination).toHaveTextContent(`Showing 1–25 of ${MOCK_COMPANY_ROWS.length} items`);
   expect(pagination).toHaveTextContent("Items per page");
@@ -120,7 +124,7 @@ test("a react-day-picker locale also translates the calendar's accessible names"
 });
 
 test("a full English labels object translates the row actions and the inline select", () => {
-  renderEnglishTable();
+  renderEnglishTable({ columns: INLINE_EDIT_COLUMNS });
   expect(screen.getAllByText("Select...")[0]).toBeInTheDocument();
   fireEvent.keyDown(screen.getAllByRole("button", { name: "Options" })[0], { key: "Enter" });
   for (const action of ["Edit", "View history", "Delete"]) {
@@ -129,7 +133,7 @@ test("a full English labels object translates the row actions and the inline sel
 });
 
 test("a partial labels object keeps the Spanish default of every other text", () => {
-  const container = renderTable({ labels: { pageOf: (page, count) => `${page}/${count}` } });
+  const container = renderTable({ labels: { pageOf: (page, count) => `${page}/${count}` }, defaultPageSize: PAGINATED_PAGE_SIZE });
   expect(container.querySelector(".gdy-table-pagination-right")).toHaveTextContent(`1/${PAGE_COUNT}`);
   expect(container.querySelector(".gdy-table-pagination-left")).toHaveTextContent("Elementos por página");
   expect(screen.getByRole("button", { name: "Página siguiente" })).toBeInTheDocument();

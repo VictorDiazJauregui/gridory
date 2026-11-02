@@ -11,7 +11,8 @@ import { KANBAN_STATIC_PROPS } from "../components/mocks/kanban/kanban-config";
 import { DataTable, type DataTableProps } from "../components/table";
 
 const ACCENTED_ROW: MockCompanyRow = { ...MOCK_COMPANY_ROWS[0], id: "accented", name: "Niño Andino" };
-const ROWS = [...MOCK_COMPANY_ROWS, ACCENTED_ROW];
+// Five of the 20 hand-written companies are in Perú, enough to tell an accent-blind match from an exact one.
+const ROWS = [...MOCK_COMPANY_ROWS.slice(0, 20), ACCENTED_ROW];
 const COLUMNS = buildCompanyColumns({ appsWidth: 120, statusSearchable: true });
 const PERU_COUNT = ROWS.filter((row) => row.country === "Perú").length;
 
