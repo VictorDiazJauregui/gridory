@@ -139,6 +139,26 @@ that accessible name) on the match only.
 The `browser` project uses the Google Chrome installed on your machine, the same way CI uses the one
 the GitHub runner ships, so there is no browser to download. You only need Chrome installed.
 
+### Fast browser tests
+
+The browser files share one page per worker, so each test leaves the page as it found it:
+
+- Switch print media, reduced motion or touch only through the helpers in `src/test/browser/`
+  (`emulateMediaType`, `emulateReducedMotion`, `emulateTouchScreen`). They note what they changed and the
+  setup undoes it after every test, even a failed one, so no file needs its own `afterEach` for that.
+  The theme and the screen size go back to light and desktop the same way.
+- Tests run with reduced motion. A test of an animation turns motion on with
+  `emulateReducedMotion(false)`; the rest never wait for one.
+- A file that needs a fresh page goes in `OWN_PAGE_BROWSER_TESTS` in `vitest.config.ts`, with the
+  reason: touch emulation, `:focus-visible` after a scripted focus, or a lazy module loaded for the
+  first time.
+- Wait for a condition, never for a fixed time: `expect.poll` (which retries once per frame in this
+  project), `vi.waitFor` or `findBy*`. A `setTimeout` is either slow or flaky.
+- Give each test only the data it looks at: a few rows instead of a full table, and `paste` instead of
+  typing when the text is only the setup.
+- When the component listens to where the pointer is, move the real pointer with `userEvent.hover`: a
+  synthetic `pointerenter` does not move it, and the cursor stays where the previous file left it.
+
 ## Documentation
 
 The docs are written in English with a Spanish copy (`*.es.md`) next to each file. Update both when you
