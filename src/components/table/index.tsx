@@ -15,6 +15,7 @@ import { useTableOptions } from "./model/use-table-options";
 import { useResponsiveColumns } from "./columns/use-responsive-columns";
 import { useCloseHiddenFilterMenu, useColumnVisibilityReport } from "./columns/use-column-visibility-report";
 import { resolveTablePinnedColumns } from "./columns/table-pinned-columns";
+import { useColumnWidths } from "./resize/use-column-widths";
 
 const resolveRootClassName = <TData,>(settings: TableSettings<TData>) => {
   const showStickyHeader =
@@ -33,9 +34,12 @@ const resolveRootClassName = <TData,>(settings: TableSettings<TData>) => {
 const useTableModel = <TData,>(props: DataTableProps<TData>): TableModel<TData> => {
   const core = useTableCore(props);
   const table = useReactTable(useTableOptions(core));
-  const hiddenByPriority = useResponsiveColumns({ settings: core.settings, table, wrapRef: core.paging.wrapRef });
-  const pinnedColumns = resolveTablePinnedColumns(core.settings, table);
-  const model = { ...core, table, hiddenByPriority, pinnedColumns };
+  const { settings, paging } = core;
+  const columnWidths = useColumnWidths({ settings, table, wrapRef: paging.wrapRef });
+  const committedWidths = columnWidths?.committedWidths ?? null;
+  const hiddenByPriority = useResponsiveColumns({ settings, table, wrapRef: paging.wrapRef, committedWidths });
+  const pinnedColumns = resolveTablePinnedColumns(settings, table, columnWidths?.layoutWidths ?? null);
+  const model = { ...core, table, hiddenByPriority, pinnedColumns, columnWidths };
   useColumnVisibilityReport(model);
   useCloseHiddenFilterMenu(model);
   return model;
