@@ -12,24 +12,29 @@ import { DataTable, type DataTableProps } from "../components/table";
 
 type TableProps = Partial<DataTableProps<MockCompanyRow>>;
 
+// The 20 hand-written companies hold every status and the name the search looks for.
+const ROWS = MOCK_COMPANY_ROWS.slice(0, 20);
 const COLUMNS = buildCompanyColumns({ appsWidth: 120, statusSearchable: true });
 const NO_PAGINATION = { pagination: false };
 const STATUS_OPTIONS = ["Activa", "Pendiente", "Archivada"].map((value) => ({
   value,
   label: value,
 }));
-const STATUS_COUNT = new Set(MOCK_COMPANY_ROWS.map((row) => row.status)).size;
+const STATUS_COUNT = new Set(ROWS.map((row) => row.status)).size;
 
 const renderTable = (props: TableProps = {}) =>
   render(
     <DataTable
       columns={COLUMNS}
-      data={MOCK_COMPANY_ROWS}
+      data={ROWS}
       getRowId={(row) => row.id}
       features={NO_PAGINATION}
       {...props}
     />,
   );
+
+const getHeaderButton = (container: HTMLElement, name: string) =>
+  within(container.querySelector("thead") as HTMLElement).getByRole("button", { name });
 
 const dataRows = (container: HTMLElement) =>
   container.querySelectorAll(".gdy-table-row");
@@ -43,10 +48,10 @@ const rowNames = (container: HTMLElement) =>
   );
 
 const sortedNames = () =>
-  MOCK_COMPANY_ROWS.map((row) => row.name).sort((a, b) => a.localeCompare(b));
+  ROWS.map((row) => row.name).sort((a, b) => a.localeCompare(b));
 
 const countRows = (predicate: (row: MockCompanyRow) => boolean) =>
-  MOCK_COMPANY_ROWS.filter(predicate).length;
+  ROWS.filter(predicate).length;
 
 const withColumn = (id: string, patch: Partial<(typeof COLUMNS)[number]>) =>
   COLUMNS.map((column) =>
@@ -57,9 +62,9 @@ test("renders the headers and one row per record", () => {
   const { container } = renderTable();
   expect(container.querySelector(".gdy-table")).toBeInTheDocument();
   ["Empresa", "Marca", "País", "Apps", "Estado"].forEach((header) => {
-    expect(screen.getByRole("button", { name: header })).toBeInTheDocument();
+    expect(getHeaderButton(container, header)).toBeInTheDocument();
   });
-  expect(dataRows(container)).toHaveLength(MOCK_COMPANY_ROWS.length);
+  expect(dataRows(container)).toHaveLength(ROWS.length);
 });
 
 test("narrows the rows to the records matching the search", async () => {
@@ -79,7 +84,7 @@ test("shows the empty message when nothing matches", async () => {
 
 test("sorts from the column menu and marks the active direction", () => {
   const { container } = renderTable();
-  fireEvent.click(screen.getByRole("button", { name: "Empresa" }));
+  fireEvent.click(getHeaderButton(container, "Empresa"));
   const ascending = screen.getByRole("button", { name: /Ascendente/ });
   fireEvent.click(ascending);
   expect(ascending).toHaveAttribute("aria-pressed", "true");
@@ -94,7 +99,7 @@ test("cycles the sort of a non-filterable column: asc, desc, none", () => {
     columns: withColumn("name", { filterable: false }),
   });
   const initial = rowNames(container);
-  const header = screen.getByRole("button", { name: "Empresa" });
+  const header = getHeaderButton(container, "Empresa");
   fireEvent.click(header);
   expect(rowNames(container)[0]).toBe(sortedNames()[0]);
   fireEvent.click(header);
@@ -105,7 +110,7 @@ test("cycles the sort of a non-filterable column: asc, desc, none", () => {
 
 test("filters by value and clears from the toolbar", () => {
   const { container } = renderTable();
-  const trigger = screen.getByRole("button", { name: "Estado" });
+  const trigger = getHeaderButton(container, "Estado");
   fireEvent.click(trigger);
   const panel = container.querySelector(".gdy-panel") as HTMLElement;
   fireEvent.click(within(panel).getByText("Activa"));
@@ -117,7 +122,7 @@ test("filters by value and clears from the toolbar", () => {
   );
   fireEvent.click(screen.getByRole("button", { name: "Limpiar filtros" }));
   expect(trigger).not.toHaveAttribute("data-filtered");
-  expect(dataRows(container)).toHaveLength(MOCK_COMPANY_ROWS.length);
+  expect(dataRows(container)).toHaveLength(ROWS.length);
 });
 
 test("marks the rows as clickable and reports the clicked record", () => {
@@ -126,7 +131,7 @@ test("marks the rows as clickable and reports the clicked record", () => {
   const [firstRow] = dataRows(container);
   expect(firstRow).toHaveAttribute("data-clickable");
   fireEvent.click(firstRow);
-  expect(onRowClick).toHaveBeenCalledWith(MOCK_COMPANY_ROWS[0], expect.objectContaining({ type: "click" }));
+  expect(onRowClick).toHaveBeenCalledWith(ROWS[0], expect.objectContaining({ type: "click" }));
 });
 
 test("groups the rows and collapses a group from its toggle", () => {
@@ -145,13 +150,13 @@ test("groups the rows and collapses a group from its toggle", () => {
   fireEvent.click(toggle());
   expect(toggle()).toHaveAttribute("aria-expanded", "false");
   expect(dataRows(container)).toHaveLength(
-    MOCK_COMPANY_ROWS.length - groupSize,
+    ROWS.length - groupSize,
   );
 });
 
 test("paginates with the given page size and steps to the next page", () => {
   const { container } = renderTable({ features: {}, defaultPageSize: 5 });
-  const pageCount = Math.ceil(MOCK_COMPANY_ROWS.length / 5);
+  const pageCount = Math.ceil(ROWS.length / 5);
   expect(dataRows(container)).toHaveLength(5);
   expect(screen.getByText(`Página 1 de ${pageCount}`)).toBeInTheDocument();
   const [, next] = container.querySelectorAll(
@@ -159,7 +164,7 @@ test("paginates with the given page size and steps to the next page", () => {
   );
   fireEvent.click(next);
   expect(screen.getByText(`Página 2 de ${pageCount}`)).toBeInTheDocument();
-  expect(rowNames(container)[0]).toBe(MOCK_COMPANY_ROWS[5].name);
+  expect(rowNames(container)[0]).toBe(ROWS[5].name);
 });
 
 test("applies the style hooks passed as props", () => {
@@ -186,10 +191,10 @@ test("edits a cell inline through its select", async () => {
   const trigger = container.querySelector(
     ".gdy-table-inline-select",
   ) as HTMLElement;
-  expect(trigger).toHaveTextContent(MOCK_COMPANY_ROWS[0].status);
+  expect(trigger).toHaveTextContent(ROWS[0].status);
   await user.click(trigger);
   await user.click(await screen.findByRole("option", { name: "Pendiente" }));
-  expect(onInlineEdit).toHaveBeenCalledWith(MOCK_COMPANY_ROWS[0], "Pendiente");
+  expect(onInlineEdit).toHaveBeenCalledWith(ROWS[0], "Pendiente");
 });
 
 test("features.toolbar false leaves the table without its toolbar; any other value keeps it", () => {

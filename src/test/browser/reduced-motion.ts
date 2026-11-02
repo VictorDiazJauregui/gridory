@@ -1,4 +1,5 @@
 import { commands } from "vitest/browser";
+import { forgetUndo, rememberUndo } from "./page-changes";
 
 declare module "vitest/browser" {
   interface BrowserCommands {
@@ -6,4 +7,8 @@ declare module "vitest/browser" {
   }
 }
 
-export const emulateReducedMotion = (isReduced: boolean): Promise<void> => commands.emulateReducedMotion(isReduced);
+export const emulateReducedMotion = async (isReduced: boolean): Promise<void> => {
+  await commands.emulateReducedMotion(isReduced);
+  if (isReduced) return forgetUndo("motion");
+  rememberUndo("motion", () => commands.emulateReducedMotion(true));
+};

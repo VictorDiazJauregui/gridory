@@ -1,13 +1,11 @@
 import { render } from "@testing-library/react";
-import { afterEach, expect, test } from "vitest";
+import { expect, test } from "vitest";
 import { DataTable, type DataTableProps } from "../components/table";
 import { MOCK_COMPANY_ROWS, type MockCompanyRow } from "../components/mocks/company/company-rows";
 import { buildCompanyColumns } from "../components/mocks/company/company-columns";
 import { TABLE_ROW_ACTIONS } from "../components/mocks/table/table-config";
 import { findRequiredElement } from "./browser/elements";
 import { emulateMediaType } from "./browser/print-media";
-
-afterEach(() => emulateMediaType("screen"));
 
 const COLUMNS = buildCompanyColumns({ appsWidth: 200, statusSearchable: false });
 

@@ -1,5 +1,5 @@
 import { render } from "@testing-library/react";
-import { afterEach, expect, test } from "vitest";
+import { expect, test } from "vitest";
 import { DataTable, type DataTableProps } from "../components/table";
 import { BASELINE_COLUMNS, BASELINE_ROWS, type BaselineRow } from "./baseline-fixture";
 import { readColorContrast } from "./browser/contrast";
@@ -7,11 +7,6 @@ import { findRequiredElement } from "./browser/elements";
 import { applyTheme, type Theme } from "./browser/environment";
 import { measureBox, readStyle } from "./browser/measure";
 import { emulateMediaType } from "./browser/print-media";
-
-afterEach(async () => {
-  applyTheme("light");
-  await emulateMediaType("screen");
-});
 
 const renderTable = (props: Partial<DataTableProps<BaselineRow>> = {}) =>
   render(<DataTable columns={BASELINE_COLUMNS} data={BASELINE_ROWS} getRowId={(row) => row.id} {...props} />)

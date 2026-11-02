@@ -19,13 +19,27 @@ const renderSignUp = (props: Partial<SignUpFormProps> = {}) => {
 const input = (label: RegExp) => screen.getByLabelText(label);
 const submit = () => screen.getByRole("button", { name: DEFAULT_SIGN_UP_TEXTS.submit });
 
-const fillCredentials = async (user: ReturnType<typeof userEvent.setup>, password = "Clave-123") => {
+type User = ReturnType<typeof userEvent.setup>;
+
+const typeCredentials = async (user: User, password: string) => {
   await user.type(input(/^Email/), "ana@empresa.com");
   await user.type(input(/^Contraseña/), password);
   await user.type(input(/^Confirmar contraseña/), password);
 };
 
-const choosePeruPrefix = async (user: ReturnType<typeof userEvent.setup>) => {
+const pasteInto = async (user: User, label: RegExp, text: string) => {
+  await user.click(input(label));
+  await user.paste(text);
+};
+
+// Where the credentials are only the setup, pasting skips a render of the live password rules per key.
+const pasteCredentials = async (user: User) => {
+  await pasteInto(user, /^Email/, "ana@empresa.com");
+  await pasteInto(user, /^Contraseña/, "Clave-123");
+  await pasteInto(user, /^Confirmar contraseña/, "Clave-123");
+};
+
+const choosePeruPrefix = async (user: User) => {
   await user.click(screen.getByRole("combobox", { name: /^Prefijo/ }));
   await user.type(await screen.findByRole("combobox", { name: "Buscar prefijo" }), "peru");
   await user.click(screen.getByRole("option", { name: /^Perú/ }));
@@ -83,7 +97,7 @@ test("the password rules update live and block a weak password", async () => {
   const { container, onSubmit, user } = renderSignUp({ passwordRules: { minLength: 8, uppercase: true } });
   const statuses = () => [...container.querySelectorAll(".gdy-auth-rule")].map((rule) => rule.getAttribute("data-status"));
   expect(statuses()).toEqual(["pending", "pending"]);
-  await fillCredentials(user, "Corta");
+  await typeCredentials(user, "Corta");
   expect(statuses()).toEqual(["unmet", "met"]);
   await user.click(submit());
   expect(screen.getByText(DEFAULT_SIGN_UP_TEXTS.passwordRequirements)).toBeInTheDocument();
@@ -98,7 +112,7 @@ const WITHOUT_NAMES: Partial<SignUpFormProps> = {
 
 test("required extra fields report their own messages and take the focus", async () => {
   const { onSubmit, user } = renderSignUp(WITHOUT_NAMES);
-  await fillCredentials(user);
+  await pasteCredentials(user);
   await user.click(submit());
   expect(screen.getByText(DEFAULT_SIGN_UP_TEXTS.selectRequired)).toBeInTheDocument();
   expect(screen.getByText(DEFAULT_SIGN_UP_TEXTS.checkboxRequired)).toBeInTheDocument();
@@ -108,7 +122,7 @@ test("required extra fields report their own messages and take the focus", async
 
 test("extra fields of every kind are emitted flat next to the credentials", async () => {
   const { onSubmit, user } = renderSignUp(WITHOUT_NAMES);
-  await fillCredentials(user);
+  await pasteCredentials(user);
   await user.type(input(/^Teléfono/), "999 111 222");
   await choosePeruPrefix(user);
   await user.click(screen.getByRole("combobox", { name: /^Rol/ }));
@@ -154,7 +168,7 @@ test("a Standard Schema can veto the submit and point at a field", async () => {
     },
   };
   const { onSubmit, user } = renderSignUp({ schema });
-  await fillCredentials(user);
+  await pasteCredentials(user);
   await user.click(submit());
   await waitFor(() => expect(input(/^Email/)).toHaveFocus());
   expect(screen.getByText("Usa tu email personal")).toBeInTheDocument();

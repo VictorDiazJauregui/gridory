@@ -8,7 +8,11 @@ const BROWSER_TESTS = "src/test/**/*.browser.test.{ts,tsx}";
 
 // jsdom has no layout engine, so styles, sizes and positions are checked in the installed Google Chrome,
 // headless (the GitHub runner ships one), so neither CI nor a contributor downloads a browser.
-const installedChrome = playwright({ launchOptions: { channel: "chrome" } });
+// Reduced motion by default, so only the tests of an animation wait for one: they turn motion back on.
+const installedChrome = playwright({
+  launchOptions: { channel: "chrome" },
+  contextOptions: { reducedMotion: "reduce" },
+});
 
 // Vitest's browser API cannot switch the CSS media type, so the print tests reach the Playwright
 // page of the provider above through this command.
@@ -70,6 +74,48 @@ const LAZY_EDITOR_DEPENDENCIES = [
   "mermaid",
 ];
 
+// Files share one page per worker, saving its load per file, and the setup leaves it as found. A reload alone undoes
+// touch's `(hover: none)` or a click hiding `:focus-visible` from scripted focus; the busy test needs a cold editor.
+const OWN_PAGE_BROWSER_TESTS = [
+  "src/test/kanban-move-menu.browser.test.tsx",
+  "src/test/data-table-resizable-columns-touch.browser.test.tsx",
+  "src/test/data-table-row-focus.browser.test.tsx",
+  "src/test/markdown-source.browser.test.tsx",
+];
+
+// A function, not a shared object: Vitest writes the project name into each instance.
+const createHeadlessChrome = () => ({
+  enabled: true,
+  provider: installedChrome,
+  headless: true,
+  viewport: { width: 1920, height: 1080 },
+  instances: [{ browser: "chromium" as const }],
+  commands: { emulateMedia, emulateReducedMotion, emulateTouch, dragPointer },
+});
+
+interface BrowserProject {
+  name: string;
+  include: string[];
+  exclude?: string[];
+  isolate: boolean;
+}
+
+const createBrowserProject = ({ name, include, exclude = [], isolate }: BrowserProject) => ({
+  extends: true,
+  optimizeDeps: { include: LAZY_EDITOR_DEPENDENCIES },
+  test: {
+    name,
+    isolate,
+    maxWorkers: 2,
+    // A poll does not react to DOM changes, so it retries once per frame instead of every 50 ms.
+    expect: { poll: { interval: 16 } },
+    setupFiles: ["src/test/browser/setup.ts"],
+    include,
+    exclude,
+    browser: createHeadlessChrome(),
+  },
+});
+
 export default mergeConfig(
   viteConfig,
   defineConfig({
@@ -80,6 +126,8 @@ export default mergeConfig(
           test: {
             name: "unit",
             environment: "jsdom",
+            // All projects run at once and need the same value; the default makes jsdom and Chrome fight for cores.
+            maxWorkers: 2,
             // One jsdom per worker instead of one per file; each file still gets its own context.
             pool: "vmThreads",
             // The CI runner is slower and busier than a local machine.
@@ -91,23 +139,13 @@ export default mergeConfig(
             exclude: [BROWSER_TESTS],
           },
         },
-        {
-          extends: true,
-          optimizeDeps: { include: LAZY_EDITOR_DEPENDENCIES },
-          test: {
-            name: "browser",
-            setupFiles: ["src/test/browser/setup.ts"],
-            include: [BROWSER_TESTS],
-            browser: {
-              enabled: true,
-              provider: installedChrome,
-              headless: true,
-              viewport: { width: 1920, height: 1080 },
-              instances: [{ browser: "chromium" }],
-              commands: { emulateMedia, emulateReducedMotion, emulateTouch, dragPointer },
-            },
-          },
-        },
+        createBrowserProject({
+          name: "browser",
+          include: [BROWSER_TESTS],
+          exclude: OWN_PAGE_BROWSER_TESTS,
+          isolate: false,
+        }),
+        createBrowserProject({ name: "browser-own-page", include: OWN_PAGE_BROWSER_TESTS, isolate: true }),
       ],
     },
   }),

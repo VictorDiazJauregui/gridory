@@ -9,6 +9,7 @@ import { findRequiredElement } from "./browser/elements";
 import { applyScreen, applyTheme } from "./browser/environment";
 import type { ScreenName, Theme } from "./browser/environment";
 import { measureBox, readStyle } from "./browser/measure";
+import { emulateReducedMotion } from "./browser/reduced-motion";
 
 interface Scenario {
   theme: Theme;
@@ -95,6 +96,7 @@ test.each(SCENARIOS)("the indicator follows the option when the font size token 
 });
 
 test.each(SCENARIOS)("the indicator slides in 220ms, and not at all with animated={false} ($theme, $screen)", async (scenario) => {
+  await emulateReducedMotion(false);
   await applyScenario(scenario);
   const animatedRoot = renderCalendarView();
   const staticRoot = renderCalendarView({}, { animated: false });
@@ -164,6 +166,7 @@ test("an app layer painted above the control also covers its options", () => {
 });
 
 test("the first render places the indicator without sliding; a new choice slides it", async () => {
+  await emulateReducedMotion(false);
   const root = renderCalendarView();
   await expectIndicatorOver(root, getRadio("Mes"));
   expect(findIndicator(root).getAnimations()).toHaveLength(0);
@@ -172,6 +175,7 @@ test("the first render places the indicator without sliding; a new choice slides
 });
 
 test("with animated={false} a new choice moves the indicator without an animation", async () => {
+  await emulateReducedMotion(false);
   const root = renderCalendarView({}, { animated: false });
   await userEvent.click(getRadio("Designados"));
   expect(findIndicator(root).getAnimations()).toHaveLength(0);
@@ -179,6 +183,7 @@ test("with animated={false} a new choice moves the indicator without an animatio
 });
 
 test("a control shown after being hidden gets its indicator in place, without sliding", async () => {
+  await emulateReducedMotion(false);
   const hiddenRoot = renderCalendarView({ display: "none" }, { defaultValue: "day" });
   expect(hiddenRoot.querySelector(".gdy-segmented-indicator")).toBeNull();
   screen.getByTestId("wrapper").style.display = "block";

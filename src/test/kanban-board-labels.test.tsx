@@ -13,6 +13,8 @@ const { fields, groups } = KANBAN_STATIC_PROPS;
 const STATUS_GROUP = groups.find((group) => group.id === "status");
 const WITH_EMPTY_COLUMN = { ...STATUS_GROUP!, values: [...(STATUS_GROUP?.values ?? []), { value: "Nueva", label: "Nueva" }] };
 const UNTITLED_ROW: MockCompanyRow = { ...MOCK_COMPANY_ROWS[0], id: "untitled", name: "", status: "" as MockCompanyRow["status"] };
+// The labels show the same on 20 cards as on 80, at a quarter of the render.
+const BOARD_ROWS = [...MOCK_COMPANY_ROWS.slice(0, 20), UNTITLED_ROW];
 
 const renderBoard = (props: BoardProps = {}) =>
   render(
@@ -21,7 +23,7 @@ const renderBoard = (props: BoardProps = {}) =>
       groups={[WITH_EMPTY_COLUMN]}
       defaultGroupId="status"
       getCardId={(card) => card.id}
-      data={[...MOCK_COMPANY_ROWS, UNTITLED_ROW]}
+      data={BOARD_ROWS}
       rowActions={TABLE_ROW_ACTIONS}
       {...props}
     />,

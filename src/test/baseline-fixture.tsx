@@ -65,6 +65,7 @@ const TABLE_ACTIONS_ARIA_LABEL = / aria-label="Opciones"(?=[^>]*><svg class="gdy
 // 1.2.0 names the pagination arrows, which had no accessible name.
 const PAGE_ARROW_ARIA_LABEL = / aria-label="Página (?:anterior|siguiente)"/g;
 const GRIDORY_CLASS = /\bgdy-[a-z0-9-]+/g;
+const REACT_ID = /:r[0-9a-z]+:/g;
 
 // The inside of an icon belongs to lucide-react, which changes it between the versions the
 // dependency range allows: only the gdy-* classes Gridory puts on the icon are compared.
@@ -73,10 +74,20 @@ const keepGridoryIconClasses = (icon: string) => {
   return `<svg class="${classes.join(" ")}"></svg>`;
 };
 
+// React counts useId across the whole run, so an id told which test ran first: each one is numbered by its
+// first appearance in the markup instead.
+const numberReactIdsInOrder = (html: string) => {
+  const numbered = new Map<string, string>();
+  return html.replace(REACT_ID, (id) => {
+    if (!numbered.has(id)) numbered.set(id, `:r${numbered.size}:`);
+    return numbered.get(id) as string;
+  });
+};
+
 // Added on purpose: data-column-id, data-row-id and the table's ⋯ aria-label (1.1.0), the arrows' aria-label
 // (1.2.0) and each kanban column's data-column-value (1.3.0). Anything else must stay byte for byte.
 export const normalizeBaselineHtml = (html: string) =>
-  html
+  numberReactIdsInOrder(html)
     .replace(ADDED_ATTRIBUTES, "")
     .replace(ICON, keepGridoryIconClasses)
     .replace(TABLE_ACTIONS_ARIA_LABEL, "")

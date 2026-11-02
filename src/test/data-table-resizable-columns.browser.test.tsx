@@ -1,5 +1,5 @@
 import { render } from "@testing-library/react";
-import { afterEach, expect, test } from "vitest";
+import { expect, test } from "vitest";
 import { userEvent } from "vitest/browser";
 import { DataTable, type ColumnDefinition, type DataTableProps } from "../components/table";
 import type { BaselineRow } from "./baseline-fixture";
@@ -8,11 +8,6 @@ import { applyTheme, type Theme } from "./browser/environment";
 import { measureBox, readStyle } from "./browser/measure";
 import { dragPointer } from "./browser/pointer-drag";
 import { emulateMediaType } from "./browser/print-media";
-
-afterEach(async () => {
-  applyTheme("light");
-  await emulateMediaType("screen");
-});
 
 type Column = ColumnDefinition<BaselineRow>;
 type Props = Partial<DataTableProps<BaselineRow>>;
@@ -74,13 +69,13 @@ test("the first drag does not jump: every column starts where the browser had la
 test("the drag stops at minWidth", async () => {
   const columns = COLUMNS.map((column) => (column.id === "name" ? { ...column, minWidth: 120 } : column));
   const container = renderTable({ columns });
-  await dragPointer({ selector: handleSelector("name"), deltaX: -300, steps: 10 });
+  await dragPointer({ selector: handleSelector("name"), deltaX: -300, steps: 2 });
   expect(measureBox(headerOf(container, "name")).width).toBe(120);
 });
 
 test("the totals, a detail and the loading rows follow the new width", async () => {
   const container = renderTable({ renderExpandedRow: (row) => row.name, defaultExpandedRowIds: ["r1"] });
-  await dragPointer({ selector: handleSelector("name"), deltaX: 50, steps: 5 });
+  await dragPointer({ selector: handleSelector("name"), deltaX: 50, steps: 2 });
   const header = measureBox(headerOf(container, "name"));
   const footCell = measureBox(findRequiredElement(container, 'tfoot td[data-column-id="name"]'));
   expect([footCell.left, footCell.width]).toEqual([header.left, header.width]);
@@ -97,11 +92,11 @@ test("the loading placeholders take the user's widths", () => {
 test("a pinned column pushes the next pinned one, and never grows past half of the container", async () => {
   const pinned = COLUMNS.map((column) => (["name", "country"].includes(column.id) ? { ...column, pin: "left" as const } : column));
   const container = renderTable({ columns: pinned });
-  await dragPointer({ selector: handleSelector("name"), deltaX: 40, steps: 4 });
+  await dragPointer({ selector: handleSelector("name"), deltaX: 40, steps: 2 });
   const name = measureBox(headerOf(container, "name"));
   expect(name.width).toBe(220);
   expect(measureBox(headerOf(container, "country")).left).toBe(name.right);
-  await dragPointer({ selector: handleSelector("name"), deltaX: 400, steps: 8 });
+  await dragPointer({ selector: handleSelector("name"), deltaX: 400, steps: 2 });
   const half = findRequiredElement(container, ".gdy-table-wrap").clientWidth / 2;
   expect(measureBox(headerOf(container, "name")).width + 120).toBe(Math.floor(half));
   expect(findRequiredElement(container, ".gdy-table-wrap")).not.toHaveAttribute("data-pinning-suspended");
@@ -113,7 +108,7 @@ test("a right-pinned column has its handle on its left edge and grows leftward",
   const header = headerOf(container, "notes");
   const handle = findRequiredElement(header, ".gdy-table-resize-handle");
   expect(measureBox(handle).left).toBe(measureBox(header).left);
-  await dragPointer({ selector: handleSelector("notes"), deltaX: -30, steps: 3 });
+  await dragPointer({ selector: handleSelector("notes"), deltaX: -30, steps: 2 });
   expect(measureBox(header).width).toBe(190);
 });
 

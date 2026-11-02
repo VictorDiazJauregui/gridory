@@ -1,5 +1,5 @@
 import { render } from "@testing-library/react";
-import { afterEach, expect, test } from "vitest";
+import { expect, test } from "vitest";
 import { userEvent } from "vitest/browser";
 import { DataTable, type ColumnDefinition, type DataTableProps } from "../components/table";
 import { BASELINE_ROW_ACTIONS, type BaselineRow } from "./baseline-fixture";
@@ -7,12 +7,6 @@ import { findRequiredElement } from "./browser/elements";
 import { applyScreen, applyTheme, type Theme } from "./browser/environment";
 import { measureBox, readStyle } from "./browser/measure";
 import { emulateMediaType } from "./browser/print-media";
-
-afterEach(async () => {
-  applyTheme("light");
-  await applyScreen("desktop");
-  await emulateMediaType("screen");
-});
 
 const ROWS: BaselineRow[] = Array.from({ length: 30 }, (_, index) => ({
   id: `r${index + 1}`,

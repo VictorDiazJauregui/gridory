@@ -1,5 +1,5 @@
 import { render } from "@testing-library/react";
-import { afterEach, expect, test } from "vitest";
+import { expect, test } from "vitest";
 import { DataTable, type DataTableProps } from "../components/table";
 import { MOCK_COMPANY_ROWS, type MockCompanyRow } from "../components/mocks/company/company-rows";
 import { buildCompanyColumns } from "../components/mocks/company/company-columns";
@@ -8,11 +8,6 @@ import { findRequiredElement } from "./browser/elements";
 import { applyTheme, type Theme } from "./browser/environment";
 import { measureBox } from "./browser/measure";
 import { emulateMediaType } from "./browser/print-media";
-
-afterEach(async () => {
-  applyTheme("light");
-  await emulateMediaType("screen");
-});
 
 const COLUMNS = buildCompanyColumns({ appsWidth: 200, statusSearchable: false }).map((column) =>
   column.id === "name" ? { ...column, footer: () => "Total" } : { ...column, footer: () => "—", align: "right" as const },
