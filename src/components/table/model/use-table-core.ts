@@ -1,5 +1,6 @@
 import type { Table } from "@tanstack/react-table";
 import type { PinnedColumns } from "../columns/pinned-columns";
+import type { ColumnWidthsModel } from "../resize/use-column-widths";
 import { useResolvedLabels } from "../../shared/labels/use-resolved-labels";
 import { DATA_TABLE_LABELS } from "../labels";
 import { resolveTableSettings } from "../settings";
@@ -42,6 +43,8 @@ export type TableModel<TData> = TableCore<TData> & {
   hiddenByPriority: string[];
   /** Pinned columns on screen; `null` without `pin` or `rowActions.pinned`. */
   pinnedColumns: PinnedColumns | null;
+  /** The user's column widths; `null` without `resizableColumns`. */
+  columnWidths: ColumnWidthsModel | null;
 };
 
 export interface TableModelProps<TData> {
