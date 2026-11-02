@@ -1,5 +1,5 @@
 import { fireEvent, render } from "@testing-library/react";
-import { afterEach, expect, test } from "vitest";
+import { expect, test } from "vitest";
 import { DataTable, type ColumnDefinition, type DataTableProps } from "../components/table";
 import { BASELINE_COLUMNS, BASELINE_ROWS, type BaselineRow } from "./baseline-fixture";
 import { findRequiredElement } from "./browser/elements";
@@ -7,12 +7,6 @@ import { applyTheme, type Theme } from "./browser/environment";
 import { measureBox, readStyle } from "./browser/measure";
 import { emulateMediaType } from "./browser/print-media";
 import { emulateReducedMotion } from "./browser/reduced-motion";
-
-afterEach(async () => {
-  applyTheme("light");
-  await emulateMediaType("screen");
-  await emulateReducedMotion(false);
-});
 
 const renderDetail = (row: BaselineRow) => <p style={{ height: 60, margin: 0 }}>Detalle de {row.name}</p>;
 
@@ -73,6 +67,7 @@ test("the keyboard focus of the button draws a ring inside the cell", () => {
 });
 
 test("the detail grows from 0 to its content height, and the chevron turns", async () => {
+  await emulateReducedMotion(false);
   const container = renderTable();
   openRow(container, "b1");
   const panel = panelOf(container);
@@ -84,6 +79,7 @@ test("the detail grows from 0 to its content height, and the chevron turns", asy
 });
 
 test("closing shrinks the detail and unmounts it when the transition ends", async () => {
+  await emulateReducedMotion(false);
   const container = renderTable();
   openRow(container, "b1");
   await waitForTransition(panelOf(container));
@@ -95,6 +91,7 @@ test("closing shrinks the detail and unmounts it when the transition ends", asyn
 });
 
 test("a detail closed before its opening transition ran still unmounts", async () => {
+  await emulateReducedMotion(false);
   const container = renderTable({ defaultExpandedRowIds: ["b1"] });
   openRow(container, "b1");
   await expect.poll(() => container.querySelector(".gdy-table-expanded-row")).toBeNull();

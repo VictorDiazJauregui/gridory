@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, expect, test } from "vitest";
+import { expect, test } from "vitest";
 import { DataTable, type ColumnAlign, type ColumnDefinition } from "../components/table";
 import { BASELINE_ROWS, type BaselineRow } from "./baseline-fixture";
 import { readColorContrast } from "./browser/contrast";
@@ -7,11 +7,6 @@ import { findRequiredElement } from "./browser/elements";
 import { applyScreen, applyTheme, type Theme } from "./browser/environment";
 import { measureBox, readStyle } from "./browser/measure";
 import { emulateMediaType } from "./browser/print-media";
-
-afterEach(async () => {
-  applyTheme("light");
-  await applyScreen("desktop");
-});
 
 const HELP = "Suma de los contratos vigentes, en su moneda";
 
@@ -67,7 +62,6 @@ test("with printMode the help icon does not reach the paper", async () => {
   ).container;
   await emulateMediaType("print");
   expect(readStyle(headerPart(container, "help", ".gdy-table-head-help"), "display")).toBe("none");
-  await emulateMediaType("screen");
 });
 
 test("the header row keeps its height with the icon", () => {
