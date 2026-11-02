@@ -61,10 +61,15 @@ test.each([
 test.each([
   ["upper", "a «Mixed text» b", "a «MIXED TEXT» b"],
   ["lower", "«MIXED Text»", "«mixed text»"],
-  ["words", "«hola MUNDO. otra frase-compuesta»", "«Hola Mundo. Otra Frase-Compuesta»"],
-  ["words", "«l'été ñandú»", "«L'été Ñandú»"],
 ] as const)("transformCase %s", (textCase, before, after) => {
   expect(run(transformCase(textCase), before)).toBe(after);
+});
+
+test.each([
+  ["«hola MUNDO. otra frase-compuesta»", "«Hola Mundo. Otra Frase-Compuesta»"],
+  ["«l'été ñandú»", "«L'été Ñandú»"],
+])("transformCase words %s", (before, after) => {
+  expect(run(transformCase("words"), before)).toBe(after);
 });
 
 test.each([
