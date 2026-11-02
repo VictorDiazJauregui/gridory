@@ -17,6 +17,7 @@ import { useTableHookProps } from "./use-table-hook-props";
 import { useRowSelectionDemo, withRowSelectionDemo } from "./use-row-selection-demo";
 import { useColumnVisibilityDemo, withColumnVisibilityDemo } from "./use-column-visibility-demo";
 import { withExpandableRowsDemo } from "./use-expandable-rows-demo";
+import { useColumnWidthsDemo, withColumnWidthsDemo } from "./use-column-widths-demo";
 import { EmptyWithCreate } from "../company/EmptyWithCreate";
 import { useLoadingToggle } from "../shared/use-loading-toggle";
 import { readDemoPrintMode } from "./demo-print-mode";
@@ -68,6 +69,7 @@ export const useDataTableMockProps = (
   const hookProps = useTableHookProps(openCompany, setRows);
   const selectionDemo = useRowSelectionDemo();
   const visibilityDemo = useColumnVisibilityDemo();
+  const widthsDemo = useColumnWidthsDemo();
   const loadingToggle = useLoadingToggle();
   const language = useDemoLanguage();
   const baseProps = { ...TABLE_STATIC_PROPS, ...rowProps, viewSwitch };
@@ -75,6 +77,6 @@ export const useDataTableMockProps = (
   const emptyMessage = <EmptyWithCreate onCreate={rowProps.onCreate} />;
   const demoProps = withDemoControls({ ...baseProps, ...hookProps, emptyMessage }, loadingToggle);
   const firstBatchProps = withColumnVisibilityDemo(withRowSelectionDemo(demoProps, selectionDemo), visibilityDemo);
-  const waveFourProps = withExpandableRowsDemo(firstBatchProps);
+  const waveFourProps = withColumnWidthsDemo(withExpandableRowsDemo(firstBatchProps), widthsDemo);
   return localizeTableDemoProps(waveFourProps, language);
 };
