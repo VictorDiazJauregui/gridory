@@ -30,7 +30,7 @@ test("shows every tool when there is room and folds the rest into the menu when 
   expect(readVisibleButtons(wide)).toHaveLength(VISIBLE_TOOL_COUNT);
   expect(screen.queryByRole("button", { name: "Más herramientas" })).toBeNull();
   wide.closest<HTMLElement>(".gdy-md-editor")!.parentElement!.style.width = "300px";
-  await new Promise((resolve) => setTimeout(resolve, 100));
+  await expect.poll(() => screen.queryByRole("button", { name: "Más herramientas" })).not.toBeNull();
   expect(screen.getByRole("button", { name: "Más herramientas" })).toBeInTheDocument();
   expect(readVisibleButtons(wide).length).toBeLessThan(VISIBLE_TOOL_COUNT);
 });
