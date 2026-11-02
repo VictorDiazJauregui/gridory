@@ -21,4 +21,6 @@ export const DATA_TABLE_LABELS: DataTableLabels = {
   printSelectionHeader: "Seleccionada",
   columnHelp: (header) => `Ayuda sobre ${header}`,
   expandRow: "Mostrar detalle",
+  resizeColumn: (header) => `Cambiar el ancho de ${header}`,
+  resizeColumnValue: (width) => `${width} px`,
 };

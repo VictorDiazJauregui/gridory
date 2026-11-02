@@ -131,6 +131,12 @@ export interface ColumnDefinition<TData> {
    * columns of its side, in declaration order. Needs `width` (`PinnedColumnWidthError` otherwise).
    */
   pin?: ColumnPin;
+  /** Table only. With `resizableColumns`, `false` leaves this column without resize handle. */
+  resizable?: boolean;
+  /** Table only. Narrowest width the user can resize this column to. Defaults to 64. */
+  minWidth?: number;
+  /** Table only. Widest width the user can resize this column to. Defaults to no limit. */
+  maxWidth?: number;
 }
 
 /** Built-in and custom actions available per row (table) or per card (kanban). */
