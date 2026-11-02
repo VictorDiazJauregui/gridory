@@ -35,7 +35,7 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-table-foot` | con estilos | — |
 | `gdy-table-foot-cell` | con estilos | `[data-align="center"]`, `[data-align="right"]`, `[data-hidden-by="priority"]`, `[data-pinned]` |
 | `gdy-table-foot-row` | solo gancho | — |
-| `gdy-table-grid` | con estilos | — |
+| `gdy-table-grid` | con estilos | `[data-resized]` |
 | `gdy-table-group-cell` | con estilos | — |
 | `gdy-table-group-chevron` | con estilos | — |
 | `gdy-table-group-count` | con estilos | — |
@@ -70,13 +70,14 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-table-pagination-right` | con estilos | — |
 | `gdy-table-pagination-text` | con estilos | — |
 | `gdy-table-print-value` | con estilos | — |
+| `gdy-table-resize-handle` | con estilos | — |
 | `gdy-table-row` | con estilos | `[data-clickable]`, `[data-selected]` |
 | `gdy-table-select` | con estilos | `[data-state="checked"]`, `[data-state="indeterminate"]` |
 | `gdy-table-select-indicator` | con estilos | — |
 | `gdy-table-skeleton` | con estilos | `[data-column-id="_actions"]`, `[data-column-id="_expand"]`, `[data-column-id="_select"]` |
 | `gdy-table-skeleton-row` | solo gancho | — |
 | `gdy-table-sticky` | con estilos | — |
-| `gdy-table-wrap` | con estilos | `[data-has-pinned]`, `[data-pinning-suspended]`, `[data-scrolled-end]`, `[data-scrolled-start]` |
+| `gdy-table-wrap` | con estilos | `[data-has-pinned]`, `[data-pinning-suspended]`, `[data-resizing]`, `[data-scrolled-end]`, `[data-scrolled-start]` |
 
 ### Kanban
 
@@ -631,6 +632,17 @@ hay que escribir para pisarlas; los motivos están en [Temas y estilos](theming.
 | `:where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > * > tr) > [data-pinned="right"][data-pinned-edge]::after` | 0-2-1 |
 | `:where(.gdy-table-wrap[data-has-pinned][data-scrolled-start]:not([data-pinning-suspended]) > .gdy-table-grid > * > tr) > [data-pinned="left"][data-pinned-edge]::after` | 0-2-1 |
 | `:where(.gdy-table-wrap[data-has-pinned][data-scrolled-end]:not([data-pinning-suspended]) > .gdy-table-grid > * > tr) > [data-pinned="right"][data-pinned-edge]::after` | 0-2-1 |
+| `.gdy-table-resize-handle::after` | 0-1-1 |
+| `.gdy-table-resize-handle:hover::after` | 0-2-1 |
+| `.gdy-table-resize-handle:active::after` | 0-2-1 |
+| `.gdy-table-resize-handle:focus-visible::after` | 0-2-1 |
+| `.gdy-table-resize-handle:focus-visible` | 0-2-0 |
+| `:where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > thead > tr > [data-pinned="right"]) > .gdy-table-resize-handle::after` | 0-1-1 |
+| `.gdy-table-wrap[data-resizing]` | 0-2-0 |
+| `.gdy-table-wrap[data-resizing] *` | 0-2-0 |
+| `.gdy-table-grid[data-resized]` | 0-2-0 |
+| `.gdy-table-grid[data-resized] > thead > tr > th` | 0-2-3 |
+| `:where(.gdy-table-grid[data-resized] > thead > tr) > th` | 0-0-1 |
 | `.gdy-table[data-print-mode] .gdy-toolbar` | 0-3-0 |
 | `.gdy-table[data-print-mode] .gdy-table-pagination` | 0-3-0 |
 | `.gdy-table[data-print-mode] [data-column-id="_actions"]` | 0-3-0 |
@@ -719,6 +731,8 @@ ponen Radix o react-day-picker siguen a esas librerías.
 | `data-range-end` | presente / ausente | Gridory | `gdy-calendar-day`, `gdy-calendar-day-button` |
 | `data-range-middle` | presente / ausente | Gridory | `gdy-calendar-day`, `gdy-calendar-day-button` |
 | `data-range-start` | presente / ausente | Gridory | `gdy-calendar-day`, `gdy-calendar-day-button` |
+| `data-resized` | presente / ausente | Gridory | `gdy-table-grid` |
+| `data-resizing` | presente / ausente | Gridory | `gdy-table-wrap` |
 | `data-role` | `"assistant"`, `"user"` | Gridory | `gdy-ai-bubble`, `gdy-ai-message` |
 | `data-row-id` | el id de la fila (`getRowId`) | Gridory | sin regla por defecto |
 | `data-scrolled-end` | presente / ausente | Gridory | `gdy-table-wrap` |
@@ -1094,11 +1108,14 @@ cualquier ancestro cambia solo esa parte. Los `--gdy-select-*` también reflejan
 | `--gdy-skeleton-bg` | `color-mix(in oklab, var(--gdy-foreground) 10%, transparent)` | shared |
 | `--gdy-skeleton-shine` | `color-mix(in oklab, var(--gdy-background) 60%, transparent)` | motion |
 | `--gdy-table-border` | `var(--gdy-border)` | table |
+| `--gdy-table-column-print-width` | `auto` | table |
+| `--gdy-table-column-width` | `auto` | table |
 | `--gdy-table-expand-duration` | `200ms` | motion |
 | `--gdy-table-expand-focus-ring` | `var(--gdy-ring)` | table |
 | `--gdy-table-expanded-bg` | `var(--gdy-background)` | table |
 | `--gdy-table-expanded-padding` | `12px 14px` | table |
 | `--gdy-table-foot-bg` | `var(--gdy-table-head-bg, var(--gdy-muted))` | table |
+| `--gdy-table-grid-width` | `100%` | table |
 | `--gdy-table-group-bg` | `var(--gdy-accent)` | table |
 | `--gdy-table-head-bg` | `var(--gdy-muted)` | table |
 | `--gdy-table-head-fg` | `var(--gdy-muted-foreground)` | table |
@@ -1109,6 +1126,7 @@ cualquier ancestro cambia solo esa parte. Los `--gdy-select-*` también reflejan
 | `--gdy-table-pinned-corner-z` | `3` | table |
 | `--gdy-table-pinned-shadow` | `color-mix(in oklab, var(--gdy-foreground) 14%, transparent)` | table |
 | `--gdy-table-pinned-z` | `1` | table |
+| `--gdy-table-resize-handle-color` | `var(--gdy-ring)` | table |
 | `--gdy-table-row-focus-ring` | `var(--gdy-ring)` | table |
 | `--gdy-table-row-hover-bg` | `var(--gdy-muted)` | table |
 | `--gdy-table-row-selected-bg` | `var(--gdy-accent)` | table |
