@@ -1,5 +1,5 @@
 import { render, screen, within } from "@testing-library/react";
-import { afterEach, expect, test } from "vitest";
+import { expect, test } from "vitest";
 import { userEvent } from "vitest/browser";
 import { KanbanBoard, type KanbanGroupOption } from "../components/kanban";
 import { BASELINE_COLUMNS, BASELINE_ROWS, type BaselineRow } from "./baseline-fixture";
@@ -44,18 +44,27 @@ const expectInsideScreen = (element: Element, screenName: ScreenName) => {
   expect(box.right).toBeLessThanOrEqual(SCREENS[screenName].width);
 };
 
-afterEach(() => emulateTouchScreen(false));
+const takesPointerAtCenter = (element: HTMLElement): boolean => {
+  const box = element.getBoundingClientRect();
+  return element.contains(document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2));
+};
+
+// On a busy machine an item can show before it takes the pointer: a click on the page behind it closes the submenu.
+const clickMenuItem = async (item: HTMLElement) => {
+  await expect.poll(() => takesPointerAtCenter(item)).toBe(true);
+  await userEvent.click(item);
+};
 
 test.each(PHONES)("on a %s touch screen the menu shows Move to and moves the card", async (screenName) => {
   await applyScreen(screenName);
   await emulateTouchScreen(true);
   renderBoard();
   await userEvent.click(within(column("Activa")).getAllByRole("button", { name: "Opciones" })[0]);
-  await userEvent.click(await screen.findByRole("menuitem", { name: "Mover a…" }));
+  await clickMenuItem(await screen.findByRole("menuitem", { name: "Mover a…" }));
   const destination = await screen.findByRole("menuitem", { name: "Pendiente" });
   expect(screen.getByRole("menuitem", { name: "Archivada" })).toHaveAccessibleDescription(REASON);
   expectInsideScreen(destination.closest("[role=menu]") as Element, screenName);
-  await userEvent.click(destination);
+  await clickMenuItem(destination);
   expect(titlesIn("Pendiente")).toEqual(["Frío Delta"]);
 });
 
