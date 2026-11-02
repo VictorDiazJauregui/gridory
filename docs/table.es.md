@@ -110,6 +110,9 @@ Cada entrada de `columns` es un `ColumnDefinition<TData>`.
 | `headerTooltipPlacement` | `"before" \| "after" \| "edge"` | Dónde va el "?". Por defecto `"after"` (`"before"` con un encabezado alineado a la derecha). Solo la tabla. |
 | `headerContent` | `ReactNode` | Reemplaza el título visible; `header` sigue siendo el nombre accesible y el texto de los menús. Solo la tabla. |
 | `pin` | `"left" \| "right"` | Deja la columna en ese borde mientras las filas se desplazan de costado. Requiere `width`. Ver [Columnas fijas](#columnas-fijas). Solo la tabla. |
+| `resizable` | `boolean` | Con `resizableColumns`, `false` deja la columna sin manija. Ver [Columnas redimensionables](#columnas-redimensionables). Solo la tabla. |
+| `minWidth` | `number` | Ancho más angosto al que el usuario puede llevar la columna. Por defecto `64`. Solo la tabla. |
+| `maxWidth` | `number` | Ancho más ancho al que el usuario puede llevar la columna. Sin límite por defecto. Solo la tabla. |
 
 Las opciones de filtro se calculan con todas las filas de `data` (antes de la búsqueda y los filtros), no
 solo con la página visible. Las columnas con `type: "date"` nunca reciben una lista de valores: su menú
@@ -934,6 +937,114 @@ Antes, una columna pegada llevaba una clase por celda, desplazamientos a mano y 
 + { id: "customer", width: 220, pin: "left" }
 ```
 
+### Columnas redimensionables
+
+`resizableColumns` agrega una manija en el borde derecho del encabezado de cada columna de datos. Arrastrarla,
+o moverla con las flechas, cambia el ancho de esa columna; la tabla avisa los anchos y la app decide dónde
+guardarlos. Apagado por defecto: sin la prop no se pinta ninguna manija y el navegador reparte las columnas
+como antes.
+
+```tsx
+const [columnWidths, setColumnWidths] = useState<Record<string, number>>({});
+
+<DataTable
+  columns={columns}
+  data={invoices}
+  getRowId={(row) => row.id}
+  resizableColumns
+  columnWidths={columnWidths}
+  onColumnWidthsChange={setColumnWidths}
+/>;
+```
+
+| Prop | Tipo | Default | Descripción |
+| --- | --- | --- | --- |
+| `resizableColumns` | `boolean` | `false` | Agrega las manijas. |
+| `columnWidths` | `Record<string, number>` | — | Anchos controlados en px, por id de columna. Una columna que no figura conserva su `width`. |
+| `defaultColumnWidths` | `Record<string, number>` | — | Anchos iniciales cuando los guarda la tabla. |
+| `onColumnWidthsChange` | `(columnWidths) => void` | — | Se emite al soltar, solo con las columnas que el usuario cambió. |
+
+- **Cuándo avisa.** `onColumnWidthsChange` se emite cuando el usuario suelta el puntero o la flecha, y al
+  restablecer; nunca en cada movimiento. Lleva solo las columnas que el usuario cambió, que es justo lo que hay
+  que guardar y volver a pasar. Gridory no guarda nada por su cuenta.
+- **Límites.** `minWidth` (por defecto `64`) y `maxWidth` (sin límite por defecto) acotan el arrastre, las
+  teclas y los anchos que llegan por `columnWidths` (un ancho guardado fuera de rango se muestra dentro de los
+  límites, sin avisar). `resizable: false` deja una columna sin manija. Las columnas de casilla, de expandir y de
+  acciones nunca tienen.
+- **Volver a `width`.** Un doble clic en la manija, o Enter sobre ella, quita el ancho de esa columna: el aviso
+  llega sin su clave.
+- **Teclado.** La manija es un `role="separator"` con `aria-orientation="vertical"`, `aria-valuenow` (el ancho
+  en px), `aria-valuetext` (`labels.resizeColumnValue`, `"220 px"`), `aria-valuemin` y `aria-valuemax`
+  (`maxWidth`, o `4000`), con el nombre de `labels.resizeColumn` (`"Cambiar el ancho de Empresa"`). Se llega con
+  Tab; las flechas izquierda y derecha mueven el borde 10 px; mantener una flecha apretada avisa una vez, al
+  soltarla. Hasta el primer ancho el navegador reparte el lugar, así que la tabla vuelve a medir los encabezados
+  cada vez que el contenedor cambia de tamaño, y el valor sigue siendo el ancho en pantalla.
+- **Nada más se estira.** Hasta el primer ancho, el navegador reparte el contenedor como siempre. Desde el
+  primero, la tabla conserva el ancho que cada columna tenía en pantalla y pasa a medir la suma, así que mover un
+  borde solo corre lo que está a su derecha: el lugar que sobra queda vacío a la derecha, y una tabla más ancha se
+  desplaza de costado. Ahí la columna de acciones toma 56 px (96 px con `rowActions.columnLabel`) si no tenía
+  lugar. Al restablecer el último ancho vuelve el reparto de siempre.
+- **Columnas fijas.** Cambiar el ancho de una fija corre los desplazamientos de las fijas que vienen después.
+  Una fija deja de crecer cuando las fijas llegan a la mitad del contenedor, el punto en que se soltarían. Una
+  fija a la derecha crece hacia la izquierda, por eso su manija está en su borde izquierdo.
+- **Prioridad.** Con `responsiveColumns`, una columna cambiada cuenta su ancho nuevo, una vez soltada: si el
+  resto ya no entra, la de menor prioridad se oculta en ese momento, no en medio del arrastre.
+- **Celulares.** La manija solo se muestra en un equipo con puntero fino (`any-pointer: fine`: mouse o
+  trackpad). Un celular no tiene una forma cómoda de arrastrar un borde.
+- **Al imprimir** se usa el `width` declarado de cada columna: los anchos del usuario son de pantalla, así una
+  tabla agrandada nunca se sale de la hoja.
+- **Marcado.** La manija es `div.gdy-table-resize-handle`, dentro de la celda del encabezado. Una vez cambiado
+  algún ancho, la grilla (`gdy-table-grid`) lleva `data-resized` y su ancho en `--gdy-table-grid-width`, y cada
+  celda del encabezado su ancho en `--gdy-table-column-width`; mientras el puntero arrastra, el contenedor de
+  filas lleva `data-resizing` (sin selección de texto, cursor de redimensionar). Su línea toma
+  `--gdy-table-resize-handle-color` (con `--gdy-ring` de respaldo). El doble clic restablece: no ajusta al
+  contenido.
+
+Guardar los anchos en `localStorage`, para que sigan después de recargar:
+
+```tsx
+const STORAGE_KEY = "invoices-column-widths";
+
+const readWidths = (): Record<string, number> => JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "{}");
+
+const [columnWidths, setColumnWidths] = useState(readWidths);
+
+const saveWidths = (widths: Record<string, number>) => {
+  setColumnWidths(widths);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(widths));
+};
+
+<DataTable {...props} resizableColumns columnWidths={columnWidths} onColumnWidthsChange={saveWidths} />;
+```
+
+O en el servidor, por usuario: se cargan con el resto de las preferencias y se guardan en cada aviso. Como el
+aviso llega recién al soltar, no hace falta un debounce:
+
+```tsx
+const { data: preferences } = usePreferences();
+
+<DataTable
+  {...props}
+  resizableColumns
+  columnWidths={preferences.invoiceColumnWidths}
+  onColumnWidthsChange={(widths) => savePreferences({ invoiceColumnWidths: widths })}
+/>;
+```
+
+Guardá `columnWidths` en un estado o en un objeto estable: un objeto nuevo en línea en cada render volvería a
+poner los anchos cada vez.
+
+Antes, una columna redimensionable llevaba una manija en cada `header` y listeners propios en el documento:
+
+```diff
+- const onMouseDown = (event) => {
+-   document.addEventListener("mousemove", resize);
+-   document.addEventListener("mouseup", stopResizing);
+- };
+- { id: "notes", width, cell: ..., headerContent: <ResizableTitle onMouseDown={onMouseDown} /> }
++ <DataTable resizableColumns columnWidths={widths} onColumnWidthsChange={setWidths} ... />
+```
+
 ### Ayuda y contenido en el encabezado
 
 Dos campos de columna enriquecen el encabezado sin tocar `header`:
@@ -1124,6 +1235,8 @@ Claves propias de la tabla (`DataTableLabels`):
 | `printSelectionHeader` | `"Seleccionada"` | Se imprime en el encabezado de la columna de casillas (`printMode`) | — |
 | `columnHelp(header)` | `"Ayuda sobre Monto"` | Nombre accesible del ícono de ayuda del encabezado (`headerTooltip`) | — |
 | `expandRow` | `"Mostrar detalle"` | Nombre accesible del botón de expandir de una fila (`renderExpandedRow`) | — |
+| `resizeColumn(header)` | `"Cambiar el ancho de Empresa"` | Nombre accesible de la manija para cambiar el ancho de una columna (`resizableColumns`) | — |
+| `resizeColumnValue(width)` | `"220 px"` | Valor que lee el lector de pantalla en esa manija, su ancho (`aria-valuetext`) | — |
 
 ## Eventos
 
@@ -1233,6 +1346,7 @@ mismo selector.
 | `gdy-table-cell` | Celda de datos (`td`); `gdy-table-cell-content` envuelve su contenido. | `data-column-id` con el `id` de su columna; `data-align` con `align`. `gdy-table-cell-content` lleva `data-overflow` con `overflow`. |
 | `gdy-table-actions-cell` | Caja del botón ⋯ en la columna de acciones; `gdy-table-actions-head-label` es el texto de su encabezado (`rowActions.columnLabel`). | `data-align` cuando se pasa `rowActions.align` o `columnLabel`. |
 | `gdy-table-expand-toggle` | Botón de expandir de una fila (`renderExpandedRow`), con su chevron `gdy-table-expand-chevron`. | `aria-expanded`; `aria-controls` mientras está abierto. |
+| `gdy-table-resize-handle` | Manija para cambiar el ancho, en el encabezado de una columna de datos (`resizableColumns`); oculta sin puntero fino. | `role="separator"`, `aria-valuenow`. Con algún ancho cambiado, la grilla lleva `data-resized` y `--gdy-table-grid-width`, y cada celda del encabezado `--gdy-table-column-width`; `data-resizing` en `gdy-table-wrap` mientras se arrastra. |
 | `gdy-table-expanded-row` | Fila de detalle debajo de una fila abierta; su única celda es `gdy-table-expanded-cell`, que contiene `gdy-table-expanded-panel` (la caja animada), `gdy-table-expanded-content` y `gdy-table-expanded-body` (el margen interno). | `data-state` (`open`, `closed`) en el panel; `data-expanded` en la `gdy-table-row` abierta. |
 | `gdy-table-wrap` | Contenedor de desplazamiento de las filas. | Con columnas fijas, `data-has-pinned`, más `data-scrolled-start`, `data-scrolled-end` y `data-pinning-suspended` mientras aplican. Cada celda de una columna fija lleva `data-pinned` (`left`, `right`), `--gdy-table-pin-offset` y, en la última de su lado, `data-pinned-edge`. |
 | `gdy-table-group-row` | Fila de grupo; `gdy-table-group-cell` es su única celda. | — |
@@ -1271,6 +1385,7 @@ estos tokens, cada uno con un fallback a un token base, así que basta con decla
 | `--gdy-table-pinned-z` | `1` | Apilado de las celdas fijas. |
 | `--gdy-table-pinned-corner-z` | `3` | Apilado de las celdas fijas del encabezado y de los totales, sobre el encabezado fijo (2). |
 | `--gdy-table-open-menu-z` | `4` | Apilado de una celda del encabezado con su panel de filtro abierto, sobre las esquinas. |
+| `--gdy-table-resize-handle-color` | `--gdy-ring` | Línea de la manija para cambiar el ancho, con el mouse encima, con foco y al arrastrar. |
 
 ```css
 :root {
@@ -1376,6 +1491,10 @@ Props propias de `DataTableProps<TData>`, en el orden del código fuente.
 | `onExpandedChange` | `(expandedRowIds: string[]) => void` | — | Apertura o cierre que hace el usuario. |
 | `canExpandRow` | `(row: TData) => boolean` | — | `false` deja la fila sin botón. |
 | `responsiveColumns` | `boolean` | `false` | Oculta las columnas `hideable` y con `priority` hasta que el resto entra. |
+| `resizableColumns` | `boolean` | `false` | Manijas para cambiar el ancho de las columnas de datos. Ver [Columnas redimensionables](#columnas-redimensionables). |
+| `columnWidths` | `Record<string, number>` | — | Anchos de columna controlados, en px. |
+| `defaultColumnWidths` | `Record<string, number>` | — | Anchos de columna iniciales, no controlados. |
+| `onColumnWidthsChange` | `(columnWidths) => void` | — | Se emite al soltar, con las columnas que el usuario cambió. |
 | `onRowClick` | `(row: TData, event: RowClickEvent) => void` | — | Callback del clic en fila; marca las filas con `data-clickable`. |
 | `getRowHref` | `(row: TData) => string \| undefined` | — | Convierte la fila en un enlace (`data-href`). |
 | `focusableRows` | `boolean` | `false` (`true` con `getRowHref`) | Las filas reciben el foco con Tab y se disparan con Enter. |

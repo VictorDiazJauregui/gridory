@@ -109,6 +109,9 @@ Each entry of `columns` is a `ColumnDefinition<TData>`.
 | `headerTooltipPlacement` | `"before" \| "after" \| "edge"` | Where the "?" goes. Default `"after"` (`"before"` with a right-aligned header). Table only. |
 | `headerContent` | `ReactNode` | Replaces the visible title; `header` stays the accessible name and the menus' text. Table only. |
 | `pin` | `"left" \| "right"` | Keeps the column at that edge while the rows scroll sideways. Needs `width`. See [Pinned columns](#pinned-columns). Table only. |
+| `resizable` | `boolean` | With `resizableColumns`, `false` leaves the column without resize handle. See [Resizable columns](#resizable-columns). Table only. |
+| `minWidth` | `number` | Narrowest width the user can resize the column to. Defaults to `64`. Table only. |
+| `maxWidth` | `number` | Widest width the user can resize the column to. No limit by default. Table only. |
 
 Filter options are computed from every row in `data` (before search and filters), not only from the
 visible page. Columns with `type: "date"` never get a value list: their menu offers the operators
@@ -920,6 +923,111 @@ Before, a sticky column took a class per cell, hand-written offsets and its own 
 + { id: "customer", width: 220, pin: "left" }
 ```
 
+### Resizable columns
+
+`resizableColumns` adds a handle on the right edge of each data column's header. Dragging it, or moving it
+with the arrow keys, changes that column's width; the table reports the widths and the app decides where to
+keep them. Off by default: without it no handle is rendered and the browser lays the columns out as before.
+
+```tsx
+const [columnWidths, setColumnWidths] = useState<Record<string, number>>({});
+
+<DataTable
+  columns={columns}
+  data={invoices}
+  getRowId={(row) => row.id}
+  resizableColumns
+  columnWidths={columnWidths}
+  onColumnWidthsChange={setColumnWidths}
+/>;
+```
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `resizableColumns` | `boolean` | `false` | Adds the resize handles. |
+| `columnWidths` | `Record<string, number>` | — | Controlled widths in px, per column id. A column not listed keeps its `width`. |
+| `defaultColumnWidths` | `Record<string, number>` | — | Starting widths when the table keeps them. |
+| `onColumnWidthsChange` | `(columnWidths) => void` | — | Fires on release, with only the columns the user resized. |
+
+- **When it reports.** `onColumnWidthsChange` fires when the user releases the pointer or the arrow key, and
+  on a reset; never on every move. It carries only the columns the user resized, which is exactly what to
+  store and pass back. Gridory stores nothing on its own.
+- **Limits.** `minWidth` (default `64`) and `maxWidth` (no limit by default) bound the drag, the keys and the
+  widths that come from `columnWidths` (a stored width out of range is shown within them, without a report).
+  `resizable: false` leaves a column without handle. The checkbox, expand and actions columns never get one.
+- **Back to `width`.** A double click on the handle, or Enter on it, drops that column's width: the report
+  comes without its key.
+- **Keyboard.** The handle is a `role="separator"` with `aria-orientation="vertical"`, `aria-valuenow` (the
+  width in px), `aria-valuetext` (`labels.resizeColumnValue`, `"220 px"`), `aria-valuemin` and
+  `aria-valuemax` (`maxWidth`, or `4000`), named by `labels.resizeColumn` (`"Cambiar el ancho de Empresa"`).
+  Tab reaches it; the left and right arrows move the edge 10px; holding an arrow reports once, on release.
+  Until the first width the browser shares the room out, so the table measures the headers again whenever the
+  container resizes, and the value stays the width on screen.
+- **Nothing else stretches.** Until the first width, the browser shares the container out as always. From
+  the first one, the table keeps the width every column had on screen and becomes as wide as their sum, so
+  moving one edge only shifts what is to its right: left over room stays empty on the right, and a wider
+  table scrolls sideways. The actions column takes 56px there (96px with `rowActions.columnLabel`) when it
+  had no room. Resetting the last width brings back the shared-out layout.
+- **Pinned columns.** Resizing a pinned column moves the offsets of the pinned columns after it. A pinned
+  column stops growing when the pinned columns reach half of the container, the point where they would let
+  go. A right-pinned column grows leftward, so its handle sits on its left edge.
+- **Priority.** With `responsiveColumns`, a resized column counts its new width, once released: if the rest
+  no longer fits, the lowest priority hides then, not in the middle of the drag.
+- **Phones.** The handle only shows on a device with a fine pointer (`any-pointer: fine`: a mouse or a
+  trackpad). A phone has no comfortable way to drag an edge.
+- **Printing** keeps the declared `width` of each column: the user's widths are for the screen, so a widened
+  table never runs off the page.
+- **Markup.** The handle is `div.gdy-table-resize-handle` inside the header cell. Once resized, the grid
+  (`gdy-table-grid`) takes `data-resized` and its width as `--gdy-table-grid-width`, and each header cell its
+  width as `--gdy-table-column-width`; while the pointer drags, the rows container takes `data-resizing` (no
+  text selection, resize cursor). Its line takes `--gdy-table-resize-handle-color` (falling back to
+  `--gdy-ring`). The double click resets: it does not fit the content.
+
+Keeping the widths in `localStorage`, so they survive a reload:
+
+```tsx
+const STORAGE_KEY = "invoices-column-widths";
+
+const readWidths = (): Record<string, number> => JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "{}");
+
+const [columnWidths, setColumnWidths] = useState(readWidths);
+
+const saveWidths = (widths: Record<string, number>) => {
+  setColumnWidths(widths);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(widths));
+};
+
+<DataTable {...props} resizableColumns columnWidths={columnWidths} onColumnWidthsChange={saveWidths} />;
+```
+
+Or on the server, per user: load them with the rest of the preferences and save on each report. Since the
+report only comes on release, it needs no debounce:
+
+```tsx
+const { data: preferences } = usePreferences();
+
+<DataTable
+  {...props}
+  resizableColumns
+  columnWidths={preferences.invoiceColumnWidths}
+  onColumnWidthsChange={(widths) => savePreferences({ invoiceColumnWidths: widths })}
+/>;
+```
+
+Keep `columnWidths` in state or in a stable object: a new inline object on every render would reset the
+widths each time.
+
+Before, a resizable column took a handle in every `header` and document listeners of its own:
+
+```diff
+- const onMouseDown = (event) => {
+-   document.addEventListener("mousemove", resize);
+-   document.addEventListener("mouseup", stopResizing);
+- };
+- { id: "notes", width, cell: ..., headerContent: <ResizableTitle onMouseDown={onMouseDown} /> }
++ <DataTable resizableColumns columnWidths={widths} onColumnWidthsChange={setWidths} ... />
+```
+
 ### Header help and custom content
 
 Two column fields enrich the header without touching `header`:
@@ -1109,6 +1217,8 @@ Table keys (`DataTableLabels`):
 | `printSelectionHeader` | `"Seleccionada"` | Printed in the header of the checkbox column (`printMode`) | — |
 | `columnHelp(header)` | `"Ayuda sobre Monto"` | Accessible name of the header help icon (`headerTooltip`) | — |
 | `expandRow` | `"Mostrar detalle"` | Accessible name of a row's expand button (`renderExpandedRow`) | — |
+| `resizeColumn(header)` | `"Cambiar el ancho de Empresa"` | Accessible name of a column's resize handle (`resizableColumns`) | — |
+| `resizeColumnValue(width)` | `"220 px"` | Spoken value of a column's resize handle, its width (`aria-valuetext`) | — |
 
 ## Events
 
@@ -1216,6 +1326,7 @@ selector.
 | `gdy-table-cell` | Data cell (`td`); `gdy-table-cell-content` wraps its content. | `data-column-id` with the `id` of its column; `data-align` with `align`. `gdy-table-cell-content` takes `data-overflow` with `overflow`. |
 | `gdy-table-actions-cell` | Box of the ⋯ button in the actions column; `gdy-table-actions-head-label` is the text of its header (`rowActions.columnLabel`). | `data-align` when `rowActions.align` or `columnLabel` is set. |
 | `gdy-table-expand-toggle` | Expand button of a row (`renderExpandedRow`), with its chevron `gdy-table-expand-chevron`. | `aria-expanded`; `aria-controls` while open. |
+| `gdy-table-resize-handle` | Resize handle in a data column's header (`resizableColumns`); hidden without a fine pointer. | `role="separator"`, `aria-valuenow`. Once resized, the grid takes `data-resized` and `--gdy-table-grid-width`, each header cell `--gdy-table-column-width`; `data-resizing` on `gdy-table-wrap` while dragging. |
 | `gdy-table-expanded-row` | Detail row under an open row; its single cell is `gdy-table-expanded-cell`, holding `gdy-table-expanded-panel` (the animated box), `gdy-table-expanded-content` and `gdy-table-expanded-body` (the padding). | `data-state` (`open`, `closed`) on the panel; `data-expanded` on the open `gdy-table-row`. |
 | `gdy-table-wrap` | Rows scroll container. | With pinned columns, `data-has-pinned`, plus `data-scrolled-start`, `data-scrolled-end` and `data-pinning-suspended` while they apply. Every cell of a pinned column takes `data-pinned` (`left`, `right`), `--gdy-table-pin-offset` and, on the last one of its side, `data-pinned-edge`. |
 | `gdy-table-group-row` | Group row; `gdy-table-group-cell` is its single cell. | — |
@@ -1254,6 +1365,7 @@ scope is enough:
 | `--gdy-table-pinned-z` | `1` | Stacking of pinned cells. |
 | `--gdy-table-pinned-corner-z` | `3` | Stacking of pinned header and totals cells, over the sticky header (2). |
 | `--gdy-table-open-menu-z` | `4` | Stacking of a header cell while its filter panel is open, over the corners. |
+| `--gdy-table-resize-handle-color` | `--gdy-ring` | Line of a column's resize handle on hover, focus and drag. |
 
 ```css
 :root {
@@ -1358,6 +1470,10 @@ Own props of `DataTableProps<TData>`, in source order.
 | `onExpandedChange` | `(expandedRowIds: string[]) => void` | — | Open or close made by the user. |
 | `canExpandRow` | `(row: TData) => boolean` | — | `false` leaves the row without button. |
 | `responsiveColumns` | `boolean` | `false` | Hides `hideable` and `priority` columns until the rest fits. |
+| `resizableColumns` | `boolean` | `false` | Resize handles on the data columns. See [Resizable columns](#resizable-columns). |
+| `columnWidths` | `Record<string, number>` | — | Controlled column widths in px. |
+| `defaultColumnWidths` | `Record<string, number>` | — | Starting column widths, uncontrolled. |
+| `onColumnWidthsChange` | `(columnWidths) => void` | — | Fires on release, with the columns the user resized. |
 | `onRowClick` | `(row: TData, event: RowClickEvent) => void` | — | Row click handler; marks rows with `data-clickable`. |
 | `getRowHref` | `(row: TData) => string \| undefined` | — | Turns the row into a link (`data-href`). |
 | `focusableRows` | `boolean` | `false` (`true` with `getRowHref`) | Rows take the focus with Tab and fire with Enter. |
