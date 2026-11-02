@@ -12,11 +12,17 @@ interface ResponsiveColumnsInput<TData> {
   settings: TableSettings<TData>;
   table: Table<TData>;
   wrapRef: RefObject<HTMLDivElement | null>;
+  /** The user's widths once the columns are resized (`resizableColumns`): they count instead of `width`. */
+  committedWidths: ReadonlyMap<string, number> | null;
 }
 
 interface WidthSources {
   wrap: HTMLDivElement;
   measuredWidths: Map<string, number>;
+}
+
+interface ColumnWidthSources extends WidthSources {
+  committedWidths: ReadonlyMap<string, number> | null;
 }
 
 // A pinned column never hides: it is the one the app wants in sight while the rest scrolls.
@@ -29,7 +35,9 @@ const isHideable = <TData,>(definition: ColumnDefinition<TData> | undefined, vis
   );
 
 // Without `width`, the column needs its title; the last measure stands in while it is hidden.
-const resolveColumnWidth = <TData,>(column: Column<TData>, definition: ColumnDefinition<TData> | undefined, sources: WidthSources) => {
+const resolveColumnWidth = <TData,>(column: Column<TData>, definition: ColumnDefinition<TData> | undefined, sources: ColumnWidthSources) => {
+  const committedWidth = sources.committedWidths?.get(column.id);
+  if (committedWidth !== undefined) return committedWidth;
   if (!definition) return column.columnDef.size ?? 0;
   if (definition.width !== undefined) return definition.width;
   const headerCell = sources.wrap.querySelector(`th[data-column-id="${CSS.escape(column.id)}"]`);
@@ -38,8 +46,10 @@ const resolveColumnWidth = <TData,>(column: Column<TData>, definition: ColumnDef
   return sources.measuredWidths.get(column.id) ?? 0;
 };
 
-const buildPriorityColumns = <TData,>({ settings, table }: ResponsiveColumnsInput<TData>, sources: WidthSources) => {
+const buildPriorityColumns = <TData,>(input: ResponsiveColumnsInput<TData>, measures: WidthSources) => {
+  const { settings, table } = input;
   const definitions = new Map(settings.columns.map((column) => [column.id, column]));
+  const sources = { ...measures, committedWidths: input.committedWidths };
   return table.getVisibleLeafColumns().map((column): PriorityColumn => {
     const definition = definitions.get(column.id);
     return {
@@ -74,6 +84,7 @@ export const useResponsiveColumns = <TData,>(input: ResponsiveColumnsInput<TData
   const measuredWidths = useRef(new Map<string, number>());
   const isEnabled = Boolean(input.settings.responsiveColumns) && typeof ResizeObserver !== "undefined";
   const columnsKey = input.table.getVisibleLeafColumns().map((column) => column.id).join("|");
+  const widthsKey = [...(input.committedWidths ?? [])].join("|");
   const calculateRef = useLatestRef(() => {
     const wrap = input.wrapRef.current;
     if (!wrap) return;
@@ -85,6 +96,6 @@ export const useResponsiveColumns = <TData,>(input: ResponsiveColumnsInput<TData
   useLayoutEffect(() => {
     if (!isEnabled || !wrapRef.current) return;
     return observeContainer(wrapRef.current, () => calculateRef.current());
-  }, [isEnabled, columnsKey, wrapRef, calculateRef]);
+  }, [isEnabled, columnsKey, widthsKey, wrapRef, calculateRef]);
   return isEnabled ? hiddenIds : NO_IDS;
 };

@@ -168,6 +168,10 @@ export interface DataTableLabels extends DataViewLabels {
   columnHelp: (header: string) => string;
   /** Accessible name of a row's expand button (`renderExpandedRow`); `aria-expanded` tells its state. `"Mostrar detalle"`. */
   expandRow: string;
+  /** Accessible name of a column's resize handle (`resizableColumns`). `"Cambiar el ancho de Empresa"`. */
+  resizeColumn: (header: string) => string;
+  /** Spoken value of a column's resize handle, its width in px (`aria-valuetext`). `"220 px"`. */
+  resizeColumnValue: (width: number) => string;
 }
 
 export interface DataTableProps<TData> extends DataViewProps<TData> {
@@ -211,6 +215,19 @@ export interface DataTableProps<TData> extends DataViewProps<TData> {
    * scroll. A column counts its `width`, or the measured width of its title. Defaults to `false`.
    */
   responsiveColumns?: boolean;
+  /**
+   * Adds a handle on the edge of each data column's header to drag, or move with the arrow keys, its width.
+   * Defaults to `false`. The table never stores the widths: keep `onColumnWidthsChange` to persist them.
+   */
+  resizableColumns?: boolean;
+  /** Controlled widths in px, per column id; a column not listed keeps its `width`. */
+  columnWidths?: Record<string, number>;
+  defaultColumnWidths?: Record<string, number>;
+  /**
+   * Fires when the user releases a resize (pointer or key) or resets one (double click, Enter), with only the
+   * columns the user resized: a reset drops its key. Never on every pointer move.
+   */
+  onColumnWidthsChange?: (columnWidths: Record<string, number>) => void;
   /**
    * Fires on a data row click, or Enter on a focusable row; never from a column with `ignoreRowClick`.
    * With `getRowHref`, Ctrl/Cmd + click opens the link instead.

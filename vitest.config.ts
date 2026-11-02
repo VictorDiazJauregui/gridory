@@ -31,6 +31,31 @@ const emulateTouch: BrowserCommand<[enabled: boolean]> = async ({ page }, enable
   await session.send("Emulation.setTouchEmulationEnabled", { enabled, maxTouchPoints: 5 });
 };
 
+interface PointerDrag {
+  selector: string;
+  deltaX: number;
+  steps: number;
+}
+
+class MissingDragTargetError extends Error {
+  constructor(selector: string) {
+    super(`dragPointer: "${selector}" is not on screen.`);
+    this.name = "MissingDragTargetError";
+  }
+}
+
+// Nor a real pointer with coordinates: dragging an edge needs a captured pointer, which a synthetic event cannot
+// have. The box comes from the test frame, in the page's coordinates, as the mouse needs.
+const dragPointer: BrowserCommand<[drag: PointerDrag]> = async (context, { selector, deltaX, steps }) => {
+  const box = await (await context.frame()).locator(selector).first().boundingBox();
+  if (!box) throw new MissingDragTargetError(selector);
+  const [x, y] = [box.x + box.width / 2, box.y + box.height / 2];
+  await context.page.mouse.move(x, y);
+  await context.page.mouse.down();
+  await context.page.mouse.move(x + deltaX, y, { steps });
+  await context.page.mouse.up();
+};
+
 const LAZY_EDITOR_DEPENDENCIES = [
   "@codemirror/commands",
   "@codemirror/language",
@@ -79,7 +104,7 @@ export default mergeConfig(
               headless: true,
               viewport: { width: 1920, height: 1080 },
               instances: [{ browser: "chromium" }],
-              commands: { emulateMedia, emulateReducedMotion, emulateTouch },
+              commands: { emulateMedia, emulateReducedMotion, emulateTouch, dragPointer },
             },
           },
         },

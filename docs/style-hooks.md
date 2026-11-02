@@ -35,7 +35,7 @@ The state selectors column lists the attributes the stylesheets combine with eac
 | `gdy-table-foot` | styled | — |
 | `gdy-table-foot-cell` | styled | `[data-align="center"]`, `[data-align="right"]`, `[data-hidden-by="priority"]`, `[data-pinned]` |
 | `gdy-table-foot-row` | hook only | — |
-| `gdy-table-grid` | styled | — |
+| `gdy-table-grid` | styled | `[data-resized]` |
 | `gdy-table-group-cell` | styled | — |
 | `gdy-table-group-chevron` | styled | — |
 | `gdy-table-group-count` | styled | — |
@@ -70,13 +70,14 @@ The state selectors column lists the attributes the stylesheets combine with eac
 | `gdy-table-pagination-right` | styled | — |
 | `gdy-table-pagination-text` | styled | — |
 | `gdy-table-print-value` | styled | — |
+| `gdy-table-resize-handle` | styled | — |
 | `gdy-table-row` | styled | `[data-clickable]`, `[data-selected]` |
 | `gdy-table-select` | styled | `[data-state="checked"]`, `[data-state="indeterminate"]` |
 | `gdy-table-select-indicator` | styled | — |
 | `gdy-table-skeleton` | styled | `[data-column-id="_actions"]`, `[data-column-id="_expand"]`, `[data-column-id="_select"]` |
 | `gdy-table-skeleton-row` | hook only | — |
 | `gdy-table-sticky` | styled | — |
-| `gdy-table-wrap` | styled | `[data-has-pinned]`, `[data-pinning-suspended]`, `[data-scrolled-end]`, `[data-scrolled-start]` |
+| `gdy-table-wrap` | styled | `[data-has-pinned]`, `[data-pinning-suspended]`, `[data-resizing]`, `[data-scrolled-end]`, `[data-scrolled-start]` |
 
 ### Kanban
 
@@ -631,6 +632,17 @@ write when you override them; the reasons are in [Theming and styling](theming.m
 | `:where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > * > tr) > [data-pinned="right"][data-pinned-edge]::after` | 0-2-1 |
 | `:where(.gdy-table-wrap[data-has-pinned][data-scrolled-start]:not([data-pinning-suspended]) > .gdy-table-grid > * > tr) > [data-pinned="left"][data-pinned-edge]::after` | 0-2-1 |
 | `:where(.gdy-table-wrap[data-has-pinned][data-scrolled-end]:not([data-pinning-suspended]) > .gdy-table-grid > * > tr) > [data-pinned="right"][data-pinned-edge]::after` | 0-2-1 |
+| `.gdy-table-resize-handle::after` | 0-1-1 |
+| `.gdy-table-resize-handle:hover::after` | 0-2-1 |
+| `.gdy-table-resize-handle:active::after` | 0-2-1 |
+| `.gdy-table-resize-handle:focus-visible::after` | 0-2-1 |
+| `.gdy-table-resize-handle:focus-visible` | 0-2-0 |
+| `:where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > thead > tr > [data-pinned="right"]) > .gdy-table-resize-handle::after` | 0-1-1 |
+| `.gdy-table-wrap[data-resizing]` | 0-2-0 |
+| `.gdy-table-wrap[data-resizing] *` | 0-2-0 |
+| `.gdy-table-grid[data-resized]` | 0-2-0 |
+| `.gdy-table-grid[data-resized] > thead > tr > th` | 0-2-3 |
+| `:where(.gdy-table-grid[data-resized] > thead > tr) > th` | 0-0-1 |
 | `.gdy-table[data-print-mode] .gdy-toolbar` | 0-3-0 |
 | `.gdy-table[data-print-mode] .gdy-table-pagination` | 0-3-0 |
 | `.gdy-table[data-print-mode] [data-column-id="_actions"]` | 0-3-0 |
@@ -719,6 +731,8 @@ Radix or react-day-picker follow those libraries.
 | `data-range-end` | present / absent | Gridory | `gdy-calendar-day`, `gdy-calendar-day-button` |
 | `data-range-middle` | present / absent | Gridory | `gdy-calendar-day`, `gdy-calendar-day-button` |
 | `data-range-start` | present / absent | Gridory | `gdy-calendar-day`, `gdy-calendar-day-button` |
+| `data-resized` | present / absent | Gridory | `gdy-table-grid` |
+| `data-resizing` | present / absent | Gridory | `gdy-table-wrap` |
 | `data-role` | `"assistant"`, `"user"` | Gridory | `gdy-ai-bubble`, `gdy-ai-message` |
 | `data-row-id` | the row id (`getRowId`) | Gridory | no default rule |
 | `data-scrolled-end` | present / absent | Gridory | `gdy-table-wrap` |
@@ -1094,11 +1108,14 @@ any ancestor overrides that part only. `--gdy-select-*` also mirror the `selectT
 | `--gdy-skeleton-bg` | `color-mix(in oklab, var(--gdy-foreground) 10%, transparent)` | shared |
 | `--gdy-skeleton-shine` | `color-mix(in oklab, var(--gdy-background) 60%, transparent)` | motion |
 | `--gdy-table-border` | `var(--gdy-border)` | table |
+| `--gdy-table-column-print-width` | `auto` | table |
+| `--gdy-table-column-width` | `auto` | table |
 | `--gdy-table-expand-duration` | `200ms` | motion |
 | `--gdy-table-expand-focus-ring` | `var(--gdy-ring)` | table |
 | `--gdy-table-expanded-bg` | `var(--gdy-background)` | table |
 | `--gdy-table-expanded-padding` | `12px 14px` | table |
 | `--gdy-table-foot-bg` | `var(--gdy-table-head-bg, var(--gdy-muted))` | table |
+| `--gdy-table-grid-width` | `100%` | table |
 | `--gdy-table-group-bg` | `var(--gdy-accent)` | table |
 | `--gdy-table-head-bg` | `var(--gdy-muted)` | table |
 | `--gdy-table-head-fg` | `var(--gdy-muted-foreground)` | table |
@@ -1109,6 +1126,7 @@ any ancestor overrides that part only. `--gdy-select-*` also mirror the `selectT
 | `--gdy-table-pinned-corner-z` | `3` | table |
 | `--gdy-table-pinned-shadow` | `color-mix(in oklab, var(--gdy-foreground) 14%, transparent)` | table |
 | `--gdy-table-pinned-z` | `1` | table |
+| `--gdy-table-resize-handle-color` | `var(--gdy-ring)` | table |
 | `--gdy-table-row-focus-ring` | `var(--gdy-ring)` | table |
 | `--gdy-table-row-hover-bg` | `var(--gdy-muted)` | table |
 | `--gdy-table-row-selected-bg` | `var(--gdy-accent)` | table |

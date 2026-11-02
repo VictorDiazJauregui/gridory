@@ -653,6 +653,92 @@
   }
 }
 
+/* Resizable columns (`resizableColumns`). The handle sits inside the header's 14px end padding, so it covers neither
+   the title, nor the "?", nor the filter trigger, and an open filter panel (50) stays above it. Only a fine pointer
+   shows it: a phone has no comfortable way to drag an edge. */
+.gdy-table-resize-handle {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 8px;
+  cursor: col-resize;
+  touch-action: none;
+}
+
+@media (any-pointer: fine) {
+  .gdy-table-resize-handle {
+    display: block;
+  }
+}
+
+.gdy-table-resize-handle::after {
+  content: "";
+  position: absolute;
+  top: 6px;
+  right: 3px;
+  bottom: 6px;
+  width: 2px;
+  border-radius: 1px;
+  background: var(--gdy-table-resize-handle-color, var(--gdy-ring));
+  opacity: 0;
+}
+
+.gdy-table-resize-handle:hover::after,
+.gdy-table-resize-handle:active::after,
+.gdy-table-resize-handle:focus-visible::after {
+  opacity: 1;
+}
+
+.gdy-table-resize-handle:focus-visible {
+  outline: 2px solid var(--gdy-ring);
+  outline-offset: -2px;
+}
+
+/* A right-pinned column grows leftward: its handle goes on the edge that moves. */
+:where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > thead > tr > [data-pinned="right"]) > .gdy-table-resize-handle {
+  right: auto;
+  left: 0;
+}
+
+:where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > thead > tr > [data-pinned="right"]) > .gdy-table-resize-handle::after {
+  right: auto;
+  left: 3px;
+}
+
+/* While the pointer drags an edge, nothing under it gets selected and the cursor does not flicker. */
+.gdy-table-wrap[data-resizing],
+.gdy-table-wrap[data-resizing] * {
+  cursor: col-resize;
+  user-select: none;
+}
+
+/* Resized, the grid is the sum of its columns, so moving one edge stretches nothing else. Screen only: on paper the
+   declared widths stand (without `width`, `auto` leaves the column to the browser). */
+@media screen {
+  .gdy-table-grid[data-resized] {
+    width: var(--gdy-table-grid-width, 100%);
+  }
+
+  .gdy-table-grid[data-resized] > thead > tr > th {
+    width: var(--gdy-table-column-width, auto);
+  }
+
+  /* A resized grid can be narrower than its container: the detail and the group label, which take the visible
+     width, stop at its edge. */
+  :where(.gdy-table-grid[data-resized] > tbody > tr > .gdy-table-expanded-cell) > .gdy-table-expanded-panel,
+  :where(.gdy-table-grid[data-resized] > tbody > tr > .gdy-table-group-cell) > .gdy-table-group-toggle {
+    max-width: 100%;
+  }
+}
+
+@media print {
+  :where(.gdy-table-grid[data-resized] > thead > tr) > th {
+    width: var(--gdy-table-column-print-width, auto);
+  }
+}
+
 /* printMode: every rule hangs from [data-print-mode], so a table without the prop prints as before. Toolbar,
    pagination and row actions are useless on paper; the rows area grows, since its scroll would cut rows. */
 @media print {

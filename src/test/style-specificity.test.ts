@@ -106,6 +106,17 @@ const TABLE_COMPOUND_RULES = {
   ':where(.gdy-table-wrap[data-has-pinned][data-scrolled-end]:not([data-pinning-suspended]) > .gdy-table-grid > * > tr) > [data-pinned="right"][data-pinned-edge]::after': "0-2-1",
   ".gdy-table[data-print-mode] thead": "0-2-1",
   ".gdy-table[data-print-mode] tr": "0-2-1",
+  ".gdy-table-resize-handle::after": "0-1-1",
+  ".gdy-table-resize-handle:hover::after": "0-2-1",
+  ".gdy-table-resize-handle:active::after": "0-2-1",
+  ".gdy-table-resize-handle:focus-visible::after": "0-2-1",
+  ".gdy-table-resize-handle:focus-visible": "0-2-0",
+  ':where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > thead > tr > [data-pinned="right"]) > .gdy-table-resize-handle::after': "0-1-1",
+  ".gdy-table-wrap[data-resizing]": "0-2-0",
+  ".gdy-table-wrap[data-resizing] *": "0-2-0",
+  ".gdy-table-grid[data-resized]": "0-2-0",
+  ".gdy-table-grid[data-resized] > thead > tr > th": "0-2-3",
+  ":where(.gdy-table-grid[data-resized] > thead > tr) > th": "0-0-1",
 };
 
 test("lists every table rule that is not a single class, the alignment, focus, overflow, loading, print and totals rules included", () => {

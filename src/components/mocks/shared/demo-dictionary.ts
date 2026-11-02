@@ -58,6 +58,8 @@ const ENGLISH_DEMO_TEXTS: Record<string, string> = {
   Filtradas: "Filtered",
   "Ocultar Notas": "Hide Notes",
   "Columnas ocultas": "Hidden columns",
+  "Restablecer anchos": "Reset widths",
+  "Anchos guardados": "Saved widths",
   "Suma de los contratos vigentes, en su moneda": "Sum of the contracts in force, in their currency",
   "Fecha en que la empresa se dio de alta": "Date the company signed up",
   "Activa, Pendiente o Archivada; se cambia desde la celda": "Active, Pending or Archived; change it from the cell",

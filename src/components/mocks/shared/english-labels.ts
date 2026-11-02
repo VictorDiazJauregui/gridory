@@ -65,6 +65,8 @@ export const ENGLISH_TABLE_LABELS: DataTableLabels = {
   printSelectionHeader: "Selected",
   columnHelp: (header) => `About ${header}`,
   expandRow: "Show details",
+  resizeColumn: (header) => `Resize ${header}`,
+  resizeColumnValue: (width) => `${width} px`,
 };
 
 const formatUsDate = (value: string) => {

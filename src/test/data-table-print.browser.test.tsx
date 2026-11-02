@@ -25,6 +25,8 @@ const renderTable = (props: Partial<DataTableProps<MockCompanyRow>> = {}) =>
   ).container;
 
 const isDisplayed = (element: Element) => getComputedStyle(element).display !== "none";
+// The browser reports a media change (`matchMedia`) on its next rendering frame, not when the emulation returns.
+const nextFrame = () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 
 const expectCleanPrint = (container: HTMLElement) => {
   expect(isDisplayed(findRequiredElement(container, ".gdy-toolbar"))).toBe(false);
@@ -77,6 +79,7 @@ test("printed, the group row and an open detail end where the printed columns en
     defaultExpandedRowIds: [MOCK_COMPANY_ROWS[0].id],
   });
   await emulateMediaType("print");
+  await nextFrame();
   const rowRight = findRequiredElement(container, "tr.gdy-table-row").getBoundingClientRect().right;
   const lastCell = [...findRequiredElement(container, "tr.gdy-table-row").querySelectorAll("td")]
     .filter((cell) => getComputedStyle(cell).display !== "none")

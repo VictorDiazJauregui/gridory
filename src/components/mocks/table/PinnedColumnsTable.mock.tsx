@@ -13,9 +13,12 @@ import { withExpandableRowsDemo } from "./use-expandable-rows-demo";
 // width: past half of the container (a phone, a narrow window) they let go and scroll like the rest.
 const MINIMUM_COLUMN_WIDTH = 240;
 const PINS: Record<string, MockCompanyColumn["pin"]> = { name: "left", amount: "right" };
+// Resizable columns (1.4.0) with limits of their own: the company name never under 160px nor over 360px.
+const NAME_WIDTH_LIMITS = { minWidth: 160, maxWidth: 360 };
 
 const widenAndPin = (column: MockCompanyColumn): MockCompanyColumn => {
   const pin = PINS[column.id];
+  if (column.id === "name") return { ...column, pin, ...NAME_WIDTH_LIMITS };
   if (pin) return { ...column, pin };
   return { ...column, width: Math.max(column.width ?? 0, MINIMUM_COLUMN_WIDTH) };
 };
@@ -31,6 +34,7 @@ const usePinnedTableProps = (): DataTableProps<MockCompanyRow> => {
     archivedView: undefined,
     rowSelection: {},
     rowActions: { ...buildActionsColumnProps(setRows), pinned: true },
+    resizableColumns: true,
   });
 };
 
