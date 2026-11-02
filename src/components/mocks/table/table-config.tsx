@@ -15,6 +15,8 @@ import type { MockRowsUpdater } from "../company/row-updates";
 import { buildAmountColumn } from "./company-amounts";
 import { AmountFooter, TotalLabelFooter } from "./AmountFooter";
 import { buildNotesColumn } from "./company-notes";
+import { withResponsiveFields } from "./use-column-visibility-demo";
+import { withHeaderHelp } from "./header-help-columns";
 
 const TABLE_COLUMN_OPTIONS = { appsWidth: 220, statusSearchable: false };
 
@@ -97,9 +99,12 @@ const withTotalsFooter = (column: MockCompanyColumn): MockCompanyColumn => {
   return column;
 };
 
-// The inline status select is a control of its own: clicking it must not open the row.
+// The inline status select is a control of its own: clicking it must not open the row. On paper (1.4.0) the
+// select means nothing, so the column prints its value as text.
 const ignoreStatusClicks = (columns: MockCompanyColumn[]) =>
-  columns.map((column) => (column.id === "status" ? { ...column, ignoreRowClick: true } : column));
+  columns.map((column) =>
+    column.id === "status" ? { ...column, ignoreRowClick: true, printValue: (row: MockCompanyRow) => row.status } : column,
+  );
 
 export const buildTableColumns = (
   setRows: MockRowsUpdater,
@@ -108,7 +113,8 @@ export const buildTableColumns = (
   const columns = buildCompanyColumns(TABLE_COLUMN_OPTIONS).map((column) =>
     decorateColumn(column, setRows),
   );
-  return withNewProps ? ignoreStatusClicks(insertNewColumns(columns)).map(withTotalsFooter) : columns;
+  if (!withNewProps) return columns;
+  return withHeaderHelp(withResponsiveFields(ignoreStatusClicks(insertNewColumns(columns)).map(withTotalsFooter)));
 };
 
 const TABLE_MENU_ACTIONS: MenuItem<MockCompanyRow>[] = [

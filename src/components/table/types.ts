@@ -1,4 +1,4 @@
-import type { KeyboardEvent, MouseEvent } from "react";
+import type { KeyboardEvent, MouseEvent, ReactNode } from "react";
 import type { ConsumerAttributes } from "../shared/attributes/consumer-attributes";
 import type { ColumnDefinition, ColumnFiltersState, ColumnSortingState, DataInput } from "../shared/data-model";
 import type { DataViewProps } from "../shared/data-view-props";
@@ -14,7 +14,9 @@ export type {
   ColumnFiltersState,
   ColumnFooterContext,
   ColumnOverflow,
+  ColumnPin,
   ColumnSortingState,
+  HeaderTooltipPlacement,
   DataInput,
   DateFilterOp,
   DateFilterState,
@@ -35,6 +37,8 @@ export interface DataTableFeatures {
   rowActions?: boolean;
   createButton?: boolean;
   grouping?: boolean;
+  /** `false` renders no toolbar at all, as a table nested in a row detail may need. Defaults to `true`. */
+  toolbar?: boolean;
 }
 
 export interface GroupHeader {
@@ -72,6 +76,28 @@ export interface VisibleRowsState<TData> {
   filteredRows: TData[];
   /** `filteredRows.length`; with `manualPagination`, `serverRowCount` when it is set. */
   totalRows: number;
+}
+
+/** Rows the header checkbox marks: the current page, or every row that passes search and filters. */
+export type SelectAllScope = "page" | "filtered";
+
+/** Row selection: the checkbox column, controlled with `selectedIds` or left to the table. */
+export interface RowSelectionConfig<TData> {
+  /** Controlled selection, as ids from `getRowId`; `undefined` lets the table keep it. */
+  selectedIds?: string[];
+  defaultSelectedIds?: string[];
+  /** Fires on every change made by the user, and when selected rows leave `data`. */
+  onChange?: (selectedIds: string[]) => void;
+  /** Defaults to `"page"`. With `manualPagination`, `"filtered"` acts as `"page"`. */
+  selectAllScope?: SelectAllScope;
+  /** `false` disables the row's checkbox and leaves the row out of the header checkbox. */
+  isRowSelectable?: (row: TData) => boolean;
+}
+
+/** Second argument of `onColumnVisibilityChange`. */
+export interface ColumnVisibilityDetails {
+  /** Ids `responsiveColumns` hid for lack of room, in hiding order. */
+  hiddenByPriority: string[];
 }
 
 /**
@@ -126,6 +152,26 @@ export interface DataTableLabels extends DataViewLabels {
   groupNone: string;
   /** Group of the rows with an empty value. `"Sin valor"`. */
   groupEmptyValue: string;
+  /** Accessible name of a row checkbox. `"Seleccionar fila"`. */
+  selectRow: string;
+  /** Accessible name of the header checkbox with `selectAllScope: "page"`. `"Seleccionar las filas de la página"`. */
+  selectPageRows: string;
+  /** Accessible name of the header checkbox with `selectAllScope: "filtered"`. `"Seleccionar todas las filas filtradas"`. */
+  selectFilteredRows: string;
+  /** Printed instead of a checked row checkbox (`printMode`). `"Sí"`. */
+  printSelected: string;
+  /** Printed instead of an unchecked row checkbox (`printMode`). `"No"`. */
+  printNotSelected: string;
+  /** Printed instead of the header checkbox (`printMode`). `"Seleccionada"`. */
+  printSelectionHeader: string;
+  /** Accessible name of the header help icon (`headerTooltip`). `"Ayuda sobre Monto"`. */
+  columnHelp: (header: string) => string;
+  /** Accessible name of a row's expand button (`renderExpandedRow`); `aria-expanded` tells its state. `"Mostrar detalle"`. */
+  expandRow: string;
+  /** Accessible name of a column's resize handle (`resizableColumns`). `"Cambiar el ancho de Empresa"`. */
+  resizeColumn: (header: string) => string;
+  /** Spoken value of a column's resize handle, its width in px (`aria-valuetext`). `"220 px"`. */
+  resizeColumnValue: (width: number) => string;
 }
 
 export interface DataTableProps<TData> extends DataViewProps<TData> {
@@ -140,6 +186,48 @@ export interface DataTableProps<TData> extends DataViewProps<TData> {
   normalizeRow?: (row: unknown, index: number) => TData;
   getRowId?: (row: TData, index: number) => string;
   features?: DataTableFeatures;
+  /**
+   * Adds a checkbox column before the data columns. Requires `getRowId` (`MissingRowIdError` otherwise);
+   * ids that leave `data` are dropped, except with `manualPagination`, where the app owns them.
+   */
+  rowSelection?: RowSelectionConfig<TData>;
+  /**
+   * Adds an expand button column and, under each open row, a full-width detail with this content. Requires
+   * `getRowId` (`MissingRowIdError` otherwise). The detail is not a row: paging and totals ignore it.
+   */
+  renderExpandedRow?: (row: TData) => ReactNode;
+  /** Controlled open rows, as ids from `getRowId`; `undefined` lets the table keep them. */
+  expandedRowIds?: string[];
+  defaultExpandedRowIds?: string[];
+  /** Fires when the user opens or closes a row, controlled or not. */
+  onExpandedChange?: (expandedRowIds: string[]) => void;
+  /** `false` leaves the row without expand button. Defaults to every row. */
+  canExpandRow?: (row: TData) => boolean;
+  /** Columns the app shows (`true`) or removes (`false`); a column not listed is shown. Always wins over `priority`. */
+  columnVisibility?: Record<string, boolean>;
+  /**
+   * Reports, on mount and on every change, which columns are on screen (`true`/`false` per column id) and which
+   * `responsiveColumns` hid. Do not feed it back into `columnVisibility`: that would pin the hidden ones.
+   */
+  onColumnVisibilityChange?: (visibility: Record<string, boolean>, details: ColumnVisibilityDetails) => void;
+  /**
+   * Hides `hideable` and `priority` columns, as the container shrinks, until the rest fits without horizontal
+   * scroll. A column counts its `width`, or the measured width of its title. Defaults to `false`.
+   */
+  responsiveColumns?: boolean;
+  /**
+   * Adds a handle on the edge of each data column's header to drag, or move with the arrow keys, its width.
+   * Defaults to `false`. The table never stores the widths: keep `onColumnWidthsChange` to persist them.
+   */
+  resizableColumns?: boolean;
+  /** Controlled widths in px, per column id; a column not listed keeps its `width`. */
+  columnWidths?: Record<string, number>;
+  defaultColumnWidths?: Record<string, number>;
+  /**
+   * Fires when the user releases a resize (pointer or key) or resets one (double click, Enter), with only the
+   * columns the user resized: a reset drops its key. Never on every pointer move.
+   */
+  onColumnWidthsChange?: (columnWidths: Record<string, number>) => void;
   /**
    * Fires on a data row click, or Enter on a focusable row; never from a column with `ignoreRowClick`.
    * With `getRowHref`, Ctrl/Cmd + click opens the link instead.

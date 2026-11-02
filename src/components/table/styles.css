@@ -70,6 +70,12 @@
   border-radius: 8px;
 }
 
+.gdy-table-skeleton[data-column-id="_select"] > .gdy-skeleton {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+}
+
 /* Totals row (column `footer`): the header look, a line above the totals and the same cell
    padding as the rows, so each total sits under its column. */
 .gdy-table-foot-cell {
@@ -96,6 +102,64 @@
   background: var(--gdy-table-row-hover-bg, var(--gdy-muted));
 }
 
+/* Row selection (`rowSelection`): 0-3-0, under the 0-4-0 hover of a clickable row, so hovering it still shows. */
+.gdy-table-row[data-selected] .gdy-table-cell {
+  background: var(--gdy-table-row-selected-bg, var(--gdy-accent));
+}
+
+/* The width lives here, not inline, so printing can widen it for its header text. */
+.gdy-table-head-cell[data-column-id="_select"] {
+  width: 44px;
+}
+
+/* The border falls back to the muted text color, not --gdy-border: a control's edge needs 3:1 contrast. */
+.gdy-table-select {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: 1px solid var(--gdy-table-select-border, var(--gdy-muted-foreground));
+  border-radius: 4px;
+  background: var(--gdy-table-select-bg, var(--gdy-background));
+  color: var(--gdy-table-select-check-fg, var(--gdy-primary-foreground));
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.gdy-table-select[data-state="checked"],
+.gdy-table-select[data-state="indeterminate"] {
+  border-color: var(--gdy-table-select-checked-bg, var(--gdy-primary));
+  background: var(--gdy-table-select-checked-bg, var(--gdy-primary));
+}
+
+.gdy-table-select:focus-visible {
+  outline: 2px solid var(--gdy-table-select-focus-ring, var(--gdy-ring));
+  outline-offset: 2px;
+}
+
+.gdy-table-select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.gdy-table-select-indicator {
+  display: flex;
+}
+
+/* Columns `responsiveColumns` hid stay in the markup, so an app can bring them back elsewhere (on paper, say). */
+.gdy-table-head-cell[data-hidden-by="priority"],
+.gdy-table-cell[data-hidden-by="priority"],
+.gdy-table-foot-cell[data-hidden-by="priority"] {
+  display: none;
+}
+
+/* Text that replaces a cell on paper (`printMode`): the selection as "Sí"/"No", or a column `printValue`. */
+.gdy-table-print-value {
+  display: none;
+}
+
 /* Keyboard focus of a focusable row (`focusableRows`, `getRowHref`). The ring is drawn inside
    the row: the rows container scrolls (overflow) and would clip an outer one. */
 .gdy-table-row:focus-visible {
@@ -107,6 +171,67 @@
    (gdy-table-menu-holder is positioned against this element) */
 .gdy-table-head-inner {
   position: relative;
+}
+
+/* Header help (`headerTooltip`): the inner box becomes a row only then. The trigger shrinks to its content so
+   the icon sits next to the title; with "edge" it fills the cell and the icon lands on the far side. */
+.gdy-table-head-inner[data-help-placement] {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.gdy-table-head-inner[data-help-placement] > .gdy-table-head-trigger {
+  flex: 0 1 auto;
+  width: auto;
+  min-width: 0;
+}
+
+.gdy-table-head-inner[data-help-placement="edge"] > .gdy-table-head-trigger {
+  flex-grow: 1;
+}
+
+.gdy-table-head-cell[data-align="center"] > .gdy-table-head-inner[data-help-placement] {
+  justify-content: center;
+}
+
+.gdy-table-head-cell[data-align="right"] > .gdy-table-head-inner[data-help-placement] {
+  justify-content: flex-end;
+}
+
+.gdy-table-head-help {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--gdy-table-head-help-fg, var(--gdy-muted-foreground));
+  cursor: help;
+}
+
+.gdy-table-head-help:hover,
+.gdy-table-head-help[data-state$="open"] {
+  color: var(--gdy-foreground);
+}
+
+.gdy-table-head-help:focus-visible {
+  outline: 2px solid var(--gdy-ring);
+  outline-offset: 1px;
+}
+
+.gdy-table-head-tooltip {
+  z-index: var(--gdy-table-tooltip-z, 60);
+  max-width: 260px;
+  padding: 6px 10px;
+  border-radius: calc(var(--gdy-radius) - 4px);
+  background: var(--gdy-table-tooltip-bg, var(--gdy-foreground));
+  color: var(--gdy-table-tooltip-fg, var(--gdy-background));
+  font-size: 12px;
+  line-height: 1.4;
+  box-shadow: var(--gdy-shadow-md);
 }
 
 .gdy-table-head-trigger {
@@ -309,6 +434,67 @@
   padding: 1px 8px;
 }
 
+/* Expandable rows (`renderExpandedRow`): the button column is as narrow as the 28px button, so its cells
+   trade the 14px side padding for 6px; the header width lives here, as for _select. */
+.gdy-table-head-cell[data-column-id="_expand"] {
+  width: 40px;
+}
+
+.gdy-table-head-cell[data-column-id="_expand"],
+.gdy-table-cell[data-column-id="_expand"] {
+  padding-inline: 6px;
+}
+
+.gdy-table-expand-toggle:focus-visible {
+  outline: 2px solid var(--gdy-table-expand-focus-ring, var(--gdy-ring));
+  outline-offset: -2px;
+}
+
+.gdy-table-expand-chevron {
+  color: var(--gdy-muted-foreground);
+}
+
+.gdy-table-expand-toggle[aria-expanded="true"] > .gdy-table-expand-chevron {
+  transform: rotate(90deg);
+}
+
+.gdy-table-skeleton[data-column-id="_expand"] > .gdy-skeleton {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+}
+
+.gdy-table-expanded-cell {
+  padding: 0;
+  border-bottom: 1px solid var(--gdy-table-border, var(--gdy-border));
+  background: var(--gdy-table-expanded-bg, var(--gdy-background));
+}
+
+/* The table can be wider than its container: the detail takes the width on screen and sticks to the left edge,
+   so it is always seen whole while the rows scroll sideways. */
+.gdy-table-expanded-panel {
+  position: sticky;
+  left: 0;
+  display: grid;
+  grid-template-rows: 1fr;
+  width: var(--gdy-table-visible-width, 100%);
+}
+
+.gdy-table-expanded-panel[data-state="closed"] {
+  grid-template-rows: 0fr;
+}
+
+/* A 0fr track only shrinks a box with no minimum height and nothing overflowing; the padding lives one level
+   down, since padding would keep its height. */
+.gdy-table-expanded-content {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.gdy-table-expanded-body {
+  padding: var(--gdy-table-expanded-padding, 12px 14px);
+}
+
 .gdy-table-fill {
   display: flex;
   flex-direction: column;
@@ -367,6 +553,192 @@
   box-shadow: inset 0 1px 0 var(--gdy-table-border, var(--gdy-border));
 }
 
+/* Pinned columns (`pin`): every rule hangs from the rows container's own rows through child combinators, so a
+   table nested in a detail never inherits them, and it lets go with data-pinning-suspended (pins wider than half
+   the container). The :where() keeps a pinned cell at 0-2-0, under the selected (0-3-0) and hover (0-4-0) rows.
+   Screen only: on paper a pinned column is an ordinary one. */
+@media screen {
+  :where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > * > tr) > [data-pinned] {
+    position: sticky;
+    z-index: var(--gdy-table-pinned-z, 1);
+  }
+
+  :where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > * > tr) > [data-pinned="left"] {
+    left: var(--gdy-table-pin-offset, 0px);
+  }
+
+  :where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > * > tr) > [data-pinned="right"] {
+    right: var(--gdy-table-pin-offset, 0px);
+  }
+
+  /* A sticky cell loses its collapsed border, repainted as an inset shadow (as the sticky header does), over an
+     opaque surface so the scrolled cells never show through. */
+  :where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > * > tr) > .gdy-table-cell[data-pinned] {
+    border-bottom: none;
+    background: var(--gdy-table-pinned-bg, var(--gdy-card));
+    box-shadow: inset 0 -1px 0 var(--gdy-table-border, var(--gdy-border));
+  }
+
+  /* Header and totals cells cover both scroll directions: the corner stacks over the sticky header and foot (2). */
+  :where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > * > tr) > .gdy-table-head-cell[data-pinned] {
+    z-index: var(--gdy-table-pinned-corner-z, 3);
+    border-bottom: none;
+    background: var(--gdy-table-head-bg, var(--gdy-muted));
+    box-shadow: inset 0 -1px 0 var(--gdy-table-border, var(--gdy-border));
+  }
+
+  :where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > * > tr) > .gdy-table-foot-cell[data-pinned] {
+    z-index: var(--gdy-table-pinned-corner-z, 3);
+    border-top: none;
+    box-shadow: inset 0 1px 0 var(--gdy-table-border, var(--gdy-border));
+  }
+
+  /* The filter panel opens inside its header cell: that cell rises over the pinned corner while it is open. */
+  :where(.gdy-table-wrap[data-has-pinned] > .gdy-table-grid > thead > tr) > .gdy-table-head-cell:has(.gdy-table-menu-holder) {
+    z-index: var(--gdy-table-open-menu-z, 4);
+  }
+
+  /* A focused row draws its ring on the tr, which the opaque pinned cells cover: they repaint their part. */
+  :where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > tbody > tr:focus-visible) > .gdy-table-cell[data-pinned] {
+    box-shadow:
+      inset 0 2px 0 var(--gdy-table-row-focus-ring, var(--gdy-ring)),
+      inset 0 -2px 0 var(--gdy-table-row-focus-ring, var(--gdy-ring));
+  }
+
+  :where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > tbody > tr:focus-visible) > .gdy-table-cell[data-pinned]:first-child {
+    box-shadow:
+      inset 2px 0 0 var(--gdy-table-row-focus-ring, var(--gdy-ring)),
+      inset 0 2px 0 var(--gdy-table-row-focus-ring, var(--gdy-ring)),
+      inset 0 -2px 0 var(--gdy-table-row-focus-ring, var(--gdy-ring));
+  }
+
+  :where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > tbody > tr:focus-visible) > .gdy-table-cell[data-pinned]:last-child {
+    box-shadow:
+      inset -2px 0 0 var(--gdy-table-row-focus-ring, var(--gdy-ring)),
+      inset 0 2px 0 var(--gdy-table-row-focus-ring, var(--gdy-ring)),
+      inset 0 -2px 0 var(--gdy-table-row-focus-ring, var(--gdy-ring));
+  }
+
+  /* The shadow past the last pinned cell of each side, shown only while content scrolls under it. */
+  :where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > * > tr) > [data-pinned-edge]::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 10px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  :where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > * > tr) > [data-pinned="left"][data-pinned-edge]::after {
+    left: 100%;
+    background: linear-gradient(to right, var(--gdy-table-pinned-shadow, color-mix(in oklab, var(--gdy-foreground) 14%, transparent)), transparent);
+  }
+
+  :where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > * > tr) > [data-pinned="right"][data-pinned-edge]::after {
+    right: 100%;
+    background: linear-gradient(to left, var(--gdy-table-pinned-shadow, color-mix(in oklab, var(--gdy-foreground) 14%, transparent)), transparent);
+  }
+
+  :where(.gdy-table-wrap[data-has-pinned][data-scrolled-start]:not([data-pinning-suspended]) > .gdy-table-grid > * > tr) > [data-pinned="left"][data-pinned-edge]::after,
+  :where(.gdy-table-wrap[data-has-pinned][data-scrolled-end]:not([data-pinning-suspended]) > .gdy-table-grid > * > tr) > [data-pinned="right"][data-pinned-edge]::after {
+    opacity: 1;
+  }
+
+  /* A group row spans every column, so it scrolls with the table: its label stays on screen at the left. */
+  :where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > tbody > tr > .gdy-table-group-cell) > .gdy-table-group-toggle {
+    position: sticky;
+    left: 0;
+    width: var(--gdy-table-visible-width, 100%);
+  }
+}
+
+/* Resizable columns (`resizableColumns`). The handle sits inside the header's 14px end padding, so it covers neither
+   the title, nor the "?", nor the filter trigger, and an open filter panel (50) stays above it. Only a fine pointer
+   shows it: a phone has no comfortable way to drag an edge. */
+.gdy-table-resize-handle {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 8px;
+  cursor: col-resize;
+  touch-action: none;
+}
+
+@media (any-pointer: fine) {
+  .gdy-table-resize-handle {
+    display: block;
+  }
+}
+
+.gdy-table-resize-handle::after {
+  content: "";
+  position: absolute;
+  top: 6px;
+  right: 3px;
+  bottom: 6px;
+  width: 2px;
+  border-radius: 1px;
+  background: var(--gdy-table-resize-handle-color, var(--gdy-ring));
+  opacity: 0;
+}
+
+.gdy-table-resize-handle:hover::after,
+.gdy-table-resize-handle:active::after,
+.gdy-table-resize-handle:focus-visible::after {
+  opacity: 1;
+}
+
+.gdy-table-resize-handle:focus-visible {
+  outline: 2px solid var(--gdy-ring);
+  outline-offset: -2px;
+}
+
+/* A right-pinned column grows leftward: its handle goes on the edge that moves. */
+:where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > thead > tr > [data-pinned="right"]) > .gdy-table-resize-handle {
+  right: auto;
+  left: 0;
+}
+
+:where(.gdy-table-wrap[data-has-pinned]:not([data-pinning-suspended]) > .gdy-table-grid > thead > tr > [data-pinned="right"]) > .gdy-table-resize-handle::after {
+  right: auto;
+  left: 3px;
+}
+
+/* While the pointer drags an edge, nothing under it gets selected and the cursor does not flicker. */
+.gdy-table-wrap[data-resizing],
+.gdy-table-wrap[data-resizing] * {
+  cursor: col-resize;
+  user-select: none;
+}
+
+/* Resized, the grid is the sum of its columns, so moving one edge stretches nothing else. Screen only: on paper the
+   declared widths stand (without `width`, `auto` leaves the column to the browser). */
+@media screen {
+  .gdy-table-grid[data-resized] {
+    width: var(--gdy-table-grid-width, 100%);
+  }
+
+  .gdy-table-grid[data-resized] > thead > tr > th {
+    width: var(--gdy-table-column-width, auto);
+  }
+
+  /* A resized grid can be narrower than its container: the detail and the group label, which take the visible
+     width, stop at its edge. */
+  :where(.gdy-table-grid[data-resized] > tbody > tr > .gdy-table-expanded-cell) > .gdy-table-expanded-panel,
+  :where(.gdy-table-grid[data-resized] > tbody > tr > .gdy-table-group-cell) > .gdy-table-group-toggle {
+    max-width: 100%;
+  }
+}
+
+@media print {
+  :where(.gdy-table-grid[data-resized] > thead > tr) > th {
+    width: var(--gdy-table-column-print-width, auto);
+  }
+}
+
 /* printMode: every rule hangs from [data-print-mode], so a table without the prop prints as before. Toolbar,
    pagination and row actions are useless on paper; the rows area grows, since its scroll would cut rows. */
 @media print {
@@ -412,5 +784,40 @@
 
   .gdy-table[data-print-mode] tr {
     break-inside: avoid;
+  }
+
+  .gdy-table[data-print-mode] .gdy-table-print-value {
+    display: inline;
+  }
+
+  .gdy-table[data-print-mode] .gdy-table-print-value + * {
+    display: none;
+  }
+
+  .gdy-table[data-print-mode] .gdy-table-row[data-selected] .gdy-table-cell {
+    background: none;
+  }
+
+  .gdy-table[data-print-mode] .gdy-table-head-cell[data-column-id="_select"] {
+    width: 112px;
+  }
+
+  .gdy-table[data-print-mode] .gdy-table-head-help {
+    display: none;
+  }
+
+  .gdy-table[data-print-mode] [data-column-id="_expand"] {
+    display: none;
+  }
+
+  /* An open detail prints whole and in place; it may be taller than a sheet, so it can break across sheets. */
+  .gdy-table[data-print-mode] .gdy-table-expanded-row {
+    break-inside: auto;
+  }
+
+  .gdy-table[data-print-mode] .gdy-table-expanded-panel {
+    position: static;
+    width: auto;
+    transition: none;
   }
 }

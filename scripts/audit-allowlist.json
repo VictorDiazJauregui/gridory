@@ -57,6 +57,8 @@
   ],
   "variantAttributes": [
     "data-variant",
+    "data-hidden-by",
+    "data-help-placement",
     "data-size",
     "data-role",
     "data-status",

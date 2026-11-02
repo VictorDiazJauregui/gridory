@@ -19,9 +19,15 @@ const phoneNumber = () => screen.getByLabelText(/^Teléfono/);
 const prefix = () => screen.getByRole("combobox", { name: /^Prefijo/ });
 const submit = () => screen.getByRole("button", { name: DEFAULT_SIGN_UP_TEXTS.submit });
 
-const fillCredentials = async (user: ReturnType<typeof userEvent.setup>) => {
-  await user.type(screen.getByLabelText(/^Email/), "ana@empresa.com");
-  await user.type(screen.getByLabelText(/^Contraseña/), "Clave-123");
+const pasteInto = async (user: ReturnType<typeof userEvent.setup>, label: RegExp, text: string) => {
+  await user.click(screen.getByLabelText(label));
+  await user.paste(text);
+};
+
+// The credentials are only the setup of these tests: pasting skips a render of the form per key.
+const pasteCredentials = async (user: ReturnType<typeof userEvent.setup>) => {
+  await pasteInto(user, /^Email/, "ana@empresa.com");
+  await pasteInto(user, /^Contraseña/, "Clave-123");
 };
 
 const choosePeru = async (user: ReturnType<typeof userEvent.setup>) => {
@@ -47,7 +53,7 @@ test("letters typed in the number are dropped", async () => {
 
 test("the submitted value holds the country and the trimmed number", async () => {
   const { onSubmit, user } = renderSignUp();
-  await fillCredentials(user);
+  await pasteCredentials(user);
   await choosePeru(user);
   await user.type(phoneNumber(), " 999 111 222 ");
   await user.click(submit());
@@ -60,14 +66,14 @@ test("the submitted value holds the country and the trimmed number", async () =>
 
 test("an optional phone left empty is submitted as an empty value", async () => {
   const { onSubmit, user } = renderSignUp();
-  await fillCredentials(user);
+  await pasteCredentials(user);
   await user.click(submit());
   expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ phone: { country: null, number: "" } }));
 });
 
 test("a required phone left empty shows the required error, described by the number, and gets the focus", async () => {
   const { onSubmit, user } = renderSignUp({ extraFields: [{ ...PHONE_FIELD, required: true }] });
-  await fillCredentials(user);
+  await pasteCredentials(user);
   await user.click(submit());
   expect(onSubmit).not.toHaveBeenCalled();
   expect(phoneNumber()).toHaveAttribute("aria-invalid", "true");
@@ -79,7 +85,7 @@ test("a required phone left empty shows the required error, described by the num
 
 test("a number without a country is an error, with a replaceable text", async () => {
   const { onSubmit, user } = renderSignUp({ texts: { phoneCountryRequired: "Choose the country code" } });
-  await fillCredentials(user);
+  await pasteCredentials(user);
   await user.type(phoneNumber(), "999 111 222");
   await user.click(submit());
   expect(onSubmit).not.toHaveBeenCalled();

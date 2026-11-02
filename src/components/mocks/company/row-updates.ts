@@ -12,3 +12,6 @@ export const replaceRow = (
       item.id === updatedRow.id ? updatedRow : item,
     ),
   );
+
+export const removeRow = (setRows: MockRowsUpdater, rowId: string) =>
+  setRows((previousRows) => previousRows.filter((item) => item.id !== rowId));

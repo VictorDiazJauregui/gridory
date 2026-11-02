@@ -1,13 +1,11 @@
 import { render } from "@testing-library/react";
-import { afterEach, expect, test } from "vitest";
+import { expect, test } from "vitest";
 import { DataTable, type DataTableProps } from "../components/table";
 import { MOCK_COMPANY_ROWS, type MockCompanyRow } from "../components/mocks/company/company-rows";
 import { buildCompanyColumns } from "../components/mocks/company/company-columns";
 import { TABLE_ROW_ACTIONS } from "../components/mocks/table/table-config";
 import { findRequiredElement } from "./browser/elements";
 import { emulateMediaType } from "./browser/print-media";
-
-afterEach(() => emulateMediaType("screen"));
 
 const COLUMNS = buildCompanyColumns({ appsWidth: 200, statusSearchable: false });
 
@@ -25,6 +23,8 @@ const renderTable = (props: Partial<DataTableProps<MockCompanyRow>> = {}) =>
   ).container;
 
 const isDisplayed = (element: Element) => getComputedStyle(element).display !== "none";
+// The browser reports a media change (`matchMedia`) on its next rendering frame, not when the emulation returns.
+const nextFrame = () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 
 const expectCleanPrint = (container: HTMLElement) => {
   expect(isDisplayed(findRequiredElement(container, ".gdy-toolbar"))).toBe(false);
@@ -66,4 +66,24 @@ test("without printMode the print view keeps the toolbar, the pagination and the
   expect(isDisplayed(findRequiredElement(container, ".gdy-table-pagination"))).toBe(true);
   const wrap = findRequiredElement(container, ".gdy-table-wrap");
   expect(wrap.scrollHeight).toBeGreaterThan(wrap.clientHeight);
+});
+
+test("printed, the group row and an open detail end where the printed columns end", async () => {
+  const container = renderTable({
+    printMode: "page",
+    groupableColumnIds: ["status"],
+    defaultGroupBy: "status",
+    renderExpandedRow: (row) => row.name,
+    defaultExpandedRowIds: [MOCK_COMPANY_ROWS[0].id],
+  });
+  await emulateMediaType("print");
+  await nextFrame();
+  const rowRight = findRequiredElement(container, "tr.gdy-table-row").getBoundingClientRect().right;
+  const lastCell = [...findRequiredElement(container, "tr.gdy-table-row").querySelectorAll("td")]
+    .filter((cell) => getComputedStyle(cell).display !== "none")
+    .at(-1) as Element;
+  const printedRight = Math.round(lastCell.getBoundingClientRect().right);
+  expect(Math.round(findRequiredElement(container, ".gdy-table-group-cell").getBoundingClientRect().right)).toBe(printedRight);
+  expect(Math.round(findRequiredElement(container, ".gdy-table-expanded-cell").getBoundingClientRect().right)).toBe(printedRight);
+  expect(Math.round(rowRight)).toBeGreaterThanOrEqual(printedRight);
 });

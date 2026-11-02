@@ -1,9 +1,14 @@
 import type { Table } from "@tanstack/react-table";
+import type { PinnedColumns } from "../columns/pinned-columns";
+import type { ColumnWidthsModel } from "../resize/use-column-widths";
 import { useResolvedLabels } from "../../shared/labels/use-resolved-labels";
 import { DATA_TABLE_LABELS } from "../labels";
 import { resolveTableSettings } from "../settings";
 import type { ColumnDefinition, DataTableProps } from "../types";
 import { useTablePaging } from "../pagination/use-table-paging";
+import { useRowSelection } from "../selection/use-row-selection";
+import { useExpandedRows } from "../expansion/use-expanded-rows";
+import { usePrintMedia } from "./use-print-media";
 import { useTableRows } from "./use-table-rows";
 import { useTableState } from "./use-table-state";
 import { useFilterOptions } from "./use-filter-options";
@@ -23,13 +28,24 @@ export const useTableCore = <TData>(props: DataTableProps<TData>) => {
   const reportedRows = paging.printingAllRows ? null : paging.pagedRows;
   useVisibleRowsChange({ pageRows: reportedRows, filteredRows: grouping.flatRows }, settings);
   const filterOptions = useFilterOptions(rows, settings, state.filters);
+  const selection = useRowSelection(settings, { allRows: rows, pageRows: paging.pagedRows, filteredRows: grouping.flatRows });
+  const expansion = useExpandedRows(settings);
+  const isPrinting = usePrintMedia(Boolean(settings.printMode));
   const printState = paging.printingAllRows ? { ...state, collapsedGroups: NO_COLLAPSED_GROUPS } : state;
-  return { settings, state: printState, grouping, paging, filterOptions };
+  return { settings, state: printState, grouping, paging, filterOptions, selection, expansion, isPrinting };
 };
 
 export type TableCore<TData> = ReturnType<typeof useTableCore<TData>>;
 
-export type TableModel<TData> = TableCore<TData> & { table: Table<TData> };
+export type TableModel<TData> = TableCore<TData> & {
+  table: Table<TData>;
+  /** Ids `responsiveColumns` hid: still rendered, with `data-hidden-by="priority"`. */
+  hiddenByPriority: string[];
+  /** Pinned columns on screen; `null` without `pin` or `rowActions.pinned`. */
+  pinnedColumns: PinnedColumns | null;
+  /** The user's column widths; `null` without `resizableColumns`. */
+  columnWidths: ColumnWidthsModel | null;
+};
 
 export interface TableModelProps<TData> {
   model: TableModel<TData>;

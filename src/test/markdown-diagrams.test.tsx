@@ -2,7 +2,6 @@ import { render, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, expect, test, vi } from "vitest";
 import type { MarkdownDiagramRenderer, MermaidRenderer } from "../components/markdown-editor/diagrams/diagram-types";
 import { PREVIEW_CONTENT_CHANGE_EVENT } from "../components/markdown-editor/preview/preview-enhancer";
-import { MarkdownViewer } from "../components/markdown-editor/viewer/MarkdownViewer";
 
 const DIAGRAM = "```mermaid\nflowchart LR\n  A --> B\n```";
 const toDiagram = (edge: string) => `\`\`\`mermaid\nflowchart LR\n  ${edge}\n\`\`\``;
@@ -29,8 +28,15 @@ const findDiagram = async (state: string) => {
   return region.querySelector(".gdy-md-diagram") as HTMLElement;
 };
 
-beforeEach(() => {
+type MarkdownViewerModule = typeof import("../components/markdown-editor/viewer/MarkdownViewer");
+let MarkdownViewer: MarkdownViewerModule["MarkdownViewer"];
+
+// The Mermaid session and the drawn diagrams are kept in modules for the whole run, so each test loads them fresh:
+// otherwise a test sees what another one drew or set up first.
+beforeEach(async () => {
   vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(null);
+  vi.resetModules();
+  ({ MarkdownViewer } = await import("../components/markdown-editor/viewer/MarkdownViewer"));
 });
 
 test("leaves mermaid blocks as code when no renderer is given", () => {

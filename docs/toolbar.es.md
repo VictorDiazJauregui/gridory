@@ -587,6 +587,7 @@ Todos los tipos de esta sección se exportan desde `gridory`, `gridory/table` y 
 | `triggerLabel` | `string` | `"Opciones"` | Nombre accesible y tooltip del botón ⋯, en la tabla y en el kanban. |
 | `columnLabel` | `string` | — | Solo la tabla. Texto del encabezado de la columna de acciones. Ver [Alineación](table.es.md#alineación). |
 | `align` | `"left" \| "center" \| "right"` | `"right"` | Solo la tabla. Alineación del encabezado y del botón de la columna de acciones. |
+| `pinned` | `boolean` | `false` | Solo la tabla. Deja la columna de acciones en el borde derecho mientras las filas se desplazan de costado (56px, o 96px con `columnLabel`). Ver [Columnas fijas](table.es.md#columnas-fijas). |
 
 ### RowAction
 

@@ -9,6 +9,7 @@ import { findRequiredElement } from "./browser/elements";
 import { applyScreen, applyTheme } from "./browser/environment";
 import type { ScreenName, Theme } from "./browser/environment";
 import { measureBox, readStyle } from "./browser/measure";
+import { getOptionByName } from "./option-queries";
 
 interface Scenario {
   theme: Theme;
@@ -165,7 +166,7 @@ test.each(SCENARIOS)("with Uruguay chosen, its option opens inside the visible a
   await openList();
   await waitUntilPanelRests();
   const list = screen.getByRole("listbox", { name: "Prefijos por país" });
-  const option = screen.getByRole("option", { name: /^Uruguay/ });
+  const option = getOptionByName(/^Uruguay/, list);
   expect(list.scrollTop).toBeGreaterThan(0);
   await expect.poll(() => measureBox(option).top >= measureBox(list).top && measureBox(option).bottom <= measureBox(list).bottom).toBe(true);
 });

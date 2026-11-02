@@ -143,6 +143,27 @@ sola opción visible con ese nombre accesible), pero solo sobre la que coincide.
 El proyecto `browser` usa el Google Chrome instalado en tu máquina, igual que la CI usa el que trae el
 runner de GitHub, así que no hay que descargar ningún navegador. Solo necesitas tener Chrome instalado.
 
+### Tests de navegador rápidos
+
+Los archivos de navegador comparten una página por worker, así que cada test la deja como la encontró:
+
+- Cambia la media de impresión, el movimiento reducido o el táctil solo con los helpers de
+  `src/test/browser/` (`emulateMediaType`, `emulateReducedMotion`, `emulateTouchScreen`). Anotan qué
+  cambiaron y el setup lo deshace después de cada test, aunque falle, así que ningún archivo necesita su
+  propio `afterEach` para eso. El tema y el tamaño de pantalla vuelven a claro y escritorio de la misma
+  forma.
+- Los tests corren con movimiento reducido. Un test de una animación activa el movimiento con
+  `emulateReducedMotion(false)`; los demás nunca esperan una.
+- Un archivo que necesita una página nueva va en `OWN_PAGE_BROWSER_TESTS` de `vitest.config.ts`, con el
+  motivo: emulación táctil, `:focus-visible` después de un foco por código, o un módulo diferido que se
+  carga por primera vez.
+- Espera una condición, nunca un tiempo fijo: `expect.poll` (que en este proyecto reintenta una vez por
+  cuadro), `vi.waitFor` o `findBy*`. Un `setTimeout` es lento o inestable.
+- Dale a cada test solo los datos que mira: unas pocas filas en lugar de una tabla completa, y `paste`
+  en lugar de teclear cuando el texto es solo la preparación.
+- Cuando el componente escucha dónde está el puntero, mueve el puntero real con `userEvent.hover`: un
+  `pointerenter` sintético no lo mueve, y el cursor queda donde lo dejó el archivo anterior.
+
 ## Documentación
 
 La documentación está en inglés, con una copia en español (`*.es.md`) al lado de cada archivo.

@@ -1,4 +1,4 @@
-export { DataTable } from "./table";
+export { DataTable, MissingRowIdError, PinnedColumnWidthError } from "./table";
 export type {
   ColumnFiltersState,
   ColumnSortingState,
@@ -11,6 +11,9 @@ export type {
   RowAttributes,
   RowClickEvent,
   RowGroupingResult,
+  ColumnVisibilityDetails,
+  RowSelectionConfig,
+  SelectAllScope,
   VisibleRowsState,
 } from "./table";
 
@@ -44,11 +47,13 @@ export type {
   ColumnDefinition,
   ColumnFooterContext,
   ColumnOverflow,
+  ColumnPin,
   DataInput,
   DateFilterOp,
   DateFilterState,
   DateInputFormat,
   FilterOption,
+  HeaderTooltipPlacement,
   Primitive,
   RowActions,
   SortDirection,

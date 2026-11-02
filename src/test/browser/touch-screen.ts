@@ -1,4 +1,5 @@
 import { commands } from "vitest/browser";
+import { forgetUndo, rememberUndo } from "./page-changes";
 
 declare module "vitest/browser" {
   interface BrowserCommands {
@@ -7,4 +8,8 @@ declare module "vitest/browser" {
 }
 
 /** Turns `(pointer: coarse)` on or off in the page, as on a phone. Set it before rendering. */
-export const emulateTouchScreen = (enabled: boolean): Promise<void> => commands.emulateTouch(enabled);
+export const emulateTouchScreen = async (enabled: boolean): Promise<void> => {
+  await commands.emulateTouch(enabled);
+  if (!enabled) return forgetUndo("touch");
+  rememberUndo("touch", () => commands.emulateTouch(false));
+};

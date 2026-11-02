@@ -103,6 +103,16 @@ Cada entrada de `columns` es un `ColumnDefinition<TData>`.
 | `ignoreRowClick` | `boolean` | Ningún gesto que empiece en esta columna dispara la fila. Ver [Clic en fila y filas como enlace](#clic-en-fila-y-filas-como-enlace). Solo la tabla. |
 | `overflow` | `"ellipsis" \| "wrap" \| "visible"` | Qué hacen las celdas con un contenido más ancho que la columna. Por defecto `"ellipsis"`. Ver [Recorte de celdas](#recorte-de-celdas). Solo la tabla. |
 | `footer` | `(context: ColumnFooterContext<TData>) => ReactNode` | Contenido de esta columna en la fila de totales. Ver [Fila de totales](#fila-de-totales). Solo la tabla. |
+| `printValue` | `(row: TData) => string` | Con `printMode`, el texto que imprime la celda en lugar de su contenido. Ver [Impresión](#impresión). Solo la tabla. |
+| `hideable` | `boolean` | Con `responsiveColumns`, la columna puede ocultarse cuando no entra. Ver [Visibilidad de columnas](#visibilidad-de-columnas). Solo la tabla. |
+| `priority` | `number` | Con `responsiveColumns`, el número más bajo se oculta primero; implica `hideable`. Solo la tabla. |
+| `headerTooltip` | `string` | Texto de ayuda detrás de un "?" junto al título. Ver [Ayuda y contenido en el encabezado](#ayuda-y-contenido-en-el-encabezado). Solo la tabla. |
+| `headerTooltipPlacement` | `"before" \| "after" \| "edge"` | Dónde va el "?". Por defecto `"after"` (`"before"` con un encabezado alineado a la derecha). Solo la tabla. |
+| `headerContent` | `ReactNode` | Reemplaza el título visible; `header` sigue siendo el nombre accesible y el texto de los menús. Solo la tabla. |
+| `pin` | `"left" \| "right"` | Deja la columna en ese borde mientras las filas se desplazan de costado. Requiere `width`. Ver [Columnas fijas](#columnas-fijas). Solo la tabla. |
+| `resizable` | `boolean` | Con `resizableColumns`, `false` deja la columna sin manija. Ver [Columnas redimensionables](#columnas-redimensionables). Solo la tabla. |
+| `minWidth` | `number` | Ancho más angosto al que el usuario puede llevar la columna. Por defecto `64`. Solo la tabla. |
+| `maxWidth` | `number` | Ancho más ancho al que el usuario puede llevar la columna. Sin límite por defecto. Solo la tabla. |
 
 Las opciones de filtro se calculan con todas las filas de `data` (antes de la búsqueda y los filtros), no
 solo con la página visible. Las columnas con `type: "date"` nunca reciben una lista de valores: su menú
@@ -121,6 +131,7 @@ ofrece los operadores mayor que, menor que y entre, con un calendario.
 | `rowActions` | `true` | Oculta la columna de acciones de fila aunque `rowActions` esté definido. |
 | `createButton` | `true` | Oculta el botón de crear aunque `onCreate` esté definido. |
 | `grouping` | `true` | Oculta el selector de agrupado y renderiza las filas sin agrupar. |
+| `toolbar` | `true` | `false` no pinta la barra (con su búsqueda, slots y botones), para una tabla anidada en el detalle de una fila. |
 
 ### Búsqueda
 
@@ -401,6 +412,32 @@ la prop afuera y escribe una hoja `@media print` sobre los [ganchos de estilo](s
 <DataTable columns={columns} data={invoices} printMode="all" />
 ```
 
+**Controles en papel.** Una casilla o un interruptor no dicen nada en papel, así que con `printMode`:
+
+- La columna de [selección de filas](#selección-de-filas) imprime `"Sí"` o `"No"` en cada fila
+  (`labels.printSelected`, `labels.printNotSelected`) y `"Seleccionada"` en el encabezado
+  (`labels.printSelectionHeader`). Las filas seleccionadas se imprimen sin su fondo, y en papel la columna
+  pasa de 44 a 112 px para que entre ese encabezado.
+- Una columna con `printValue` imprime ese texto en lugar de su contenido. La tabla no puede leer los
+  controles que dibuja tu `cell`, así que le dices qué significa cada uno:
+
+```tsx
+const columns: ColumnDefinition<Company>[] = [
+  {
+    id: "active",
+    header: "Activo",
+    accessor: (row) => row.active,
+    cell: (row) => <Switch checked={row.active} onCheckedChange={(next) => setActive(row, next)} />,
+    printValue: (row) => (row.active ? "Sí" : "No"),
+  },
+];
+
+<DataTable columns={columns} data={companies} printMode="page" />;
+```
+
+El texto impreso va en `span.gdy-table-print-value`, antes del contenido que reemplaza; en pantalla está
+oculto y solo existe con `printMode`. Una columna sin `printValue` imprime su contenido, como en pantalla.
+
 ### Edición en línea
 
 Una columna con `inlineEditOptions` no vacío y un callback `onInlineEdit` renderiza sus celdas como un
@@ -437,6 +474,8 @@ y por defecto copia `align`.
 La columna de acciones de fila no tiene definición propia, así que se configura desde `rowActions`:
 
 - `columnLabel`: texto del encabezado (por defecto ninguno, el encabezado vacío).
+- `pinned`: deja la columna de acciones en el borde derecho mientras las filas se desplazan de costado. Ver
+  [Columnas fijas](#columnas-fijas).
 - `align`: alineación de ese encabezado y del botón ⋯ (por defecto `"right"`).
 - `triggerLabel`: nombre accesible y tooltip del botón ⋯ (por defecto `"Opciones"`). El menú de la
   tarjeta del kanban también lo usa.
@@ -625,6 +664,442 @@ const columns: ColumnDefinition<Quote>[] = [
 ];
 ```
 
+### Selección de filas
+
+`rowSelection` agrega una columna de casillas antes de las columnas de datos: una casilla por fila y una
+en el encabezado que marca todas las filas de su alcance. La tabla solo informa los ids seleccionados;
+qué hacer con ellos (exportar, borrar, mover) lo decide tu app, por ejemplo con un slot de la toolbar.
+
+```tsx
+const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+<DataTable
+  columns={columns}
+  data={invoices}
+  getRowId={(row) => row.id}
+  rowSelection={{ selectedIds, onChange: setSelectedIds, selectAllScope: "filtered" }}
+  toolbarSlots={[
+    {
+      id: "export",
+      content: (
+        <button type="button" disabled={selectedIds.length === 0} onClick={() => exportInvoices(selectedIds)}>
+          Exportar ({selectedIds.length})
+        </button>
+      ),
+    },
+  ]}
+/>;
+```
+
+| Campo | Tipo | Por defecto | Descripción |
+|---|---|---|---|
+| `selectedIds` | `string[]` | — | Selección controlada; `undefined` la deja a la tabla. |
+| `defaultSelectedIds` | `string[]` | `[]` | Selección inicial cuando no es controlada. |
+| `onChange` | `(selectedIds: string[]) => void` | — | Cada cambio que hace el usuario, y la limpieza de ids que salieron de `data`. |
+| `selectAllScope` | `"page" \| "filtered"` | `"page"` | Qué marca la casilla del encabezado: las filas de la página actual (con los grupos plegados), o todas las que pasan la búsqueda, los filtros y la vista de archivados. |
+| `isRowSelectable` | `(row: TData) => boolean` | — | `false` deshabilita la casilla de la fila y la deja fuera de la casilla del encabezado. |
+
+- **`getRowId` es obligatorio.** La selección guarda ids; sin `getRowId` las filas se identifican por
+  índice, que cambia con cada orden o página, así que la tabla lanza `MissingRowIdError`. El id no puede
+  depender del índice.
+- **La casilla del encabezado** está marcada cuando todas las filas seleccionables de su alcance están
+  seleccionadas, con `aria-checked="mixed"` cuando solo algunas lo están, y deshabilitada cuando el alcance
+  no tiene ninguna. Un clic en una parcial selecciona todo el alcance; un clic en una completa lo limpia.
+- **Páginas y `data`.** La selección se conserva al cambiar de página, ordenar y filtrar. Cuando una fila
+  seleccionada sale de `data`, su id se quita y `onChange` lo informa.
+- **Modo servidor.** Con `manualPagination`, `data` es solo la página actual: la tabla no puede distinguir
+  una fila borrada de una que está en otra página, así que conserva todos los ids y tu app quita los que ya
+  no existen. Ahí `"filtered"` actúa como `"page"` (la tabla no tiene otras filas), con un aviso en
+  desarrollo.
+- **Clics y teclado.** Un clic en cualquier parte de la columna de casillas nunca dispara `onRowClick` ni
+  el enlace de la fila. A las casillas se llega con Tab y se alternan con Espacio; Espacio sobre una fila
+  enfocada ([`focusableRows`](#clic-en-fila-y-filas-como-enlace) o `getRowHref`) también la alterna.
+  `rowSelection` no vuelve enfocables las filas.
+- **Marcado.** Las filas seleccionadas llevan `data-selected` y `aria-selected="true"`, y las demás
+  `aria-selected="false"`; `getRowAttributes` no puede pisarlos. Sin `rowSelection` no se pinta nada de
+  esto. Las casillas son `button.gdy-table-select[role="checkbox"]`, con `data-state` (`checked`,
+  `unchecked`, `indeterminate`).
+- **Textos:** `labels.selectRow`, `labels.selectPageRows` y `labels.selectFilteredRows` (nombres
+  accesibles), y los tres textos de impresión de arriba.
+
+Antes, una columna de casillas era un `cell` más tu propio estado, y el clic en la casilla abría la fila:
+
+```diff
+- const [selected, setSelected] = useState(new Set<string>());
+- const selectColumn = {
+-   id: "select",
+-   header: "",
+-   accessor: () => "",
+-   ignoreRowClick: true,
+-   cell: (row) => <input type="checkbox" checked={selected.has(row.id)} onChange={() => toggle(row.id)} />,
+- };
+- <DataTable columns={[selectColumn, ...columns]} data={invoices} />
++ <DataTable columns={columns} data={invoices} getRowId={(row) => row.id} rowSelection={{ onChange: setSelectedIds }} />
+```
+
+### Filas expandibles
+
+`renderExpandedRow` agrega una columna con un botón de expandir y, debajo de cada fila abierta, un detalle de
+ancho completo con lo que devuelva: contactos, un formulario, un gráfico u otra `DataTable`. La tabla recuerda
+qué filas están abiertas; el contenido, y cómo se carga, lo resuelve tu app.
+
+```tsx
+<DataTable
+  columns={columns}
+  data={companies}
+  getRowId={(row) => row.id}
+  renderExpandedRow={(company) => (
+    <DataTable
+      columns={contactColumns}
+      data={company.contacts}
+      getRowId={(contact) => contact.id}
+      features={{ toolbar: false, filtering: false, pagination: false }}
+      tableMinHeightClassName=""
+    />
+  )}
+  canExpandRow={(company) => company.contacts.length > 0}
+/>;
+```
+
+| Prop | Tipo | Por defecto | Descripción |
+|---|---|---|---|
+| `renderExpandedRow` | `(row: TData) => ReactNode` | — | Contenido del detalle de una fila. Sin ella no se pinta nada de esto. |
+| `expandedRowIds` | `string[]` | — | Filas abiertas controladas; `undefined` las deja a la tabla. |
+| `defaultExpandedRowIds` | `string[]` | `[]` | Filas abiertas al montar cuando no se controlan. |
+| `onExpandedChange` | `(expandedRowIds: string[]) => void` | — | Cada apertura o cierre que hace el usuario, controlado o no. |
+| `canExpandRow` | `(row: TData) => boolean` | todas las filas | `false` deja la fila sin botón y sin detalle. |
+
+- **`getRowId` es obligatorio.** Las filas abiertas se guardan por id; sin `getRowId` las filas se
+  identifican por índice, que cambia con cada orden o página, así que la tabla lanza `MissingRowIdError`.
+  Los ids de filas que salen de `data` se conservan (un id sin fila no pinta nada); si controlás la lista,
+  limpialos en tu app.
+- **La columna del botón** (`_expand`, 40px) va después de la columna de casillas y antes de las columnas
+  de datos. El botón es `button.gdy-table-expand-toggle`, con `aria-expanded` y, mientras está abierto,
+  `aria-controls` con el id del detalle. Su nombre accesible es `labels.expandRow` (`"Mostrar detalle"`). Un
+  clic en él, o Enter y Espacio, nunca dispara `onRowClick` ni el enlace de la fila; el resto de la fila sí.
+- **El detalle no es una fila.** Es un `tr.gdy-table-expanded-row` hermano, con una celda que ocupa las
+  columnas en pantalla. La paginación, su resumen, la fila de totales, la selección y `onVisibleRowsChange`
+  lo ignoran, y los clics y teclas dentro de él no llegan a la fila de arriba. El detalle se monta al
+  abrirse, así que una fila cerrada no cuesta nada.
+- **Páginas y grupos.** Las filas abiertas siguen abiertas al cambiar de página, de orden o de filtro. Un
+  grupo colapsado esconde sus filas con sus detalles, y vuelven abiertas al desplegarlo.
+- **Desplazamiento de costado.** Cuando la tabla es más ancha que su contenedor, el detalle toma el ancho
+  visible y queda quieto mientras las filas se desplazan, así que siempre se ve entero.
+- **Marcado.** La fila abierta lleva `data-expanded`; `getRowAttributes` no lo puede pisar mientras haya
+  `renderExpandedRow`. Mientras carga, el esqueleto mantiene la columna del botón y no muestra detalles.
+- **Movimiento.** El detalle crece de cero a su alto y el chevron gira (200 ms, fijados por
+  `--gdy-table-expand-duration`); con `prefers-reduced-motion: reduce` abre y cierra en el acto. Ver
+  [theming.es.md](theming.es.md#animaciones).
+- **Impresión** (`printMode`): los detalles abiertos se imprimen enteros debajo de su fila, y la columna del
+  botón queda afuera, como la de acciones.
+- **Una `DataTable` anidada** funciona tal cual; `features={{ toolbar: false }}` le quita la barra, que si no
+  quedaría vacía.
+
+Antes, un detalle era una `cell` con su propio estado, y solo podía vivir dentro de una celda de la fila:
+
+```diff
+- const [openId, setOpenId] = useState<string | null>(null);
+- const nameColumn = {
+-   ...columns[0],
+-   cell: (row) => (
+-     <>
+-       <button onClick={() => setOpenId(openId === row.id ? null : row.id)}>{row.name}</button>
+-       {openId === row.id && <Contacts company={row} />}
+-     </>
+-   ),
+- };
+- <DataTable columns={[nameColumn, ...columns.slice(1)]} data={companies} />
++ <DataTable columns={columns} data={companies} getRowId={(row) => row.id} renderExpandedRow={(row) => <Contacts company={row} />} />
+```
+
+### Visibilidad de columnas
+
+Dos capas deciden qué columnas están en pantalla:
+
+1. **Tu app**, con `columnVisibility`: `false` quita una columna (encabezado, celdas, totales y marcadores
+   de carga salen del marcado), `true` la fija para que la prioridad nunca la oculte. Una columna que no
+   figura se muestra. Siempre gana.
+2. **El lugar que queda**, con `responsiveColumns`: a medida que el contenedor de filas se angosta, la tabla
+   oculta las columnas marcadas `hideable` o con `priority` hasta que el resto entra sin scroll horizontal,
+   y las vuelve a mostrar cuando se ensancha.
+
+```tsx
+const columns: ColumnDefinition<Invoice>[] = [
+  { id: "customer", header: "Cliente", accessor: (row) => row.customer, width: 220 },
+  { id: "total", header: "Total", accessor: (row) => row.total, width: 120, priority: 3 },
+  { id: "status", header: "Estado", accessor: (row) => row.status, width: 140, priority: 2 },
+  { id: "notes", header: "Notas", accessor: (row) => row.notes, width: 280, hideable: true },
+];
+
+<DataTable
+  columns={columns}
+  data={invoices}
+  responsiveColumns
+  columnVisibility={{ notes: showNotes }}
+  onColumnVisibilityChange={(visibility, { hiddenByPriority }) => setHiddenCount(hiddenByPriority.length)}
+/>;
+```
+
+- **Qué columnas se ocultan y en qué orden.** Una columna sin `hideable` y sin `priority` nunca se oculta,
+  y tampoco las columnas de casillas y de acciones. Cuando falta lugar, primero caen las ocultables sin
+  número, de derecha a izquierda; después las numeradas, el número más bajo primero (si empatan, la de más
+  a la derecha). En el ejemplo, al angostar cae Notas, después Estado y después Total; Cliente siempre
+  queda.
+- **Qué cuenta una columna.** Su `width`; sin él, el ancho medido de su título con sus íconos de orden y de
+  filtro (las celdas ya cortan el texto largo con "…"). La medida se guarda mientras la columna está
+  oculta. Dale `width` a las columnas cuyo contenido necesita más que el título.
+- **Ocultas por la prioridad, no quitadas.** Esas celdas quedan en el marcado con
+  `data-hidden-by="priority"` y `display: none`, así puedes mostrarlas en otro medio, por ejemplo en papel:
+  `@media print { .gdy-table-cell[data-hidden-by="priority"] { display: table-cell; } }` (y lo mismo para
+  `.gdy-table-head-cell` y `.gdy-table-foot-cell`). Las columnas que tu app oculta con `columnVisibility`
+  salen del marcado.
+- **`onColumnVisibilityChange(visibility, { hiddenByPriority })`** se dispara al montar y cada vez que
+  cambian las columnas en pantalla: `true` o `false` por id de columna (una columna agrupada es `false`: no
+  está en pantalla) y los ids que ocultó la prioridad, en el orden en que cayeron. Sirve para mostrar
+  "3 columnas ocultas" o los valores que faltan en una vista de detalle. **No lo devuelvas a
+  `columnVisibility`**: fijaría las columnas ocultas.
+- **Rendimiento.** La tabla observa el contenedor de filas con un solo `ResizeObserver`, calcula como mucho
+  una vez por frame (la primera antes de pintar, así nunca parpadea la tabla completa) y se desconecta al
+  desmontar. Sin `responsiveColumns` no se observa nada.
+- Un panel de filtro abierto en una columna que se oculta se cierra.
+
+Antes, cada app medía el contenedor por su cuenta y rearmaba `columns`:
+
+```diff
+- const width = useContainerWidth(ref);
+- const shown = width < 600 ? columns.filter((column) => column.id !== "notes") : columns;
+- <div ref={ref}><DataTable columns={shown} data={invoices} /></div>
++ <DataTable columns={columns} data={invoices} responsiveColumns />
+```
+
+### Columnas fijas
+
+`pin: "left"` o `pin: "right"` deja una columna en ese borde mientras las filas se desplazan de costado, así el
+nombre de la fila y sus acciones siguen a la vista en una tabla ancha.
+
+```tsx
+const columns: ColumnDefinition<Invoice>[] = [
+  { id: "customer", header: "Cliente", accessor: (row) => row.customer, width: 220, pin: "left" },
+  { id: "notes", header: "Notas", accessor: (row) => row.notes, width: 400 },
+  { id: "total", header: "Total", accessor: (row) => row.total, width: 140, pin: "right" },
+];
+
+<DataTable columns={columns} data={invoices} getRowId={(row) => row.id} rowActions={{ ...rowActions, columnLabel: "Acciones" }} />;
+```
+
+- **`width` es obligatorio.** Una columna fija se pega a la suma de los anchos de las fijas anteriores, así
+  que sin `width` la tabla lanza `PinnedColumnWidthError`. Los desplazamientos usan los anchos declarados:
+  cuando la tabla es más angosta que su contenedor no hay desplazamiento de costado, y nada se mueve.
+- **Orden.** Las columnas fijas van a su borde, cada lado en el orden en que se declararon: en el ejemplo
+  Cliente queda primera y Total última, estén donde estén en `columns`. El resto mantiene su orden.
+- **Las columnas de la tabla.** Con cualquier fija a la izquierda, las columnas de casilla (`rowSelection`) y
+  de expandir (`renderExpandedRow`) se fijan primero, o la columna fija las taparía. Con cualquier fija a la
+  derecha, la de acciones se fija al final; `rowActions.pinned: true` la fija sola. Fijada, la columna de
+  acciones mide 56px, o 96px con `rowActions.columnLabel`; sin fijar no tiene ancho, como antes.
+- **Pantallas chicas.** Una columna fija nunca se oculta por prioridad (`responsiveColumns`). Cuando las fijas
+  ocupan más de la mitad del contenedor (un celular, una ventana angosta), se sueltan y se desplazan como las
+  demás hasta que haya lugar: el contenedor lleva `data-pinning-suspended`.
+- **Fondo.** Una celda fija pinta su propia superficie opaca, `--gdy-table-pinned-bg` (con `--gdy-card` de
+  respaldo), para que no se vean las celdas que pasan por debajo. Un fondo o una `opacity` puestos en la fila
+  (`tr`) no le llegan: la celda tapa el primero y no forma parte de la segunda. Dale a la fila un token, o
+  estilá las celdas:
+
+  ```diff
+  - .invoice-row-overdue { background: #fef2f2; }
+  + .invoice-row-overdue { --gdy-table-pinned-bg: #fef2f2; }
+  + .invoice-row-overdue > .gdy-table-cell { background: #fef2f2; }
+  ```
+
+  Las filas seleccionadas y con el mouse encima siguen pintando sobre las celdas fijas.
+- **Bordes y apilado.** La última celda fija de cada lado lleva `data-pinned-edge` y proyecta una sombra
+  (`--gdy-table-pinned-shadow`) mientras hay contenido debajo: el contenedor lleva `data-scrolled-start`
+  cuando hay contenido debajo de las fijas de la izquierda y `data-scrolled-end` cuando lo hay debajo de las de
+  la derecha. Con el encabezado fijo, las celdas fijas del encabezado y de los totales son las esquinas y
+  tapan en las dos direcciones. Las celdas fijas se apilan en `--gdy-table-pinned-z` (`1`), las esquinas en
+  `--gdy-table-pinned-corner-z` (`3`) y un encabezado con su filtro abierto en `--gdy-table-open-menu-z`
+  (`4`); los menús, el globo del "?" y los selects abren en un portal por encima de todos.
+- **Filas de grupo, vacía, de carga y de detalle** ocupan todas las columnas, así que se desplazan con la
+  tabla; con columnas fijas, el rótulo del grupo queda quieto en el borde izquierdo, y un detalle siempre toma
+  el ancho visible ([Filas expandibles](#filas-expandibles)).
+- **Marcado.** Cada celda de una columna fija (encabezado, filas, totales y esqueletos de carga) lleva
+  `data-pinned="left"` o `"right"` y su desplazamiento como `--gdy-table-pin-offset`; el contenedor de filas
+  lleva `data-has-pinned`. Sin `pin` ni `rowActions.pinned` no se pinta nada de esto.
+- **La impresión** convierte las fijas en columnas comunes: sin sticky, sin superficie propia y sin sombra.
+- **Límites.** `left` y `right` son bordes físicos (sin diseño de derecha a izquierda), y en vertical solo se
+  fijan el encabezado y la fila de totales. El estado del desplazamiento se escribe directo en el contenedor,
+  una vez por cuadro, sin render de React.
+
+Antes, una columna pegada llevaba una clase por celda, desplazamientos a mano y su propio apilado:
+
+```diff
+- const stickyCell = { position: "sticky", left: 0, zIndex: 1, background: "white" };
+- { id: "customer", cell: (row) => <div style={stickyCell}>{row.customer}</div> }
++ { id: "customer", width: 220, pin: "left" }
+```
+
+### Columnas redimensionables
+
+`resizableColumns` agrega una manija en el borde derecho del encabezado de cada columna de datos. Arrastrarla,
+o moverla con las flechas, cambia el ancho de esa columna; la tabla avisa los anchos y la app decide dónde
+guardarlos. Apagado por defecto: sin la prop no se pinta ninguna manija y el navegador reparte las columnas
+como antes.
+
+```tsx
+const [columnWidths, setColumnWidths] = useState<Record<string, number>>({});
+
+<DataTable
+  columns={columns}
+  data={invoices}
+  getRowId={(row) => row.id}
+  resizableColumns
+  columnWidths={columnWidths}
+  onColumnWidthsChange={setColumnWidths}
+/>;
+```
+
+| Prop | Tipo | Default | Descripción |
+| --- | --- | --- | --- |
+| `resizableColumns` | `boolean` | `false` | Agrega las manijas. |
+| `columnWidths` | `Record<string, number>` | — | Anchos controlados en px, por id de columna. Una columna que no figura conserva su `width`. |
+| `defaultColumnWidths` | `Record<string, number>` | — | Anchos iniciales cuando los guarda la tabla. |
+| `onColumnWidthsChange` | `(columnWidths) => void` | — | Se emite al soltar, solo con las columnas que el usuario cambió. |
+
+- **Cuándo avisa.** `onColumnWidthsChange` se emite cuando el usuario suelta el puntero o la flecha, y al
+  restablecer; nunca en cada movimiento. Lleva solo las columnas que el usuario cambió, que es justo lo que hay
+  que guardar y volver a pasar. Gridory no guarda nada por su cuenta.
+- **Límites.** `minWidth` (por defecto `64`) y `maxWidth` (sin límite por defecto) acotan el arrastre, las
+  teclas y los anchos que llegan por `columnWidths` (un ancho guardado fuera de rango se muestra dentro de los
+  límites, sin avisar). `resizable: false` deja una columna sin manija. Las columnas de casilla, de expandir y de
+  acciones nunca tienen.
+- **Volver a `width`.** Un doble clic en la manija, o Enter sobre ella, quita el ancho de esa columna: el aviso
+  llega sin su clave.
+- **Teclado.** La manija es un `role="separator"` con `aria-orientation="vertical"`, `aria-valuenow` (el ancho
+  en px), `aria-valuetext` (`labels.resizeColumnValue`, `"220 px"`), `aria-valuemin` y `aria-valuemax`
+  (`maxWidth`, o `4000`), con el nombre de `labels.resizeColumn` (`"Cambiar el ancho de Empresa"`). Se llega con
+  Tab; las flechas izquierda y derecha mueven el borde 10 px; mantener una flecha apretada avisa una vez, al
+  soltarla. Hasta el primer ancho el navegador reparte el lugar, así que la tabla vuelve a medir los encabezados
+  cada vez que el contenedor cambia de tamaño, y el valor sigue siendo el ancho en pantalla.
+- **Nada más se estira.** Hasta el primer ancho, el navegador reparte el contenedor como siempre. Desde el
+  primero, la tabla conserva el ancho que cada columna tenía en pantalla y pasa a medir la suma, así que mover un
+  borde solo corre lo que está a su derecha: el lugar que sobra queda vacío a la derecha, y una tabla más ancha se
+  desplaza de costado. Ahí la columna de acciones toma 56 px (96 px con `rowActions.columnLabel`) si no tenía
+  lugar. Al restablecer el último ancho vuelve el reparto de siempre.
+- **Columnas fijas.** Cambiar el ancho de una fija corre los desplazamientos de las fijas que vienen después.
+  Una fija deja de crecer cuando las fijas llegan a la mitad del contenedor, el punto en que se soltarían. Una
+  fija a la derecha crece hacia la izquierda, por eso su manija está en su borde izquierdo.
+- **Prioridad.** Con `responsiveColumns`, una columna cambiada cuenta su ancho nuevo, una vez soltada: si el
+  resto ya no entra, la de menor prioridad se oculta en ese momento, no en medio del arrastre.
+- **Celulares.** La manija solo se muestra en un equipo con puntero fino (`any-pointer: fine`: mouse o
+  trackpad). Un celular no tiene una forma cómoda de arrastrar un borde.
+- **Al imprimir** se usa el `width` declarado de cada columna: los anchos del usuario son de pantalla, así una
+  tabla agrandada nunca se sale de la hoja.
+- **Marcado.** La manija es `div.gdy-table-resize-handle`, dentro de la celda del encabezado. Una vez cambiado
+  algún ancho, la grilla (`gdy-table-grid`) lleva `data-resized` y su ancho en `--gdy-table-grid-width`, y cada
+  celda del encabezado su ancho en `--gdy-table-column-width`; mientras el puntero arrastra, el contenedor de
+  filas lleva `data-resizing` (sin selección de texto, cursor de redimensionar). Su línea toma
+  `--gdy-table-resize-handle-color` (con `--gdy-ring` de respaldo). El doble clic restablece: no ajusta al
+  contenido.
+
+Guardar los anchos en `localStorage`, para que sigan después de recargar:
+
+```tsx
+const STORAGE_KEY = "invoices-column-widths";
+
+const readWidths = (): Record<string, number> => JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "{}");
+
+const [columnWidths, setColumnWidths] = useState(readWidths);
+
+const saveWidths = (widths: Record<string, number>) => {
+  setColumnWidths(widths);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(widths));
+};
+
+<DataTable {...props} resizableColumns columnWidths={columnWidths} onColumnWidthsChange={saveWidths} />;
+```
+
+O en el servidor, por usuario: se cargan con el resto de las preferencias y se guardan en cada aviso. Como el
+aviso llega recién al soltar, no hace falta un debounce:
+
+```tsx
+const { data: preferences } = usePreferences();
+
+<DataTable
+  {...props}
+  resizableColumns
+  columnWidths={preferences.invoiceColumnWidths}
+  onColumnWidthsChange={(widths) => savePreferences({ invoiceColumnWidths: widths })}
+/>;
+```
+
+Guardá `columnWidths` en un estado o en un objeto estable: un objeto nuevo en línea en cada render volvería a
+poner los anchos cada vez.
+
+Antes, una columna redimensionable llevaba una manija en cada `header` y listeners propios en el documento:
+
+```diff
+- const onMouseDown = (event) => {
+-   document.addEventListener("mousemove", resize);
+-   document.addEventListener("mouseup", stopResizing);
+- };
+- { id: "notes", width, cell: ..., headerContent: <ResizableTitle onMouseDown={onMouseDown} /> }
++ <DataTable resizableColumns columnWidths={widths} onColumnWidthsChange={setWidths} ... />
+```
+
+### Ayuda y contenido en el encabezado
+
+Dos campos de columna enriquecen el encabezado sin tocar `header`:
+
+- **`headerTooltip`** agrega un "?" junto al título (`button.gdy-table-head-help`, con el nombre "Ayuda sobre
+  Monto" que arma `labels.columnHelp`). Su texto se abre en un globo con el mouse encima, con el foco del
+  teclado y con un toque o un clic, así que también funciona en el celular; Escape, un toque afuera o un
+  segundo toque lo cierran. El ícono es un botón propio, fuera del disparador del encabezado, así que nunca
+  ordena ni abre el filtro. Los lectores de pantalla además escuchan el texto justo después del título
+  (`aria-describedby` en el disparador), esté abierto o no el globo.
+- **`headerTooltipPlacement`** elige dónde va el ícono: `"before"` (a la izquierda del título), `"after"` (a
+  la derecha del título y de su ícono de orden) o `"edge"` (contra el borde de la celda opuesto al título).
+  Sin él es `"after"`, salvo con un encabezado alineado a la derecha, donde es `"before"` para que el título
+  y su ícono de orden sigan en el borde derecho, como los números de abajo.
+- **`headerContent`** reemplaza el título visible (un ícono más texto, una etiqueta). `header` sigue siendo
+  el nombre accesible del disparador y el texto del selector de agrupado, los menús de filtro, el `title` y
+  el kanban, que solo pueden mostrar texto. Los íconos de orden y de filtro siguen ahí.
+
+```tsx
+const columns: ColumnDefinition<Invoice>[] = [
+  {
+    id: "amount",
+    header: "Monto",
+    accessor: (row) => row.amount,
+    align: "right",
+    headerTooltip: "Suma de los contratos vigentes, en su moneda",
+  },
+  {
+    id: "country",
+    header: "País",
+    accessor: (row) => row.country,
+    headerContent: (
+      <>
+        <Globe size={14} aria-hidden="true" /> País
+      </>
+    ),
+  },
+];
+```
+
+**Por qué `header` sigue siendo texto.** El selector de agrupado, los menús y las tarjetas del kanban lo
+repiten como texto plano; un `ReactNode` libre ahí no tendría qué mostrar. Un `header` más rico está previsto
+para la próxima versión mayor; mientras tanto `headerContent` cubre la parte visible.
+
+Con `printMode` el "?" no se imprime. Sin estos campos el marcado del encabezado es exactamente el de
+antes. El globo lee `--gdy-table-tooltip-bg`, `--gdy-table-tooltip-fg` y `--gdy-table-tooltip-z`, y el
+ícono `--gdy-table-head-help-fg`.
+
+Antes, el "?" tenía que vivir dentro de `header`, que solo acepta texto, así que las apps lo agregaban con CSS:
+
+```diff
+- .my-table th:nth-child(4) .gdy-table-head-label::after { content: " ⓘ"; }
++ { id: "amount", header: "Monto", accessor: (row) => row.amount, headerTooltip: "Suma de los contratos vigentes" }
+```
+
 ### Layout y scroll
 
 Por defecto, el contenedor de filas (`gdy-table-wrap`) hace scroll horizontal y crece con su contenido,
@@ -752,6 +1227,16 @@ Claves propias de la tabla (`DataTableLabels`):
 | `inlineSelectPlaceholder` | `"Seleccionar..."` | Celda editable sin valor | — |
 | `groupNone` | `"Ninguno"` | Opción "sin agrupar" | `groupNoneLabel` |
 | `groupEmptyValue` | `"Sin valor"` | Grupo de las filas sin valor | `groupEmptyValueLabel` |
+| `selectRow` | `"Seleccionar fila"` | Nombre accesible de la casilla de una fila | — |
+| `selectPageRows` | `"Seleccionar las filas de la página"` | Nombre accesible de la casilla del encabezado (`"page"`) | — |
+| `selectFilteredRows` | `"Seleccionar todas las filas filtradas"` | Nombre accesible de la casilla del encabezado (`"filtered"`) | — |
+| `printSelected` | `"Sí"` | Se imprime en una fila seleccionada (`printMode`) | — |
+| `printNotSelected` | `"No"` | Se imprime en una fila no seleccionada (`printMode`) | — |
+| `printSelectionHeader` | `"Seleccionada"` | Se imprime en el encabezado de la columna de casillas (`printMode`) | — |
+| `columnHelp(header)` | `"Ayuda sobre Monto"` | Nombre accesible del ícono de ayuda del encabezado (`headerTooltip`) | — |
+| `expandRow` | `"Mostrar detalle"` | Nombre accesible del botón de expandir de una fila (`renderExpandedRow`) | — |
+| `resizeColumn(header)` | `"Cambiar el ancho de Empresa"` | Nombre accesible de la manija para cambiar el ancho de una columna (`resizableColumns`) | — |
+| `resizeColumnValue(width)` | `"220 px"` | Valor que lee el lector de pantalla en esa manija, su ancho (`aria-valuetext`) | — |
 
 ## Eventos
 
@@ -852,11 +1337,18 @@ mismo selector.
 
 | Gancho | Elemento | Atributos de estado |
 |---|---|---|
-| `gdy-table-head-cell` | Celda de encabezado (`th`). | `data-column-id` con el `id` de su columna; `data-align` con `headerAlign` o `align`. |
+| `gdy-table-head-cell` | Celda de encabezado (`th`). | `data-column-id` con el `id` de su columna; `data-align` con `headerAlign` o `align`; `data-hidden-by="priority"` (también en `gdy-table-cell` y `gdy-table-foot-cell`) mientras `responsiveColumns` la oculta. |
 | `gdy-table-head-trigger` | Botón dentro de la celda de encabezado que abre el menú de filtro o alterna el orden. | `data-filtered` mientras la columna tiene un filtro activo; `data-align` igual que su celda. |
-| `gdy-table-row` | Fila de datos (`tr`). | `data-row-id` con el id de la fila; `data-clickable` cuando se pasa `onRowClick` o `getRowHref`; `data-href` con el enlace; más lo que devuelve `getRowAttributes`. Las filas enfocables toman `:focus-visible`. |
+| `gdy-table-row` | Fila de datos (`tr`). | `data-row-id` con el id de la fila; `data-clickable` cuando se pasa `onRowClick` o `getRowHref`; `data-href` con el enlace; con `rowSelection`, `data-selected` y `aria-selected`; más lo que devuelve `getRowAttributes`. Las filas enfocables toman `:focus-visible`. |
+| `gdy-table-select` | Casilla de la columna de selección (`rowSelection`); `gdy-table-select-indicator` contiene su tilde o guion. | `data-state` (`checked`, `unchecked`, `indeterminate`), `aria-checked`, `disabled`. |
+| `gdy-table-print-value` | Texto que imprime una celda en lugar de su contenido con `printMode` (selección, `printValue`). Oculto en pantalla. | — |
+| `gdy-table-head-help` | Ícono de ayuda de un encabezado con `headerTooltip`; su globo es `div.gdy-table-head-tooltip`, en un portal. `gdy-table-head-inner` lleva `data-help-placement`. | `data-state` (`closed`, `delayed-open`, `instant-open`). |
 | `gdy-table-cell` | Celda de datos (`td`); `gdy-table-cell-content` envuelve su contenido. | `data-column-id` con el `id` de su columna; `data-align` con `align`. `gdy-table-cell-content` lleva `data-overflow` con `overflow`. |
 | `gdy-table-actions-cell` | Caja del botón ⋯ en la columna de acciones; `gdy-table-actions-head-label` es el texto de su encabezado (`rowActions.columnLabel`). | `data-align` cuando se pasa `rowActions.align` o `columnLabel`. |
+| `gdy-table-expand-toggle` | Botón de expandir de una fila (`renderExpandedRow`), con su chevron `gdy-table-expand-chevron`. | `aria-expanded`; `aria-controls` mientras está abierto. |
+| `gdy-table-resize-handle` | Manija para cambiar el ancho, en el encabezado de una columna de datos (`resizableColumns`); oculta sin puntero fino. | `role="separator"`, `aria-valuenow`. Con algún ancho cambiado, la grilla lleva `data-resized` y `--gdy-table-grid-width`, y cada celda del encabezado `--gdy-table-column-width`; `data-resizing` en `gdy-table-wrap` mientras se arrastra. |
+| `gdy-table-expanded-row` | Fila de detalle debajo de una fila abierta; su única celda es `gdy-table-expanded-cell`, que contiene `gdy-table-expanded-panel` (la caja animada), `gdy-table-expanded-content` y `gdy-table-expanded-body` (el margen interno). | `data-state` (`open`, `closed`) en el panel; `data-expanded` en la `gdy-table-row` abierta. |
+| `gdy-table-wrap` | Contenedor de desplazamiento de las filas. | Con columnas fijas, `data-has-pinned`, más `data-scrolled-start`, `data-scrolled-end` y `data-pinning-suspended` mientras aplican. Cada celda de una columna fija lleva `data-pinned` (`left`, `right`), `--gdy-table-pin-offset` y, en la última de su lado, `data-pinned-edge`. |
 | `gdy-table-group-row` | Fila de grupo; `gdy-table-group-cell` es su única celda. | — |
 | `gdy-table-group-toggle` | Botón de plegado de un grupo, con `gdy-table-group-label` y `gdy-table-group-count`. | `aria-expanded`. |
 | `gdy-table-empty-row` | Fila que aparece cuando ninguna fila coincide; su celda es `gdy-table-cell gdy-empty`. | — |
@@ -873,7 +1365,27 @@ estos tokens, cada uno con un fallback a un token base, así que basta con decla
 | `--gdy-table-border` | `--gdy-border` | Bordes de las celdas, de las celdas de grupo y del pie. |
 | `--gdy-table-row-hover-bg` | `--gdy-muted` | Hover de las filas clicables. |
 | `--gdy-table-row-focus-ring` | `--gdy-ring` | Anillo de foco de teclado de una fila enfocable. |
+| `--gdy-table-row-selected-bg` | `--gdy-accent` | Fondo de una fila seleccionada (`rowSelection`). |
+| `--gdy-table-select-border` | `--gdy-muted-foreground` | Borde de una casilla sin marcar. |
+| `--gdy-table-select-bg` | `--gdy-background` | Relleno de una casilla sin marcar. |
+| `--gdy-table-select-checked-bg` | `--gdy-primary` | Relleno y borde de una casilla marcada o parcial. |
+| `--gdy-table-select-check-fg` | `--gdy-primary-foreground` | Tilde y guion. |
+| `--gdy-table-select-focus-ring` | `--gdy-ring` | Anillo de foco de teclado de una casilla. |
+| `--gdy-table-head-help-fg` | `--gdy-muted-foreground` | Ícono de ayuda del encabezado. |
+| `--gdy-table-tooltip-bg` | `--gdy-foreground` | Fondo del globo del encabezado. |
+| `--gdy-table-tooltip-fg` | `--gdy-background` | Texto del globo del encabezado. |
+| `--gdy-table-tooltip-z` | `60` | Apilado del globo, sobre el encabezado fijo y los menús. |
 | `--gdy-table-group-bg` | `--gdy-accent` | Fondo de la fila de grupo. |
+| `--gdy-table-expanded-bg` | `--gdy-background` | Fondo del detalle de una fila. |
+| `--gdy-table-expanded-padding` | `12px 14px` | Margen interno del detalle de una fila. |
+| `--gdy-table-expand-focus-ring` | `--gdy-ring` | Anillo de foco de teclado del botón de expandir. |
+| `--gdy-table-expand-duration` | `200ms` | Apertura y cierre de un detalle, y el giro de su chevron. |
+| `--gdy-table-pinned-bg` | `--gdy-card` | Superficie de una celda fija del cuerpo. |
+| `--gdy-table-pinned-shadow` | 14% de `--gdy-foreground` | Sombra después de la última celda fija de un lado. |
+| `--gdy-table-pinned-z` | `1` | Apilado de las celdas fijas. |
+| `--gdy-table-pinned-corner-z` | `3` | Apilado de las celdas fijas del encabezado y de los totales, sobre el encabezado fijo (2). |
+| `--gdy-table-open-menu-z` | `4` | Apilado de una celda del encabezado con su panel de filtro abierto, sobre las esquinas. |
+| `--gdy-table-resize-handle-color` | `--gdy-ring` | Línea de la manija para cambiar el ancho, con el mouse encima, con foco y al arrastrar. |
 
 ```css
 :root {
@@ -970,6 +1482,19 @@ Props propias de `DataTableProps<TData>`, en el orden del código fuente.
 | `normalizeRow` | `(row: unknown, index: number) => TData` | — | Convierte cada registro del envoltorio en `TData`. |
 | `getRowId` | `(row: TData, index: number) => string` | — | Clave estable de la fila. Sin ella, las filas se identifican por índice. |
 | `features` | `DataTableFeatures` | todos `true` | Flags de capacidades. |
+| `rowSelection` | `RowSelectionConfig<TData>` | — | Columna de casillas e ids seleccionados. Exige `getRowId`. Ver [Selección de filas](#selección-de-filas). |
+| `columnVisibility` | `Record<string, boolean>` | — | Columnas que la app quita (`false`) o fija (`true`). Ver [Visibilidad de columnas](#visibilidad-de-columnas). |
+| `onColumnVisibilityChange` | `(visibility: Record<string, boolean>, details: ColumnVisibilityDetails) => void` | — | Columnas en pantalla, al montar y en cada cambio. |
+| `renderExpandedRow` | `(row: TData) => ReactNode` | — | Botón de expandir y detalle de ancho completo. Requiere `getRowId`. Ver [Filas expandibles](#filas-expandibles). |
+| `expandedRowIds` | `string[]` | — | Filas abiertas controladas. |
+| `defaultExpandedRowIds` | `string[]` | `[]` | Filas abiertas al montar. |
+| `onExpandedChange` | `(expandedRowIds: string[]) => void` | — | Apertura o cierre que hace el usuario. |
+| `canExpandRow` | `(row: TData) => boolean` | — | `false` deja la fila sin botón. |
+| `responsiveColumns` | `boolean` | `false` | Oculta las columnas `hideable` y con `priority` hasta que el resto entra. |
+| `resizableColumns` | `boolean` | `false` | Manijas para cambiar el ancho de las columnas de datos. Ver [Columnas redimensionables](#columnas-redimensionables). |
+| `columnWidths` | `Record<string, number>` | — | Anchos de columna controlados, en px. |
+| `defaultColumnWidths` | `Record<string, number>` | — | Anchos de columna iniciales, no controlados. |
+| `onColumnWidthsChange` | `(columnWidths) => void` | — | Se emite al soltar, con las columnas que el usuario cambió. |
 | `onRowClick` | `(row: TData, event: RowClickEvent) => void` | — | Callback del clic en fila; marca las filas con `data-clickable`. |
 | `getRowHref` | `(row: TData) => string \| undefined` | — | Convierte la fila en un enlace (`data-href`). |
 | `focusableRows` | `boolean` | `false` (`true` con `getRowHref`) | Las filas reciben el foco con Tab y se disparan con Enter. |
@@ -1024,7 +1549,7 @@ Todos se exportan desde `gridory/table` y `gridory`.
 - `DataTableLabels`: todos los textos de la tabla, la forma de `labels` ([Textos e idioma](#textos-e-idioma)).
   Extiende `DataViewLabels`, los textos que la tabla comparte con el kanban.
 - `DataTableFeatures`: los flags booleanos opcionales de `features` (`search`, `sorting`, `filtering`,
-  `pagination`, `rowActions`, `createButton`, `grouping`).
+  `pagination`, `rowActions`, `createButton`, `grouping`, `toolbar`).
 - `GroupHeader`: `{ value: string; label: string; count: number }`, una fila de grupo.
 - `RowGroupingResult<TData>`: `{ flatRows: TData[]; headers: Map<number, GroupHeader> }`, las filas
   agrupadas, con cada encabezado indexado por el índice de su primera fila.
@@ -1041,3 +1566,11 @@ Todos se exportan desde `gridory/table` y `gridory`.
 - `RowAttributes`: el objeto que devuelve `getRowAttributes`, solo con nombres `data-*` y `aria-*` y
   valores `string | number | boolean | undefined`.
 - `DataTableClassNames`: las clases opcionales por parte de `classNames`.
+- `RowSelectionConfig<TData>`: la forma de `rowSelection` ([Selección de filas](#selección-de-filas)).
+- `SelectAllScope`: `"page" | "filtered"`, lo que marca la casilla del encabezado.
+- `ColumnVisibilityDetails`: `{ hiddenByPriority: string[] }`, el segundo argumento de `onColumnVisibilityChange`.
+- `HeaderTooltipPlacement`: `"before" | "after" | "edge"`, el valor de `headerTooltipPlacement`.
+- `ColumnPin`: `"left" | "right"`, el valor del `pin` de una columna.
+- `PinnedColumnWidthError` (una clase, también exportada): se lanza cuando una columna tiene `pin` y no `width`.
+- `MissingRowIdError` (una clase, también exportada): se lanza cuando `rowSelection` o `renderExpandedRow` no
+  tienen `getRowId`; su mensaje nombra la prop.

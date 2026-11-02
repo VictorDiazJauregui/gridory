@@ -9,6 +9,7 @@ import { findRequiredElement } from "./browser/elements";
 import { applyScreen, applyTheme } from "./browser/environment";
 import type { ScreenName, Theme } from "./browser/environment";
 import { measureBox, readStyle } from "./browser/measure";
+import { getOptionByName } from "./option-queries";
 
 interface Scenario {
   theme: Theme;
@@ -196,7 +197,7 @@ test.each(SCENARIOS)("with Uruguay chosen, its option opens inside the visible a
   await waitUntilPanelRests();
   const list = screen.getByRole("listbox", { name: "País" });
   expect(list.scrollTop).toBeGreaterThan(0);
-  await expect.poll(() => isWithinVertically(screen.getByRole("option", { name: "Uruguay" }), list)).toBe(true);
+  await expect.poll(() => isWithinVertically(getOptionByName("Uruguay", list), list)).toBe(true);
 });
 
 test.each(SCENARIOS)("the list scrolls with a thin scrollbar in the token color ($theme, $screen)", async (scenario) => {

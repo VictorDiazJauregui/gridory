@@ -1,4 +1,5 @@
 import { GroupToggleButton } from "./GroupToggleButton";
+import { countRenderedColumns } from "../columns/rendered-columns";
 import type { GroupHeader } from "../types";
 import type { TableModelProps } from "../model/use-table-core";
 
@@ -13,7 +14,7 @@ export const TableGroupRow = <TData,>({
   const { collapsedGroups, toggleGroup } = model.state;
   return (
     <tr className="gdy-table-group-row">
-      <td className="gdy-table-group-cell" colSpan={model.table.options.columns.length}>
+      <td className="gdy-table-group-cell" colSpan={countRenderedColumns(model)}>
         <GroupToggleButton
           header={header}
           collapsed={collapsedGroups.has(header.value)}

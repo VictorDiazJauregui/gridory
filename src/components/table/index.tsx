@@ -12,6 +12,10 @@ import { buildToolbarProps } from "./toolbar-props";
 import type { DataTableProps } from "./types";
 import { useTableCore, type TableModel } from "./model/use-table-core";
 import { useTableOptions } from "./model/use-table-options";
+import { useResponsiveColumns } from "./columns/use-responsive-columns";
+import { useCloseHiddenFilterMenu, useColumnVisibilityReport } from "./columns/use-column-visibility-report";
+import { resolveTablePinnedColumns } from "./columns/table-pinned-columns";
+import { useColumnWidths } from "./resize/use-column-widths";
 
 const resolveRootClassName = <TData,>(settings: TableSettings<TData>) => {
   const showStickyHeader =
@@ -27,19 +31,32 @@ const resolveRootClassName = <TData,>(settings: TableSettings<TData>) => {
   );
 };
 
-export const DataTable = <TData,>(props: DataTableProps<TData>) => {
+const useTableModel = <TData,>(props: DataTableProps<TData>): TableModel<TData> => {
   const core = useTableCore(props);
   const table = useReactTable(useTableOptions(core));
-  const model: TableModel<TData> = { ...core, table };
+  const { settings, paging } = core;
+  const columnWidths = useColumnWidths({ settings, table, wrapRef: paging.wrapRef });
+  const committedWidths = columnWidths?.committedWidths ?? null;
+  const hiddenByPriority = useResponsiveColumns({ settings, table, wrapRef: paging.wrapRef, committedWidths });
+  const pinnedColumns = resolveTablePinnedColumns(settings, table, columnWidths?.layoutWidths ?? null);
+  const model = { ...core, table, hiddenByPriority, pinnedColumns, columnWidths };
+  useColumnVisibilityReport(model);
+  useCloseHiddenFilterMenu(model);
+  return model;
+};
+
+export const DataTable = <TData,>(props: DataTableProps<TData>) => {
+  const model = useTableModel(props);
+  const { settings } = model;
   return (
     <div
-      className={resolveRootClassName(core.settings)}
-      style={resolveRootStyle(core.settings)}
-      data-print-mode={core.settings.printMode}
-      {...buildLoadingRootAttributes(core.settings.loading)}
+      className={resolveRootClassName(settings)}
+      style={resolveRootStyle(settings)}
+      data-print-mode={settings.printMode}
+      {...buildLoadingRootAttributes(settings.loading)}
     >
       <div className="gdy-scope gdy-card">
-        <Toolbar {...buildToolbarProps(model)} />
+        {settings.flags.toolbar && <Toolbar {...buildToolbarProps(model)} />}
         <TableScrollArea model={model} />
         <TablePagination {...buildPaginationProps(model)} />
       </div>
@@ -59,14 +76,19 @@ export type {
   ColumnFiltersState,
   ColumnFooterContext,
   ColumnOverflow,
+  ColumnPin,
   DataTableClassNames,
   DataTableProps,
   FilterOption,
   GroupHeader,
+  HeaderTooltipPlacement,
   RowActions,
   RowAttributes,
   RowClickEvent,
   RowGroupingResult,
+  ColumnVisibilityDetails,
+  RowSelectionConfig,
+  SelectAllScope,
   DataTableFeatures,
   DataTableLabels,
   DataInput,
@@ -75,6 +97,8 @@ export type {
   VisibleRowsState,
 } from "./types";
 
+export { MissingRowIdError } from "./selection/use-row-selection";
+export { PinnedColumnWidthError } from "./columns/pinned-columns";
 export type {
   RowAction,
   RowActionEntry,

@@ -1,6 +1,6 @@
 import type { MenuItem, RowActions } from "../../table";
 import type { MockCompanyRow } from "../company/company-rows";
-import { replaceRow, type MockRowsUpdater } from "../company/row-updates";
+import { removeRow, replaceRow, type MockRowsUpdater } from "../company/row-updates";
 import { buildStatusSubmenu } from "../company/status-submenu";
 import { TABLE_ROW_ACTIONS } from "./table-config";
 
@@ -19,6 +19,7 @@ const withStatusSubmenu = (setRows: MockRowsUpdater): MenuItem<MockCompanyRow>[]
 export const buildActionsColumnProps = (setRows: MockRowsUpdater): RowActions<MockCompanyRow> => ({
   ...TABLE_ROW_ACTIONS,
   menuActions: withStatusSubmenu(setRows),
+  onRemove: (row) => removeRow(setRows, row.id),
   columnLabel: "Acciones",
   align: readActionsAlign(),
   triggerLabel: "Acciones de la empresa",

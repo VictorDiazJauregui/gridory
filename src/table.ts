@@ -13,8 +13,13 @@ export type {
   RowAttributes,
   RowClickEvent,
   RowGroupingResult,
+  ColumnVisibilityDetails,
+  RowSelectionConfig,
+  SelectAllScope,
   VisibleRowsState,
 } from "./components/table/types";
+export { MissingRowIdError } from "./components/table/selection/use-row-selection";
+export { PinnedColumnWidthError } from "./components/table/columns/pinned-columns";
 
 export type {
   AiButtonConfig,
@@ -25,11 +30,13 @@ export type {
   ColumnDefinition,
   ColumnFooterContext,
   ColumnOverflow,
+  ColumnPin,
   DataInput,
   DateFilterOp,
   DateFilterState,
   DateInputFormat,
   FilterOption,
+  HeaderTooltipPlacement,
   Primitive,
   RowActions,
   SortDirection,

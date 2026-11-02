@@ -30,10 +30,11 @@ test("shows a placeholder while a pasted image uploads and swaps it for the imag
 });
 
 test("removes the placeholder when the upload fails", async () => {
-  const rejectLater = () => new Promise<{ url: string }>((_, reject) => setTimeout(() => reject(new Error("rejected")), 300));
-  const { textbox, readValue } = await renderWithUpload(rejectLater);
+  let rejectUpload: (reason: Error) => void = () => undefined;
+  const { textbox, readValue } = await renderWithUpload(() => new Promise((_, reject) => (rejectUpload = reject)));
   pasteImage(textbox);
   await vi.waitFor(() => expect(readValue()).toContain("Subiendo imagen"), { timeout: 3000 });
+  rejectUpload(new Error("rejected"));
   await vi.waitFor(() => expect(readValue()).not.toContain("Subiendo imagen"), { timeout: 3000 });
   expect(readValue()).not.toContain("captura");
 });
