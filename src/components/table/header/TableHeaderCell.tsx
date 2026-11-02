@@ -1,10 +1,12 @@
+import type { CSSProperties } from "react";
 import type { Header } from "@tanstack/react-table";
 import { cn } from "../../../lib/cn";
 import { ACTIONS_COLUMN_ID, EXPAND_COLUMN_ID, SELECT_COLUMN_ID } from "../columns/internal-columns";
 import { SelectHeaderContent } from "../selection/RowSelectCell";
 import { buildCellAttributes, readColumnAlignment, type CellAttributes } from "../model/cell-attributes";
 import { TableHeaderInner } from "./TableHeaderInner";
-import type { TableColumnProps, TableModelProps } from "../model/use-table-core";
+import { ColumnResizeHandle } from "../resize/ColumnResizeHandle";
+import type { TableColumnProps, TableModel, TableModelProps } from "../model/use-table-core";
 import type { ColumnAlign } from "../types";
 
 interface TableHeaderCellProps<TData> extends TableModelProps<TData> {
@@ -46,18 +48,38 @@ interface DataHeaderCellProps<TData> extends TableColumnProps<TData>, Omit<Inter
   align?: ColumnAlign;
 }
 
-const DataHeaderCell = <TData,>({ column, model, className, attributes, align }: DataHeaderCellProps<TData>) => (
-  <th className={className} {...attributes} style={{ width: column.width, ...attributes.style }}>
-    <TableHeaderInner column={column} model={model} align={align} />
-  </th>
-);
+const DataHeaderCell = <TData,>({ column, model, className, attributes, align }: DataHeaderCellProps<TData>) => {
+  const { columnWidths } = model;
+  const inlineWidth = columnWidths?.layoutWidths ? undefined : column.width;
+  return (
+    <th className={className} {...attributes} style={{ width: inlineWidth, ...attributes.style }}>
+      <TableHeaderInner column={column} model={model} align={align} />
+      {columnWidths && column.resizable !== false && (
+        <ColumnResizeHandle column={column} model={model} widths={columnWidths} />
+      )}
+    </th>
+  );
+};
+
+// In the resized layout each header carries its width as a custom property, applied by a screen-only rule: on
+// paper the declared `width` stands, so a widened table never runs off the page.
+const withLayoutWidth = <TData,>(attributes: CellAttributes, model: TableModel<TData>, header: Header<TData, unknown>) => {
+  const layoutWidth = model.columnWidths?.layoutWidths?.get(header.column.id);
+  if (layoutWidth === undefined) return attributes;
+  const declaredWidth = model.settings.columns.find((column) => column.id === header.column.id)?.width;
+  const widthStyle = {
+    "--gdy-table-column-width": `${layoutWidth}px`,
+    "--gdy-table-column-print-width": declaredWidth === undefined ? undefined : `${declaredWidth}px`,
+  };
+  return { ...attributes, style: { ...attributes.style, ...widthStyle } as CSSProperties };
+};
 
 export const TableHeaderCell = <TData,>({
   header,
   model,
 }: TableHeaderCellProps<TData>) => {
   const align = readColumnAlignment(header.column.columnDef).header;
-  const attributes = buildCellAttributes(header.column.id, align, model);
+  const attributes = withLayoutWidth(buildCellAttributes(header.column.id, align, model), model, header);
   const className = cn("gdy-table-head-cell", model.settings.classNames?.headCell);
   if (header.column.id === EXPAND_COLUMN_ID) return <th className={className} {...attributes} />;
   if (header.column.id === SELECT_COLUMN_ID) {

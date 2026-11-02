@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
 import type { PinnedColumns } from "../columns/pinned-columns";
-import type { ColumnAlign, RowActions } from "../types";
+import type { ColumnAlign, ColumnPin, RowActions } from "../types";
 
 /** What the table decided about its columns on screen: the ones the priority hid and the pinned ones. */
 export interface ColumnLayout {
@@ -11,7 +11,13 @@ export interface ColumnLayout {
 
 // The offset travels as a custom property, not as `left`/`right`: the sticky rules (and printing, which drops
 // them) decide whether it applies.
-const buildPinAttributes = (columnId: string, pinnedColumns: PinnedColumns | null | undefined) => {
+interface PinAttributes {
+  "data-pinned"?: ColumnPin;
+  "data-pinned-edge"?: true;
+  style?: CSSProperties;
+}
+
+const buildPinAttributes = (columnId: string, pinnedColumns: PinnedColumns | null | undefined): PinAttributes => {
   const placement = pinnedColumns?.placements.get(columnId);
   if (!placement) return {};
   return {
