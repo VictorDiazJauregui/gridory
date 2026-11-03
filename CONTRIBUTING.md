@@ -37,6 +37,11 @@ copy `.env.example` to `.env.local`, set `VITE_AI_API_KEY` and restart `npm run 
 values target Gemini through a Vite proxy that avoids CORS. Without a key the demo renders, but it
 makes no calls. The demo shell uses Tailwind for itself only; none of it ships.
 
+`package.json` forces `minimatch` to `^11.0.4` with `overrides`: eslint 9 and typescript-eslint still bring
+older releases with a known denial-of-service advisory (GHSA-g3hv-75wg-m249). The override applies only to this
+repository, never to the apps that install Gridory. Remove it once both depend on `minimatch` 11 themselves and
+`npm audit` stays clean without it.
+
 ## Scripts
 
 | Command | What it does |
@@ -126,6 +131,10 @@ fails without it. New features need at least a smoke test of the main path.
   to check styles, sizes and positions: focus rings, borders, heights, where a panel opens. jsdom has
   no layout engine, so these checks cannot run there. Keep them few and focused, because they are
   slower.
+
+`src/test/` is type checked with `tsconfig.test.json`, which adds the Node types the tests use (`node:fs`,
+`process`). The library code is checked with `tsconfig.app.json`, without them, so it cannot reach for Node by
+accident.
 
 The helpers in `src/test/browser/` measure boxes and computed styles, and switch the theme and the
 screen size (desktop, iPhone 14 Pro and Pixel 7).

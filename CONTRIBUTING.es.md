@@ -37,6 +37,11 @@ proveedor real, copia `.env.example` a `.env.local`, completa `VITE_AI_API_KEY` 
 valores de ejemplo apuntan a Gemini a través de un proxy de Vite que evita CORS. Sin key la demo se
 muestra, pero no hace llamadas. La demo usa Tailwind solo para sí misma; nada de eso se publica.
 
+`package.json` fuerza `minimatch` a `^11.0.4` con `overrides`: eslint 9 y typescript-eslint todavía traen
+versiones anteriores con un aviso conocido de denegación de servicio (GHSA-g3hv-75wg-m249). El override rige solo
+en este repositorio, nunca en las apps que instalan Gridory. Se quita cuando los dos dependan de `minimatch` 11 por
+su cuenta y `npm audit` siga limpio sin él.
+
 ## Scripts
 
 | Comando | Qué hace |
@@ -130,6 +135,10 @@ que falle sin él. Las features nuevas necesitan al menos un smoke test del cami
   estilo reales, para revisar estilos, medidas y posiciones: el foco, los bordes, los altos, hacia
   dónde abre un panel. jsdom no calcula el layout, así que estas pruebas no pueden correr ahí. Que
   sean pocas y enfocadas, porque son más lentas.
+
+`src/test/` se revisa con `tsconfig.test.json`, que suma los tipos de Node que usan los tests (`node:fs`,
+`process`). El código de la librería se revisa con `tsconfig.app.json`, sin ellos, para que no pueda usar Node por
+accidente.
 
 Los helpers de `src/test/browser/` miden cajas y estilos computados, y cambian el tema y el tamaño de
 pantalla (escritorio, iPhone 14 Pro y Pixel 7).
