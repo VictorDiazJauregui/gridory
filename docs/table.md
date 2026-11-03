@@ -972,7 +972,11 @@ const [columnWidths, setColumnWidths] = useState<Record<string, number>>({});
   column stops growing when the pinned columns reach half of the container, the point where they would let
   go. A right-pinned column grows leftward, so its handle sits on its left edge.
 - **Priority.** With `responsiveColumns`, a resized column counts its new width, once released: if the rest
-  no longer fits, the lowest priority hides then, not in the middle of the drag.
+  no longer fits, the lowest priority hides then, not in the middle of the drag. The column you just resized
+  never hides, so its handle keeps the focus: the next lowest priority hides instead, also when the container
+  narrows later. It stays protected until you resize another column or reset it (double click), and only for
+  the visit, not with the saved widths. When it is the only hideable column, nothing hides and the table
+  scrolls sideways.
 - **Phones.** The handle only shows on a device with a fine pointer (`any-pointer: fine`: a mouse or a
   trackpad). A phone has no comfortable way to drag an edge.
 - **Printing** keeps the declared `width` of each column: the user's widths are for the screen, so a widened

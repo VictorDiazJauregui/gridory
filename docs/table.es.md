@@ -988,7 +988,11 @@ const [columnWidths, setColumnWidths] = useState<Record<string, number>>({});
   Una fija deja de crecer cuando las fijas llegan a la mitad del contenedor, el punto en que se soltarían. Una
   fija a la derecha crece hacia la izquierda, por eso su manija está en su borde izquierdo.
 - **Prioridad.** Con `responsiveColumns`, una columna cambiada cuenta su ancho nuevo, una vez soltada: si el
-  resto ya no entra, la de menor prioridad se oculta en ese momento, no en medio del arrastre.
+  resto ya no entra, la de menor prioridad se oculta en ese momento, no en medio del arrastre. La columna que
+  acabas de cambiar nunca se oculta, así su manija conserva el foco: se oculta la siguiente de menor prioridad,
+  también si después el contenedor se angosta. Queda protegida hasta que cambies otra columna o la restablezcas
+  (doble clic), y solo durante la visita, no con los anchos guardados. Si es la única que se puede ocultar, no se
+  oculta nada y la tabla se desplaza de costado.
 - **Celulares.** La manija solo se muestra en un equipo con puntero fino (`any-pointer: fine`: mouse o
   trackpad). Un celular no tiene una forma cómoda de arrastrar un borde.
 - **Al imprimir** se usa el `width` declarado de cada columna: los anchos del usuario son de pantalla, así una
