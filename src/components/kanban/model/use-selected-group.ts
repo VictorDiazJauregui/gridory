@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import type { KanbanBoardProps } from "../types";
 
 export const useSelectedGroup = <TData>({
@@ -7,13 +7,9 @@ export const useSelectedGroup = <TData>({
   onGroupChange,
 }: KanbanBoardProps<TData>) => {
   const [selectedGroupId, setSelectedGroupId] = useState(defaultGroupId);
-  useEffect(() => {
-    if (groups.some((group) => group.id === selectedGroupId)) return;
-    // The selection must survive a `groups` swap: resetting it here keeps the
-    // effect order and timing of the original board.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setSelectedGroupId(groups[0].id);
-  }, [groups, selectedGroupId]);
+  // A `groups` swap that drops the chosen group falls back to the first one in the same render, without
+  // reporting it: only the user's choice reaches onGroupChange.
+  if (!groups.some((group) => group.id === selectedGroupId)) setSelectedGroupId(groups[0].id);
   const selectedGroup = useMemo(
     () => groups.find((group) => group.id === selectedGroupId) ?? groups[0],
     [groups, selectedGroupId],
