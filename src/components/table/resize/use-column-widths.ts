@@ -28,6 +28,8 @@ export interface ColumnWidthsModel {
   /** The same without the width being resized: what the priority counts, so no column hides mid-drag. */
   committedWidths: ReadonlyMap<string, number> | null;
   isPointerResizing: boolean;
+  /** The column whose width the user set last, until another one is set or it is reset: the priority skips it. */
+  resizedColumnId: string | null;
   readWidth: (columnId: string) => number;
   readLimits: (columnId: string) => WidthLimits;
   freeze: () => void;
@@ -51,6 +53,8 @@ interface ColumnWidthsState<TData> extends ColumnWidthsInput<TData> {
   setMeasuredWidths: Dispatch<SetStateAction<ColumnWidthMap | null>>;
   draft: ResizeDraft | null;
   setDraft: Dispatch<SetStateAction<ResizeDraft | null>>;
+  resizedColumnId: string | null;
+  setResizedColumnId: Dispatch<SetStateAction<string | null>>;
 }
 
 const NO_WIDTHS: ColumnWidthMap = {};
@@ -144,10 +148,12 @@ const buildWidthActions = <TData,>(state: ColumnWidthsState<TData>, isResized: b
   preview: (draft: ResizeDraft) => state.setDraft(draft),
   commit: (columnId: string, width: number) => {
     state.setDraft(null);
+    state.setResizedColumnId(columnId);
     state.setUserWidths((current) => withColumnWidth(current, columnId, width));
   },
   reset: (columnId: string) => {
     state.setDraft(null);
+    state.setResizedColumnId((current) => (current === columnId ? null : current));
     state.setUserWidths((current) => withoutColumnWidth(current, columnId));
   },
   cancel: () => state.setDraft(null),
@@ -161,6 +167,7 @@ const buildColumnWidthsModel = <TData,>(state: ColumnWidthsState<TData>): Column
     layoutWidths,
     committedWidths: isResized ? buildLayoutWidths(state, sources, null) : null,
     isPointerResizing: state.draft?.source === "pointer",
+    resizedColumnId: state.resizedColumnId,
     ...buildWidthReaders(state, layoutWidths),
     ...buildWidthActions(state, isResized),
   };
@@ -170,12 +177,13 @@ const buildColumnWidthsModel = <TData,>(state: ColumnWidthsState<TData>): Column
 export const useColumnWidths = <TData,>(input: ColumnWidthsInput<TData>): ColumnWidthsModel | null => {
   const [userWidths, setUserWidths] = useUserWidths(input.settings);
   const [draft, setDraft] = useState<ResizeDraft | null>(null);
+  const [resizedColumnId, setResizedColumnId] = useState<string | null>(null);
   const isEnabled = Boolean(input.settings.resizableColumns);
   const columnsKey = input.table.getVisibleLeafColumns().map((column) => column.id).join("|");
   const hasUserLayout = Object.keys(userWidths).length > 0 || draft !== null;
   const [measuredWidths, setMeasuredWidths] = useMeasuredWidths(input, { isEnabled, hasUserLayout, columnsKey });
   if (!isEnabled) return null;
   const definitions = new Map(input.settings.columns.map((column) => [column.id, column]));
-  const state = { ...input, definitions, userWidths, setUserWidths, measuredWidths, setMeasuredWidths, draft, setDraft };
+  const state = { ...input, definitions, userWidths, setUserWidths, measuredWidths, setMeasuredWidths, draft, setDraft, resizedColumnId, setResizedColumnId };
   return buildColumnWidthsModel(state);
 };
