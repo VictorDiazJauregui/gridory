@@ -14,6 +14,8 @@ interface ResponsiveColumnsInput<TData> {
   wrapRef: RefObject<HTMLDivElement | null>;
   /** The user's widths once the columns are resized (`resizableColumns`): they count instead of `width`. */
   committedWidths: ReadonlyMap<string, number> | null;
+  /** The column the user resized last (`resizableColumns`): it never hides, so its handle keeps the focus. */
+  resizedColumnId: string | null;
 }
 
 interface WidthSources {
@@ -55,7 +57,7 @@ const buildPriorityColumns = <TData,>(input: ResponsiveColumnsInput<TData>, meas
     return {
       id: column.id,
       width: resolveColumnWidth(column, definition, sources),
-      hideable: isHideable(definition, settings.columnVisibility),
+      hideable: column.id !== input.resizedColumnId && isHideable(definition, settings.columnVisibility),
       priority: definition?.priority,
     };
   });
@@ -92,10 +94,10 @@ export const useResponsiveColumns = <TData,>(input: ResponsiveColumnsInput<TData
     const next = resolvePriorityHiddenColumns(columns, wrap.clientWidth);
     setHiddenIds((current) => (isSameIdList(current, next) ? current : next));
   });
-  const { wrapRef } = input;
+  const { wrapRef, resizedColumnId } = input;
   useLayoutEffect(() => {
     if (!isEnabled || !wrapRef.current) return;
     return observeContainer(wrapRef.current, () => calculateRef.current());
-  }, [isEnabled, columnsKey, widthsKey, wrapRef, calculateRef]);
+  }, [isEnabled, columnsKey, widthsKey, resizedColumnId, wrapRef, calculateRef]);
   return isEnabled ? hiddenIds : NO_IDS;
 };

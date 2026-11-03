@@ -37,7 +37,8 @@ const useTableModel = <TData,>(props: DataTableProps<TData>): TableModel<TData> 
   const { settings, paging } = core;
   const columnWidths = useColumnWidths({ settings, table, wrapRef: paging.wrapRef });
   const committedWidths = columnWidths?.committedWidths ?? null;
-  const hiddenByPriority = useResponsiveColumns({ settings, table, wrapRef: paging.wrapRef, committedWidths });
+  const resizedColumnId = columnWidths?.resizedColumnId ?? null;
+  const hiddenByPriority = useResponsiveColumns({ settings, table, wrapRef: paging.wrapRef, committedWidths, resizedColumnId });
   const pinnedColumns = resolveTablePinnedColumns(settings, table, columnWidths?.layoutWidths ?? null);
   const model = { ...core, table, hiddenByPriority, pinnedColumns, columnWidths };
   useColumnVisibilityReport(model);
