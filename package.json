@@ -1,6 +1,6 @@
 {
   "name": "gridory",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "React + TypeScript components for data-heavy apps. They emit events; your app keeps the data.",
   "keywords": [
     "react",
