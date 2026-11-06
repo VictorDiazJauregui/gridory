@@ -80,6 +80,8 @@ test("a full English labels object translates the kanban filter menus and the ca
   const calendar = document.querySelector(".gdy-calendar-root") as HTMLElement;
   const weekdays = [...calendar.querySelectorAll(".gdy-calendar-weekday")].map((day) => day.textContent);
   expect(weekdays).toEqual(["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]);
+  expect(within(calendar).getByRole("button", { name: "Previous month" })).toBeInTheDocument();
+  expect(within(calendar).getByRole("combobox", { name: "Choose the year" })).toBeInTheDocument();
 });
 
 test("the card actions use the labels and the row action labels win over them", () => {
