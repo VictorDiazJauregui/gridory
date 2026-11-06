@@ -132,13 +132,15 @@ Gridory usa CSS plano, sin Tailwind ni clases utilitarias.
 Los tests viven en `src/test/` y corren con Vitest y Testing Library. Un fix debería venir con un test
 que falle sin él. Las features nuevas necesitan al menos un smoke test del camino principal.
 
-`npm test` corre dos proyectos:
+`npm test` corre tres proyectos:
 
 - `unit` corre sobre jsdom y cubre comportamiento, ARIA y teclado. La mayoría de los tests van aquí.
 - `browser` corre los archivos `*.browser.test.tsx` en Google Chrome sin ventana, con las hojas de
   estilo reales, para revisar estilos, medidas y posiciones: el foco, los bordes, los altos, hacia
   dónde abre un panel. jsdom no calcula el layout, así que estas pruebas no pueden correr ahí. Que
   sean pocas y enfocadas, porque son más lentas.
+- `server` corre los archivos `*.server.test.tsx` en Node, sin `window` ni `document`, como dibujan Next o
+  `renderToString`, para comprobar que un componente se dibuja en un servidor.
 
 `src/test/` se revisa con `tsconfig.test.json`, que suma los tipos de Node que usan los tests (`node:fs`,
 `process`). El código de la librería se revisa con `tsconfig.app.json`, sin ellos, para que no pueda usar Node por
