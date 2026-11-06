@@ -24,6 +24,10 @@ before your own CSS. Tailwind is not required.
 import "gridory/styles.css";
 ```
 
+To load only the modules you use, import `gridory/base.css` and then their sheets, such as
+`gridory/table.css`, instead of `styles.css` (see
+[Per-module stylesheets](docs/theming.md#per-module-stylesheets)).
+
 The built-in UI texts are in Spanish. Every one of them can be replaced through props.
 
 The bundled TypeScript declarations compile with `skipLibCheck: false` and
@@ -62,6 +66,7 @@ the details.
 |---|---|---|
 | `DataTable`: sorting, filters, pagination, grouping, inline editing and server-side mode. | `gridory/table` | [Table](docs/table.md) |
 | `KanbanBoard`: the same data as cards, with drag and drop between columns. | `gridory/kanban` | [Kanban](docs/kanban.md) |
+| `CardGrid`: the same data as a responsive grid of cards, with the table's search, filters and pagination. | `gridory/card-grid` | [Card grid](docs/card-grid.md) |
 | Toolbar, search, filters and row actions shared by both views. | `gridory/table`, `gridory/kanban` | [Toolbar](docs/toolbar.md) |
 
 ### AI

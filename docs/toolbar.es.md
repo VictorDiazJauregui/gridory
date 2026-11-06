@@ -182,6 +182,21 @@ fecha activo.
   con `labels`: ver [table.es.md](table.es.md#textos-e-idioma) y
   [kanban.es.md](kanban.es.md#textos-e-idioma).
 
+#### Cuándo se descarga el calendario
+
+Los inputs de fecha y el calendario (`react-day-picker` y `date-fns`) no viajan con la página: se
+descargan la primera vez que se abre un menú de fecha, y los menús siguientes los reutilizan. Hasta que
+llegan, la sección `"Fechas"` muestra cajas vacías del mismo tamaño y lleva `aria-busy` y `data-loading`,
+así el menú no cambia de tamaño. Si la descarga falla dos veces seguidas (por ejemplo, la app se volvió a
+desplegar y el archivo viejo ya no está), la sección muestra `"No se pudo cargar el calendario. Si sigue sin
+aparecer, recarga la página."` y un botón `"Reintentar"` (`dateLoadError` y `dateLoadRetry`); el orden y el
+operador siguen funcionando. Algunos navegadores recuerdan una descarga fallida hasta que se recarga la página
+(Chrome lo hace con los módulos nativos que arma Vite), por eso el texto sugiere recargar: la librería nunca recarga
+la página por su cuenta.
+
+Los tests que abren un menú de fecha y después buscan un input de fecha o el calendario tienen que
+esperarlo: `await screen.findByRole("button", { name: "Seleccionar fecha" })` en lugar de `getByRole`.
+
 ### Limpiar filtros
 
 Mientras hay un filtro activo, la toolbar muestra `"Limpiar filtros"`. Un filtro de valores está activo
@@ -457,7 +472,8 @@ fondo de hover de las opciones del filtro de valores con `--gdy-option-hover-bg`
 
 ## Referencia
 
-Todos los tipos de esta sección se exportan desde `gridory`, `gridory/table` y `gridory/kanban`.
+Todos los tipos de esta sección se exportan desde `gridory`, `gridory/table` y `gridory/kanban`, y todos salvo
+`ViewSwitchConfig` desde `gridory/card-grid`, que no tiene selector de vista.
 
 ### DataViewProps
 

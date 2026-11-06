@@ -1,7 +1,9 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { defineConfig, type Plugin } from "vite";
+import { defineConfig, preprocessCSS, type Plugin, type ResolvedConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import { transform } from "lightningcss";
+import { SPLIT_STYLESHEETS, toLightningcssTargets } from "./scripts/split-stylesheets.mjs";
 
 const rootDir = import.meta.dirname;
 
@@ -39,8 +41,34 @@ const emitOptionalStylesheets = (): Plugin => ({
   },
 });
 
+// Same pipeline as gridory.css (Vite's PostCSS, then lightningcss minifying for build.cssTarget), so each sheet is
+// its slice of the bundle; check-split-stylesheets.mjs holds the build to that.
+const compileSplitStylesheet = async (source: string, config: ResolvedConfig): Promise<string> => {
+  const filename = path.join(rootDir, source);
+  const { code } = await preprocessCSS(readFileSync(filename, "utf8"), filename, config);
+  const targets = toLightningcssTargets(config.build.cssTarget);
+  const minified = transform({ filename, code: Buffer.from(code), minify: true, targets });
+  return `${minified.code.toString()}\n`;
+};
+
+const emitSplitStylesheets = (): Plugin => {
+  let resolvedConfig: ResolvedConfig;
+  return {
+    name: "gridory-split-stylesheets",
+    apply: "build",
+    configResolved(config) {
+      resolvedConfig = config;
+    },
+    async generateBundle() {
+      for (const { fileName, source } of SPLIT_STYLESHEETS) {
+        this.emitFile({ type: "asset", fileName, source: await compileSplitStylesheet(source, resolvedConfig) });
+      }
+    },
+  };
+};
+
 export default defineConfig({
-  plugins: [react(), emitOptionalStylesheets()],
+  plugins: [react(), emitOptionalStylesheets(), emitSplitStylesheets()],
   resolve: {
     alias: {
       "@": path.resolve(rootDir, "./src"),
@@ -63,6 +91,7 @@ export default defineConfig({
         index: path.resolve(rootDir, "src/index.ts"),
         table: path.resolve(rootDir, "src/table.ts"),
         kanban: path.resolve(rootDir, "src/kanban.ts"),
+        "card-grid": path.resolve(rootDir, "src/card-grid.ts"),
         ai: path.resolve(rootDir, "src/ai.ts"),
         auth: path.resolve(rootDir, "src/auth.ts"),
         "segmented-control": path.resolve(rootDir, "src/segmented-control.ts"),

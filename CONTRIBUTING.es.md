@@ -31,7 +31,7 @@ npm ci
 npm run dev
 ```
 
-La demo corre en `http://localhost:5173` con una página por módulo (`/mocks/table`, `/mocks/kanban`,
+La demo corre en `http://localhost:5173` con una página por módulo (`/mocks/table`, `/mocks/kanban`, `/mocks/card-grid`,
 `/mocks/ai`, `/mocks/auth`, `/mocks/controls`, `/mocks/sidebar`). Agrega `?theme=dark` para revisar el tema oscuro. Para probar el asistente con un
 proveedor real, copia `.env.example` a `.env.local`, completa `VITE_AI_API_KEY` y reinicia `npm run dev`. Los
 valores de ejemplo apuntan a Gemini a través de un proxy de Vite que evita CORS. Sin key la demo se
@@ -51,7 +51,7 @@ su cuenta y `npm audit` siga limpio sin él.
 | `npm run lint` | ESLint sobre el código y `scripts/`, con las reglas de estilo de código de abajo. |
 | `npm run typecheck` | `tsc -b` sin generar archivos. |
 | `npm test` / `npm run test:watch` | Vitest sobre `src/test/`; la variante watch vuelve a correr con cada cambio. |
-| `npm run audit:styles` | Después de `npm run build`: contrasta las hojas de estilo con las clases y atributos de estado que emiten los componentes, y verifica que `docs/style-hooks.md` esté al día. |
+| `npm run audit:styles` | Después de `npm run build`: contrasta las hojas de estilo con las clases y atributos de estado que emiten los componentes, comprueba que `base.css` y las hojas de módulo rearmen `gridory.css` y verifica que `docs/style-hooks.md` esté al día. |
 | `npm run docs:hooks` | Regenera `docs/style-hooks.md` y `docs/style-hooks.es.md` a partir del código. |
 
 ## Estructura del código
@@ -64,6 +64,7 @@ por área, nunca por tipo de archivo, con 3 a 12 archivos cada una y sin barrels
 |---|---|
 | `table/` | `model/`, `header/`, `body/`, `pagination/` |
 | `kanban/` | `model/`, `toolbar/`, `board/`, `card/` |
+| `card-grid/` | `model/`, `grid/` |
 | `ai/` | `chat/`, `completion/`, `sidebar/`, `transcript/`, `actions/` |
 | `auth/` | `config/`, `model/`, `fields/`, `password/`, `validation/`, `layout/`, `actions/` |
 | `segmented-control/` | `model/`, `parts/` |
@@ -120,6 +121,9 @@ Gridory usa CSS plano, sin Tailwind ni clases utilitarias.
   los tokens de componente siempre se leen con fallback: `var(--gdy-table-head-bg, var(--gdy-muted))`.
 - Una clase nueva necesita una regla, o una entrada en `hookOnly` de `scripts/audit-allowlist.json`
   si es un gancho sin estilos por defecto.
+- Un módulo nuevo con su propio `styles.css` tiene su hoja por módulo agregando su nombre a `MODULE_NAMES`
+  en `scripts/split-stylesheets.mjs`, en el lugar que ocupan sus reglas en `gridory.css`, y su export
+  `"./<módulo>.css"` en `package.json`. La auditoría de estilos falla mientras el orden esté mal.
 
 [Temas y estilos](docs/theming.es.md) explica el contrato completo.
 

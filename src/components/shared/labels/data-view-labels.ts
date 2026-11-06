@@ -80,6 +80,13 @@ export interface DataViewLabels {
   /** Accessible name of the calendar button of a range. `"Seleccionar rango"`. */
   pickRange: string;
   /**
+   * Shown in the date filter when its calendar could not be downloaded.
+   * `"No se pudo cargar el calendario. Si sigue sin aparecer, recarga la página."`.
+   */
+  dateLoadError: string;
+  /** Downloads the calendar of the date filter again. `"Reintentar"`. */
+  dateLoadRetry: string;
+  /**
    * Joins a label and its value: the toolbar selectors ("Agrupar por: Ninguno") and the group
    * tag of a kanban card. `` `${label}: ${value}` ``.
    */
@@ -113,6 +120,8 @@ export type DateFilterMenuLabels = Pick<
   | "dateApply"
   | "pickDate"
   | "pickRange"
+  | "dateLoadError"
+  | "dateLoadRetry"
 >;
 
 export const DATA_VIEW_LABELS: DataViewLabels = {
@@ -154,5 +163,7 @@ export const DATA_VIEW_LABELS: DataViewLabels = {
   dateApply: "Aplicar",
   pickDate: "Seleccionar fecha",
   pickRange: "Seleccionar rango",
+  dateLoadError: "No se pudo cargar el calendario. Si sigue sin aparecer, recarga la página.",
+  dateLoadRetry: "Reintentar",
   labeledValue: (label, value) => `${label}: ${value}`,
 };

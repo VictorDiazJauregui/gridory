@@ -32,6 +32,9 @@ Los tipos `AI*` que aparecen en esta página también se exportan. El asistente 
 `openai`. Importa `gridory/styles.css` una sola vez, antes de cualquier regla que la sobrescriba
 (consulta [theming.es.md](theming.es.md)).
 
+Para cargar solo los estilos de este módulo, importa `gridory/base.css` y después `gridory/ai.css`
+en su lugar (ver [Hojas por módulo](theming.es.md#hojas-por-módulo)).
+
 ## Cómo funciona
 
 El panel llama a tu endpoint directamente desde el navegador con el SDK `openai` (la peer dependency

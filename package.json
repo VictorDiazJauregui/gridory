@@ -1,6 +1,6 @@
 {
   "name": "gridory",
-  "version": "1.4.2",
+  "version": "1.5.0",
   "description": "React + TypeScript components for data-heavy apps. They emit events; your app keeps the data.",
   "keywords": [
     "react",
@@ -54,6 +54,10 @@
       "types": "./dist/types/kanban.d.ts",
       "import": "./dist/kanban.js"
     },
+    "./card-grid": {
+      "types": "./dist/types/card-grid.d.ts",
+      "import": "./dist/card-grid.js"
+    },
     "./ai": {
       "types": "./dist/types/ai.d.ts",
       "import": "./dist/ai.js"
@@ -91,6 +95,17 @@
       "import": "./dist/markdown-editor-katex.js"
     },
     "./styles.css": "./dist/gridory.css",
+    "./base.css": "./dist/base.css",
+    "./table.css": "./dist/table.css",
+    "./kanban.css": "./dist/kanban.css",
+    "./card-grid.css": "./dist/card-grid.css",
+    "./ai.css": "./dist/ai.css",
+    "./auth.css": "./dist/auth.css",
+    "./sidebar.css": "./dist/sidebar.css",
+    "./markdown-editor.css": "./dist/markdown-editor.css",
+    "./country-select.css": "./dist/country-select.css",
+    "./phone-input.css": "./dist/phone-input.css",
+    "./segmented-control.css": "./dist/segmented-control.css",
     "./tokens-hsl-channels.css": "./dist/tokens-hsl-channels.css",
     "./tailwind-preset": {
       "types": "./tailwind-preset.d.ts",
@@ -107,7 +122,7 @@
     "build:types": "tsc -p tsconfig.build.json && node scripts/strip-declaration-css-imports.mjs",
     "check:types": "node scripts/check-published-types.mjs",
     "build": "npm run typecheck && npm run build:lib && npm run build:types",
-    "audit:styles": "node scripts/audit-legacy.mjs && node scripts/audit-classes.mjs && node scripts/style-catalog.mjs --check",
+    "audit:styles": "node scripts/audit-legacy.mjs && node scripts/audit-classes.mjs && node scripts/check-split-stylesheets.mjs && node scripts/style-catalog.mjs --check",
     "docs:hooks": "node scripts/style-catalog.mjs",
     "lint": "eslint .",
     "preview": "vite preview",

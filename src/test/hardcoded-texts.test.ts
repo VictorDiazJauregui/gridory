@@ -3,11 +3,16 @@ import { dirname, join, relative, resolve } from "node:path";
 import ts from "typescript";
 import { expect, test } from "vitest";
 
-// Every visible text of the table and the kanban goes through `labels`: this walks the files they import and
-// fails on a JSX text, text attribute or `??` fallback in the code. Only the label defaults hold Spanish texts.
+// Every visible text of the table, the kanban and the card grid goes through `labels`: this walks the files they
+// import and fails on a JSX text, text attribute or `??` fallback in the code. Only the label defaults hold Spanish texts.
 const COMPONENTS = resolve(__dirname, "../components");
-const ENTRY_FILES = ["table/index.tsx", "kanban/index.tsx"].map((file) => join(COMPONENTS, file));
-const LABEL_FILES = new Set(["shared/labels/data-view-labels.ts", "table/labels.ts", "kanban/labels.ts"]);
+const ENTRY_FILES = ["table/index.tsx", "kanban/index.tsx", "card-grid/index.tsx"].map((file) => join(COMPONENTS, file));
+const LABEL_FILES = new Set([
+  "shared/labels/data-view-labels.ts",
+  "table/labels.ts",
+  "kanban/labels.ts",
+  "card-grid/labels.ts",
+]);
 const TEXT_ATTRIBUTES = new Set(["aria-label", "ariaLabel", "title", "placeholder", "label", "alt"]);
 const HAS_WORD = /\p{L}{2,}/u;
 // A `??` fallback is a text when it reads like one; lowercase ids ("bottom", "gt") are values.
@@ -67,7 +72,7 @@ const findHardcodedTexts = (file: string) => {
   return found;
 };
 
-test("the table and the kanban write no visible text outside their labels", () => {
+test("the table, the kanban and the card grid write no visible text outside their labels", () => {
   const files = collectComponentFiles().filter((file) => !LABEL_FILES.has(relative(COMPONENTS, file)));
   expect(files.length).toBeGreaterThan(50);
   expect(files.flatMap(findHardcodedTexts)).toEqual([]);

@@ -27,6 +27,9 @@ import { PhoneInput } from "gridory/phone-input";
 Import `gridory/styles.css` once in your app, before any override (see [theming.md](theming.md)). The
 root `gridory` entry re-exports the same names.
 
+To load only this module's styles, import `gridory/base.css` and then `gridory/phone-input.css`
+instead (see [Per-module stylesheets](theming.md#per-module-stylesheets)).
+
 ## Quick example
 
 ```tsx

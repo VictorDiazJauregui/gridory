@@ -22,10 +22,15 @@ export interface RowNavigation<TData> {
   config: TableRowConfig<TData>;
 }
 
-const targetElementOf = (event: RowClickEvent) =>
+interface ElementEvent {
+  target: EventTarget;
+  currentTarget: EventTarget;
+}
+
+const targetElementOf = (event: ElementEvent) =>
   event.target instanceof Element ? event.target : null;
 
-const isFromInteractiveElement = (event: RowClickEvent) => {
+export const isFromInteractiveElement = (event: ElementEvent) => {
   const control = targetElementOf(event)?.closest(INTERACTIVE_ELEMENTS);
   return Boolean(control) && control !== event.currentTarget;
 };

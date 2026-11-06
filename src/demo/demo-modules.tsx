@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
-import { Bot, FileText, KeyRound, PanelLeft, SlidersHorizontal, SquareKanban, Table2 } from "lucide-react";
+import { Bot, FileText, KeyRound, LayoutGrid, PanelLeft, SlidersHorizontal, SquareKanban, Table2 } from "lucide-react";
 import { DataTableMock } from "@/components/mocks/table/DataTable.mock";
 import { KanbanBoardMock } from "@/components/mocks/kanban/KanbanBoard.mock";
+import { CardGridMock } from "@/components/mocks/card-grid/CardGrid.mock";
 import { AIAssistantIntegratedMock } from "@/components/mocks/ai/AIAssistantIntegrated.mock";
 import { AuthFormsMock } from "@/components/mocks/auth/AuthForms.mock";
 import { ControlsMock } from "@/components/mocks/controls/Controls.mock";
@@ -27,6 +28,12 @@ export const MODULES: ModuleItem[] = [
     label: "Kanban",
     icon: <SquareKanban />,
     content: <KanbanBoardMock />,
+  },
+  {
+    id: "card-grid",
+    label: "Tarjetas",
+    icon: <LayoutGrid />,
+    content: <CardGridMock />,
   },
   {
     id: "ai",

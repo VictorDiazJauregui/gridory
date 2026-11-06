@@ -4,7 +4,7 @@ import type { VisibleRowsState } from "../types";
 interface VisibleRowsInput<TData> {
   pageRows: TData[];
   filteredRows: TData[];
-  manualPagination: boolean;
+  manualPagination?: boolean;
   serverRowCount?: number;
 }
 

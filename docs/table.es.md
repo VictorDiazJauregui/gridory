@@ -16,6 +16,9 @@ import { DataTable, type ColumnDefinition } from "gridory/table";
 Importa `gridory/styles.css` una sola vez en tu app, antes de sobrescribir cualquier estilo (consulta
 [theming.es.md](theming.es.md)). La entrada raíz `gridory` reexporta los mismos nombres.
 
+Para cargar solo los estilos de este módulo, importa `gridory/base.css` y después `gridory/table.css`
+en su lugar (ver [Hojas por módulo](theming.es.md#hojas-por-módulo)).
+
 ## Ejemplo rápido
 
 ```tsx
@@ -163,6 +166,8 @@ las columnas de texto y número, y un filtro de fechas con los operadores mayor 
 para `type: "date"`. El botón del encabezado lleva `data-filtered` mientras hay un filtro activo, y la
 toolbar muestra un botón para limpiar filtros. Los menús de filtro, los inputs de fecha y las opciones
 del calendario se comparten con el kanban y están documentados en [toolbar.es.md](toolbar.es.md).
+El calendario se descarga la primera vez que se abre un menú de fecha
+([toolbar.es.md](toolbar.es.md#cuándo-se-descarga-el-calendario)).
 
 ### Agrupado
 
@@ -737,6 +742,9 @@ Antes, una columna de casillas era un `cell` más tu propio estado, y el clic en
 + <DataTable columns={columns} data={invoices} getRowId={(row) => row.id} rowSelection={{ onChange: setSelectedIds }} />
 ```
 
+La casilla se descarga solo en las tablas con `rowSelection`, justo después del primer render. Hasta
+entonces cada celda muestra el mismo marcado, que ya marca y desmarca, así que nada se mueve ni espera.
+
 ### Filas expandibles
 
 `renderExpandedRow` agrega una columna con un botón de expandir y, debajo de cada fila abierta, un detalle de
@@ -1104,6 +1112,10 @@ Antes, el "?" tenía que vivir dentro de `header`, que solo acepta texto, así q
 + { id: "amount", header: "Monto", accessor: (row) => row.amount, headerTooltip: "Suma de los contratos vigentes" }
 ```
 
+El tooltip se descarga solo en las tablas con algún `headerTooltip`, justo después del primer render. Hasta
+entonces el "?" es el mismo botón, y tocarlo abre el tooltip apenas llega. Los tests que lo abren ya lo
+esperan: `await screen.findByRole("tooltip")`.
+
 ### Layout y scroll
 
 Por defecto, el contenedor de filas (`gdy-table-wrap`) hace scroll horizontal y crece con su contenido,
@@ -1216,6 +1228,8 @@ Claves comunes a la tabla y al kanban (`DataViewLabels`):
 | `dateApply` | `"Aplicar"` | Aplica el filtro de fecha | — |
 | `pickDate` | `"Seleccionar fecha"` | Nombre accesible del botón del calendario (una fecha) | — |
 | `pickRange` | `"Seleccionar rango"` | Nombre accesible del botón del calendario (rango) | — |
+| `dateLoadError` | `"No se pudo cargar el calendario. Si sigue sin aparecer, recarga la página."` | Aviso del filtro de fecha cuando no se pudo descargar el calendario | — |
+| `dateLoadRetry` | `"Reintentar"` | Botón que vuelve a descargar el calendario | — |
 | `labeledValue(label, value)` | `` `${label}: ${value}` `` | Une un prefijo y su valor: "Agrupar por: Ninguno", "Mostrar: Activos", los selectores propios y la etiqueta de la card | — |
 
 Claves propias de la tabla (`DataTableLabels`):

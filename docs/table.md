@@ -15,6 +15,9 @@ import { DataTable, type ColumnDefinition } from "gridory/table";
 Import `gridory/styles.css` once in your app, before any override (see [theming.md](theming.md)). The
 root `gridory` entry re-exports the same names.
 
+To load only this module's styles, import `gridory/base.css` and then `gridory/table.css`
+instead (see [Per-module stylesheets](theming.md#per-module-stylesheets)).
+
 ## Quick example
 
 ```tsx
@@ -161,6 +164,7 @@ columns, and a date filter with the operators greater than, less than and betwee
 The header trigger carries `data-filtered` while a filter is active and the toolbar shows a
 clear-filters button. The filter menus, the date inputs and the calendar options are shared with the
 kanban and documented in [toolbar.md](toolbar.md).
+The calendar downloads when a date menu first opens ([toolbar.md](toolbar.md#when-the-calendar-downloads)).
 
 ### Grouping
 
@@ -726,6 +730,9 @@ Before, a checkbox column was a `cell` plus your own state, and the click on the
 + <DataTable columns={columns} data={invoices} getRowId={(row) => row.id} rowSelection={{ onChange: setSelectedIds }} />
 ```
 
+The checkbox component downloads only for tables with `rowSelection`, right after the first render. Until
+then each cell shows the same markup, and it already toggles, so nothing moves or waits.
+
 ### Expandable rows
 
 `renderExpandedRow` adds a column with an expand button and, under each open row, a full-width detail with
@@ -1087,6 +1094,10 @@ Before, the "?" had to live inside `header`, which only takes text, so apps patc
 + { id: "amount", header: "Amount", accessor: (row) => row.amount, headerTooltip: "Sum of the contracts in force" }
 ```
 
+The tooltip downloads only for tables with a `headerTooltip`, right after the first render. Until then the
+"?" is the same button, and a press on it opens the tooltip as soon as it arrives. Tests that open it
+already wait for it: `await screen.findByRole("tooltip")`.
+
 ### Layout and scrolling
 
 By default the rows container (`gdy-table-wrap`) scrolls horizontally and grows with its content, with
@@ -1198,6 +1209,8 @@ Keys shared with the kanban (`DataViewLabels`):
 | `dateApply` | `"Aplicar"` | Applies the date filter | — |
 | `pickDate` | `"Seleccionar fecha"` | Accessible name of the calendar button (one date) | — |
 | `pickRange` | `"Seleccionar rango"` | Accessible name of the calendar button (range) | — |
+| `dateLoadError` | `"No se pudo cargar el calendario. Si sigue sin aparecer, recarga la página."` | Shown in the date filter when its calendar could not be downloaded | — |
+| `dateLoadRetry` | `"Reintentar"` | Button that downloads the calendar again | — |
 | `labeledValue(label, value)` | `` `${label}: ${value}` `` | Joins a prefix and its value: "Agrupar por: Ninguno", "Mostrar: Activos", the header selectors and the kanban card tag | — |
 
 Table keys (`DataTableLabels`):

@@ -13,10 +13,12 @@ import type { RowActionLabels } from "../../shared/menu/menu-nodes";
 import type { KanbanBoardLabels, RowActions } from "../types";
 import { buildMoveMenuNode, type CardMoveEntry } from "./move-menu-node";
 
+export type KanbanCardMenuLabels = RowActionLabels & Pick<KanbanBoardLabels, "rowActionsTrigger">;
+
 interface KanbanCardMenuProps<TData> {
   card: TData;
   rowActions?: RowActions<TData>;
-  labels: RowActionLabels & Pick<KanbanBoardLabels, "rowActionsTrigger">;
+  labels: KanbanCardMenuLabels;
   /** "Move to", first in the menu; without it the menu is only the app's actions. */
   move?: CardMoveEntry;
 }

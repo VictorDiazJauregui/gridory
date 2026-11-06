@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 import { cn } from "../../../lib/cn";
 import { KanbanFilterItem } from "./KanbanFilterItem";
-import type { KanbanSectionProps } from "../model/use-kanban-board-state";
+import type { FilterRowProps } from "./filter-item";
 
-export const KanbanFilterRow = <TData,>(props: KanbanSectionProps<TData>) => {
+export const KanbanFilterRow = <TData,>(props: FilterRowProps<TData>) => {
   const { fields, flags } = props.view;
   const filterableFields = useMemo(
     () => fields.filter((field) => field.filterable),

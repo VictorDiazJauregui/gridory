@@ -1,5 +1,5 @@
 import { summarizeCard } from "./card-summary";
-import { KanbanCardMenu } from "./KanbanCardMenu";
+import { KanbanCardMenu, type KanbanCardMenuLabels } from "./KanbanCardMenu";
 import type { ColumnDefinition, KanbanBoardLabels, RowActions } from "../types";
 import type { CardMoveEntry } from "./move-menu-node";
 
@@ -7,7 +7,7 @@ interface DefaultKanbanCardHeadProps<TData> {
   card: TData;
   fields: ColumnDefinition<TData>[];
   rowActions?: RowActions<TData>;
-  labels: KanbanBoardLabels;
+  labels: KanbanCardMenuLabels & Pick<KanbanBoardLabels, "untitledCard">;
   move?: CardMoveEntry;
 }
 
