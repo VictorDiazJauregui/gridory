@@ -4,6 +4,11 @@ import type { TableSettings } from "../settings";
 import type { VisibleRowsState } from "../types";
 import { buildVisibleRowsState, isSameVisibleRows } from "./visible-rows";
 
+/** What the report reads from the settings: the table passes its own, the card grid a client-side subset. */
+type VisibleRowsSettings<TData> = Pick<TableSettings<TData>, "onVisibleRowsChange" | "loading" | "serverRowCount"> & {
+  manualPagination?: boolean;
+};
+
 interface VisibleRowsSources<TData> {
   /** `null` while the rows on screen are not the page (printing every row): nothing is reported. */
   pageRows: TData[] | null;
@@ -14,7 +19,7 @@ interface VisibleRowsSources<TData> {
 // `columns` or a re-run effect (StrictMode) recompute the arrays without changing a row.
 export const useVisibleRowsChange = <TData>(
   { pageRows, filteredRows }: VisibleRowsSources<TData>,
-  settings: TableSettings<TData>,
+  settings: VisibleRowsSettings<TData>,
 ) => {
   const { manualPagination, serverRowCount, onVisibleRowsChange, loading } = settings;
   const callbackRef = useLatestRef(onVisibleRowsChange);

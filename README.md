@@ -66,6 +66,7 @@ the details.
 |---|---|---|
 | `DataTable`: sorting, filters, pagination, grouping, inline editing and server-side mode. | `gridory/table` | [Table](docs/table.md) |
 | `KanbanBoard`: the same data as cards, with drag and drop between columns. | `gridory/kanban` | [Kanban](docs/kanban.md) |
+| `CardGrid`: the same data as a responsive grid of cards, with the table's search, filters and pagination. | `gridory/card-grid` | [Card grid](docs/card-grid.md) |
 | Toolbar, search, filters and row actions shared by both views. | `gridory/table`, `gridory/kanban` | [Toolbar](docs/toolbar.md) |
 
 ### AI

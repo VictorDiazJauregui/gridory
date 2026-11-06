@@ -1,0 +1,38 @@
+.gdy-card-grid {
+  width: 100%;
+  color: var(--gdy-foreground);
+  font-size: 14px;
+}
+
+.gdy-card-grid * {
+  box-sizing: border-box;
+}
+
+/* auto-fill keeps the card width when there are few cards; min() lets the only column of a narrow phone
+   shrink below the minimum instead of overflowing it. */
+.gdy-card-grid-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--gdy-card-grid-min, 260px)), 1fr));
+  gap: var(--gdy-card-grid-gap, 12px);
+  margin: 0;
+  padding: var(--gdy-card-grid-padding, 12px);
+  list-style: none;
+}
+
+.gdy-card-grid-loading {
+  padding: var(--gdy-card-grid-padding, 12px);
+}
+
+/* A grid item is as wide as its longest line by default: the card title would push its column wider. */
+.gdy-card-grid-card {
+  min-width: 0;
+}
+
+.gdy-card-grid-card[data-clickable] {
+  cursor: pointer;
+}
+
+.gdy-card-grid-card:focus-visible {
+  outline: 2px solid var(--gdy-card-grid-focus-ring, var(--gdy-ring));
+  outline-offset: 2px;
+}

@@ -1,11 +1,6 @@
-import type { TableSettings } from "../settings";
-import type { PageWindow } from "./use-table-pagination";
+import type { PageWindow, PagingSettings } from "./use-table-pagination";
 
-export const computePageRange = <TData>(
-  localRowCount: number,
-  { pageIndex, pageSize }: PageWindow,
-  settings: TableSettings<TData>,
-) => {
+export const computePageRange = (localRowCount: number, { pageIndex, pageSize }: PageWindow, settings: PagingSettings) => {
   const { manualPagination, serverRowCount, flags } = settings;
   const totalRows = manualPagination
     ? (serverRowCount ?? localRowCount)

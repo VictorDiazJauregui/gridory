@@ -9,6 +9,7 @@ import type {
   SortDirection,
 } from "../shared/data-model";
 import type { DataViewProps } from "../shared/data-view-props";
+import type { DataViewStateProps } from "../shared/data-view-state-props";
 import type { DataViewLabels } from "../shared/labels/data-view-labels";
 
 export type {
@@ -17,6 +18,8 @@ export type {
   ArchivedViewMode,
   CellHighlight,
   ColumnDefinition,
+  ColumnFiltersState,
+  ColumnSortingState,
   DataInput,
   DateFilterOp,
   DateFilterState,
@@ -182,7 +185,7 @@ export interface KanbanBoardLabels extends DataViewLabels {
   expandColumn: (column: string) => string;
 }
 
-export interface KanbanBoardProps<TData> extends DataViewProps<TData> {
+export interface KanbanBoardProps<TData> extends DataViewProps<TData>, DataViewStateProps {
   /**
    * Replaces any text of the kanban; the keys you leave out keep their Spanish default. The older
    * single-text props (`searchPlaceholder`, `createLabel`, `emptyMessage`, `groupSelectorLabel`, the

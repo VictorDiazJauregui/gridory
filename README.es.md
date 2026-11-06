@@ -67,6 +67,7 @@ cuando necesites el detalle.
 |---|---|---|
 | `DataTable`: orden, filtros, paginación, agrupado, edición en línea y modo servidor. | `gridory/table` | [Tabla](docs/table.es.md) |
 | `KanbanBoard`: los mismos datos como tarjetas, con arrastrar y soltar entre columnas. | `gridory/kanban` | [Kanban](docs/kanban.es.md) |
+| `CardGrid`: los mismos datos como una grilla de tarjetas que se adapta al ancho, con la búsqueda, los filtros y la paginación de la tabla. | `gridory/card-grid` | [Vista de tarjetas](docs/card-grid.es.md) |
 | Barra de herramientas, búsqueda, filtros y acciones de fila que comparten las dos vistas. | `gridory/table`, `gridory/kanban` | [Toolbar, filtros y acciones](docs/toolbar.es.md) |
 
 ### IA
