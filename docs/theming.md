@@ -42,6 +42,30 @@ headings there their own styles. Gridory sets no font family; the components inh
 stylesheet does not use Tailwind and your app does not need it. It emits no utility classes, no
 `--tw-*` variables and no Tailwind directives. The [Tailwind preset](#tailwind-preset) is optional.
 
+### Per-module stylesheets
+
+`styles.css` carries every module. An app that uses only some of them can load a smaller set
+instead: `base.css` first, then the sheet of each module it renders.
+
+```ts
+import "gridory/base.css";
+import "gridory/table.css";
+import "gridory/kanban.css";
+import "./app.css";
+```
+
+- `base.css` holds items 1 to 5 of the list above: tokens, reset, primitives, shared layer and
+  motion. Every module needs it, and it goes before any module sheet.
+- Each module sheet holds only that module's rules: `ai.css`, `auth.css`, `country-select.css`,
+  `table.css`, `kanban.css`, `segmented-control.css`, `phone-input.css`, `sidebar.css` and
+  `markdown-editor.css`. Import them in that order, the one they keep inside `styles.css`.
+- The auth forms render the phone input for a `tel` field: with one, load `phone-input.css` too.
+- `base.css` plus every module sheet, in that order, are exactly `styles.css`, so the cascade and
+  your overrides work the same way. Load your own CSS after the last Gridory sheet.
+- Use one approach or the other: do not import `styles.css` together with the per-module sheets.
+  Its rules would load twice, and a second copy loaded after your CSS would undo your overrides.
+- `tokens-hsl-channels.css` works the same with either: import it after `base.css`.
+
 ## Light and dark theme
 
 The light theme is the default. The dark theme applies under any element with the `dark` class or
@@ -684,6 +708,7 @@ The library repository checks this contract with `npm run audit:styles`, which r
 `dist/gridory.css` and so runs after a build. It fails when a class a component emits has no rule
 and is not a declared hook, when a rule targets a class no component emits, when an attribute
 selector matches nothing the components write, when a literal color appears outside
-`src/styles/tokens.css`, when a Tailwind leftover appears, or when
-[style-hooks.md](style-hooks.md) is out of date. `npm run docs:hooks` regenerates that catalog from
+`src/styles/tokens.css`, when a Tailwind leftover appears, when `base.css` and the module sheets,
+joined in order, are not exactly `gridory.css`, or when [style-hooks.md](style-hooks.md) is out of
+date. `npm run docs:hooks` regenerates that catalog from
 the sources, with no build needed.

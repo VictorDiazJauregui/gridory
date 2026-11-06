@@ -51,7 +51,7 @@ repository, never to the apps that install Gridory. Remove it once both depend o
 | `npm run lint` | ESLint over the sources and `scripts/`, with the code style rules below. |
 | `npm run typecheck` | `tsc -b` without emitting files. |
 | `npm test` / `npm run test:watch` | Vitest over `src/test/`; the watch variant reruns on change. |
-| `npm run audit:styles` | After `npm run build`: checks the stylesheets against the classes and state attributes the components emit, and that `docs/style-hooks.md` is current. |
+| `npm run audit:styles` | After `npm run build`: checks the stylesheets against the classes and state attributes the components emit, that `base.css` and the module sheets rebuild `gridory.css`, and that `docs/style-hooks.md` is current. |
 | `npm run docs:hooks` | Regenerates `docs/style-hooks.md` and `docs/style-hooks.es.md` from the sources. |
 
 ## Code structure
@@ -116,6 +116,9 @@ Gridory ships plain CSS, no Tailwind and no utility classes.
   tokens are always read with a fallback: `var(--gdy-table-head-bg, var(--gdy-muted))`.
 - A new class needs a rule, or an entry in `hookOnly` in `scripts/audit-allowlist.json` when it is a
   hook without default styles.
+- A new module with its own `styles.css` gets its per-module sheet by adding its name to `MODULE_NAMES`
+  in `scripts/split-stylesheets.mjs`, at the place its rules take in `gridory.css`, and its
+  `"./<module>.css"` export to `package.json`. The style audit fails while the order is wrong.
 
 [Theming and styling](docs/theming.md) explains the whole contract.
 

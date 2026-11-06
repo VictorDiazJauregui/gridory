@@ -15,6 +15,9 @@ import { KanbanBoard, type ColumnDefinition, type KanbanGroupOption } from "grid
 Importa `gridory/styles.css` una sola vez en tu app, antes de cualquier regla que lo sobrescriba
 (consulta [theming.es.md](theming.es.md)). La entrada raíz `gridory` reexporta los mismos nombres.
 
+Para cargar solo los estilos de este módulo, importa `gridory/base.css` y después `gridory/kanban.css`
+en su lugar (ver [Hojas por módulo](theming.es.md#hojas-por-módulo)).
+
 ## Ejemplo rápido
 
 ```tsx

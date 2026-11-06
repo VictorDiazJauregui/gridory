@@ -16,6 +16,9 @@ import { DataTable, type ColumnDefinition } from "gridory/table";
 Importa `gridory/styles.css` una sola vez en tu app, antes de sobrescribir cualquier estilo (consulta
 [theming.es.md](theming.es.md)). La entrada raíz `gridory` reexporta los mismos nombres.
 
+Para cargar solo los estilos de este módulo, importa `gridory/base.css` y después `gridory/table.css`
+en su lugar (ver [Hojas por módulo](theming.es.md#hojas-por-módulo)).
+
 ## Ejemplo rápido
 
 ```tsx

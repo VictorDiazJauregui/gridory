@@ -45,6 +45,31 @@ ninguna familia tipográfica; los componentes heredan la tuya. La hoja de estilo
 lo necesita. No emite clases utilitarias, ni variables `--tw-*`, ni directivas de Tailwind. El
 [preset de Tailwind](#preset-de-tailwind) es opcional.
 
+### Hojas por módulo
+
+`styles.css` trae todos los módulos. Una app que usa solo algunos puede cargar un conjunto más chico en su
+lugar: primero `base.css` y después la hoja de cada módulo que renderiza.
+
+```ts
+import "gridory/base.css";
+import "gridory/table.css";
+import "gridory/kanban.css";
+import "./app.css";
+```
+
+- `base.css` trae los puntos 1 a 5 de la lista de arriba: tokens, reset, primitivos, capa compartida y
+  animaciones. Todos los módulos la necesitan y va antes que cualquier hoja de módulo.
+- Cada hoja de módulo trae solo las reglas de ese módulo: `ai.css`, `auth.css`, `country-select.css`,
+  `table.css`, `kanban.css`, `segmented-control.css`, `phone-input.css`, `sidebar.css` y
+  `markdown-editor.css`. Impórtalas en ese orden, el mismo que tienen dentro de `styles.css`.
+- Los formularios de autenticación renderizan el teléfono con prefijo para un campo `tel`: si tienes uno,
+  carga también `phone-input.css`.
+- `base.css` más todas las hojas de módulo, en ese orden, son exactamente `styles.css`, así que la cascada y
+  tus sobrescrituras funcionan igual. Carga tu propio CSS después de la última hoja de Gridory.
+- Usa un camino o el otro: no importes `styles.css` junto con las hojas por módulo. Sus reglas se cargarían
+  dos veces, y una segunda copia cargada después de tu CSS desharía tus sobrescrituras.
+- `tokens-hsl-channels.css` funciona igual con cualquiera de los dos: impórtala después de `base.css`.
+
 ## Tema claro y oscuro
 
 El tema claro es el predeterminado. El oscuro se aplica bajo cualquier elemento con la clase `dark` o el
@@ -691,6 +716,7 @@ El repositorio de la librería comprueba este contrato con `npm run audit:styles
 `dist/gridory.css` y por eso se ejecuta después de un build. Falla cuando una clase que emite un componente
 no tiene regla y no está declarada como gancho, cuando una regla apunta a una clase que ningún componente
 emite, cuando un selector de atributo no coincide con nada de lo que escriben los componentes, cuando aparece
-un color literal fuera de `src/styles/tokens.css`, cuando queda algún resto de Tailwind o cuando
+un color literal fuera de `src/styles/tokens.css`, cuando queda algún resto de Tailwind, cuando `base.css` y
+las hojas de módulo, unidas en orden, no son exactamente `gridory.css`, o cuando
 [style-hooks.es.md](style-hooks.es.md) está desactualizado. `npm run docs:hooks` regenera ese catálogo desde
 el código fuente, sin necesidad de build.

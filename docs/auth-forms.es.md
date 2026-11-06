@@ -16,6 +16,10 @@ import { LoginForm, SignUpForm } from "gridory/auth";
 Importa `gridory/styles.css` una vez en tu app, antes de cualquier override (ver
 [theming.es.md](theming.es.md)). La entrada raíz `gridory` reexporta los mismos nombres.
 
+Para cargar solo los estilos de este módulo, importa `gridory/base.css` y después `gridory/auth.css` en
+su lugar, más `gridory/phone-input.css` si un campo es de tipo `tel` (ver
+[Hojas por módulo](theming.es.md#hojas-por-módulo)).
+
 ## Ejemplo rápido
 
 ```tsx

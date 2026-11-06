@@ -39,6 +39,9 @@ Importá `gridory/styles.css` una sola vez en tu app, antes de cualquier overrid
 opcionales agregan el dibujo a demanda: `gridory/markdown-editor/mermaid` y
 `gridory/markdown-editor/katex` (ver [Diagramas y fórmulas](#diagramas-y-fórmulas)).
 
+Para cargar solo los estilos de este módulo, importá `gridory/base.css` y después `gridory/markdown-editor.css`
+en su lugar (ver [Hojas por módulo](theming.es.md#hojas-por-módulo)).
+
 ## Ejemplo rápido
 
 ```tsx
