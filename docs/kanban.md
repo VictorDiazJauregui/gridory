@@ -513,6 +513,39 @@ locale-aware (`es`), ignores case and accents and compares digit runs numericall
 compares `Number(value)`; `"date"` compares the first ten characters of the value, so ISO strings
 sort by day. Without an active sort the cards keep the order of `data`.
 
+### Controlled state
+
+The search, the filters and the sort can be owned by your app, with the same props, types and rules as
+in `DataTable` ([Controlled state](table.md#controlled-state)): pass the value and its `on…Change`
+handler and the board shows exactly that value and only reports what the user does; leave the value
+`undefined` and the board keeps the state itself, as before. Pick one mode for the whole lifetime of the
+board: switching after mounting logs a warning in development builds. Nothing is reported on mount.
+
+- `search` (`string`) sets the query of the search box. `onSearchChange(query)` reports what the user
+  types, controlled or not; never the changes of the prop.
+- `sorting` (`ColumnSortingState | null`) sets the active sort; `null` is "no sort". `onSortChange(sorting)`
+  fires on every sort change made in a filter menu (the "Ordenar" buttons, the date "Limpiar").
+- `columnFilters` (`ColumnFiltersState`) sets the value and date filters. `onFiltersChange(filters)` fires
+  when the user changes the active filters (a value menu, a date menu, "Limpiar filtros") and receives
+  only the active ones.
+
+The board filters and sorts the cards it holds: there is no `manualSorting` or `manualFiltering`, and
+no `searchDebounceMs`, since nothing goes to a server. The usual reason to control them is to keep them
+when the app switches between `DataTable`, `CardGrid` and `KanbanBoard`:
+
+```tsx
+const [search, setSearch] = useState("");
+const [sorting, setSorting] = useState<ColumnSortingState | null>(null);
+const [filters, setFilters] = useState<ColumnFiltersState>({ values: {}, dates: {} });
+const shared = {
+  search, onSearchChange: setSearch,
+  sorting, onSortChange: setSorting,
+  columnFilters: filters, onFiltersChange: setFilters,
+};
+
+{view === "kanban" ? <KanbanBoard {...shared} {...boardProps} /> : <DataTable {...shared} {...tableProps} />}
+```
+
 ### Custom cards
 
 The default card is built from `fields`, in order:
@@ -652,6 +685,9 @@ Kanban keys (`KanbanBoardLabels`):
 | `onCardClick` | `(event: KanbanCardClickEvent<TData>) => void` | A card is clicked (not at the end of a drag, not from its menu). |
 | `onVisibleCardsChange` | `(state: KanbanVisibleCardsState<TData>) => void` | On mount, and whenever the visible cards change. See [Visible cards](#visible-cards). |
 | `onGroupChange` | `(groupId: string) => void` | The user picks another group in the selector. Not on mount. |
+| `onSearchChange` | `(query: string) => void` | The user types in the search box. See [Controlled state](#controlled-state). |
+| `onSortChange` | `(sorting: ColumnSortingState \| null) => void` | The user changes the sort in a filter menu. |
+| `onFiltersChange` | `(filters: ColumnFiltersState) => void` | The user changes the active filters. |
 | `onCreate` | `() => void` | The create button is clicked. The button renders only when this is set. |
 | `rowActions.onEdit`, `onArchive`, `onArchiveToggle`, `onRemove`, `onHistory` | `(row: TData) => void` | The matching built-in action is picked in the card menu. |
 | `rowActions.customActions[].onClick` | `(row: TData) => void` | A custom action is picked in the card menu. |
@@ -852,6 +888,12 @@ Own props of `KanbanBoardProps<TData>`, in source order.
 | `onCardClick` | `(event: KanbanCardClickEvent<TData>) => void` | — | Card clicked. |
 | `onVisibleCardsChange` | `(state: KanbanVisibleCardsState<TData>) => void` | — | Visible cards on mount and after each change. |
 | `onGroupChange` | `(groupId: string) => void` | — | Group selector change. |
+| `search` | `string` | — | Controlled search query. See [Controlled state](#controlled-state). |
+| `onSearchChange` | `(query: string) => void` | — | What the user types in the search box. |
+| `sorting` | `ColumnSortingState \| null` | — | Controlled sort; `null` is no sort. |
+| `onSortChange` | `(sorting: ColumnSortingState \| null) => void` | — | Sort change made by the user. |
+| `columnFilters` | `ColumnFiltersState` | — | Controlled value and date filters. |
+| `onFiltersChange` | `(filters: ColumnFiltersState) => void` | — | Active filters changed by the user. |
 | `renderColumnHeaderExtra` | `(context: KanbanColumnHeaderContext<TData>) => ReactNode` | — | Own content in each column header. See [Column header content](#column-header-content). |
 | `renderColumnFooter` | `(context: KanbanColumnFooterContext<TData>) => ReactNode` | — | Own content at the bottom of each column. See [Collapsible columns and footer](#collapsible-columns-and-footer). |
 | `collapsibleColumns` | `boolean` | `false` | Adds the button that collapses a column. |
@@ -900,4 +942,6 @@ Own props of `KanbanBoardProps<TData>`, in source order.
 - `KanbanFiltersState`: `Record<string, string[]>`, the selected values per field id.
 - `KanbanDateFiltersState`: `Record<string, DateFilterState>`, the date filter per field id.
 - `KanbanBoardClassNames`: the optional classes per part of `classNames`.
+- `ColumnSortingState` and `ColumnFiltersState`: the controlled sort and filters, the same types as in
+  `DataTable`, also exported from `gridory/kanban`.
 - `KanbanColumnAttributes`: the `data-*` and `aria-*` attributes `getColumnAttributes` returns.

@@ -56,10 +56,12 @@ import "./app.css";
 
 - `base.css` holds items 1 to 5 of the list above: tokens, reset, primitives, shared layer and
   motion. Every module needs it, and it goes before any module sheet.
-- Each module sheet holds only that module's rules: `ai.css`, `auth.css`, `country-select.css`,
-  `table.css`, `kanban.css`, `segmented-control.css`, `phone-input.css`, `sidebar.css` and
-  `markdown-editor.css`. Import them in that order, the one they keep inside `styles.css`.
+- Each module sheet holds only that module's rules: `ai.css`, `auth.css`, `card-grid.css`,
+  `country-select.css`, `table.css`, `kanban.css`, `segmented-control.css`, `phone-input.css`,
+  `sidebar.css` and `markdown-editor.css`. Import them in that order, the one they keep inside `styles.css`.
 - The auth forms render the phone input for a `tel` field: with one, load `phone-input.css` too.
+- `card-grid.css` holds only the grid: its cards are kanban cards, its filter row the kanban's and its
+  pagination the table's. With the card grid load `table.css` and `kanban.css` too, in the order above.
 - `base.css` plus every module sheet, in that order, are exactly `styles.css`, so the cascade and
   your overrides work the same way. Load your own CSS after the last Gridory sheet.
 - Use one approach or the other: do not import `styles.css` together with the per-module sheets.
@@ -182,6 +184,7 @@ them.
 |---|---|
 | `--gdy-table-*` | `--gdy-table-head-bg` (`--gdy-muted`), `--gdy-table-foot-bg` (`--gdy-table-head-bg`, then `--gdy-muted`), `--gdy-table-border` (`--gdy-border`), `--gdy-table-row-hover-bg` (`--gdy-muted`), `--gdy-table-row-focus-ring` (`--gdy-ring`), `--gdy-table-row-selected-bg` (`--gdy-accent`), `--gdy-table-select-border` (`--gdy-muted-foreground`), `--gdy-table-select-bg` (`--gdy-background`), `--gdy-table-select-checked-bg` (`--gdy-primary`), `--gdy-table-select-check-fg` (`--gdy-primary-foreground`), `--gdy-table-select-focus-ring` (`--gdy-ring`), `--gdy-table-head-help-fg` (`--gdy-muted-foreground`), `--gdy-table-tooltip-bg` (`--gdy-foreground`), `--gdy-table-tooltip-fg` (`--gdy-background`), `--gdy-table-tooltip-z` (`60`), `--gdy-table-expanded-bg` (`--gdy-background`), `--gdy-table-expanded-padding` (`12px 14px`), `--gdy-table-expand-focus-ring` (`--gdy-ring`), `--gdy-table-expand-duration` (`200ms`), `--gdy-table-pinned-bg` (`--gdy-card`), `--gdy-table-pinned-shadow` (14% of `--gdy-foreground`), `--gdy-table-pinned-z` (`1`), `--gdy-table-pinned-corner-z` (`3`), `--gdy-table-open-menu-z` (`4`), `--gdy-table-resize-handle-color` (`--gdy-ring`) |
 | `--gdy-kanban-*` | `--gdy-kanban-column-bg` (`--gdy-muted`), `--gdy-kanban-card-bg` (`--gdy-card`), `--gdy-kanban-drop-outline` (`--gdy-muted-foreground`), `--gdy-kanban-drop-disabled-outline` (`--gdy-destructive`), `--gdy-kanban-column-collapsed-width` (`44px`) |
+| `--gdy-card-grid-*` | `--gdy-card-grid-min` (`260px`, the narrowest column), `--gdy-card-grid-gap` (`12px`), `--gdy-card-grid-padding` (`12px`), `--gdy-card-grid-focus-ring` (`--gdy-ring`); the cards also read the `--gdy-kanban-card-*` tokens |
 | `--gdy-ai-*` | `--gdy-ai-accent` (`--gdy-primary`), `--gdy-ai-bg` (`--gdy-background`), `--gdy-ai-user-bubble-bg` (`--gdy-ai-accent`, then `--gdy-primary`) |
 | `--gdy-auth-*` | `--gdy-auth-bg` (`--gdy-card`), `--gdy-auth-submit-bg` (`--gdy-primary`), `--gdy-auth-input-focus-border` (`--gdy-ring`), `--gdy-auth-rule-met` (`--gdy-success`) |
 | `--gdy-segmented-*` | `--gdy-segmented-bg` (`--gdy-muted`), `--gdy-segmented-indicator-bg` (`--gdy-background`), `--gdy-segmented-item-active-color` (`--gdy-foreground`), `--gdy-segmented-focus-ring` (`--gdy-ring`), `--gdy-segmented-duration` (`220ms`) |

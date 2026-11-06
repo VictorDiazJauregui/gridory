@@ -59,11 +59,14 @@ import "./app.css";
 
 - `base.css` trae los puntos 1 a 5 de la lista de arriba: tokens, reset, primitivos, capa compartida y
   animaciones. Todos los módulos la necesitan y va antes que cualquier hoja de módulo.
-- Cada hoja de módulo trae solo las reglas de ese módulo: `ai.css`, `auth.css`, `country-select.css`,
-  `table.css`, `kanban.css`, `segmented-control.css`, `phone-input.css`, `sidebar.css` y
-  `markdown-editor.css`. Impórtalas en ese orden, el mismo que tienen dentro de `styles.css`.
+- Cada hoja de módulo trae solo las reglas de ese módulo: `ai.css`, `auth.css`, `card-grid.css`,
+  `country-select.css`, `table.css`, `kanban.css`, `segmented-control.css`, `phone-input.css`,
+  `sidebar.css` y `markdown-editor.css`. Impórtalas en ese orden, el mismo que tienen dentro de `styles.css`.
 - Los formularios de autenticación renderizan el teléfono con prefijo para un campo `tel`: si tienes uno,
   carga también `phone-input.css`.
+- `card-grid.css` trae solo la grilla: sus tarjetas son las del kanban, su fila de filtros la del kanban y su
+  paginación la de la tabla. Con la vista de tarjetas carga también `table.css` y `kanban.css`, en el orden de
+  arriba.
 - `base.css` más todas las hojas de módulo, en ese orden, son exactamente `styles.css`, así que la cascada y
   tus sobrescrituras funcionan igual. Carga tu propio CSS después de la última hoja de Gridory.
 - Usa un camino o el otro: no importes `styles.css` junto con las hojas por módulo. Sus reglas se cargarían
@@ -187,6 +190,7 @@ tengan que alcanzarlos.
 |---|---|
 | `--gdy-table-*` | `--gdy-table-head-bg` (`--gdy-muted`), `--gdy-table-foot-bg` (`--gdy-table-head-bg`, luego `--gdy-muted`), `--gdy-table-border` (`--gdy-border`), `--gdy-table-row-hover-bg` (`--gdy-muted`), `--gdy-table-row-focus-ring` (`--gdy-ring`), `--gdy-table-row-selected-bg` (`--gdy-accent`), `--gdy-table-select-border` (`--gdy-muted-foreground`), `--gdy-table-select-bg` (`--gdy-background`), `--gdy-table-select-checked-bg` (`--gdy-primary`), `--gdy-table-select-check-fg` (`--gdy-primary-foreground`), `--gdy-table-select-focus-ring` (`--gdy-ring`), `--gdy-table-head-help-fg` (`--gdy-muted-foreground`), `--gdy-table-tooltip-bg` (`--gdy-foreground`), `--gdy-table-tooltip-fg` (`--gdy-background`), `--gdy-table-tooltip-z` (`60`), `--gdy-table-expanded-bg` (`--gdy-background`), `--gdy-table-expanded-padding` (`12px 14px`), `--gdy-table-expand-focus-ring` (`--gdy-ring`), `--gdy-table-expand-duration` (`200ms`), `--gdy-table-pinned-bg` (`--gdy-card`), `--gdy-table-pinned-shadow` (14% de `--gdy-foreground`), `--gdy-table-pinned-z` (`1`), `--gdy-table-pinned-corner-z` (`3`), `--gdy-table-open-menu-z` (`4`), `--gdy-table-resize-handle-color` (`--gdy-ring`) |
 | `--gdy-kanban-*` | `--gdy-kanban-column-bg` (`--gdy-muted`), `--gdy-kanban-card-bg` (`--gdy-card`), `--gdy-kanban-drop-outline` (`--gdy-muted-foreground`), `--gdy-kanban-drop-disabled-outline` (`--gdy-destructive`), `--gdy-kanban-column-collapsed-width` (`44px`) |
+| `--gdy-card-grid-*` | `--gdy-card-grid-min` (`260px`, la columna más angosta), `--gdy-card-grid-gap` (`12px`), `--gdy-card-grid-padding` (`12px`), `--gdy-card-grid-focus-ring` (`--gdy-ring`); las tarjetas leen además los tokens `--gdy-kanban-card-*` |
 | `--gdy-ai-*` | `--gdy-ai-accent` (`--gdy-primary`), `--gdy-ai-bg` (`--gdy-background`), `--gdy-ai-user-bubble-bg` (`--gdy-ai-accent` y después `--gdy-primary`) |
 | `--gdy-auth-*` | `--gdy-auth-bg` (`--gdy-card`), `--gdy-auth-submit-bg` (`--gdy-primary`), `--gdy-auth-input-focus-border` (`--gdy-ring`), `--gdy-auth-rule-met` (`--gdy-success`) |
 | `--gdy-segmented-*` | `--gdy-segmented-bg` (`--gdy-muted`), `--gdy-segmented-indicator-bg` (`--gdy-background`), `--gdy-segmented-item-active-color` (`--gdy-foreground`), `--gdy-segmented-focus-ring` (`--gdy-ring`), `--gdy-segmented-duration` (`220ms`) |

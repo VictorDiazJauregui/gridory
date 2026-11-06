@@ -472,7 +472,8 @@ fondo de hover de las opciones del filtro de valores con `--gdy-option-hover-bg`
 
 ## Referencia
 
-Todos los tipos de esta sección se exportan desde `gridory`, `gridory/table` y `gridory/kanban`.
+Todos los tipos de esta sección se exportan desde `gridory`, `gridory/table` y `gridory/kanban`, y todos salvo
+`ViewSwitchConfig` desde `gridory/card-grid`, que no tiene selector de vista.
 
 ### DataViewProps
 

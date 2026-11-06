@@ -31,7 +31,7 @@ npm ci
 npm run dev
 ```
 
-La demo corre en `http://localhost:5173` con una página por módulo (`/mocks/table`, `/mocks/kanban`,
+La demo corre en `http://localhost:5173` con una página por módulo (`/mocks/table`, `/mocks/kanban`, `/mocks/card-grid`,
 `/mocks/ai`, `/mocks/auth`, `/mocks/controls`, `/mocks/sidebar`). Agrega `?theme=dark` para revisar el tema oscuro. Para probar el asistente con un
 proveedor real, copia `.env.example` a `.env.local`, completa `VITE_AI_API_KEY` y reinicia `npm run dev`. Los
 valores de ejemplo apuntan a Gemini a través de un proxy de Vite que evita CORS. Sin key la demo se
@@ -64,6 +64,7 @@ por área, nunca por tipo de archivo, con 3 a 12 archivos cada una y sin barrels
 |---|---|
 | `table/` | `model/`, `header/`, `body/`, `pagination/` |
 | `kanban/` | `model/`, `toolbar/`, `board/`, `card/` |
+| `card-grid/` | `model/`, `grid/` |
 | `ai/` | `chat/`, `completion/`, `sidebar/`, `transcript/`, `actions/` |
 | `auth/` | `config/`, `model/`, `fields/`, `password/`, `validation/`, `layout/`, `actions/` |
 | `segmented-control/` | `model/`, `parts/` |

@@ -460,7 +460,8 @@ themes are described in [theming.md](theming.md).
 
 ## Reference
 
-Every type below is exported from `gridory`, `gridory/table` and `gridory/kanban`.
+Every type below is exported from `gridory`, `gridory/table` and `gridory/kanban`, and all but `ViewSwitchConfig`
+from `gridory/card-grid`, which has no view switch.
 
 ### DataViewProps
 

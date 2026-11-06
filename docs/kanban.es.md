@@ -530,6 +530,40 @@ números; `"number"` compara `Number(value)`; `"date"` compara los diez primeros
 así que los strings ISO se ordenan por día. Sin un orden activo, las tarjetas mantienen el orden de
 `data`.
 
+### Estado controlado
+
+La búsqueda, los filtros y el orden pueden quedar en manos de tu app, con las mismas props, tipos y reglas
+que en `DataTable` ([Estado controlado](table.es.md#estado-controlado)): pasa el valor y su `on…Change` y
+el tablero muestra exactamente ese valor y solo avisa lo que hace el usuario; deja el valor en `undefined`
+y el tablero guarda el estado por su cuenta, como antes. Elige un modo para toda la vida del tablero:
+cambiarlo después de montar muestra un aviso en las builds de desarrollo. Al montar no se avisa nada.
+
+- `search` (`string`) fija el texto del buscador. `onSearchChange(query)` avisa lo que escribe el usuario,
+  controlado o no; nunca los cambios de la prop.
+- `sorting` (`ColumnSortingState | null`) fija el orden activo; `null` es "sin orden". `onSortChange(sorting)`
+  se dispara con cada cambio de orden hecho en un menú de filtro (los botones de "Ordenar", el "Limpiar" de
+  fecha).
+- `columnFilters` (`ColumnFiltersState`) fija los filtros de valores y de fecha. `onFiltersChange(filters)`
+  se dispara cuando el usuario cambia los filtros activos (un menú de valores, uno de fecha, "Limpiar
+  filtros") y recibe solo los activos.
+
+El tablero filtra y ordena las tarjetas que tiene: no hay `manualSorting` ni `manualFiltering`, ni
+`searchDebounceMs`, porque nada va a un servidor. El motivo habitual para controlarlos es no perderlos al
+alternar entre `DataTable`, `CardGrid` y `KanbanBoard`:
+
+```tsx
+const [search, setSearch] = useState("");
+const [sorting, setSorting] = useState<ColumnSortingState | null>(null);
+const [filters, setFilters] = useState<ColumnFiltersState>({ values: {}, dates: {} });
+const shared = {
+  search, onSearchChange: setSearch,
+  sorting, onSortChange: setSorting,
+  columnFilters: filters, onFiltersChange: setFilters,
+};
+
+{view === "kanban" ? <KanbanBoard {...shared} {...boardProps} /> : <DataTable {...shared} {...tableProps} />}
+```
+
 ### Tarjetas personalizadas
 
 La tarjeta por defecto se construye a partir de `fields`, en este orden:
@@ -671,6 +705,9 @@ Claves propias del kanban (`KanbanBoardLabels`):
 | `onCardClick` | `(event: KanbanCardClickEvent<TData>) => void` | Se hace clic en una tarjeta (no al terminar un arrastre ni desde su menú). |
 | `onVisibleCardsChange` | `(state: KanbanVisibleCardsState<TData>) => void` | Al montar, y cada vez que cambian las tarjetas visibles. Ver [Tarjetas visibles](#tarjetas-visibles). |
 | `onGroupChange` | `(groupId: string) => void` | El usuario elige otro grupo en el selector. No se dispara al montar. |
+| `onSearchChange` | `(query: string) => void` | El usuario escribe en el buscador. Ver [Estado controlado](#estado-controlado). |
+| `onSortChange` | `(sorting: ColumnSortingState \| null) => void` | El usuario cambia el orden en un menú de filtro. |
+| `onFiltersChange` | `(filters: ColumnFiltersState) => void` | El usuario cambia los filtros activos. |
 | `onCreate` | `() => void` | Se hace clic en el botón de crear. El botón solo se renderiza si defines este callback. |
 | `rowActions.onEdit`, `onArchive`, `onArchiveToggle`, `onRemove`, `onHistory` | `(row: TData) => void` | Se elige la acción predefinida correspondiente en el menú de la tarjeta. |
 | `rowActions.customActions[].onClick` | `(row: TData) => void` | Se elige una acción personalizada en el menú de la tarjeta. |
@@ -875,6 +912,12 @@ Props propias de `KanbanBoardProps<TData>`, en el orden del código fuente.
 | `onCardClick` | `(event: KanbanCardClickEvent<TData>) => void` | — | Clic en una tarjeta. |
 | `onVisibleCardsChange` | `(state: KanbanVisibleCardsState<TData>) => void` | — | Tarjetas visibles al montar y después de cada cambio. |
 | `onGroupChange` | `(groupId: string) => void` | — | Cambio en el selector de grupo. |
+| `search` | `string` | — | Búsqueda controlada. Ver [Estado controlado](#estado-controlado). |
+| `onSearchChange` | `(query: string) => void` | — | Lo que el usuario escribe en el buscador. |
+| `sorting` | `ColumnSortingState \| null` | — | Orden controlado; `null` es sin orden. |
+| `onSortChange` | `(sorting: ColumnSortingState \| null) => void` | — | Cambio de orden hecho por el usuario. |
+| `columnFilters` | `ColumnFiltersState` | — | Filtros de valores y de fecha controlados. |
+| `onFiltersChange` | `(filters: ColumnFiltersState) => void` | — | Filtros activos cambiados por el usuario. |
 | `renderColumnHeaderExtra` | `(context: KanbanColumnHeaderContext<TData>) => ReactNode` | — | Contenido propio en la cabecera de cada columna. Ver [Contenido en la cabecera de columna](#contenido-en-la-cabecera-de-columna). |
 | `renderColumnFooter` | `(context: KanbanColumnFooterContext<TData>) => ReactNode` | — | Contenido propio al final de cada columna. Ver [Columnas colapsables y pie](#columnas-colapsables-y-pie). |
 | `collapsibleColumns` | `boolean` | `false` | Agrega el botón que colapsa una columna. |
@@ -923,4 +966,6 @@ Props propias de `KanbanBoardProps<TData>`, en el orden del código fuente.
 - `KanbanFiltersState`: `Record<string, string[]>`, los valores seleccionados por id de campo.
 - `KanbanDateFiltersState`: `Record<string, DateFilterState>`, el filtro de fecha por id de campo.
 - `KanbanBoardClassNames`: las clases opcionales por parte de `classNames`.
+- `ColumnSortingState` y `ColumnFiltersState`: el orden y los filtros controlados, los mismos tipos que en
+  `DataTable`, exportados también desde `gridory/kanban`.
 - `KanbanColumnAttributes`: los atributos `data-*` y `aria-*` que devuelve `getColumnAttributes`.
