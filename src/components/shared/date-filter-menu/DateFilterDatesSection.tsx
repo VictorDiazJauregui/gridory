@@ -1,5 +1,6 @@
 import type { CalendarSettings } from "../controls/column-filters";
 import type { DateFilterMenuLabels } from "../labels/data-view-labels";
+import type { CalendarLabels } from "../../ui/calendar/calendar-labels";
 import type { DeferredModuleState } from "../deferred/use-deferred-module";
 import type { DatePickersBundle } from "../date-pickers/deferred-date-pickers";
 import { buildLoadingRootAttributes } from "../loading/loading-state";
@@ -9,7 +10,7 @@ import type { DateFilterDraft } from "./use-date-filter-draft";
 
 type DatesSectionLabels = Pick<
   DateFilterMenuLabels,
-  "datesTitle" | "pickDate" | "pickRange" | "dateLoadError" | "dateLoadRetry"
+  "datesTitle" | "pickDate" | "pickRange" | "dateLoadError" | "dateLoadRetry" | keyof CalendarLabels
 >;
 
 interface DateFilterDatesSectionProps {
@@ -22,12 +23,13 @@ interface DraftPickerProps extends Omit<DateFilterDatesSectionProps, "pickers"> 
   pickers: DatePickersBundle;
 }
 
-const toPickerCalendar = (settings: CalendarSettings) => ({
+const toPickerCalendar = (settings: CalendarSettings & { labels: CalendarLabels }) => ({
   dateInputFormat: settings.dateInputFormat,
   monthYearDropdown: settings.calendarMonthYearDropdown,
   fromYear: settings.calendarFromYear,
   toYear: settings.calendarToYear,
   locale: settings.calendarLocale,
+  labels: settings.labels,
 });
 
 const DraftDatePicker = ({ draft, settings, pickers }: DraftPickerProps) => (

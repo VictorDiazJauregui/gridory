@@ -1,8 +1,10 @@
+import type { CalendarLabels } from "../../ui/calendar/calendar-labels";
+
 /**
  * Texts shared by the table and the kanban: toolbar, row and card actions, value and date filter
  * menus and the date pickers. Each key documents its Spanish default.
  */
-export interface DataViewLabels {
+export interface DataViewLabels extends CalendarLabels {
   /** Search box placeholder. `"Buscar..."` (table), `"Buscar cards..."` (kanban). */
   searchPlaceholder: string;
   /** Create button. `"Nuevo"`. */
@@ -122,6 +124,7 @@ export type DateFilterMenuLabels = Pick<
   | "pickRange"
   | "dateLoadError"
   | "dateLoadRetry"
+  | keyof CalendarLabels
 >;
 
 export const DATA_VIEW_LABELS: DataViewLabels = {
@@ -165,5 +168,11 @@ export const DATA_VIEW_LABELS: DataViewLabels = {
   pickRange: "Seleccionar rango",
   dateLoadError: "No se pudo cargar el calendario. Si sigue sin aparecer, recarga la página.",
   dateLoadRetry: "Reintentar",
+  calendarNavigation: "Navegación del calendario",
+  calendarPreviousMonth: "Mes anterior",
+  calendarNextMonth: "Mes siguiente",
+  calendarChooseMonth: "Elegir el mes",
+  calendarChooseYear: "Elegir el año",
+  calendarToday: "Hoy",
   labeledValue: (label, value) => `${label}: ${value}`,
 };
