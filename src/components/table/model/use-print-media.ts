@@ -3,8 +3,9 @@ import { flushSync } from "react-dom";
 
 const PRINT_QUERY = "print";
 
+// A server render (Next, renderToString) has no `window`: it starts as the screen, and the effect corrects it.
 const readPrintMedia = () =>
-  typeof window.matchMedia === "function" && window.matchMedia(PRINT_QUERY).matches;
+  typeof window !== "undefined" && typeof window.matchMedia === "function" && window.matchMedia(PRINT_QUERY).matches;
 
 // `beforeprint` and `afterprint` bracket the browser's print (Ctrl+P, `window.print()`); the media
 // query also covers a print preview or an emulated print media, which fire no print events.
