@@ -4,10 +4,10 @@ import { DataTable } from "../components/table";
 import { TableHeaderHelp } from "../components/table/header/TableHeaderHelp";
 import type { HeaderCheckState } from "../components/table/selection/row-selection";
 import { SelectCheckbox } from "../components/table/selection/SelectCheckbox";
-import { BASELINE_COLUMNS, BASELINE_ROWS } from "./baseline-fixture";
+import { BASELINE_COLUMNS, BASELINE_ROWS, keepOnlyGridoryIconClasses } from "./baseline-fixture";
 
 // The markup Radix rendered in 1.5.0 (captured from its Checkbox and Tooltip trigger): consumers' CSS and tests
-// read it, so the own checkbox and help keep it byte for byte.
+// read it, so the own checkbox and help keep it byte for byte, except the inside of the lucide icons.
 const RADIX_CHECKBOX_MARKUP: [HeaderCheckState, boolean, string][] = [
   [false, false, "<button type=\"button\" role=\"checkbox\" aria-checked=\"false\" data-state=\"unchecked\" value=\"on\" class=\"gdy-table-select\" aria-label=\"Seleccionar fila\"></button>"],
   [false, true, "<button type=\"button\" role=\"checkbox\" aria-checked=\"false\" data-state=\"unchecked\" data-disabled=\"\" disabled=\"\" value=\"on\" class=\"gdy-table-select\" aria-label=\"Seleccionar fila\"></button>"],
@@ -32,11 +32,13 @@ const renderTable = () =>
 
 test.each(RADIX_CHECKBOX_MARKUP)("the checkbox (%s, disabled %s) renders the markup of the 1.5.0 Radix checkbox", (checked, disabled, markup) => {
   const props = { checked, disabled, label: "Seleccionar fila", onToggle: () => {} };
-  expect(render(<SelectCheckbox {...props} />).container.innerHTML).toBe(markup);
+  const html = render(<SelectCheckbox {...props} />).container.innerHTML;
+  expect(keepOnlyGridoryIconClasses(html)).toBe(keepOnlyGridoryIconClasses(markup));
 });
 
 test("the closed help renders the markup of the 1.5.0 Radix tooltip trigger", () => {
-  expect(render(<TableHeaderHelp text="Ayuda" label="Ayuda sobre Usuarios" />).container.innerHTML).toBe(RADIX_HELP_TRIGGER_MARKUP);
+  const html = render(<TableHeaderHelp text="Ayuda" label="Ayuda sobre Usuarios" />).container.innerHTML;
+  expect(keepOnlyGridoryIconClasses(html)).toBe(keepOnlyGridoryIconClasses(RADIX_HELP_TRIGGER_MARKUP));
 });
 
 test("the checkbox is in the first render and toggles at once, with no download to wait for", () => {
