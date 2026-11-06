@@ -13,6 +13,7 @@ const rootEntry = await import("../index");
 test("the root entry loads without the openai SDK", () => {
   expect(rootEntry).toHaveProperty("DataTable");
   expect(rootEntry).toHaveProperty("KanbanBoard");
+  expect(rootEntry).toHaveProperty("CardGrid");
 });
 
 test("the root entry leaves the AI assistant to gridory/ai", () => {
