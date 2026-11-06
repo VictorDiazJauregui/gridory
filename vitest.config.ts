@@ -5,6 +5,7 @@ import type { BrowserCommand } from "vitest/node";
 import viteConfig from "./vite.config.ts";
 
 const BROWSER_TESTS = "src/test/**/*.browser.test.{ts,tsx}";
+const SERVER_TESTS = "src/test/**/*.server.test.{ts,tsx}";
 
 // jsdom has no layout engine, so styles, sizes and positions are checked in the installed Google Chrome,
 // headless (the GitHub runner ships one), so neither CI nor a contributor downloads a browser.
@@ -139,8 +140,13 @@ export default mergeConfig(
             setupFiles: ["src/test/setup.ts"],
             css: false,
             include: ["src/test/**/*.test.{ts,tsx}"],
-            exclude: [BROWSER_TESTS],
+            exclude: [BROWSER_TESTS, SERVER_TESTS],
           },
+        },
+        // Next, Remix or renderToString render on a server, where neither `window` nor `document` exist.
+        {
+          extends: true,
+          test: { name: "server", environment: "node", maxWorkers: 2, css: false, include: [SERVER_TESTS] },
         },
         createBrowserProject({
           name: "browser",
