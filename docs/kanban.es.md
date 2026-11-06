@@ -610,8 +610,6 @@ calendario de los filtros. Los defaults están en español (decisión de product
 que quieras cambiar y el resto queda igual. Los textos con valores son funciones.
 
 ```tsx
-import { enUS } from "date-fns/locale";
-
 const formatDate = new Intl.DateTimeFormat("en-US", { dateStyle: "medium" });
 
 <KanbanBoard
@@ -621,8 +619,10 @@ const formatDate = new Intl.DateTimeFormat("en-US", { dateStyle: "medium" });
     emptyColumn: "No deals",
     emptyValue: "No stage",
     formatCardDate: (value) => formatDate.format(new Date(`${value.slice(0, 10)}T00:00`)),
+    calendarPreviousMonth: "Previous month",
+    calendarNextMonth: "Next month",
   }}
-  calendarLocale={enUS}
+  calendarLocale="en-US"
 />;
 ```
 
@@ -632,8 +632,9 @@ const formatDate = new Intl.DateTimeFormat("en-US", { dateStyle: "medium" });
 - **Memorizalo.** Guardá `labels` en una constante o en un `useMemo`.
 - **Los contenidos son tuyos.** Los títulos de los campos, las etiquetas de grupo y los valores de las
   cards son textos de tu app.
-- **`calendarLocale`** funciona igual que en la tabla ([table.es.md](table.es.md#textos-e-idioma)); un
-  locale de `react-day-picker/locale` traduce además los nombres accesibles del calendario.
+- **`calendarLocale`** y las claves `calendar*` funcionan igual que en la tabla
+  ([table.es.md](table.es.md#textos-e-idioma)): una etiqueta BCP 47 o un locale de `date-fns` fija el
+  idioma, y las claves, los nombres accesibles del calendario.
 
 Claves comunes con la tabla (`DataViewLabels`):
 
@@ -679,6 +680,12 @@ Claves comunes con la tabla (`DataViewLabels`):
 | `pickRange` | `"Seleccionar rango"` | Nombre accesible del botón del calendario (rango) | — |
 | `dateLoadError` | `"No se pudo cargar el calendario. Si sigue sin aparecer, recarga la página."` | Aviso del filtro de fecha cuando no se pudo descargar el calendario | — |
 | `dateLoadRetry` | `"Reintentar"` | Botón que vuelve a descargar el calendario | — |
+| `calendarNavigation` | `"Navegación del calendario"` | Nombre accesible de la navegación del calendario | — |
+| `calendarPreviousMonth` | `"Mes anterior"` | Nombre accesible del botón de mes anterior del calendario | — |
+| `calendarNextMonth` | `"Mes siguiente"` | Nombre accesible del botón de mes siguiente del calendario | — |
+| `calendarChooseMonth` | `"Elegir el mes"` | Nombre accesible del desplegable de meses del calendario | — |
+| `calendarChooseYear` | `"Elegir el año"` | Nombre accesible del desplegable de años del calendario | — |
+| `calendarToday` | `"Hoy"` | Prefijo del nombre accesible del día de hoy ("Hoy, viernes, 6 de noviembre de 2026") | — |
 | `labeledValue(label, value)` | `` `${label}: ${value}` `` | Une un prefijo y su valor: "Agrupar por: Ninguno", "Mostrar: Activos", los selectores propios y la etiqueta de la card | — |
 
 Claves propias del kanban (`KanbanBoardLabels`):

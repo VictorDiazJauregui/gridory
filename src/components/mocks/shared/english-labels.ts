@@ -44,6 +44,12 @@ const ENGLISH_VIEW_LABELS: DataViewLabels = {
   pickRange: "Pick a range",
   dateLoadError: "The calendar could not be loaded. If it still does not appear, reload the page.",
   dateLoadRetry: "Try again",
+  calendarNavigation: "Calendar navigation",
+  calendarPreviousMonth: "Previous month",
+  calendarNextMonth: "Next month",
+  calendarChooseMonth: "Choose the month",
+  calendarChooseYear: "Choose the year",
+  calendarToday: "Today",
   labeledValue: (label, value) => `${label}: ${value}`,
 };
 

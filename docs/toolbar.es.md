@@ -175,16 +175,16 @@ fecha activo.
 - `calendarMonthYearDropdown` (por defecto `true`) muestra desplegables de mes y año en la cabecera del
   calendario; con `false`, el mes aparece como texto fijo. Los años van de `calendarFromYear` (por
   defecto, el año actual menos 100) a `calendarToYear` (por defecto, el año actual más 10).
-- El calendario usa el locale español (nombres de meses y de días, semanas que empiezan el lunes),
-  salvo que `calendarLocale` indique otro locale de `date-fns`. Un locale de `react-day-picker/locale`
-  traduce además los nombres accesibles del calendario.
+- El calendario está en español (nombres de meses y de días, semanas que empiezan el lunes), salvo que
+  `calendarLocale` indique otro idioma, como etiqueta BCP 47 (`"en-US"`) o como locale de `date-fns`.
+  Sus nombres accesibles ("Mes anterior", "Elegir el año"…) son las claves `calendar*` de `labels`.
 - Todos los textos de la barra y de los menús ("Limpiar filtros", "Ordenar", "Aplicar"…) se reemplazan
   con `labels`: ver [table.es.md](table.es.md#textos-e-idioma) y
   [kanban.es.md](kanban.es.md#textos-e-idioma).
 
 #### Cuándo se descarga el calendario
 
-Los inputs de fecha y el calendario (`react-day-picker` y `date-fns`) no viajan con la página: se
+Los inputs de fecha y el calendario no viajan con la página: se
 descargan la primera vez que se abre un menú de fecha, y los menús siguientes los reutilizan. Hasta que
 llegan, la sección `"Fechas"` muestra cajas vacías del mismo tamaño y lleva `aria-busy` y `data-loading`,
 así el menú no cambia de tamaño. Si la descarga falla dos veces seguidas (por ejemplo, la app se volvió a
@@ -503,7 +503,7 @@ Todos los tipos de esta sección se exportan desde `gridory`, `gridory/table` y 
 | `calendarMonthYearDropdown` | `boolean` | `true` | Desplegables de mes y año en la cabecera del calendario. |
 | `calendarFromYear` | `number` | año actual menos 100 | Primer año del desplegable de años. |
 | `calendarToYear` | `number` | año actual más 10 | Último año del desplegable de años. |
-| `calendarLocale` | `Locale` (`date-fns`) | español (`es`) | Idioma del calendario de los filtros. |
+| `calendarLocale` | `string \| { code?: string; options?: { weekStartsOn?: number } }` | español (`"es"`) | Idioma del calendario de los filtros: una etiqueta BCP 47 o un locale de `date-fns`. |
 
 ### ToolbarLayout
 

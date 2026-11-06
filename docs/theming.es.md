@@ -513,10 +513,10 @@ por su presencia (`[data-dragging]`), no por su valor. El resto toma los valores
 | `aria-expanded` | `gdy-table-group-toggle` | Gridory | `"false"` cuando el grupo está plegado |
 | `data-state` | `gdy-menu-content`, `gdy-popover-content`, `gdy-select-*`, `gdy-toggle-item` | Radix | `"open"` o `"closed"` en menú, popover y select; `"checked"` en un ítem de select; `"on"` en un ítem de toggle |
 | `data-highlighted` | `gdy-select-item` | Radix | el ítem bajo el puntero o con el foco del teclado |
-| `data-disabled` | `gdy-menu-item`, `gdy-select-item`, `gdy-calendar-day` | Radix, react-day-picker | un ítem o un día deshabilitado |
+| `data-disabled` | `gdy-menu-item`, `gdy-select-item`, `gdy-calendar-day` | Radix | un ítem o un día deshabilitado |
 | `data-placeholder` | `gdy-select-trigger` | Radix | no hay ningún valor seleccionado |
 | `data-side` | `gdy-menu-content`, `gdy-popover-content`, `gdy-select-content` | Radix | `"top"`, `"right"`, `"bottom"` o `"left"` respecto al ancla |
-| `data-today`, `data-outside`, `data-selected` | `gdy-calendar-day` | react-day-picker | hoy, un día de otro mes, un día seleccionado |
+| `data-today`, `data-outside`, `data-selected` | `gdy-calendar-day` | Gridory | hoy, un día de otro mes, un día seleccionado |
 | `data-range-start`, `data-range-middle`, `data-range-end` | `gdy-calendar-day`, `gdy-calendar-day-button` | Gridory | posición dentro de un rango seleccionado |
 | `data-selected-single` | `gdy-calendar-day-button` | Gridory | un día seleccionado fuera de un rango |
 | `data-state` | `gdy-ai-sidebar` | Gridory | `"open"` o `"closed"` |

@@ -1,4 +1,3 @@
-import { format } from "date-fns";
 import type { DateInputFormat } from "../data-model";
 
 interface CalendarDate {
@@ -13,7 +12,7 @@ const MASK_FIELD_PATTERNS: Record<string, string> = {
   yyyy: "(?<year>\\d{1,4})",
 };
 
-// Reading the four fixed masks by hand keeps date-fns' parse, and its dozens of token parsers, out of the bundle.
+// Reading and writing the four fixed masks by hand spares the package a date library and its token parsers.
 const buildMaskPattern = (mask: DateInputFormat): RegExp =>
   new RegExp(`^${mask.replace(/dd|mm|yyyy/g, (field) => MASK_FIELD_PATTERNS[field])}$`);
 
@@ -33,9 +32,13 @@ const toExistingLocalDate = ({ day, month, year }: CalendarDate): Date | undefin
   return matchesTypedDayAndMonth ? date : undefined;
 };
 
-/** Maps the user-facing mask (mm = month) to a date-fns pattern (MM = month). */
-const dateFnsPattern = (mask: DateInputFormat): string =>
-  mask.replace("mm", "MM");
+const padNumber = (value: number, length: number): string => String(value).padStart(length, "0");
+
+const writeMaskedDate = (date: Date, mask: DateInputFormat | "yyyy-mm-dd"): string =>
+  mask
+    .replace("dd", padNumber(date.getDate(), 2))
+    .replace("mm", padNumber(date.getMonth() + 1, 2))
+    .replace("yyyy", padNumber(date.getFullYear(), 4));
 
 export const parseInputToDate = (
   text: string,
@@ -50,7 +53,7 @@ export const formatDateToInput = (
   mask: DateInputFormat,
 ): string => {
   if (!date) return "";
-  return format(date, dateFnsPattern(mask));
+  return writeMaskedDate(date, mask);
 };
 
 export const parseStringToDate = (dateStr: string): Date | undefined => {
@@ -63,5 +66,5 @@ export const parseStringToDate = (dateStr: string): Date | undefined => {
 
 export const formatDateToString = (date: Date | undefined): string => {
   if (!date) return "";
-  return format(date, "yyyy-MM-dd");
+  return writeMaskedDate(date, "yyyy-mm-dd");
 };

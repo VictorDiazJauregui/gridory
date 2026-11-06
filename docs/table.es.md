@@ -1180,8 +1180,6 @@ calendario de los filtros. Los defaults están en español (decisión de product
 que quieras cambiar y el resto queda igual. Los textos con valores son funciones.
 
 ```tsx
-import { enUS } from "date-fns/locale";
-
 <DataTable
   columns={columns}
   data={invoices}
@@ -1192,8 +1190,10 @@ import { enUS } from "date-fns/locale";
       total === 0 ? `0 ${itemsName}` : `Showing ${from}–${to} of ${total} ${itemsName}`,
     pageOf: (page, count) => `Page ${page} of ${count}`,
     itemsName: "invoices",
+    calendarPreviousMonth: "Previous month",
+    calendarNextMonth: "Next month",
   }}
-  calendarLocale={enUS}
+  calendarLocale="en-US"
 />;
 ```
 
@@ -1205,10 +1205,15 @@ import { enUS } from "date-fns/locale";
   rearma las columnas y los menús cada vez.
 - **Los contenidos son tuyos.** Los títulos de columna, los valores de las celdas y tus propios
   controles de la barra son textos de tu app: traducilos ahí.
-- **`calendarLocale`** recibe un locale de `date-fns` y cambia los nombres de meses y días, el primer
-  día de la semana y el desplegable de meses. Sin la prop, el calendario queda en español. Un locale de
-  `react-day-picker/locale` (`import { enUS } from "react-day-picker/locale"`) traduce además los
-  nombres accesibles del calendario ("mes anterior", "elegir el año"), que si no quedan en inglés.
+- **`calendarLocale`** recibe una etiqueta BCP 47 (`"en-US"`, `"pt-BR"`) y cambia los nombres de
+  meses y días, el primer día de la semana y el desplegable de meses; los escribe el `Intl` del
+  navegador, así que cualquier idioma funciona sin instalar nada. Sin la prop, el calendario queda en
+  español. Un locale de `date-fns` (`enUS` de `date-fns/locale`) sigue sirviendo: el calendario lee su
+  `code` y su `weekStartsOn`. El primer día de la semana lo da el navegador (`Intl.Locale#getWeekInfo`);
+  donde no existe (Firefox) la semana empieza el lunes, así que pasa
+  `{ code: "en-US", options: { weekStartsOn: 0 } }` si tus usuarios esperan el domingo en todos lados.
+- **Los nombres accesibles del calendario** ("Mes anterior", "Elegir el año", "Hoy, …") son las claves
+  `calendar*` de `labels`, en español por defecto como el resto de los textos.
 - Los campos de fecha muestran como placeholder la máscara de `dateInputFormat` (`"dd/mm/yyyy"`);
   elegí la que esperan tus usuarios.
 
@@ -1256,6 +1261,12 @@ Claves comunes a la tabla y al kanban (`DataViewLabels`):
 | `pickRange` | `"Seleccionar rango"` | Nombre accesible del botón del calendario (rango) | — |
 | `dateLoadError` | `"No se pudo cargar el calendario. Si sigue sin aparecer, recarga la página."` | Aviso del filtro de fecha cuando no se pudo descargar el calendario | — |
 | `dateLoadRetry` | `"Reintentar"` | Botón que vuelve a descargar el calendario | — |
+| `calendarNavigation` | `"Navegación del calendario"` | Nombre accesible de la navegación del calendario | — |
+| `calendarPreviousMonth` | `"Mes anterior"` | Nombre accesible del botón de mes anterior del calendario | — |
+| `calendarNextMonth` | `"Mes siguiente"` | Nombre accesible del botón de mes siguiente del calendario | — |
+| `calendarChooseMonth` | `"Elegir el mes"` | Nombre accesible del desplegable de meses del calendario | — |
+| `calendarChooseYear` | `"Elegir el año"` | Nombre accesible del desplegable de años del calendario | — |
+| `calendarToday` | `"Hoy"` | Prefijo del nombre accesible del día de hoy ("Hoy, viernes, 6 de noviembre de 2026") | — |
 | `labeledValue(label, value)` | `` `${label}: ${value}` `` | Une un prefijo y su valor: "Agrupar por: Ninguno", "Mostrar: Activos", los selectores propios y la etiqueta de la card | — |
 
 Claves propias de la tabla (`DataTableLabels`):

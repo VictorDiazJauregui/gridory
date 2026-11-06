@@ -1,10 +1,12 @@
-import type { Locale } from "date-fns";
-import type { DayPickerProps } from "react-day-picker";
+import type { CalendarLabels } from "../../ui/calendar/calendar-labels";
+import type { CalendarLocale } from "../../ui/calendar/calendar-locale";
+import type { CalendarProps } from "../../ui/calendar/calendar";
 
-/** Accessible name of the calendar button and language of the calendar (Spanish when unset). */
+/** Accessible names of the calendar button and the calendar, and its language (Spanish when unset). */
 export interface CalendarTexts {
   ariaLabel: string;
-  locale?: Locale;
+  labels: CalendarLabels;
+  locale?: CalendarLocale;
 }
 
 export interface CalendarYearRange {
@@ -14,7 +16,7 @@ export interface CalendarYearRange {
 }
 
 type CalendarCaption = Pick<
-  DayPickerProps,
+  CalendarProps,
   "captionLayout" | "startMonth" | "endMonth"
 >;
 

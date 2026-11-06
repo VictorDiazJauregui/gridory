@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { Locale } from "date-fns";
+import type { CalendarLocale } from "../ui/calendar/calendar-locale";
 import type {
   AiButtonConfig,
   ArchivedViewConfig,
@@ -86,9 +86,8 @@ export interface DataViewProps<TData> {
   /** Last year of the calendar year dropdown. Defaults to the current year plus 10. */
   calendarToYear?: number;
   /**
-   * Language of the filter calendar, as a `date-fns` locale (`import { enUS } from "date-fns/locale"`).
-   * One from `react-day-picker/locale` also translates its accessible names ("previous month").
-   * Defaults to the Spanish `es` of `date-fns`.
+   * Language of the filter calendar, as a BCP 47 tag (`"en-US"`); a `date-fns` locale still works through its
+   * `code` and `weekStartsOn`. Defaults to `"es"`. Its accessible names are the `calendar*` keys of `labels`.
    */
-  calendarLocale?: Locale;
+  calendarLocale?: CalendarLocale;
 }

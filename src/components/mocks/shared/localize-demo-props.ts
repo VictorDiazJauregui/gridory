@@ -1,4 +1,3 @@
-import { enUS } from "date-fns/locale";
 import type { DataTableProps } from "../../table";
 import type { KanbanBoardProps, KanbanGroupOption } from "../../kanban";
 import type { ColumnDefinition, FilterOption } from "../../shared/data-model";
@@ -68,7 +67,7 @@ const localizeViewProps = <TProps extends DataTableProps<MockCompanyRow> | Kanba
   props: TProps,
 ): TProps => ({
   ...props,
-  calendarLocale: enUS,
+  calendarLocale: "en-US",
   createLabel: props.createLabel && toEnglish(props.createLabel),
   rowActions: localizeRowActions(props.rowActions),
   toggleGroups: props.toggleGroups?.map(localizeToggleGroup),

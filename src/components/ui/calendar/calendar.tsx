@@ -1,102 +1,97 @@
 "use client";
 
-import * as React from "react";
-import {
-  DayPicker,
-  type CustomComponents,
-  type Locale,
-} from "react-day-picker";
-import { es } from "date-fns/locale";
+import { useMemo } from "react";
 
-import { CalendarChevron } from "./calendar-chevron";
-import { CalendarDay } from "./calendar-day";
-import { CalendarDayButton } from "./calendar-day-button";
-import { CalendarRoot } from "./calendar-root";
+import { buildCalendarFormatters } from "./calendar-formatters";
+import type { CalendarLabels } from "./calendar-labels";
+import { resolveCalendarLocale, type CalendarLocale } from "./calendar-locale";
+import { CalendarCaption } from "./calendar-caption";
+import type { CalendarDayContext } from "./calendar-day";
+import { CalendarMonthGrid } from "./calendar-month-grid";
+import { CalendarNav } from "./calendar-nav";
+import { addDayToRange, toggleDay, type CalendarSelection, type DateRange } from "./calendar-selection";
+import { useCalendarKeyboard, useFocusedDay } from "./use-calendar-keyboard";
+import { buildVisibleMonths, type VisibleMonths, type VisibleMonthsOptions } from "./visible-months";
 
-const CALENDAR_CLASS_NAMES: React.ComponentProps<typeof DayPicker>["classNames"] = {
-  root: "gdy-calendar-root",
-  months: "gdy-calendar-months",
-  month: "gdy-calendar-month",
-  nav: "gdy-calendar-nav",
-  button_previous: "gdy-calendar-button-previous",
-  button_next: "gdy-calendar-button-next",
-  month_caption: "gdy-calendar-month-caption",
-  dropdowns: "gdy-calendar-dropdowns",
-  dropdown_root: "gdy-calendar-dropdown-root",
-  dropdown: "gdy-calendar-dropdown",
-  months_dropdown: "gdy-calendar-months-dropdown",
-  years_dropdown: "gdy-calendar-years-dropdown",
-  caption_label: "gdy-calendar-caption-label",
-  month_grid: "gdy-calendar-month-grid",
-  weekdays: "gdy-calendar-weekdays",
-  weekday: "gdy-calendar-weekday",
-  weeks: "gdy-calendar-weeks",
-  week: "gdy-calendar-week",
-  week_number_header: "gdy-calendar-week-number-header",
-  week_number: "gdy-calendar-week-number",
-  day: "gdy-calendar-day",
-  day_button: "gdy-calendar-day-button",
-  chevron: "gdy-calendar-chevron",
-  footer: "gdy-calendar-footer",
-  // Day states travel as attributes, so the modifier class names stay empty.
-  selected: "",
-  today: "",
-  outside: "",
-  disabled: "",
-  hidden: "",
-  focused: "",
-  range_start: "",
-  range_middle: "",
-  range_end: "",
-};
+export type { DateRange };
 
-type CalendarProps = React.ComponentProps<typeof DayPicker>;
-
-// Module-level components keep their identity across renders: an inline
-// component would remount the whole calendar subtree on every render.
-const CALENDAR_COMPONENTS: Partial<CustomComponents> = {
-  Root: CalendarRoot,
-  Day: CalendarDay,
-  Chevron: CalendarChevron,
-};
-
-const buildFormatters = (
-  locale: Partial<Locale>,
-  formatters: CalendarProps["formatters"],
-): CalendarProps["formatters"] => ({
-  formatMonthDropdown: (date) =>
-    date.toLocaleString(locale.code, { month: "short" }),
-  ...formatters,
-});
-
-// DayButton needs the active locale, so it stays a per-render closure.
-const buildComponents = (
-  locale: Partial<Locale>,
-  components: CalendarProps["components"],
-): CalendarProps["components"] => ({
-  ...CALENDAR_COMPONENTS,
-  DayButton: (props) => <CalendarDayButton locale={locale} {...props} />,
-  ...components,
-});
-
-const Calendar = ({
-  showOutsideDays = true,
-  captionLayout = "label",
-  locale,
-  ...props
-}: CalendarProps) => {
-  const activeLocale = locale ?? es;
-  return (
-    <DayPicker
-      {...props}
-      showOutsideDays={showOutsideDays}
-      captionLayout={captionLayout}
-      locale={activeLocale}
-      formatters={buildFormatters(activeLocale, props.formatters)}
-      classNames={{ ...CALENDAR_CLASS_NAMES, ...props.classNames }}
-      components={buildComponents(activeLocale, props.components)}
-    />
-  );
+interface CalendarViewProps extends VisibleMonthsOptions {
+  locale?: CalendarLocale;
+  labels: CalendarLabels;
+  captionLayout?: "label" | "dropdown";
 }
 
-export { Calendar };
+type CalendarSelectionProps =
+  | { mode: "single"; selected?: Date; onSelect?: (day: Date | undefined) => void }
+  | { mode: "range"; selected?: DateRange; onSelect?: (range: DateRange | undefined) => void };
+
+export type CalendarProps = CalendarViewProps & CalendarSelectionProps;
+
+const selectDay = (props: CalendarSelectionProps, day: Date) => {
+  if (props.mode === "single") return props.onSelect?.(toggleDay(props.selected, day));
+  return props.onSelect?.(addDayToRange(props.selected, day));
+};
+
+const readSelection = (props: CalendarSelectionProps): CalendarSelection =>
+  props.mode === "single" ? { mode: "single", selected: props.selected } : { mode: "range", selected: props.selected };
+
+const readFirstSelectedDay = (selection: CalendarSelection): Date | undefined =>
+  selection.mode === "single" ? selection.selected : selection.selected?.from;
+
+const listYears = ({ startMonth, endMonth }: VisibleMonthsOptions): number[] | undefined => {
+  if (!startMonth || !endMonth) return undefined;
+  const firstYear = startMonth.getFullYear();
+  return Array.from({ length: endMonth.getFullYear() - firstYear + 1 }, (_, index) => firstYear + index);
+};
+
+const useCalendarDays = (props: CalendarProps, visibleMonths: VisibleMonths, weekStartsOn: number) => {
+  const selection = readSelection(props);
+  const { monthsRef, onKeyDown, isTabbable, setCurrentDay } = useCalendarKeyboard({
+    months: visibleMonths.months,
+    preferredDays: [readFirstSelectedDay(selection), new Date()],
+    weekStartsOn,
+    revealDay: visibleMonths.revealDay,
+  });
+  const focus = useFocusedDay();
+  const pressDay = (day: Date) => {
+    setCurrentDay(day);
+    selectDay(props, day);
+  };
+  const isHidden = visibleMonths.isOutsideYearRange;
+  return { monthsRef, onKeyDown, days: { ...focus, selection, isTabbable, isHidden, pressDay } };
+};
+
+interface CalendarMonthsProps {
+  props: CalendarProps;
+  visibleMonths: VisibleMonths;
+  context: CalendarDayContext & { weekStartsOn: number };
+}
+
+// Keyed by position, not by date, so the month and year selects keep the focus while they change the month.
+const CalendarMonths = ({ props, visibleMonths, context }: CalendarMonthsProps) => {
+  const years = props.captionLayout === "dropdown" ? listYears(props) : undefined;
+  return visibleMonths.months.map((month, position) => (
+    <div key={position} className="gdy-calendar-month">
+      <CalendarCaption month={month} formatters={context.formatters} labels={props.labels} years={years}
+        showMonth={visibleMonths.showMonth} />
+      <CalendarMonthGrid month={month} weekStartsOn={context.weekStartsOn} context={context} />
+    </div>
+  ));
+};
+
+export const Calendar = (props: CalendarProps) => {
+  const locale = resolveCalendarLocale(props.locale);
+  const formatters = useMemo(() => buildCalendarFormatters(locale.code), [locale.code]);
+  const visibleMonths = buildVisibleMonths(props);
+  const { monthsRef, onKeyDown, days } = useCalendarDays(props, visibleMonths, locale.weekStartsOn);
+  const context = { ...locale, ...days, formatters, labels: props.labels };
+  return (
+    <div data-slot="calendar" className="gdy-calendar-root" lang={locale.code} data-mode={props.mode}
+      data-multiple-months={visibleMonths.months.length > 1 || undefined}>
+      <div className="gdy-calendar-months" ref={monthsRef} onKeyDown={onKeyDown}>
+        <CalendarNav labels={props.labels} canStepMonths={visibleMonths.canStepMonths} stepMonths={visibleMonths.stepMonths} />
+        <CalendarMonths props={props} visibleMonths={visibleMonths} context={context} />
+      </div>
+    </div>
+  );
+};

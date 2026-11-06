@@ -84,6 +84,7 @@ const OWN_PAGE_BROWSER_TESTS = [
   "src/test/data-table-row-focus.browser.test.tsx",
   "src/test/markdown-source.browser.test.tsx",
   "src/test/date-filter-deferred-calendar.browser.test.tsx",
+  "src/test/date-filter-calendar-phone.browser.test.tsx",
   "src/test/data-table-deferred-help-and-selection.browser.test.tsx",
 ];
 

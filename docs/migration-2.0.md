@@ -80,3 +80,68 @@ and does not change). To keep the 1.x layout, add these two rules after the libr
 
 If your tests compare the table markup, the `table` element now carries its minimum width:
 `<table class="gdy-table-grid" style="--gdy-table-min-width: 476px;">`.
+
+## Calendar
+
+**Who is affected:** apps that pass a locale from `react-day-picker/locale` to `calendarLocale`, apps that import
+`date-fns` or `react-day-picker` without having them in their own `package.json`, and tests that look for the
+calendar's English accessible names ("Go to the Previous Month"). Apps that pass nothing, or a `date-fns`
+locale, need no change.
+
+The date filter calendar is now Gridory's own, written with the browser's `Intl.DateTimeFormat` instead of
+`react-day-picker` and `date-fns`. It looks the same to the pixel, keeps every `gdy-calendar-*` class and state
+attribute, and keeps the keyboard: arrows, Home/End, PageUp/PageDown, and Shift for a whole year.
+
+**No language is lost.** `Intl` knows every language the browser knows, so any BCP 47 tag works without
+installing anything. A `date-fns` locale still compiles and works too: the calendar reads its `code` and its
+`weekStartsOn`. What changes is this:
+
+- **The language is a tag.** `calendarLocale` is now `string | { code?: string; options?: { weekStartsOn?:
+  number } }`. Prefer `"en-US"`; an `enUS` from `date-fns/locale` keeps working.
+- **`date-fns` no longer comes installed with Gridory**, and neither do `react-day-picker` and `@date-fns/tz`. If
+  your app imports any of them, add it to your own `package.json` (`npm install date-fns`), or switch to the tag.
+- **The accessible names are `labels`, in Spanish by default.** A locale from `react-day-picker/locale` no longer
+  translates them. Without `labels`, a screen reader now hears "Mes anterior" instead of "Go to the Previous
+  Month", in line with the rest of the Spanish interface.
+
+```tsx
+// 1.x
+import { enUS } from "react-day-picker/locale"; // came installed with gridory
+<DataTable calendarLocale={enUS} … />;           // also translated "Go to the Previous Month"
+
+// 2.0
+<DataTable
+  calendarLocale="en-US"
+  labels={{
+    calendarNavigation: "Calendar navigation",
+    calendarPreviousMonth: "Previous month",
+    calendarNextMonth: "Next month",
+    calendarChooseMonth: "Choose the month",
+    calendarChooseYear: "Choose the year",
+    calendarToday: "Today",
+  }}
+  …
+/>;
+```
+
+The same props and keys work on `KanbanBoard` and `CardGrid`.
+
+**If you type a full labels object** (`const labels: DataTableLabels = { … }`, or `DataViewLabels`,
+`KanbanBoardLabels`, `CardGridLabels`), add these keys: `calendarNavigation`, `calendarPreviousMonth`,
+`calendarNextMonth`, `calendarChooseMonth`, `calendarChooseYear` and `calendarToday`. TypeScript reports the ones
+missing. A partial object passed to `labels` needs nothing: the keys you leave out keep their Spanish default.
+
+**Smaller differences:**
+
+- A day's accessible name no longer ends in ", selected": the cell's `aria-selected` already says it.
+- The first day of the week comes from the browser (`Intl.Locale#getWeekInfo`). Firefox does not have it, and
+  there a tag starts the week on Monday; a `date-fns` locale or `{ code: "en-US", options: { weekStartsOn: 0 } }`
+  sets it everywhere.
+
+To find what is left, search your sources and check what your app installs on its own:
+
+```bash
+grep -rnE "from \"(react-day-picker|date-fns|@date-fns/tz)" src
+grep -rnE "Go to the (Previous|Next) Month|Choose the (Month|Year)" src
+npm ls date-fns react-day-picker
+```

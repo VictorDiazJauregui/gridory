@@ -19,7 +19,7 @@ export const DatePickerWithInput = (props: DatePickerWithInputProps) => {
       popover={popover}
       ariaLabel={props.ariaLabel}
     >
-      <Calendar mode="single" locale={props.locale} {...calendar} {...caption} />
+      <Calendar mode="single" locale={props.locale} labels={props.labels} {...calendar} {...caption} />
     </DatePickerField>
   );
 };

@@ -171,16 +171,16 @@ day; "between" includes both ends. Rows with an empty value never match an activ
 - `calendarMonthYearDropdown` (default `true`) shows month and year dropdowns in the calendar
   header; `false` shows a static month label. The years run from `calendarFromYear` (default:
   current year minus 100) to `calendarToYear` (default: current year plus 10).
-- The calendar uses the Spanish locale (month and weekday names, weeks starting on Monday) unless
-  `calendarLocale` sets another `date-fns` locale. A locale from `react-day-picker/locale` also
-  translates the calendar's accessible names.
+- The calendar is in Spanish (month and weekday names, weeks starting on Monday) unless
+  `calendarLocale` sets another language, as a BCP 47 tag (`"en-US"`) or a `date-fns` locale. Its
+  accessible names ("Mes anterior", "Elegir el año"…) are the `calendar*` keys of `labels`.
 - Every text of the toolbar and the menus (this page's "Limpiar filtros", "Ordenar", "Aplicar"…) is
   replaceable with `labels`: see [table.md](table.md#texts-and-language) and
   [kanban.md](kanban.md#texts-and-language).
 
 #### When the calendar downloads
 
-The date inputs and the calendar (`react-day-picker` and `date-fns`) are not part of the page bundle:
+The date inputs and the calendar are not part of the page bundle:
 they download the first time a date menu opens, and every later menu reuses them. Until they arrive,
 the `"Fechas"` section shows empty boxes of the same size and carries `aria-busy` and `data-loading`,
 so the menu does not change size. If the download fails twice in a row (for example, the app was
@@ -491,7 +491,7 @@ from `gridory/card-grid`, which has no view switch.
 | `calendarMonthYearDropdown` | `boolean` | `true` | Month and year dropdowns in the calendar header. |
 | `calendarFromYear` | `number` | current year minus 100 | First year of the year dropdown. |
 | `calendarToYear` | `number` | current year plus 10 | Last year of the year dropdown. |
-| `calendarLocale` | `Locale` (`date-fns`) | Spanish (`es`) | Language of the filter calendar. |
+| `calendarLocale` | `string \| { code?: string; options?: { weekStartsOn?: number } }` | Spanish (`"es"`) | Language of the filter calendar: a BCP 47 tag or a `date-fns` locale. |
 
 ### ToolbarLayout
 
