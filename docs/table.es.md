@@ -742,8 +742,7 @@ Antes, una columna de casillas era un `cell` más tu propio estado, y el clic en
 + <DataTable columns={columns} data={invoices} getRowId={(row) => row.id} rowSelection={{ onChange: setSelectedIds }} />
 ```
 
-La casilla se descarga solo en las tablas con `rowSelection`, justo después del primer render. Hasta
-entonces cada celda muestra el mismo marcado, que ya marca y desmarca, así que nada se mueve ni espera.
+La casilla es parte de la tabla desde el primer render: no suma ninguna descarga.
 
 ### Filas expandibles
 
@@ -1140,9 +1139,8 @@ Antes, el "?" tenía que vivir dentro de `header`, que solo acepta texto, así q
 + { id: "amount", header: "Monto", accessor: (row) => row.amount, headerTooltip: "Suma de los contratos vigentes" }
 ```
 
-El tooltip se descarga solo en las tablas con algún `headerTooltip`, justo después del primer render. Hasta
-entonces el "?" es el mismo botón, y tocarlo abre el tooltip apenas llega. Los tests que lo abren ya lo
-esperan: `await screen.findByRole("tooltip")`.
+El tooltip es parte de la tabla desde el primer render: tocar el "?" lo abre en el acto, así que un test puede
+leerlo con `screen.getByRole("tooltip")` justo después del clic.
 
 ### Layout y scroll
 

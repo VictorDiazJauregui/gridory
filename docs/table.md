@@ -730,8 +730,7 @@ Before, a checkbox column was a `cell` plus your own state, and the click on the
 + <DataTable columns={columns} data={invoices} getRowId={(row) => row.id} rowSelection={{ onChange: setSelectedIds }} />
 ```
 
-The checkbox component downloads only for tables with `rowSelection`, right after the first render. Until
-then each cell shows the same markup, and it already toggles, so nothing moves or waits.
+The checkbox is part of the table from the first render: it adds no download.
 
 ### Expandable rows
 
@@ -1120,9 +1119,8 @@ Before, the "?" had to live inside `header`, which only takes text, so apps patc
 + { id: "amount", header: "Amount", accessor: (row) => row.amount, headerTooltip: "Sum of the contracts in force" }
 ```
 
-The tooltip downloads only for tables with a `headerTooltip`, right after the first render. Until then the
-"?" is the same button, and a press on it opens the tooltip as soon as it arrives. Tests that open it
-already wait for it: `await screen.findByRole("tooltip")`.
+The tooltip is part of the table from the first render: a press on the "?" opens it at once, so a test can
+read it with `screen.getByRole("tooltip")` right after the click.
 
 ### Layout and scrolling
 
