@@ -1,70 +1,44 @@
-import { useRef, useState, type MouseEvent } from "react";
+import { useLayoutEffect, useRef, useState, type CSSProperties, type RefObject } from "react";
+import { createPortal } from "react-dom";
 import { CircleHelp } from "lucide-react";
-import { useFocusOnMount } from "../../shared/deferred/use-placeholder-focus";
-import { Tooltip } from "radix-ui";
+import { placeHelpTooltip } from "./help-tooltip-position";
+import { useHelpTooltip } from "./use-help-tooltip";
 
 export interface TableHeaderHelpProps {
   text: string;
   label: string;
-  initiallyOpen?: boolean;
-  initiallyFocused?: boolean;
 }
 
-// Radix opens a tooltip on hover and focus only, and closes it on click. A click or tap toggles it here, judged
-// by its state when the press began: on a phone the focus arrives after the finger lifts and opens it first.
-const useClickToggledOpen = (initiallyOpen = false) => {
-  const [open, setOpen] = useState(initiallyOpen);
-  const openOnPressRef = useRef<boolean | null>(null);
-  const rememberOpenOnPress = () => {
-    openOnPressRef.current = open;
-  };
-  const toggleOnClick = (event: MouseEvent) => {
-    event.preventDefault();
-    const wasOpen = openOnPressRef.current ?? open;
-    openOnPressRef.current = null;
-    setOpen(!wasOpen);
-  };
-  return { open, setOpen, rememberOpenOnPress, toggleOnClick };
-};
+const HIDDEN_UNTIL_PLACED: CSSProperties = { position: "fixed", visibility: "hidden" };
 
-const HelpTooltipContent = ({ text }: { text: string }) => (
-  <Tooltip.Portal>
-    <Tooltip.Content className="gdy-scope gdy-table-head-tooltip" sideOffset={6} collisionPadding={8}>
+const HelpTooltipContent = ({ text, triggerRef }: { text: string; triggerRef: RefObject<HTMLButtonElement | null> }) => {
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [placement, setPlacement] = useState<ReturnType<typeof placeHelpTooltip>>();
+  useLayoutEffect(() => {
+    const trigger = triggerRef.current?.getBoundingClientRect();
+    const content = contentRef.current?.getBoundingClientRect();
+    if (trigger && content) setPlacement(placeHelpTooltip(trigger, content));
+  }, [triggerRef]);
+  return createPortal(
+    <div ref={contentRef} role="tooltip" data-side={placement?.side} className="gdy-scope gdy-table-head-tooltip"
+      style={placement?.style ?? HIDDEN_UNTIL_PLACED}>
       {text}
-    </Tooltip.Content>
-  </Tooltip.Portal>
-);
-
-interface HelpTriggerProps {
-  label: string;
-  initiallyFocused?: boolean;
-  toggle: Pick<ReturnType<typeof useClickToggledOpen>, "rememberOpenOnPress" | "toggleOnClick">;
-}
-
-const HelpTrigger = ({ label, initiallyFocused, toggle }: HelpTriggerProps) => {
-  const triggerRef = useFocusOnMount<HTMLButtonElement>(initiallyFocused);
-  return (
-    <Tooltip.Trigger
-      ref={triggerRef}
-      type="button"
-      className="gdy-table-head-help"
-      aria-label={label}
-      onPointerDown={toggle.rememberOpenOnPress}
-      onClick={toggle.toggleOnClick}
-    >
-      <CircleHelp size={14} aria-hidden="true" />
-    </Tooltip.Trigger>
+    </div>,
+    document.body,
   );
 };
 
-export const TableHeaderHelp = ({ text, label, initiallyOpen, initiallyFocused }: TableHeaderHelpProps) => {
-  const { open, setOpen, ...toggle } = useClickToggledOpen(initiallyOpen);
+// The header links the text for screen readers with aria-describedby (TableHeaderHelpDescription); the popup is the
+// visual copy, so it does not need its own id.
+export const TableHeaderHelp = ({ text, label }: TableHeaderHelpProps) => {
+  const { open, triggerRef, triggerHandlers } = useHelpTooltip();
   return (
-    <Tooltip.Provider delayDuration={200}>
-      <Tooltip.Root open={open} onOpenChange={setOpen}>
-        <HelpTrigger label={label} initiallyFocused={initiallyFocused} toggle={toggle} />
-        <HelpTooltipContent text={text} />
-      </Tooltip.Root>
-    </Tooltip.Provider>
+    <>
+      <button ref={triggerRef} data-state={open ? "delayed-open" : "closed"} type="button" className="gdy-table-head-help"
+        aria-label={label} {...triggerHandlers}>
+        <CircleHelp size={14} aria-hidden="true" />
+      </button>
+      {open && <HelpTooltipContent text={text} triggerRef={triggerRef} />}
+    </>
   );
 };
