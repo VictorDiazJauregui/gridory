@@ -125,8 +125,7 @@ test("extra fields of every kind are emitted flat next to the credentials", asyn
   await pasteCredentials(user);
   await user.type(input(/^Teléfono/), "999 111 222");
   await choosePeruPrefix(user);
-  await user.click(screen.getByRole("combobox", { name: /^Rol/ }));
-  await user.click(await screen.findByRole("option", { name: "Desarrollo" }));
+  await user.selectOptions(screen.getByRole("combobox", { name: /^Rol/ }), "Desarrollo");
   await user.click(input(/^Acepto los términos/));
   await user.click(submit());
   expect(onSubmit).toHaveBeenCalledWith({

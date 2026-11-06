@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { expect, test, vi } from "vitest";
 import { DataTable, type ColumnDefinition, type DataTableProps } from "../components/table";
@@ -75,8 +75,8 @@ test("headerContent replaces the visible title; header stays the accessible name
   expect(screen.getByTestId("custom")).toBeInTheDocument();
   const trigger = screen.getByRole("button", { name: "País" });
   expect(trigger).toContainElement(screen.getByTestId("custom"));
-  fireEvent.click(screen.getByRole("combobox", { name: "Agrupar por" }));
-  expect(screen.getByRole("option", { name: "Agrupar por: País" })).toBeInTheDocument();
+  const groupSelector = screen.getByRole("combobox", { name: "Agrupar por" });
+  expect(within(groupSelector).getByRole("option", { name: "Agrupar por: País" })).toBeInTheDocument();
 });
 
 test("labels.columnHelp names the help button", () => {

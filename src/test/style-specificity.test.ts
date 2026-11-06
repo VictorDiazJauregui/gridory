@@ -40,6 +40,7 @@ const TABLE_COMPOUND_RULES = {
   '.gdy-table-cell-content[data-overflow="wrap"]': "0-2-0",
   '.gdy-table-cell-content[data-overflow="visible"]': "0-2-0",
   ".gdy-select-trigger.gdy-table-inline-select": "0-2-0",
+  ".gdy-table-inline-select-wrap > .gdy-select": "0-2-0",
   '.gdy-table-actions-cell[data-align="left"]': "0-2-0",
   '.gdy-table-actions-cell[data-align="center"]': "0-2-0",
   ".gdy-table-group-toggle:hover": "0-2-0",

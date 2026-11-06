@@ -58,8 +58,8 @@ const openRangeCalendar = async (container: HTMLElement, labels: { between: stri
 test("a full English labels object translates the toolbar", () => {
   renderEnglishTable({ createLabel: undefined });
   expect(screen.getByPlaceholderText("Search...")).toBeInTheDocument();
-  expect(screen.getByRole("combobox", { name: "Show" })).toHaveTextContent("Show: All");
-  expect(screen.getByRole("combobox", { name: "Group by" })).toHaveTextContent("Group by: None");
+  expect(screen.getByRole("combobox", { name: "Show" })).toHaveDisplayValue("Show: All");
+  expect(screen.getByRole("combobox", { name: "Group by" })).toHaveDisplayValue("Group by: None");
   expect(screen.getByRole("button", { name: "Table" })).toBeInTheDocument();
   expect(screen.getByRole("button", { name: "Board" })).toBeInTheDocument();
   expect(screen.getByRole("button", { name: "New" })).toBeInTheDocument();
@@ -177,7 +177,7 @@ test("the older single-text props win over their labels key", () => {
   expect(screen.getByRole("button", { name: "New company" })).toBeInTheDocument();
   expect(screen.getByText("Nothing here")).toBeInTheDocument();
   expect(container.querySelector(".gdy-table-pagination-left")).toHaveTextContent("0 companies");
-  expect(screen.getByRole("combobox", { name: "Group" })).toHaveTextContent("Group: Flat");
+  expect(screen.getByRole("combobox", { name: "Group" })).toHaveDisplayValue("Group: Flat");
 });
 
 test("the row action labels and the archived view labels win over their labels keys", () => {
@@ -185,13 +185,13 @@ test("the row action labels and the archived view labels win over their labels k
     rowActions: { ...TABLE_ROW_ACTIONS, editLabel: "Modify", triggerLabel: "More" },
     archivedView: { defaultValue: "all", label: "View", optionLabels: { all: "Everything" } },
   });
-  expect(screen.getByRole("combobox", { name: "View" })).toHaveTextContent("View: Everything");
+  expect(screen.getByRole("combobox", { name: "View" })).toHaveDisplayValue("View: Everything");
   fireEvent.keyDown(screen.getAllByRole("button", { name: "More" })[0], { key: "Enter" });
   expect(screen.getByRole("menuitem", { name: "Modify" })).toBeInTheDocument();
 });
 
 test("labeledValue joins the selector prefixes and their options", () => {
   renderTable({ labels: { labeledValue: (label, value) => `${label} · ${value}` } });
-  expect(screen.getByRole("combobox", { name: "Agrupar por" })).toHaveTextContent("Agrupar por · Ninguno");
-  expect(screen.getByRole("combobox", { name: "Mostrar" })).toHaveTextContent("Mostrar · Todos");
+  expect(screen.getByRole("combobox", { name: "Agrupar por" })).toHaveDisplayValue("Agrupar por · Ninguno");
+  expect(screen.getByRole("combobox", { name: "Mostrar" })).toHaveDisplayValue("Mostrar · Todos");
 });
