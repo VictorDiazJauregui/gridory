@@ -17,7 +17,7 @@ const manifest = JSON.parse(
 ) as PackageManifest;
 
 // Every dependency and peer dependency stays out of the bundle so the consumer installs a single copy of each;
-// the prefix check also covers subpath imports such as "react/jsx-runtime" or "date-fns/locale".
+// the prefix check also covers subpath imports such as "react/jsx-runtime" or "react-dom/client".
 const externalPackages = [
   ...Object.keys(manifest.dependencies ?? {}),
   ...Object.keys(manifest.peerDependencies ?? {}),
