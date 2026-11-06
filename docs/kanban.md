@@ -496,6 +496,7 @@ operators greater than, less than and between, with a calendar. Several values o
 of them, and filters on different fields must all match. A trigger carries `data-filtered` while its
 field has a filter, and the toolbar shows a clear-filters button. The menus, date inputs and calendar
 options are shared with the table and documented in [toolbar.md](toolbar.md).
+The calendar downloads when a date menu first opens ([toolbar.md](toolbar.md#when-the-calendar-downloads)).
 
 ### Sorting
 
@@ -620,6 +621,8 @@ Keys shared with the table (`DataViewLabels`):
 | `dateApply` | `"Aplicar"` | Applies the date filter | — |
 | `pickDate` | `"Seleccionar fecha"` | Accessible name of the calendar button (one date) | — |
 | `pickRange` | `"Seleccionar rango"` | Accessible name of the calendar button (range) | — |
+| `dateLoadError` | `"No se pudo cargar el calendario. Si sigue sin aparecer, recarga la página."` | Shown in the date filter when its calendar could not be downloaded | — |
+| `dateLoadRetry` | `"Reintentar"` | Button that downloads the calendar again | — |
 | `labeledValue(label, value)` | `` `${label}: ${value}` `` | Joins a prefix and its value: "Agrupar por: Ninguno", "Mostrar: Activos", the header selectors and the kanban card tag | — |
 
 Kanban keys (`KanbanBoardLabels`):

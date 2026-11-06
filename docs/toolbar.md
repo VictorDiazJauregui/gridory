@@ -178,6 +178,20 @@ day; "between" includes both ends. Rows with an empty value never match an activ
   replaceable with `labels`: see [table.md](table.md#texts-and-language) and
   [kanban.md](kanban.md#texts-and-language).
 
+#### When the calendar downloads
+
+The date inputs and the calendar (`react-day-picker` and `date-fns`) are not part of the page bundle:
+they download the first time a date menu opens, and every later menu reuses them. Until they arrive,
+the `"Fechas"` section shows empty boxes of the same size and carries `aria-busy` and `data-loading`,
+so the menu does not change size. If the download fails twice in a row (for example, the app was
+redeployed and the old file is gone), the section shows `"No se pudo cargar el calendario. Si sigue sin
+aparecer, recarga la página."` and a `"Reintentar"` button (`dateLoadError` and `dateLoadRetry`); sorting and the
+operator keep working. Some browsers remember a failed download until the page reloads (Chrome does it with the
+native modules that Vite builds), so the text also suggests reloading: the library never reloads the page itself.
+
+Tests that open a date menu and then look for a date input or the calendar must wait for it:
+`await screen.findByRole("button", { name: "Seleccionar fecha" })` instead of `getByRole`.
+
 ### Clearing filters
 
 While a filter is active the toolbar shows `"Limpiar filtros"`. A value filter is active when an

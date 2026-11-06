@@ -161,6 +161,7 @@ columns, and a date filter with the operators greater than, less than and betwee
 The header trigger carries `data-filtered` while a filter is active and the toolbar shows a
 clear-filters button. The filter menus, the date inputs and the calendar options are shared with the
 kanban and documented in [toolbar.md](toolbar.md).
+The calendar downloads when a date menu first opens ([toolbar.md](toolbar.md#when-the-calendar-downloads)).
 
 ### Grouping
 
@@ -1198,6 +1199,8 @@ Keys shared with the kanban (`DataViewLabels`):
 | `dateApply` | `"Aplicar"` | Applies the date filter | — |
 | `pickDate` | `"Seleccionar fecha"` | Accessible name of the calendar button (one date) | — |
 | `pickRange` | `"Seleccionar rango"` | Accessible name of the calendar button (range) | — |
+| `dateLoadError` | `"No se pudo cargar el calendario. Si sigue sin aparecer, recarga la página."` | Shown in the date filter when its calendar could not be downloaded | — |
+| `dateLoadRetry` | `"Reintentar"` | Button that downloads the calendar again | — |
 | `labeledValue(label, value)` | `` `${label}: ${value}` `` | Joins a prefix and its value: "Agrupar por: Ninguno", "Mostrar: Activos", the header selectors and the kanban card tag | — |
 
 Table keys (`DataTableLabels`):
