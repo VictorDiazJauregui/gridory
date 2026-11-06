@@ -7,6 +7,9 @@ import { MOCK_COMPANY_ROWS, type MockCompanyRow } from "../components/mocks/comp
 import { ENGLISH_TABLE_LABELS } from "../components/mocks/shared/english-labels";
 import { TABLE_ROW_ACTIONS } from "../components/mocks/table/table-config";
 import { DataTable, type DataTableProps } from "../components/table";
+import { warmDatePickersBeforeAll } from "./warm-date-pickers";
+
+warmDatePickersBeforeAll();
 
 type TableProps = Partial<DataTableProps<MockCompanyRow>>;
 
@@ -46,10 +49,10 @@ const openMenu = (container: HTMLElement, header: string) => {
   return container.querySelector(".gdy-panel") as HTMLElement;
 };
 
-const openRangeCalendar = (container: HTMLElement, labels: { between: string; pickRange: string }) => {
+const openRangeCalendar = async (container: HTMLElement, labels: { between: string; pickRange: string }) => {
   const panel = openMenu(container, "Alta");
   fireEvent.click(within(panel).getByText(labels.between));
-  fireEvent.click(screen.getByRole("button", { name: labels.pickRange }));
+  fireEvent.click(await screen.findByRole("button", { name: labels.pickRange }));
   return document.querySelector(".gdy-calendar-root") as HTMLElement;
 };
 
@@ -92,7 +95,7 @@ test("a full English labels object translates the value filter menu", () => {
   expect(within(panel).getByRole("button", { name: "Select all" })).toBeInTheDocument();
 });
 
-test("a full English labels object translates the date filter menu", () => {
+test("a full English labels object translates the date filter menu", async () => {
   const panel = openMenu(renderEnglishTable(), "Alta");
   const texts = ["Ascending (oldest → newest)", "Descending (newest → oldest)", "Operator", "After (later date)"];
   for (const text of [...texts, "Before (earlier date)", "Between (range)", "Clear", "Apply"]) {
@@ -100,23 +103,23 @@ test("a full English labels object translates the date filter menu", () => {
   }
   fireEvent.click(within(panel).getByText("After (later date)"));
   expect(within(panel).getByText("Dates")).toBeInTheDocument();
-  expect(within(panel).getByRole("button", { name: "Pick a date" })).toBeInTheDocument();
+  expect(await within(panel).findByRole("button", { name: "Pick a date" })).toBeInTheDocument();
 });
 
-test("calendarLocale puts the calendar in that language", () => {
-  const calendar = openRangeCalendar(renderEnglishTable(), { between: "Between (range)", pickRange: "Pick a range" });
+test("calendarLocale puts the calendar in that language", async () => {
+  const calendar = await openRangeCalendar(renderEnglishTable(), { between: "Between (range)", pickRange: "Pick a range" });
   const weekdays = [...calendar.querySelectorAll(".gdy-calendar-weekday")].map((day) => day.textContent);
   expect(weekdays.slice(0, 7)).toEqual(["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]);
 });
 
-test("without calendarLocale the calendar stays in Spanish", () => {
-  const calendar = openRangeCalendar(renderTable(), { between: "Entre (rango)", pickRange: "Seleccionar rango" });
+test("without calendarLocale the calendar stays in Spanish", async () => {
+  const calendar = await openRangeCalendar(renderTable(), { between: "Entre (rango)", pickRange: "Seleccionar rango" });
   const weekdays = [...calendar.querySelectorAll(".gdy-calendar-weekday")].map((day) => day.textContent);
   expect(weekdays.slice(0, 7)).toEqual(["lu", "ma", "mi", "ju", "vi", "sá", "do"]);
 });
 
-test("a react-day-picker locale also translates the calendar's accessible names", () => {
-  const calendar = openRangeCalendar(renderTable({ calendarLocale: dayPickerSpanish }), {
+test("a react-day-picker locale also translates the calendar's accessible names", async () => {
+  const calendar = await openRangeCalendar(renderTable({ calendarLocale: dayPickerSpanish }), {
     between: "Entre (rango)",
     pickRange: "Seleccionar rango",
   });

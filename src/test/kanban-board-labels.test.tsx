@@ -6,6 +6,9 @@ import { MOCK_COMPANY_ROWS, type MockCompanyRow } from "../components/mocks/comp
 import { KANBAN_STATIC_PROPS } from "../components/mocks/kanban/kanban-config";
 import { ENGLISH_KANBAN_LABELS } from "../components/mocks/shared/english-labels";
 import { TABLE_ROW_ACTIONS } from "../components/mocks/table/table-config";
+import { warmDatePickersBeforeAll } from "./warm-date-pickers";
+
+warmDatePickersBeforeAll();
 
 type BoardProps = Partial<KanbanBoardProps<MockCompanyRow>>;
 
@@ -68,12 +71,12 @@ test("cardFieldLabel and formatCardDate reshape the default card fields", () => 
   expect(card).toHaveTextContent("Alta → [2026-03-01]");
 });
 
-test("a full English labels object translates the kanban filter menus and the calendar", () => {
+test("a full English labels object translates the kanban filter menus and the calendar", async () => {
   renderEnglishBoard();
   fireEvent.click(screen.getByRole("button", { name: "Alta" }));
   const panel = document.querySelector(".gdy-panel") as HTMLElement;
   fireEvent.click(within(panel).getByText("After (later date)"));
-  fireEvent.click(within(panel).getByRole("button", { name: "Pick a date" }));
+  fireEvent.click(await within(panel).findByRole("button", { name: "Pick a date" }));
   const calendar = document.querySelector(".gdy-calendar-root") as HTMLElement;
   const weekdays = [...calendar.querySelectorAll(".gdy-calendar-weekday")].map((day) => day.textContent);
   expect(weekdays).toEqual(["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]);

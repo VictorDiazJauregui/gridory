@@ -75,12 +75,14 @@ const LAZY_EDITOR_DEPENDENCIES = [
 ];
 
 // Files share one page per worker, saving its load per file, and the setup leaves it as found. A reload alone undoes
-// touch's `(hover: none)` or a click hiding `:focus-visible` from scripted focus; the busy test needs a cold editor.
+// touch's `(hover: none)` or a click hiding `:focus-visible` from scripted focus; the busy test needs a cold editor and
+// the date menu test replaces its calendar download with a mock.
 const OWN_PAGE_BROWSER_TESTS = [
   "src/test/kanban-move-menu.browser.test.tsx",
   "src/test/data-table-resizable-columns-touch.browser.test.tsx",
   "src/test/data-table-row-focus.browser.test.tsx",
   "src/test/markdown-source.browser.test.tsx",
+  "src/test/date-filter-deferred-calendar.browser.test.tsx",
 ];
 
 // A function, not a shared object: Vitest writes the project name into each instance.
