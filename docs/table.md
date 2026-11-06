@@ -730,6 +730,9 @@ Before, a checkbox column was a `cell` plus your own state, and the click on the
 + <DataTable columns={columns} data={invoices} getRowId={(row) => row.id} rowSelection={{ onChange: setSelectedIds }} />
 ```
 
+The checkbox component downloads only for tables with `rowSelection`, right after the first render. Until
+then each cell shows the same markup, and it already toggles, so nothing moves or waits.
+
 ### Expandable rows
 
 `renderExpandedRow` adds a column with an expand button and, under each open row, a full-width detail with
@@ -1090,6 +1093,10 @@ Before, the "?" had to live inside `header`, which only takes text, so apps patc
 - .my-table th:nth-child(4) .gdy-table-head-label::after { content: " ⓘ"; }
 + { id: "amount", header: "Amount", accessor: (row) => row.amount, headerTooltip: "Sum of the contracts in force" }
 ```
+
+The tooltip downloads only for tables with a `headerTooltip`, right after the first render. Until then the
+"?" is the same button, and a press on it opens the tooltip as soon as it arrives. Tests that open it
+already wait for it: `await screen.findByRole("tooltip")`.
 
 ### Layout and scrolling
 
