@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import type { DateRange } from "react-day-picker";
+import type { DateRange } from "../../ui/calendar/calendar";
 import type { DateInputFormat } from "../data-model";
 import { formatDateToString, parseStringToDate } from "./date-mask";
 import { useCalendarPopover } from "./use-calendar-popover";

@@ -23,7 +23,7 @@ export const DateRangePicker = (props: DateRangePickerProps) => {
         popover={popover}
         ariaLabel={props.ariaLabel}
       >
-        <Calendar mode="range" numberOfMonths={2} locale={props.locale} {...calendar} {...caption} />
+        <Calendar mode="range" numberOfMonths={2} locale={props.locale} labels={props.labels} {...calendar} {...caption} />
       </DatePickerField>
     </div>
   );
