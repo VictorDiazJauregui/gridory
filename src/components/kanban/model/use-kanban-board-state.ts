@@ -1,6 +1,6 @@
+import { useViewControls } from "../../shared/controls/use-view-controls";
 import type { KanbanBoardView } from "../board-view";
 import { buildCardMover } from "./card-move";
-import { useBoardControls } from "./use-board-controls";
 import { useCardMoving } from "./use-card-moving";
 import { useCollapsedColumns } from "./use-collapsed-columns";
 import { useGroupColumns } from "./use-group-columns";
@@ -11,7 +11,7 @@ import { useVisibleCards } from "./use-visible-cards";
 import { useVisibleCardsChange } from "./use-visible-cards-change";
 
 export const useKanbanBoardState = <TData>(view: KanbanBoardView<TData>) => {
-  const controls = useBoardControls(view);
+  const controls = useViewControls(view);
   const { cards, setCards, filterOptions, inputCardsRef } = useKanbanCards(view);
   const { selectedGroup, changeGroup } = useSelectedGroup(view);
   const visibleCards = useVisibleCards({ cards, view, ...controls });
