@@ -32,6 +32,14 @@
   table-layout: fixed;
 }
 
+/* Columns without `width` keep their minimum (`--gdy-table-min-width`, the sum the table computes): a narrow
+   container scrolls the rows sideways instead of squeezing them. Screen only; :where() keeps it overridable. */
+@media screen {
+  .gdy-table-grid:where(:not([data-resized])) {
+    min-width: var(--gdy-table-min-width, 0px);
+  }
+}
+
 /* Every cell rule is a single class; the group cell (gdy-table-group-cell) has its own rule
    and never carries gdy-table-cell. */
 .gdy-table-head-row {
@@ -288,6 +296,15 @@
 
 /* Header text of the actions column (`rowActions.columnLabel`): no trigger, so it repeats the header type.
    As a block it has its own line box: the 12px text skips the th's taller line, keeping the row height. */
+/* The actions column keeps the room of its button instead of sharing the width left with the other columns. */
+.gdy-table-head-cell[data-column-id="_actions"] {
+  width: 56px;
+}
+
+.gdy-table-head-cell[data-column-id="_actions"]:where(:has(> .gdy-table-actions-head-label)) {
+  width: 96px;
+}
+
 .gdy-table-actions-head-label {
   display: block;
   color: var(--gdy-table-head-fg, var(--gdy-muted-foreground));
