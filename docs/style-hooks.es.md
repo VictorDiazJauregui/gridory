@@ -501,6 +501,7 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-country-flag` | con estilos | — |
 | `gdy-date-input` | con estilos | — |
 | `gdy-date-input-with-icon` | con estilos | — |
+| `gdy-date-load-error` | solo gancho | — |
 | `gdy-date-picker-icon` | solo gancho | — |
 | `gdy-date-picker-input` | con estilos | — |
 | `gdy-date-picker-trigger` | con estilos | — |
