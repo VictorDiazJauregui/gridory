@@ -42,6 +42,8 @@ export type {
   ViewSwitchConfig,
   AiButtonConfig,
   ColumnDefinition,
+  ColumnFiltersState,
+  ColumnSortingState,
   RowActions,
   KanbanBoardClassNames,
   KanbanColumnAttributes,
