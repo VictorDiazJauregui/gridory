@@ -74,6 +74,8 @@ const keepGridoryIconClasses = (icon: string) => {
   return `<svg class="${classes.join(" ")}"></svg>`;
 };
 
+export const keepOnlyGridoryIconClasses = (html: string) => html.replace(ICON, keepGridoryIconClasses);
+
 // React counts useId across the whole run, so an id told which test ran first: each one is numbered by its
 // first appearance in the markup instead.
 const numberReactIdsInOrder = (html: string) => {
@@ -87,8 +89,7 @@ const numberReactIdsInOrder = (html: string) => {
 // Added on purpose: data-column-id, data-row-id and the table's ⋯ aria-label (1.1.0), the arrows' aria-label
 // (1.2.0) and each kanban column's data-column-value (1.3.0). Anything else must stay byte for byte.
 export const normalizeBaselineHtml = (html: string) =>
-  numberReactIdsInOrder(html)
+  keepOnlyGridoryIconClasses(numberReactIdsInOrder(html))
     .replace(ADDED_ATTRIBUTES, "")
-    .replace(ICON, keepGridoryIconClasses)
     .replace(TABLE_ACTIONS_ARIA_LABEL, "")
     .replace(PAGE_ARROW_ARIA_LABEL, "");
