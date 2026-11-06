@@ -54,6 +54,8 @@ const TABLE_COMPOUND_RULES = {
   '.gdy-table-skeleton[data-column-id="_select"] > .gdy-skeleton': "0-3-0",
   ".gdy-table-row[data-selected] .gdy-table-cell": "0-3-0",
   '.gdy-table-head-cell[data-column-id="_select"]': "0-2-0",
+  '.gdy-table-head-cell[data-column-id="_actions"]': "0-2-0",
+  '.gdy-table-head-cell[data-column-id="_actions"]:where(:has(> .gdy-table-actions-head-label))': "0-2-0",
   '.gdy-table[data-print-mode] .gdy-table-head-cell[data-column-id="_select"]': "0-4-0",
   ".gdy-table[data-print-mode] .gdy-table-head-help": "0-3-0",
   '.gdy-table-select[data-state="checked"]': "0-2-0",

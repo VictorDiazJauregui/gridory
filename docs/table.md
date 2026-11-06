@@ -96,7 +96,7 @@ Each entry of `columns` is a `ColumnDefinition<TData>`.
 | `searchable` | `boolean` | Default `true`. Set `false` to exclude the column from the global search. |
 | `filterable` | `boolean` | Adds a filter menu to the header. Default `false`. |
 | `filterOptions` | `FilterOption[]` | Declared `{ value, label }` options for the filter menu. Without them the options are the distinct values found in `data`, sorted alphabetically. Also labels and orders the groups when grouping by this column. |
-| `width` | `number` | Column width in pixels. The grid uses `table-layout: fixed`. |
+| `width` | `number` | Column width in pixels. The grid uses `table-layout: fixed`. Without it the column shares the room left, down to `minWidth`. See [Narrow screens](#narrow-screens). |
 | `inlineEditOptions` | `FilterOption[]` | Together with `onInlineEdit`, renders the cell as a select with these options. |
 | `onInlineEdit` | `(row: TData, value: string) => void` | Fires with the chosen option value. |
 | `valueHighlights` | `Record<string, CellHighlight>` | `{ className?, style? }` keyed by cell value. `className` is added to the cell content; `style` is applied to the inline select trigger, so it only shows on inline-editable cells. |
@@ -113,7 +113,7 @@ Each entry of `columns` is a `ColumnDefinition<TData>`.
 | `headerContent` | `ReactNode` | Replaces the visible title; `header` stays the accessible name and the menus' text. Table only. |
 | `pin` | `"left" \| "right"` | Keeps the column at that edge while the rows scroll sideways. Needs `width`. See [Pinned columns](#pinned-columns). Table only. |
 | `resizable` | `boolean` | With `resizableColumns`, `false` leaves the column without resize handle. See [Resizable columns](#resizable-columns). Table only. |
-| `minWidth` | `number` | Narrowest width the user can resize the column to. Defaults to `64`. Table only. |
+| `minWidth` | `number` | Narrowest width the user can resize the column to (default `64`) and, without `width`, the narrowest it gets on a narrow screen (default `120`). Table only. |
 | `maxWidth` | `number` | Widest width the user can resize the column to. No limit by default. Table only. |
 
 Filter options are computed from every row in `data` (before search and filters), not only from the
@@ -805,6 +805,32 @@ Before, a detail was a `cell` with its own state, and it could only live inside 
 - };
 - <DataTable columns={[nameColumn, ...columns.slice(1)]} data={companies} />
 + <DataTable columns={columns} data={companies} getRowId={(row) => row.id} renderExpandedRow={(row) => <Contacts company={row} />} />
+```
+
+### Narrow screens
+
+Columns with `width` keep it. The others share the room left, and none gets narrower than its `minWidth`
+(`120` by default); the actions column keeps 56px (96px with `rowActions.columnLabel`). When the container
+is narrower than all those widths, as on a phone, the rows scroll sideways inside it and the page does not.
+
+```tsx
+const columns: ColumnDefinition<Company>[] = [
+  { id: "name", header: "Company", accessor: (row) => row.name, width: 220 },
+  { id: "country", header: "Country", accessor: (row) => row.country }, // never under 120px
+  { id: "notes", header: "Notes", accessor: (row) => row.notes, minWidth: 200 }, // never under 200px
+];
+```
+
+To show fewer columns instead of scrolling, mark them with `priority` or `hideable` and turn on
+`responsiveColumns` (see [Column visibility](#column-visibility)); then the table hides columns and does not
+apply these minimums. Columns resized by the user (`resizableColumns`) keep the widths they were given.
+
+To bring back the 1.x layout (every column without `width` shrinks with no floor, and the actions column
+shares the room left like them), override two rules after importing the stylesheet:
+
+```css
+.gdy-table-grid { min-width: 0; }
+.gdy-table-head-cell[data-column-id="_actions"] { width: auto; }
 ```
 
 ### Column visibility

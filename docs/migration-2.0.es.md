@@ -46,3 +46,38 @@ grep -rnE "(bg|text|border|ring|outline|fill|stroke|divide|from|via|to)-(backgro
 **Proyectos shadcn:** si tu configuración ya define `primary`, `muted` y el resto, esas utilidades son
 tuyas, no del preset; quita el preset, como recomienda la [guía de temas](theming.es.md#preset-de-tailwind),
 y no cambia nada.
+
+## Tablas en pantallas angostas
+
+**A quién afecta:** a las tablas con columnas sin `width` o con `rowActions`, sin `responsiveColumns`. Tu código
+no tiene que cambiar; lo que cambia es cómo se ve la tabla:
+
+- **La columna de acciones conserva 56 px** (96 px con `rowActions.columnLabel`) en lugar de repartirse el lugar
+  que queda con las columnas sin `width`. En una pantalla ancha se angosta y esas columnas se ensanchan.
+- **Una columna sin `width` nunca baja de su `minWidth`** (`120` por defecto). En un celular, donde la 1.x
+  apretaba esas columnas a unos 25 px y su contenido desaparecía, ahora las filas se desplazan de costado dentro
+  de la tabla, y la página no.
+
+```tsx
+// 1.x, iPhone: País, Estado, Ingresos y Alta medían 25 px cada una
+// 2.0, iPhone: 120 px cada una, y las filas se desplazan de costado
+const columns = [
+  { id: "name", header: "Empresa", accessor: (row) => row.name, width: 220 },
+  { id: "country", header: "País", accessor: (row) => row.country },
+  { id: "notes", header: "Notas", accessor: (row) => row.notes, minWidth: 200 }, // un piso propio
+];
+```
+
+Al imprimir sin `printMode`, la columna de acciones también conserva sus 56 px en el papel.
+
+Para ocultar columnas en un celular en lugar de desplazarse, usa `responsiveColumns` con `priority` (ya existía
+y no cambia). Para conservar la disposición de la 1.x, agrega estas dos reglas después de la hoja de estilos de
+la librería:
+
+```css
+.gdy-table-grid { min-width: 0; }
+.gdy-table-head-cell[data-column-id="_actions"] { width: auto; }
+```
+
+Si tus tests comparan el marcado de la tabla, el elemento `table` ahora lleva su ancho mínimo:
+`<table class="gdy-table-grid" style="--gdy-table-min-width: 476px;">`.

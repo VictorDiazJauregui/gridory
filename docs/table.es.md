@@ -97,7 +97,7 @@ Cada entrada de `columns` es un `ColumnDefinition<TData>`.
 | `searchable` | `boolean` | Por defecto `true`. Ponlo en `false` para excluir la columna de la búsqueda global. |
 | `filterable` | `boolean` | Añade un menú de filtro al encabezado. Por defecto `false`. |
 | `filterOptions` | `FilterOption[]` | Opciones `{ value, label }` declaradas para el menú de filtro. Sin ellas, las opciones son los valores distintos que aparecen en `data`, en orden alfabético. También dan etiqueta y orden a los grupos al agrupar por esta columna. |
-| `width` | `number` | Ancho de la columna en píxeles. La tabla usa `table-layout: fixed`. |
+| `width` | `number` | Ancho de la columna en píxeles. La tabla usa `table-layout: fixed`. Sin él, la columna comparte el lugar que queda, hasta su `minWidth`. Ver [Pantallas angostas](#pantallas-angostas). |
 | `inlineEditOptions` | `FilterOption[]` | Junto con `onInlineEdit`, renderiza la celda como un select con estas opciones. |
 | `onInlineEdit` | `(row: TData, value: string) => void` | Se dispara con el valor de la opción elegida. |
 | `valueHighlights` | `Record<string, CellHighlight>` | `{ className?, style? }` indexado por valor de celda. `className` se añade al contenido de la celda; `style` se aplica al botón que abre el select en línea, así que solo se ve en celdas editables en línea. |
@@ -114,7 +114,7 @@ Cada entrada de `columns` es un `ColumnDefinition<TData>`.
 | `headerContent` | `ReactNode` | Reemplaza el título visible; `header` sigue siendo el nombre accesible y el texto de los menús. Solo la tabla. |
 | `pin` | `"left" \| "right"` | Deja la columna en ese borde mientras las filas se desplazan de costado. Requiere `width`. Ver [Columnas fijas](#columnas-fijas). Solo la tabla. |
 | `resizable` | `boolean` | Con `resizableColumns`, `false` deja la columna sin manija. Ver [Columnas redimensionables](#columnas-redimensionables). Solo la tabla. |
-| `minWidth` | `number` | Ancho más angosto al que el usuario puede llevar la columna. Por defecto `64`. Solo la tabla. |
+| `minWidth` | `number` | Ancho más angosto al que el usuario puede llevar la columna (por defecto `64`) y, sin `width`, el más angosto que toma en una pantalla angosta (por defecto `120`). Solo la tabla. |
 | `maxWidth` | `number` | Ancho más ancho al que el usuario puede llevar la columna. Sin límite por defecto. Solo la tabla. |
 
 Las opciones de filtro se calculan con todas las filas de `data` (antes de la búsqueda y los filtros), no
@@ -818,6 +818,34 @@ Antes, un detalle era una `cell` con su propio estado, y solo podía vivir dentr
 - };
 - <DataTable columns={[nameColumn, ...columns.slice(1)]} data={companies} />
 + <DataTable columns={columns} data={companies} getRowId={(row) => row.id} renderExpandedRow={(row) => <Contacts company={row} />} />
+```
+
+### Pantallas angostas
+
+Las columnas con `width` lo conservan. Las demás comparten el lugar que queda, y ninguna baja de su `minWidth`
+(`120` por defecto); la columna de acciones conserva 56 px (96 px con `rowActions.columnLabel`). Cuando el
+contenedor es más angosto que todos esos anchos, como en un celular, las filas se desplazan de costado dentro
+de él y la página no.
+
+```tsx
+const columns: ColumnDefinition<Company>[] = [
+  { id: "name", header: "Empresa", accessor: (row) => row.name, width: 220 },
+  { id: "country", header: "País", accessor: (row) => row.country }, // nunca menos de 120 px
+  { id: "notes", header: "Notas", accessor: (row) => row.notes, minWidth: 200 }, // nunca menos de 200 px
+];
+```
+
+Para mostrar menos columnas en lugar de desplazarse, márcalas con `priority` o `hideable` y activa
+`responsiveColumns` (ver [Visibilidad de columnas](#visibilidad-de-columnas)); así la tabla oculta columnas y
+no aplica estos mínimos. Las columnas que el usuario redimensiona (`resizableColumns`) conservan el ancho que
+les dio.
+
+Para volver a la disposición de la 1.x (las columnas sin `width` se achican sin piso y la columna de acciones
+comparte el lugar que queda como ellas), redefine dos reglas después de importar la hoja de estilos:
+
+```css
+.gdy-table-grid { min-width: 0; }
+.gdy-table-head-cell[data-column-id="_actions"] { width: auto; }
 ```
 
 ### Visibilidad de columnas

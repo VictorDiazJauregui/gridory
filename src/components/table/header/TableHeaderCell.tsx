@@ -18,7 +18,7 @@ interface InternalHeaderCellProps<TData> extends TableModelProps<TData> {
   attributes: CellAttributes;
 }
 
-// Unpinned, the actions header keeps no width (as before pinning existed); pinned, the sticky offsets need it.
+// Unpinned, the stylesheet gives the actions header its width; pinned, the sticky offsets need it inline.
 const resolveActionsHeaderStyle = <TData,>({ model, attributes }: InternalHeaderCellProps<TData>) => {
   const width = model.pinnedColumns?.placements.get(ACTIONS_COLUMN_ID)?.width;
   return width === undefined ? attributes.style : { ...attributes.style, width };

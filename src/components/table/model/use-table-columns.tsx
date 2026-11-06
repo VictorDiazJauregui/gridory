@@ -5,11 +5,11 @@ import { PrintValue } from "../body/PrintValue";
 import { RowActionsMenu } from "../body/RowActionsMenu";
 import {
   ACTIONS_COLUMN_ID,
-  ACTIONS_COLUMN_WIDTH,
   EXPAND_COLUMN_ID,
   EXPAND_COLUMN_WIDTH,
   SELECT_COLUMN_ID,
   SELECT_COLUMN_WIDTH,
+  resolveInternalColumnWidth,
 } from "../columns/internal-columns";
 import { orderByPin } from "../columns/pinned-columns";
 import { ExpandToggleCell } from "../expansion/ExpandToggleCell";
@@ -77,7 +77,7 @@ const buildRowActionsColumn = <TData,>(
   const align = resolveActionsAlign(rowActions);
   return {
     id: ACTIONS_COLUMN_ID,
-    size: ACTIONS_COLUMN_WIDTH,
+    size: resolveInternalColumnWidth(ACTIONS_COLUMN_ID, rowActions),
     header: "",
     meta: { alignment: { cells: align, header: align } },
     cell: ({ row }) => <RowActionsMenu row={row.original} actions={rowActions} align={align} labels={labels} />,

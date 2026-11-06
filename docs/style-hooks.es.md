@@ -44,7 +44,7 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-table-group-toggle` | con estilos | `[aria-expanded="false"]` |
 | `gdy-table-head` | solo gancho | — |
 | `gdy-table-head-arrow` | con estilos | — |
-| `gdy-table-head-cell` | con estilos | `[data-align="center"]`, `[data-align="right"]`, `[data-column-id="_expand"]`, `[data-column-id="_select"]`, `[data-hidden-by="priority"]`, `[data-pinned]` |
+| `gdy-table-head-cell` | con estilos | `[data-align="center"]`, `[data-align="right"]`, `[data-column-id="_actions"]`, `[data-column-id="_expand"]`, `[data-column-id="_select"]`, `[data-hidden-by="priority"]`, `[data-pinned]` |
 | `gdy-table-head-filter-icon` | con estilos | — |
 | `gdy-table-head-help` | con estilos | — |
 | `gdy-table-head-inner` | con estilos | `[data-help-placement="edge"]`, `[data-help-placement]` |
@@ -613,6 +613,8 @@ hay que escribir para pisarlas; los motivos están en [Temas y estilos](theming.
 | `.gdy-table-foot-cell[data-align="right"]` | 0-2-0 |
 | `.gdy-table-head-trigger[data-align="center"]` | 0-2-0 |
 | `.gdy-table-head-trigger[data-align="right"]` | 0-2-0 |
+| `.gdy-table-head-cell[data-column-id="_actions"]` | 0-2-0 |
+| `.gdy-table-head-cell[data-column-id="_actions"]:where(:has(> .gdy-table-actions-head-label))` | 0-2-0 |
 | `.gdy-table-menu-holder[data-align="end"]` | 0-2-0 |
 | `.gdy-table-cell-content[data-overflow="wrap"]` | 0-2-0 |
 | `.gdy-table-cell-content[data-overflow="visible"]` | 0-2-0 |
@@ -1135,6 +1137,7 @@ cualquier ancestro cambia solo esa parte. Los `--gdy-select-*` también reflejan
 | `--gdy-table-head-bg` | `var(--gdy-muted)` | table |
 | `--gdy-table-head-fg` | `var(--gdy-muted-foreground)` | table |
 | `--gdy-table-head-help-fg` | `var(--gdy-muted-foreground)` | table |
+| `--gdy-table-min-width` | `0px` | table |
 | `--gdy-table-open-menu-z` | `4` | table |
 | `--gdy-table-pin-offset` | `0px` | table |
 | `--gdy-table-pinned-bg` | `var(--gdy-card)` | table |

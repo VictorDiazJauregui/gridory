@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import { cn } from "../../../lib/cn";
 import { sumWidths } from "../columns/column-widths";
+import { sumMinimumColumnWidths } from "../columns/table-min-width";
 import { TableBody } from "./TableBody";
 import { TableHead } from "../header/TableHead";
 import { TableFoot } from "../footer/TableFoot";
@@ -19,11 +20,23 @@ const resolveWrapClassName = <TData,>(settings: TableSettings<TData>) =>
   );
 
 // Resized, the grid is as wide as its columns: one edge moves and nothing else stretches to fill the container.
-const buildGridLayout = <TData,>({ columnWidths, hiddenByPriority }: TableModel<TData>) => {
-  const layoutWidths = columnWidths?.layoutWidths;
-  if (!layoutWidths) return {};
+const buildResizedLayout = (layoutWidths: ReadonlyMap<string, number>, hiddenByPriority: readonly string[]) => {
   const style = { "--gdy-table-grid-width": `${sumWidths(layoutWidths, hiddenByPriority)}px` } as CSSProperties;
   return { "data-resized": true, style };
+};
+
+// Otherwise a narrow container scrolls the rows sideways instead of squeezing the columns without `width` to
+// nothing. `responsiveColumns` hides columns instead, so it keeps its own fit.
+const buildMinimumLayout = <TData,>({ settings, table }: TableModel<TData>) => {
+  if (settings.responsiveColumns) return {};
+  const columnIds = table.getVisibleLeafColumns().map((column) => column.id);
+  const minimumWidth = sumMinimumColumnWidths(columnIds, settings);
+  return { style: { "--gdy-table-min-width": `${minimumWidth}px` } as CSSProperties };
+};
+
+const buildGridLayout = <TData,>(model: TableModel<TData>) => {
+  const layoutWidths = model.columnWidths?.layoutWidths;
+  return layoutWidths ? buildResizedLayout(layoutWidths, model.hiddenByPriority) : buildMinimumLayout(model);
 };
 
 export const TableScrollArea = <TData,>({ model }: TableModelProps<TData>) => {

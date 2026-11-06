@@ -44,7 +44,7 @@ The state selectors column lists the attributes the stylesheets combine with eac
 | `gdy-table-group-toggle` | styled | `[aria-expanded="false"]` |
 | `gdy-table-head` | hook only | — |
 | `gdy-table-head-arrow` | styled | — |
-| `gdy-table-head-cell` | styled | `[data-align="center"]`, `[data-align="right"]`, `[data-column-id="_expand"]`, `[data-column-id="_select"]`, `[data-hidden-by="priority"]`, `[data-pinned]` |
+| `gdy-table-head-cell` | styled | `[data-align="center"]`, `[data-align="right"]`, `[data-column-id="_actions"]`, `[data-column-id="_expand"]`, `[data-column-id="_select"]`, `[data-hidden-by="priority"]`, `[data-pinned]` |
 | `gdy-table-head-filter-icon` | styled | — |
 | `gdy-table-head-help` | styled | — |
 | `gdy-table-head-inner` | styled | `[data-help-placement="edge"]`, `[data-help-placement]` |
@@ -613,6 +613,8 @@ write when you override them; the reasons are in [Theming and styling](theming.m
 | `.gdy-table-foot-cell[data-align="right"]` | 0-2-0 |
 | `.gdy-table-head-trigger[data-align="center"]` | 0-2-0 |
 | `.gdy-table-head-trigger[data-align="right"]` | 0-2-0 |
+| `.gdy-table-head-cell[data-column-id="_actions"]` | 0-2-0 |
+| `.gdy-table-head-cell[data-column-id="_actions"]:where(:has(> .gdy-table-actions-head-label))` | 0-2-0 |
 | `.gdy-table-menu-holder[data-align="end"]` | 0-2-0 |
 | `.gdy-table-cell-content[data-overflow="wrap"]` | 0-2-0 |
 | `.gdy-table-cell-content[data-overflow="visible"]` | 0-2-0 |
@@ -1135,6 +1137,7 @@ any ancestor overrides that part only. `--gdy-select-*` also mirror the `selectT
 | `--gdy-table-head-bg` | `var(--gdy-muted)` | table |
 | `--gdy-table-head-fg` | `var(--gdy-muted-foreground)` | table |
 | `--gdy-table-head-help-fg` | `var(--gdy-muted-foreground)` | table |
+| `--gdy-table-min-width` | `0px` | table |
 | `--gdy-table-open-menu-z` | `4` | table |
 | `--gdy-table-pin-offset` | `0px` | table |
 | `--gdy-table-pinned-bg` | `var(--gdy-card)` | table |

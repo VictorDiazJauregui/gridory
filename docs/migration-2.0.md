@@ -46,3 +46,37 @@ grep -rnE "(bg|text|border|ring|outline|fill|stroke|divide|from|via|to)-(backgro
 **shadcn projects:** if your config already defines `primary`, `muted` and the rest, those utilities are
 yours, not the preset's; remove the preset, as the [theming guide](theming.md#tailwind-preset) recommends,
 and nothing changes.
+
+## Tables on narrow screens
+
+**Who is affected:** tables with columns without `width` or with `rowActions`, without `responsiveColumns`.
+Nothing in your code has to change; what changes is how the table looks:
+
+- **The actions column keeps 56px** (96px with `rowActions.columnLabel`) instead of sharing the room left with
+  the columns without `width`. On a wide screen it gets narrower and those columns get wider.
+- **A column without `width` never gets narrower than its `minWidth`** (`120` by default). On a phone, where
+  1.x squeezed those columns to about 25px and their content disappeared, the rows now scroll sideways inside
+  the table, and the page does not.
+
+```tsx
+// 1.x, iPhone: Country, Status, Revenue and Created at were 25px wide each
+// 2.0, iPhone: 120px each, and the rows scroll sideways
+const columns = [
+  { id: "name", header: "Company", accessor: (row) => row.name, width: 220 },
+  { id: "country", header: "Country", accessor: (row) => row.country },
+  { id: "notes", header: "Notes", accessor: (row) => row.notes, minWidth: 200 }, // a floor of your own
+];
+```
+
+Printed without `printMode`, the actions column keeps its 56px on paper too.
+
+To hide columns on a phone instead of scrolling, use `responsiveColumns` with `priority` (it already existed
+and does not change). To keep the 1.x layout, add these two rules after the library's stylesheet:
+
+```css
+.gdy-table-grid { min-width: 0; }
+.gdy-table-head-cell[data-column-id="_actions"] { width: auto; }
+```
+
+If your tests compare the table markup, the `table` element now carries its minimum width:
+`<table class="gdy-table-grid" style="--gdy-table-min-width: 476px;">`.
