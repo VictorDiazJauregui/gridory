@@ -3,7 +3,7 @@ import type { TableSettings } from "../settings";
 
 // A controlled size the app computes (a height recipe gives 13) may be missing from the options:
 // it is listed while active so the select never goes blank. Uncontrolled, the options stay as given.
-const resolvePageSizeOptions = <TData>(settings: TableSettings<TData>, pageSize: number) => {
+export const resolvePageSizeOptions = (settings: Pick<TableSettings<unknown>, "pageSize" | "pageSizeOptions">, pageSize: number) => {
   const options = settings.pageSizeOptions;
   if (settings.pageSize === undefined || options.includes(pageSize)) return options;
   return [...options, pageSize].sort((first, second) => first - second);

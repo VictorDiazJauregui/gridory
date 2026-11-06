@@ -1,18 +1,17 @@
 import { useEffect, useRef } from "react";
 import { useLatestRef } from "../../shared/use-latest-ref";
-import type { TableSettings } from "../settings";
-import type { PageNavigation } from "./use-table-pagination";
+import type { PageNavigation, PagingSettings } from "./use-table-pagination";
 
-interface PageSyncInput<TData> {
+interface PageSyncInput {
   /** The page asked for (the prop when controlled), before fitting it into the page count. */
   rawPageIndex: number;
   navigation: PageNavigation;
-  settings: TableSettings<TData>;
+  settings: PagingSettings;
 }
 
 // A controlled page beyond the last one is shown as the last page and the fix is reported, once.
 // Never while loading: a transient row count (0 while the server answers) would send the app to page 1.
-const useOutOfRangeReport = <TData>({ rawPageIndex, navigation, settings }: PageSyncInput<TData>) => {
+const useOutOfRangeReport = ({ rawPageIndex, navigation, settings }: PageSyncInput) => {
   const { pageIndex, pageSize } = navigation;
   const isControlled = settings.pageIndex !== undefined;
   const onPaginationChangeRef = useLatestRef(settings.onPaginationChange);
@@ -23,7 +22,7 @@ const useOutOfRangeReport = <TData>({ rawPageIndex, navigation, settings }: Page
 };
 
 // A page size set from outside starts again from the first page, as the page-size select does.
-const useOutsidePageSizeReset = <TData>({ navigation, settings }: PageSyncInput<TData>) => {
+const useOutsidePageSizeReset = ({ navigation, settings }: PageSyncInput) => {
   const { pageSize } = settings;
   const previousRef = useRef(pageSize);
   const resetRef = useLatestRef(navigation.resetToFirstPage);
@@ -34,7 +33,7 @@ const useOutsidePageSizeReset = <TData>({ navigation, settings }: PageSyncInput<
   }, [pageSize, resetRef]);
 };
 
-export const usePageSync = <TData>(input: PageSyncInput<TData>) => {
+export const usePageSync = (input: PageSyncInput) => {
   useOutOfRangeReport(input);
   useOutsidePageSizeReset(input);
 };

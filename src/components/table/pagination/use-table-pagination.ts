@@ -1,17 +1,26 @@
 import { useControllableState } from "../../shared/state/use-controllable-state";
-import type { TableSettings } from "../settings";
+import type { ManualPaginationState } from "../types";
 import { usePageSync } from "./use-page-sync";
+
+/** What the page window reads from the settings: the table passes its own, the card grid a client-side subset. */
+export interface PagingSettings {
+  pageIndex?: number;
+  pageSize?: number;
+  defaultPageSize: number;
+  manualPagination?: boolean;
+  serverPageCount?: number;
+  serverRowCount?: number;
+  onPaginationChange?: (state: ManualPaginationState) => void;
+  loading?: boolean;
+  flags: { pagination: boolean };
+}
 
 export interface PageWindow {
   pageIndex: number;
   pageSize: number;
 }
 
-const computePageCount = <TData>(
-  localRowCount: number,
-  pageSize: number,
-  settings: TableSettings<TData>,
-): number => {
+const computePageCount = (localRowCount: number, pageSize: number, settings: PagingSettings): number => {
   const { flags, manualPagination, serverPageCount, serverRowCount } = settings;
   if (!flags.pagination) return 1;
   if (!manualPagination) {
@@ -37,7 +46,7 @@ export interface PageNavigation extends PageWindow {
   returnToFirstPage: () => void;
 }
 
-const usePageWindowState = <TData>(settings: TableSettings<TData>) => {
+const usePageWindowState = (settings: PagingSettings) => {
   const [rawPageIndex, setPageIndex] = useControllableState({
     value: settings.pageIndex,
     defaultValue: 0,
@@ -53,13 +62,13 @@ const usePageWindowState = <TData>(settings: TableSettings<TData>) => {
 
 type PageWindowState = ReturnType<typeof usePageWindowState>;
 
-interface NavigationInput<TData> extends PageWindow {
+interface NavigationInput extends PageWindow {
   pageCount: number;
   state: PageWindowState;
-  settings: TableSettings<TData>;
+  settings: PagingSettings;
 }
 
-const buildUserNavigation = <TData>({ pageIndex, pageSize, pageCount, state, settings }: NavigationInput<TData>) => ({
+const buildUserNavigation = ({ pageIndex, pageSize, pageCount, state, settings }: NavigationInput) => ({
   goToPage: (next: number) => {
     const target = Math.min(Math.max(0, next), pageCount - 1);
     state.setPageIndex(target);
@@ -77,7 +86,7 @@ const buildUserNavigation = <TData>({ pageIndex, pageSize, pageCount, state, set
   },
 });
 
-const buildFirstPageReset = <TData>({ pageIndex, pageSize, state, settings }: NavigationInput<TData>) => () => {
+const buildFirstPageReset = ({ pageIndex, pageSize, state, settings }: NavigationInput) => () => {
   if (settings.pageIndex === undefined) {
     state.setPageIndex(0);
     return;
@@ -85,10 +94,7 @@ const buildFirstPageReset = <TData>({ pageIndex, pageSize, state, settings }: Na
   if (pageIndex !== 0) settings.onPaginationChange?.({ pageIndex: 0, pageSize });
 };
 
-export const useTablePagination = <TData>(
-  localRowCount: number,
-  settings: TableSettings<TData>,
-): PageNavigation => {
+export const useTablePagination = (localRowCount: number, settings: PagingSettings): PageNavigation => {
   const state = usePageWindowState(settings);
   const { rawPageIndex, pageSize } = state;
   const pageCount = computePageCount(localRowCount, pageSize, settings);

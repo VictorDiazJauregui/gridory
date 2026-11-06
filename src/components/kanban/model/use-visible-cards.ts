@@ -9,9 +9,14 @@ import { useSearchedRows } from "../../shared/rows/use-searched-rows";
 import { useSortedRows } from "../../shared/rows/use-sorted-rows";
 import type { KanbanBoardView } from "../board-view";
 
+/** What the pipeline reads from the board, kept narrow so the card grid runs the same one. */
+type VisibleCardsView<TData> = Pick<KanbanBoardView<TData>, "fields" | "archivedView" | "rowActions"> & {
+  flags: { search: boolean; filtering: boolean; sorting: boolean };
+};
+
 interface VisibleCardsInput<TData> {
   cards: TData[];
-  view: KanbanBoardView<TData>;
+  view: VisibleCardsView<TData>;
   search: string;
   archivedMode: ArchivedViewMode;
   filters: Record<string, string[]>;
