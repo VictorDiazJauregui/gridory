@@ -2,7 +2,8 @@ import type { CSSProperties } from "react";
 
 /**
  * Each value set here beats the Select's CSS variables, which in turn beat the theme tokens.
- * Colors accept any CSS color; `radius` accepts a number (px) or a CSS length.
+ * Colors accept any CSS color; `radius` accepts a number (px) or a CSS length. They style the closed box only:
+ * the open list is the browser's own.
  */
 export interface SelectTheme {
   background?: string;
@@ -10,13 +11,7 @@ export interface SelectTheme {
   border?: string;
   text?: string;
   radius?: string | number;
-  contentBackground?: string;
-  optionText?: string;
-  optionHoverBackground?: string;
-  optionActiveBackground?: string;
   triggerClassName?: string;
-  contentClassName?: string;
-  itemClassName?: string;
 }
 
 const SELECT_VAR_BY_KEY: Record<string, string> = {
@@ -24,10 +19,6 @@ const SELECT_VAR_BY_KEY: Record<string, string> = {
   hoverBackground: "--gdy-select-trigger-hover-bg",
   border: "--gdy-select-border",
   text: "--gdy-select-text",
-  contentBackground: "--gdy-select-content-bg",
-  optionText: "--gdy-select-item-text",
-  optionHoverBackground: "--gdy-select-item-hover-bg",
-  optionActiveBackground: "--gdy-select-item-active-bg",
 };
 
 export const selectThemeToVars = (theme?: SelectTheme): CSSProperties => {

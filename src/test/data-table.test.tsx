@@ -188,12 +188,9 @@ test("edits a cell inline through its select", async () => {
       onInlineEdit,
     }),
   });
-  const trigger = container.querySelector(
-    ".gdy-table-inline-select",
-  ) as HTMLElement;
-  expect(trigger).toHaveTextContent(ROWS[0].status);
-  await user.click(trigger);
-  await user.click(await screen.findByRole("option", { name: "Pendiente" }));
+  const select = container.querySelector(".gdy-table-inline-select") as HTMLSelectElement;
+  expect(select).toHaveDisplayValue(ROWS[0].status);
+  await user.selectOptions(select, "Pendiente");
   expect(onInlineEdit).toHaveBeenCalledWith(ROWS[0], "Pendiente");
 });
 

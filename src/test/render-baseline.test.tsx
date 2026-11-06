@@ -18,10 +18,11 @@ const KANBAN_GROUPS = [
   },
 ];
 
-// 2.0 adds the grid's minimum width (180px + 120px + 120px + the 56px actions column); the rest is the 1.0.1 markup.
+// 2.0 adds the grid's minimum width (180px + 120px + 120px + the 56px actions column) and swaps each Radix select for
+// a native one, which also shifts the Radix ids of the menus; the rest is the 1.0.1 markup.
 const GRID_MINIMUM_WIDTH = ' style="--gdy-table-min-width: 476px;"';
 
-test("the table without the 1.1.0 props renders the 1.0.1 markup plus the 2.0 minimum width", async () => {
+test("the table without the 1.1.0 props renders the 1.0.1 markup plus the 2.0 minimum width and selects", async () => {
   const { container } = render(
     <DataTable
       {...BASELINE_VIEW_PROPS}
@@ -36,7 +37,7 @@ test("the table without the 1.1.0 props renders the 1.0.1 markup plus the 2.0 mi
   await expect(html.replace(GRID_MINIMUM_WIDTH, "")).toMatchFileSnapshot("./baselines/data-table-1.0.1.html");
 });
 
-test("the kanban without the 1.1.0 props renders the 1.0.1 markup", async () => {
+test("the kanban without the 1.1.0 props renders the 1.0.1 markup plus the 2.0 selects", async () => {
   const { container } = render(
     <KanbanBoard
       {...BASELINE_VIEW_PROPS}

@@ -445,11 +445,12 @@ one, or a built-in id, throws `DuplicateRowActionError` too. Code that reads `ac
 ## Select styling and scrollbars
 
 `selectTheme` styles every select of the component: the toolbar selects (archived view, group
-selector, header selectors) and, in the table, the inline edit and page-size selects. Each color and
-`radius` key is written as an inline `--gdy-select-*` custom property on the select trigger and its
-dropdown, so it wins over the same token in your stylesheet (see [SelectTheme](#selecttheme)).
-`triggerClassName`, `contentClassName` and `itemClassName` add classes to the trigger, the dropdown
-and each option.
+selector, header selectors) and, in the table, the inline edit and page-size selects. Each one is the
+browser's own `<select>`: Gridory styles the closed box, and the open list is the system one (a
+sheet or a wheel on phones), which takes its colors from the box and follows the dark theme. Each
+color and `radius` key is written as an inline `--gdy-select-*` custom property on the select, so it
+wins over the same token in your stylesheet (see [SelectTheme](#selecttheme)). `triggerClassName`
+adds a class to the select.
 
 `thinScrollbars` (default `true`) adds the class `gdy-thin-scroll` to the root, which thins the
 scrollbars of every internal scroll area (rows or board viewport, option lists, capped regions);
@@ -639,13 +640,11 @@ from `gridory/card-grid`, which has no view switch.
 | `border` | `string` | `--gdy-select-border` |
 | `text` | `string` | `--gdy-select-text` |
 | `radius` | `string \| number` | `--gdy-select-radius` (numbers in pixels) |
-| `contentBackground` | `string` | `--gdy-select-content-bg` |
-| `optionText` | `string` | `--gdy-select-item-text` |
-| `optionHoverBackground` | `string` | `--gdy-select-item-hover-bg` |
-| `optionActiveBackground` | `string` | `--gdy-select-item-active-bg` |
-| `triggerClassName` | `string` | Class on each select trigger. |
-| `contentClassName` | `string` | Class on each dropdown. |
-| `itemClassName` | `string` | Class on each option. |
+| `triggerClassName` | `string` | Class on each select. |
+
+Every key styles the closed box only. The 1.x keys of the open list (`contentBackground`,
+`optionText`, `optionHoverBackground`, `optionActiveBackground`, `contentClassName`, `itemClassName`)
+were removed in 2.0: see [migration-2.0.md](migration-2.0.md#selects).
 
 ### DateFilterState
 

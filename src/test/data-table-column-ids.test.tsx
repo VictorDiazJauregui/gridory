@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { expect, test } from "vitest";
 import { DataTable } from "../components/table";
 import { BASELINE_COLUMNS, BASELINE_ROWS, BASELINE_ROW_ACTIONS } from "./baseline-fixture";
@@ -48,10 +49,9 @@ test("the attribute follows the column when the columns are reordered", () => {
   expect(firstRow?.querySelector('[data-column-id="name"]')).toHaveTextContent(BASELINE_ROWS[0].name);
 });
 
-test("the group row and the empty cell carry no column id", () => {
+test("the group row and the empty cell carry no column id", async () => {
   const { container } = renderTable();
-  fireEvent.click(screen.getByRole("combobox", { name: "Agrupar por" }));
-  fireEvent.click(screen.getByRole("option", { name: "Agrupar por: Estado" }));
+  await userEvent.selectOptions(screen.getByRole("combobox", { name: "Agrupar por" }), "Agrupar por: Estado");
   expect(container.querySelector(".gdy-table-group-cell")).not.toHaveAttribute("data-column-id");
   expect(headerIds(container)).toEqual(["name", "country", "_actions"]);
   fireEvent.change(screen.getByRole("searchbox"), { target: { value: "sin coincidencias" } });

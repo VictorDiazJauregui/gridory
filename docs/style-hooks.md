@@ -479,17 +479,9 @@ The state selectors column lists the attributes the stylesheets combine with eac
 | `gdy-menu-sub-content` | styled | — |
 | `gdy-menu-sub-trigger` | styled | `[data-state="open"]` |
 | `gdy-popover-content` | styled | `[data-side="bottom"]`, `[data-side="left"]`, `[data-side="right"]`, `[data-side="top"]`, `[data-state="closed"]`, `[data-state="open"]` |
-| `gdy-select-content` | styled | `[data-side="bottom"]`, `[data-side="left"]`, `[data-side="right"]`, `[data-side="top"]`, `[data-state="open"]` |
+| `gdy-select` | styled | — |
 | `gdy-select-icon` | styled | — |
-| `gdy-select-item` | styled | `[data-disabled]`, `[data-highlighted]`, `[data-state="checked"]` |
-| `gdy-select-item-check` | styled | — |
-| `gdy-select-item-indicator` | styled | — |
-| `gdy-select-item-text` | hook only | — |
-| `gdy-select-scroll-button` | styled | — |
-| `gdy-select-scroll-icon` | styled | — |
-| `gdy-select-trigger` | styled | `[aria-invalid="true"]`, `[data-placeholder]`, `[data-state="open"]` |
-| `gdy-select-value` | hook only | — |
-| `gdy-select-viewport` | styled | — |
+| `gdy-select-trigger` | styled | `[aria-invalid="true"]`, `[data-placeholder]` |
 | `gdy-toggle-group` | styled | — |
 | `gdy-toggle-item` | styled | `[data-state="on"]` |
 | `gdy-toggle-item-label` | hook only | — |
@@ -615,6 +607,7 @@ write when you override them; the reasons are in [Theming and styling](theming.m
 | `.gdy-table-menu-holder[data-align="end"]` | 0-2-0 |
 | `.gdy-table-cell-content[data-overflow="wrap"]` | 0-2-0 |
 | `.gdy-table-cell-content[data-overflow="visible"]` | 0-2-0 |
+| `.gdy-table-inline-select-wrap > .gdy-select` | 0-2-0 |
 | `.gdy-select-trigger.gdy-table-inline-select` | 0-2-0 |
 | `.gdy-table-actions-cell[data-align="left"]` | 0-2-0 |
 | `.gdy-table-actions-cell[data-align="center"]` | 0-2-0 |
@@ -700,7 +693,7 @@ Radix follow that library.
 | `data-compact` | `"true"` | Gridory | `gdy-sidebar-logo` |
 | `data-day` | the date of the day | Gridory | no default rule |
 | `data-diagram-state` | `"error"`, `"loading"`, `"ready"` | Gridory | `gdy-md-diagram` |
-| `data-disabled` | present / absent | Gridory or Radix | `gdy-auth-google-slot`, `gdy-calendar-day`, `gdy-menu-item`, `gdy-select-item` |
+| `data-disabled` | present / absent | Gridory or Radix | `gdy-auth-google-slot`, `gdy-calendar-day`, `gdy-menu-item` |
 | `data-draggable` | present / absent | Gridory | `gdy-kanban-card` |
 | `data-dragging` | present / absent | Gridory | `gdy-kanban-card` |
 | `data-drop-disabled` | present / absent | Gridory | `gdy-kanban-column` |
@@ -716,7 +709,6 @@ Radix follow that library.
 | `data-help-placement` | `"edge"` | Gridory | `gdy-table-head-inner` |
 | `data-hidden` | present / absent | Gridory | `gdy-calendar-day` |
 | `data-hidden-by` | `"priority"` | Gridory | `gdy-table-cell`, `gdy-table-foot-cell`, `gdy-table-head-cell` |
-| `data-highlighted` | present / absent | Radix | `gdy-select-item` |
 | `data-hover-expand` | `"false"`, `"true"` | Gridory | `gdy-sidebar` |
 | `data-href` | present / absent | Gridory | no default rule |
 | `data-invalid` | present / absent | Gridory | `gdy-phone-input` |
@@ -753,10 +745,10 @@ Radix follow that library.
 | `data-scrolled-start` | present / absent | Gridory | `gdy-table-wrap` |
 | `data-selected` | present / absent | Gridory | `gdy-calendar-day`, `gdy-option-item`, `gdy-table-row` |
 | `data-selected-single` | present / absent | Gridory | `gdy-calendar-day-button` |
-| `data-side` | `"bottom"`, `"left"`, `"right"`, `"top"` | Gridory or Radix | `gdy-menu-content`, `gdy-popover-content`, `gdy-select-content` |
+| `data-side` | `"bottom"`, `"left"`, `"right"`, `"top"` | Gridory or Radix | `gdy-menu-content`, `gdy-popover-content` |
 | `data-size` | `"default"`, `"icon"`, `"icon-lg"`, `"icon-sm"`, `"icon-xs"`, `"lg"`, `"sm"`, `"xs"` | Gridory | `gdy-button` |
 | `data-slot-id` | the slot `id` | Gridory | no default rule |
-| `data-state` | `"active"`, `"checked"`, `"closed"`, `"collapsed"`, `"expanded"`, `"indeterminate"`, `"on"`, `"open"` | Gridory or Radix | `gdy-ai-sidebar`, `gdy-md-image-tab`, `gdy-md-picker-tab`, `gdy-md-tool`, `gdy-menu-content`, `gdy-menu-sub-trigger`, `gdy-popover-content`, `gdy-select-content`, `gdy-select-item`, `gdy-select-trigger`, `gdy-sidebar`, `gdy-sidebar-drawer`, `gdy-sidebar-overlay`, `gdy-table-expanded-panel`, `gdy-table-select`, `gdy-toggle-item` |
+| `data-state` | `"active"`, `"checked"`, `"closed"`, `"collapsed"`, `"expanded"`, `"indeterminate"`, `"on"`, `"open"` | Gridory or Radix | `gdy-ai-sidebar`, `gdy-md-image-tab`, `gdy-md-picker-tab`, `gdy-md-tool`, `gdy-menu-content`, `gdy-menu-sub-trigger`, `gdy-popover-content`, `gdy-sidebar`, `gdy-sidebar-drawer`, `gdy-sidebar-overlay`, `gdy-table-expanded-panel`, `gdy-table-select`, `gdy-toggle-item` |
 | `data-status` | `"met"`, `"pending"`, `"unmet"` | Gridory | `gdy-auth-rule` |
 | `data-streaming` | present / absent | Gridory | no default rule |
 | `data-thinking` | present / absent | Gridory | no default rule |
@@ -1080,12 +1072,6 @@ any ancestor overrides that part only. `--gdy-select-*` also mirror the `selectT
 | `--gdy-segmented-radius` | `9px` | segmented-control |
 | `--gdy-select-bg` | `var(--gdy-background)` | ui |
 | `--gdy-select-border` | `var(--gdy-border)` | ui |
-| `--gdy-select-content-bg` | `var(--gdy-popover)` | ui |
-| `--gdy-select-content-text` | `var(--gdy-popover-foreground)` | ui |
-| `--gdy-select-item-active-bg` | `transparent` | ui |
-| `--gdy-select-item-hover-bg` | `var(--gdy-accent)` | ui |
-| `--gdy-select-item-hover-text` | `var(--gdy-accent-foreground)` | ui |
-| `--gdy-select-item-text` | `inherit` | ui |
 | `--gdy-select-radius` | `calc(var(--gdy-radius) - 2px)` | ui |
 | `--gdy-select-text` | `var(--gdy-foreground)` | ui |
 | `--gdy-select-trigger-hover-bg` | `var(--gdy-muted)` | ui |

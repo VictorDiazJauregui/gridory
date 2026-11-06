@@ -458,10 +458,11 @@ repetido, o un id integrado, también lanza `DuplicateRowActionError`. El códig
 
 `selectTheme` da estilo a todos los selects del componente: los de la toolbar (vista de archivados,
 selector de agrupado, selectores del encabezado) y, en la tabla, los de edición en línea y de tamaño de
-página. Cada clave de color y `radius` se escribe como una variable CSS `--gdy-select-*` inline en el
-botón del select y en su desplegable, así que gana sobre el mismo token de tu hoja de estilos (consulta
-[SelectTheme](#selecttheme)). `triggerClassName`, `contentClassName` e `itemClassName` añaden clases al
-botón, al desplegable y a cada opción.
+página. Cada uno es el `<select>` del navegador: Gridory da estilo a la caja cerrada, y la lista abierta
+es la del sistema (una hoja o una rueda en el celular), que toma sus colores de la caja y sigue el tema
+oscuro. Cada clave de color y `radius` se escribe como una variable CSS `--gdy-select-*` inline en el
+select, así que gana sobre el mismo token de tu hoja de estilos (consulta [SelectTheme](#selecttheme)).
+`triggerClassName` añade una clase al select.
 
 `thinScrollbars` (por defecto `true`) añade la clase `gdy-thin-scroll` a la raíz, que afina las barras
 de scroll de todas las áreas de scroll internas (el viewport de las filas o del tablero, las listas de
@@ -651,13 +652,11 @@ Todos los tipos de esta sección se exportan desde `gridory`, `gridory/table` y 
 | `border` | `string` | `--gdy-select-border` |
 | `text` | `string` | `--gdy-select-text` |
 | `radius` | `string \| number` | `--gdy-select-radius` (los números, en píxeles) |
-| `contentBackground` | `string` | `--gdy-select-content-bg` |
-| `optionText` | `string` | `--gdy-select-item-text` |
-| `optionHoverBackground` | `string` | `--gdy-select-item-hover-bg` |
-| `optionActiveBackground` | `string` | `--gdy-select-item-active-bg` |
-| `triggerClassName` | `string` | Clase en el botón de cada select. |
-| `contentClassName` | `string` | Clase en cada desplegable. |
-| `itemClassName` | `string` | Clase en cada opción. |
+| `triggerClassName` | `string` | Clase en cada select. |
+
+Todas las claves dan estilo solo a la caja cerrada. Las claves 1.x de la lista abierta (`contentBackground`,
+`optionText`, `optionHoverBackground`, `optionActiveBackground`, `contentClassName`, `itemClassName`) se
+quitaron en la 2.0: consulta [migration-2.0.es.md](migration-2.0.es.md#selects).
 
 ### DateFilterState
 

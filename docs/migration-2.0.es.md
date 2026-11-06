@@ -147,3 +147,66 @@ grep -rnE "from \"(react-day-picker|date-fns|@date-fns/tz)" src
 grep -rnE "Go to the (Previous|Next) Month|Choose the (Month|Year)" src
 npm ls date-fns react-day-picker
 ```
+
+## Selects
+
+**A quién afecta:** a las apps que pasan las claves de opciones de `selectTheme`, dan estilo a la lista abierta
+de un select desde su CSS o prueban los selects de la tabla, el kanban, la grilla de tarjetas o `SignUpForm`
+abriendo la lista. La caja cerrada se ve igual que en la 1.5.0: mismo tamaño, colores, ícono y placeholder, y
+`valueHighlights` sigue pintando toda la caja del select de edición en línea.
+
+Todos los selects de la librería (vista de archivados, selector de agrupado, selectores del encabezado, tamaño
+de página, edición en línea y el campo `select` de `SignUpForm`) ahora son el `<select>` del navegador. Gridory
+da estilo a la caja cerrada; la lista abierta es la del sistema: un menú nativo en el escritorio, una hoja o una
+rueda en el celular. Toma sus colores de la caja y sigue el tema oscuro mediante `color-scheme`.
+
+```html
+<!-- 1.x -->
+<button type="button" role="combobox" class="gdy-select-trigger" aria-label="Agrupar por">
+  <span data-slot="select-value">Agrupar por: Estado</span><svg class="gdy-select-icon"></svg>
+</button>
+<!-- 2.0 -->
+<span class="gdy-select">
+  <select class="gdy-select-trigger" aria-label="Agrupar por">
+    <option value="__gdy_group_none__">Agrupar por: Ninguno</option>
+    <option value="status">Agrupar por: Estado</option>
+  </select>
+  <svg class="gdy-select-icon" aria-hidden="true"></svg>
+</span>
+```
+
+**Se quitaron de `SelectTheme`**, porque la lista a la que daban estilo ya no existe: `contentBackground`,
+`optionText`, `optionHoverBackground`, `optionActiveBackground`, `contentClassName` e `itemClassName`.
+TypeScript los marca; bórralos. `background`, `hoverBackground`, `border`, `text`, `radius` y `triggerClassName`
+funcionan como antes.
+
+**Se quitaron de la hoja de estilos:** las clases `gdy-select-content`, `gdy-select-viewport`, `gdy-select-item`
+(y sus `-indicator`, `-check` y `-text`), `gdy-select-scroll-button`, `gdy-select-scroll-icon` y
+`gdy-select-value`, y los tokens `--gdy-select-content-bg`, `--gdy-select-content-text`,
+`--gdy-select-item-text`, `--gdy-select-item-hover-bg`, `--gdy-select-item-hover-text` y
+`--gdy-select-item-active-bg`. Una regla sobre ellos ya no coincide con nada. Tampoco
+`.gdy-select-trigger[data-state="open"]`: un select nativo no tiene estado abierto.
+
+**Tests:** elige una opción con `user.selectOptions` en lugar de abrir la lista y hacer clic en la opción, y lee
+la opción elegida con `toHaveDisplayValue`. Las opciones están siempre en el DOM, dentro del select.
+
+```tsx
+const groupBy = screen.getByRole("combobox", { name: "Agrupar por" });
+// 1.x
+await user.click(groupBy);
+await user.click(await screen.findByRole("option", { name: "Agrupar por: Estado" }));
+expect(groupBy).toHaveTextContent("Agrupar por: Estado");
+// 2.0
+await user.selectOptions(groupBy, "Agrupar por: Estado");
+expect(groupBy).toHaveDisplayValue("Agrupar por: Estado");
+```
+
+`toHaveTextContent` sobre un select sigue pasando, pero contra el texto de todas las opciones, así que ya no
+prueba cuál está elegida. Si tus tests comparan el marcado, cada select ahora se ve como el ejemplo 2.0 de
+arriba, y los ids de Radix de los demás menús se corren porque los selects ya no toman uno.
+
+Para encontrar lo que quede, busca en tus fuentes:
+
+```bash
+grep -rnE "contentBackground|optionText|optionHoverBackground|optionActiveBackground|contentClassName|itemClassName|gdy-select-(content|viewport|item|scroll|value)|--gdy-select-(content|item)" src
+```

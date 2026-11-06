@@ -1,8 +1,8 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { expect, test, vi } from "vitest";
 import { KanbanBoard, type KanbanGroupOption } from "../components/kanban";
 import { BASELINE_COLUMNS, BASELINE_ROWS, type BaselineRow } from "./baseline-fixture";
-import { getOptionByName } from "./option-queries";
 
 const STATUS_GROUP: KanbanGroupOption<BaselineRow> = {
   id: "status",
@@ -37,43 +37,40 @@ const shownColumnValues = () =>
 
 const groupSelector = () => screen.getByRole("combobox", { name: "Agrupar por" });
 
-const chooseGroup = (label: string) => {
-  fireEvent.click(groupSelector());
-  fireEvent.click(getOptionByName(`Agrupar por: ${label}`));
-};
+const chooseGroup = (label: string) => userEvent.selectOptions(groupSelector(), `Agrupar por: ${label}`);
 
-test("choosing a group regroups the board and reports it", () => {
+test("choosing a group regroups the board and reports it", async () => {
   const onGroupChange = vi.fn();
   render(boardElement([STATUS_GROUP, COUNTRY_GROUP], onGroupChange));
-  chooseGroup("País");
+  await chooseGroup("País");
   expect(shownColumnValues()).toEqual(COUNTRY_COLUMNS);
-  expect(groupSelector()).toHaveTextContent("Agrupar por: País");
+  expect(groupSelector()).toHaveDisplayValue("Agrupar por: País");
   expect(onGroupChange.mock.calls).toEqual([["country"]]);
 });
 
-test("when the chosen group leaves groups, the board falls back to the first one without reporting it", () => {
+test("when the chosen group leaves groups, the board falls back to the first one without reporting it", async () => {
   const onGroupChange = vi.fn();
   const { rerender } = render(boardElement([STATUS_GROUP, COUNTRY_GROUP], onGroupChange));
-  chooseGroup("País");
+  await chooseGroup("País");
   rerender(boardElement([STATUS_GROUP], onGroupChange));
   expect(shownColumnValues()).toEqual(STATUS_COLUMNS);
-  expect(groupSelector()).toHaveTextContent("Agrupar por: Estado");
+  expect(groupSelector()).toHaveDisplayValue("Agrupar por: Estado");
   expect(onGroupChange.mock.calls).toEqual([["country"]]);
 });
 
-test("a group that comes back does not take the selection back", () => {
+test("a group that comes back does not take the selection back", async () => {
   const { rerender } = render(boardElement([STATUS_GROUP, COUNTRY_GROUP]));
-  chooseGroup("País");
+  await chooseGroup("País");
   rerender(boardElement([STATUS_GROUP]));
   rerender(boardElement([STATUS_GROUP, COUNTRY_GROUP]));
   expect(shownColumnValues()).toEqual(STATUS_COLUMNS);
-  expect(groupSelector()).toHaveTextContent("Agrupar por: Estado");
+  expect(groupSelector()).toHaveDisplayValue("Agrupar por: Estado");
 });
 
-test("reordering groups keeps the chosen group", () => {
+test("reordering groups keeps the chosen group", async () => {
   const { rerender } = render(boardElement([STATUS_GROUP, COUNTRY_GROUP]));
-  chooseGroup("País");
+  await chooseGroup("País");
   rerender(boardElement([COUNTRY_GROUP, STATUS_GROUP]));
   expect(shownColumnValues()).toEqual(COUNTRY_COLUMNS);
-  expect(groupSelector()).toHaveTextContent("Agrupar por: País");
+  expect(groupSelector()).toHaveDisplayValue("Agrupar por: País");
 });
