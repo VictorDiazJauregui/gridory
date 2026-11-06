@@ -591,8 +591,6 @@ filter calendar. The defaults are Spanish (a product decision); pass only the ke
 replace, the rest keep their default. Texts with values are functions.
 
 ```tsx
-import { enUS } from "date-fns/locale";
-
 const formatDate = new Intl.DateTimeFormat("en-US", { dateStyle: "medium" });
 
 <KanbanBoard
@@ -602,8 +600,10 @@ const formatDate = new Intl.DateTimeFormat("en-US", { dateStyle: "medium" });
     emptyColumn: "No deals",
     emptyValue: "No stage",
     formatCardDate: (value) => formatDate.format(new Date(`${value.slice(0, 10)}T00:00`)),
+    calendarPreviousMonth: "Previous month",
+    calendarNextMonth: "Next month",
   }}
-  calendarLocale={enUS}
+  calendarLocale="en-US"
 />;
 ```
 
@@ -612,8 +612,9 @@ const formatDate = new Intl.DateTimeFormat("en-US", { dateStyle: "medium" });
   `viewSwitch.tableLabel` and `kanbanLabel`, `aiButton.label`) still work and win over their key.
 - **Memoize it.** Keep `labels` in a constant or a `useMemo`.
 - **Contents are yours.** Field headers, group labels and card values are your texts.
-- **`calendarLocale`** works as in the table ([table.md](table.md#texts-and-language)); a locale from
-  `react-day-picker/locale` also translates the calendar's accessible names.
+- **`calendarLocale`** and the `calendar*` keys work as in the table
+  ([table.md](table.md#texts-and-language)): a BCP 47 tag or a `date-fns` locale sets the language, and
+  the keys set the calendar's accessible names.
 
 Keys shared with the table (`DataViewLabels`):
 
@@ -659,6 +660,12 @@ Keys shared with the table (`DataViewLabels`):
 | `pickRange` | `"Seleccionar rango"` | Accessible name of the calendar button (range) | — |
 | `dateLoadError` | `"No se pudo cargar el calendario. Si sigue sin aparecer, recarga la página."` | Shown in the date filter when its calendar could not be downloaded | — |
 | `dateLoadRetry` | `"Reintentar"` | Button that downloads the calendar again | — |
+| `calendarNavigation` | `"Navegación del calendario"` | Accessible name of the calendar's navigation landmark | — |
+| `calendarPreviousMonth` | `"Mes anterior"` | Accessible name of the calendar's previous month button | — |
+| `calendarNextMonth` | `"Mes siguiente"` | Accessible name of the calendar's next month button | — |
+| `calendarChooseMonth` | `"Elegir el mes"` | Accessible name of the calendar's month dropdown | — |
+| `calendarChooseYear` | `"Elegir el año"` | Accessible name of the calendar's year dropdown | — |
+| `calendarToday` | `"Hoy"` | Prefix of today's accessible name in the calendar ("Hoy, viernes, 6 de noviembre de 2026") | — |
 | `labeledValue(label, value)` | `` `${label}: ${value}` `` | Joins a prefix and its value: "Agrupar por: Ninguno", "Mostrar: Activos", the header selectors and the kanban card tag | — |
 
 Kanban keys (`KanbanBoardLabels`):

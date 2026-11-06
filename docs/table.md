@@ -1159,8 +1159,6 @@ filter calendar. The defaults are Spanish (a product decision); pass only the ke
 replace, the rest keep their default. Texts with values are functions.
 
 ```tsx
-import { enUS } from "date-fns/locale";
-
 <DataTable
   columns={columns}
   data={invoices}
@@ -1171,8 +1169,10 @@ import { enUS } from "date-fns/locale";
       total === 0 ? `0 ${itemsName}` : `Showing ${from}–${to} of ${total} ${itemsName}`,
     pageOf: (page, count) => `Page ${page} of ${count}`,
     itemsName: "invoices",
+    calendarPreviousMonth: "Previous month",
+    calendarNextMonth: "Next month",
   }}
-  calendarLocale={enUS}
+  calendarLocale="en-US"
 />;
 ```
 
@@ -1184,10 +1184,15 @@ import { enUS } from "date-fns/locale";
   the columns and menus each time.
 - **Contents are yours.** Column headers, cell values and your own toolbar controls are your texts:
   translate them in your app.
-- **`calendarLocale`** takes a `date-fns` locale and changes the month and weekday names, the first
-  day of the week and the month dropdown. Without it the calendar is Spanish. A locale from
-  `react-day-picker/locale` (`import { enUS } from "react-day-picker/locale"`) also translates the
-  calendar's accessible names ("previous month", "choose the year"), which otherwise stay in English.
+- **`calendarLocale`** takes a BCP 47 tag (`"en-US"`, `"pt-BR"`) and changes the month and weekday
+  names, the first day of the week and the month dropdown; the browser's `Intl` writes them, so every
+  language works without installing anything. Without it the calendar is Spanish. A `date-fns` locale
+  (`enUS` from `date-fns/locale`) still works: the calendar reads its `code` and its `weekStartsOn`.
+  The first day of the week comes from the browser (`Intl.Locale#getWeekInfo`); where it is missing
+  (Firefox) the week starts on Monday, so pass `{ code: "en-US", options: { weekStartsOn: 0 } }` if
+  your users expect Sunday everywhere.
+- **The calendar's accessible names** ("Mes anterior", "Elegir el año", "Hoy, …") are the
+  `calendar*` keys of `labels`, Spanish by default like every other text.
 - The date inputs show the `dateInputFormat` mask as placeholder (`"dd/mm/yyyy"`); set the mask your
   users expect.
 
@@ -1235,6 +1240,12 @@ Keys shared with the kanban (`DataViewLabels`):
 | `pickRange` | `"Seleccionar rango"` | Accessible name of the calendar button (range) | — |
 | `dateLoadError` | `"No se pudo cargar el calendario. Si sigue sin aparecer, recarga la página."` | Shown in the date filter when its calendar could not be downloaded | — |
 | `dateLoadRetry` | `"Reintentar"` | Button that downloads the calendar again | — |
+| `calendarNavigation` | `"Navegación del calendario"` | Accessible name of the calendar's navigation landmark | — |
+| `calendarPreviousMonth` | `"Mes anterior"` | Accessible name of the calendar's previous month button | — |
+| `calendarNextMonth` | `"Mes siguiente"` | Accessible name of the calendar's next month button | — |
+| `calendarChooseMonth` | `"Elegir el mes"` | Accessible name of the calendar's month dropdown | — |
+| `calendarChooseYear` | `"Elegir el año"` | Accessible name of the calendar's year dropdown | — |
+| `calendarToday` | `"Hoy"` | Prefix of today's accessible name in the calendar ("Hoy, viernes, 6 de noviembre de 2026") | — |
 | `labeledValue(label, value)` | `` `${label}: ${value}` `` | Joins a prefix and its value: "Agrupar por: Ninguno", "Mostrar: Activos", the header selectors and the kanban card tag | — |
 
 Table keys (`DataTableLabels`):

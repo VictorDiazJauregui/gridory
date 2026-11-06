@@ -72,7 +72,7 @@ por área, nunca por tipo de archivo, con 3 a 12 archivos cada una y sin barrels
 | `phone-input/` | `model/`, `parts/` |
 | `sidebar/` | `model/`, `parts/`, `desktop/`, `mobile/` |
 | `shared/` | Contratos comunes en la raíz; `controls/`, `rows/`, `toolbar/`, `filter-menu/`, `date-filter-menu/`, `date-pickers/`, `menu/` |
-| `ui/` | Primitivas sobre Radix y react-day-picker: `select/`, `toggle-group/`, `calendar/` |
+| `ui/` | Primitivas sobre Radix y el calendario propio: `select/`, `toggle-group/`, `calendar/` |
 | `mocks/` | Datos y configuración de la demo |
 
 La demo está en `src/demo/`, los tests en `src/test/` y las guías en `docs/`. La demo, los mocks y los

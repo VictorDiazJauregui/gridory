@@ -72,7 +72,7 @@ folders by area, never by file type, with 3 to 12 files each and no barrel files
 | `phone-input/` | `model/`, `parts/` |
 | `sidebar/` | `model/`, `parts/`, `desktop/`, `mobile/` |
 | `shared/` | Common contracts at the root; `controls/`, `rows/`, `toolbar/`, `filter-menu/`, `date-filter-menu/`, `date-pickers/`, `menu/` |
-| `ui/` | Primitives over Radix and react-day-picker: `select/`, `toggle-group/`, `calendar/` |
+| `ui/` | Primitives over Radix, and the own calendar: `select/`, `toggle-group/`, `calendar/` |
 | `mocks/` | Demo data and configuration |
 
 The demo shell is in `src/demo/`, the tests in `src/test/` and the guides in `docs/`. The demo, the

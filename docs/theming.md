@@ -507,10 +507,10 @@ presence (`[data-dragging]`), not by value. The others take the values listed.
 | `aria-expanded` | `gdy-table-group-toggle` | Gridory | `"false"` when the group is collapsed |
 | `data-state` | `gdy-menu-content`, `gdy-popover-content`, `gdy-select-*`, `gdy-toggle-item` | Radix | `"open"` or `"closed"` on menu, popover and select; `"checked"` on a select item; `"on"` on a toggle item |
 | `data-highlighted` | `gdy-select-item` | Radix | the item under the pointer or keyboard focus |
-| `data-disabled` | `gdy-menu-item`, `gdy-select-item`, `gdy-calendar-day` | Radix, react-day-picker | a disabled item or day |
+| `data-disabled` | `gdy-menu-item`, `gdy-select-item`, `gdy-calendar-day` | Radix | a disabled item or day |
 | `data-placeholder` | `gdy-select-trigger` | Radix | no value selected |
 | `data-side` | `gdy-menu-content`, `gdy-popover-content`, `gdy-select-content` | Radix | `"top"`, `"right"`, `"bottom"` or `"left"` of the anchor |
-| `data-today`, `data-outside`, `data-selected` | `gdy-calendar-day` | react-day-picker | today, a day of another month, a selected day |
+| `data-today`, `data-outside`, `data-selected` | `gdy-calendar-day` | Gridory | today, a day of another month, a selected day |
 | `data-range-start`, `data-range-middle`, `data-range-end` | `gdy-calendar-day`, `gdy-calendar-day-button` | Gridory | position inside a selected range |
 | `data-selected-single` | `gdy-calendar-day-button` | Gridory | a selected day outside a range |
 | `data-state` | `gdy-ai-sidebar` | Gridory | `"open"` or `"closed"` |

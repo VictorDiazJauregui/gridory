@@ -456,7 +456,6 @@ The state selectors column lists the attributes the stylesheets combine with eac
 | `gdy-calendar-dropdown` | styled | — |
 | `gdy-calendar-dropdown-root` | styled | — |
 | `gdy-calendar-dropdowns` | styled | — |
-| `gdy-calendar-footer` | hook only | — |
 | `gdy-calendar-month` | styled | — |
 | `gdy-calendar-month-caption` | styled | — |
 | `gdy-calendar-month-grid` | styled | — |
@@ -466,8 +465,6 @@ The state selectors column lists the attributes the stylesheets combine with eac
 | `gdy-calendar-popover` | styled | — |
 | `gdy-calendar-root` | styled | — |
 | `gdy-calendar-week` | styled | — |
-| `gdy-calendar-week-number` | hook only | — |
-| `gdy-calendar-week-number-header` | hook only | — |
 | `gdy-calendar-weekday` | styled | — |
 | `gdy-calendar-weekdays` | styled | — |
 | `gdy-calendar-weeks` | hook only | — |
@@ -679,20 +676,20 @@ write when you override them; the reasons are in [Theming and styling](theming.m
 ## State attributes
 
 Boolean attributes are present or absent; the others take the listed values. Attributes set by
-Radix or react-day-picker follow those libraries.
+Radix follow that library.
 
 | Attribute | Values | Set by | Used with |
 |---|---|---|---|
 | `aria-checked` | `"false"`, `"true"` | Gridory | `gdy-segmented-item` |
 | `aria-current` | `"location"`, `"page"` | Gridory | `gdy-md-outline-link`, `gdy-sidebar-item` |
-| `aria-disabled` | `"true"` | Radix or react-day-picker | `gdy-calendar-button-next`, `gdy-calendar-button-previous`, `gdy-listbox-option` |
+| `aria-disabled` | `"true"` | Gridory | `gdy-calendar-button-next`, `gdy-calendar-button-previous`, `gdy-listbox-option` |
 | `aria-expanded` | `"false"`, `"true"` | Gridory | `gdy-button`, `gdy-country-select-trigger`, `gdy-phone-input-prefix`, `gdy-table-expand-toggle`, `gdy-table-group-toggle` |
 | `aria-invalid` | `"true"` | Gridory | `gdy-auth-input`, `gdy-country-select-trigger`, `gdy-select-trigger` |
 | `aria-pressed` | `"true"` | Gridory | `gdy-link-btn`, `gdy-md-tool`, `gdy-md-view-option`, `gdy-view-switch-btn` |
 | `aria-selected` | `"true"` | Gridory | `gdy-listbox-option` |
 | `data-action-type` | `"create-card"`, `"create-row"`, `"custom"`, `"move-card"`, `"update-row"` | Gridory | no default rule |
 | `data-active` | present / absent | Gridory | `gdy-listbox-option` |
-| `data-align` | `"center"`, `"end"`, `"left"`, `"right"` | Gridory, Radix or react-day-picker | `gdy-kanban-filter-menu-holder`, `gdy-table-actions-cell`, `gdy-table-cell`, `gdy-table-foot-cell`, `gdy-table-head-cell`, `gdy-table-head-trigger`, `gdy-table-menu-holder` |
+| `data-align` | `"center"`, `"end"`, `"left"`, `"right"` | Gridory or Radix | `gdy-kanban-filter-menu-holder`, `gdy-table-actions-cell`, `gdy-table-cell`, `gdy-table-foot-cell`, `gdy-table-head-cell`, `gdy-table-head-trigger`, `gdy-table-menu-holder` |
 | `data-alignment` | `"center"`, `"right"` | Gridory | `gdy-md-table-preview` |
 | `data-animated` | `"true"` | Gridory | `gdy-segmented`, `gdy-sidebar` |
 | `data-checked` | present / absent | Gridory | `gdy-option-check` |
@@ -703,7 +700,7 @@ Radix or react-day-picker follow those libraries.
 | `data-compact` | `"true"` | Gridory | `gdy-sidebar-logo` |
 | `data-day` | the date of the day | Gridory | no default rule |
 | `data-diagram-state` | `"error"`, `"loading"`, `"ready"` | Gridory | `gdy-md-diagram` |
-| `data-disabled` | present / absent | Gridory, Radix or react-day-picker | `gdy-auth-google-slot`, `gdy-calendar-day`, `gdy-menu-item`, `gdy-select-item` |
+| `data-disabled` | present / absent | Gridory or Radix | `gdy-auth-google-slot`, `gdy-calendar-day`, `gdy-menu-item`, `gdy-select-item` |
 | `data-draggable` | present / absent | Gridory | `gdy-kanban-card` |
 | `data-dragging` | present / absent | Gridory | `gdy-kanban-card` |
 | `data-drop-disabled` | present / absent | Gridory | `gdy-kanban-column` |
@@ -711,14 +708,15 @@ Radix or react-day-picker follow those libraries.
 | `data-empty` | present / absent | Gridory | `gdy-ai-body` |
 | `data-expanded` | present / absent | Gridory | no default rule |
 | `data-filtered` | present / absent | Gridory | `gdy-kanban-filter-trigger` |
+| `data-focused` | present / absent | Gridory | no default rule |
 | `data-form` | `"login"`, `"signup"` | Gridory | no default rule |
 | `data-fullscreen` | present / absent | Gridory | `gdy-md-editor` |
 | `data-has-pinned` | present / absent | Gridory | `gdy-table-wrap` |
 | `data-header` | present / absent | Gridory | `gdy-md-table-preview-cell` |
 | `data-help-placement` | `"edge"` | Gridory | `gdy-table-head-inner` |
-| `data-hidden` | present / absent | Radix or react-day-picker | `gdy-calendar-day` |
+| `data-hidden` | present / absent | Gridory | `gdy-calendar-day` |
 | `data-hidden-by` | `"priority"` | Gridory | `gdy-table-cell`, `gdy-table-foot-cell`, `gdy-table-head-cell` |
-| `data-highlighted` | present / absent | Radix or react-day-picker | `gdy-select-item` |
+| `data-highlighted` | present / absent | Radix | `gdy-select-item` |
 | `data-hover-expand` | `"false"`, `"true"` | Gridory | `gdy-sidebar` |
 | `data-href` | present / absent | Gridory | no default rule |
 | `data-invalid` | present / absent | Gridory | `gdy-phone-input` |
@@ -732,14 +730,17 @@ Radix or react-day-picker follow those libraries.
 | `data-measure-overflow` | present / absent | Gridory | no default rule |
 | `data-menu` | present / absent | Gridory | `gdy-md-tool` |
 | `data-mobile` | `"true"` | Gridory | `gdy-sidebar-layout` |
+| `data-mode` | `single` or `range` | Gridory | no default rule |
+| `data-month` | the month (`yyyy-mm`) of a day from another month | Gridory | no default rule |
 | `data-multiple` | present / absent | Gridory | `gdy-country-select` |
-| `data-outside` | present / absent | Radix or react-day-picker | `gdy-calendar-day` |
+| `data-multiple-months` | present / absent | Gridory | no default rule |
+| `data-outside` | present / absent | Gridory | `gdy-calendar-day` |
 | `data-overflow` | `"visible"`, `"wrap"` | Gridory | `gdy-table-cell-content` |
 | `data-pending` | present / absent | Gridory | `gdy-kanban-card` |
 | `data-pinned` | `"false"`, `"true"` | Gridory | `gdy-sidebar`, `gdy-table-cell`, `gdy-table-foot-cell`, `gdy-table-head-cell` |
 | `data-pinned-edge` | present / absent | Gridory | no default rule |
 | `data-pinning-suspended` | present / absent | Gridory | `gdy-table-wrap` |
-| `data-placeholder` | present / absent | Gridory, Radix or react-day-picker | `gdy-country-select-value`, `gdy-phone-input-dial-code`, `gdy-select-trigger` |
+| `data-placeholder` | present / absent | Gridory or Radix | `gdy-country-select-value`, `gdy-phone-input-dial-code`, `gdy-select-trigger` |
 | `data-print-mode` | present / absent | Gridory | `gdy-table` |
 | `data-range-end` | present / absent | Gridory | `gdy-calendar-day`, `gdy-calendar-day-button` |
 | `data-range-middle` | present / absent | Gridory | `gdy-calendar-day`, `gdy-calendar-day-button` |
@@ -750,16 +751,16 @@ Radix or react-day-picker follow those libraries.
 | `data-row-id` | the row id (`getRowId`) | Gridory | no default rule |
 | `data-scrolled-end` | present / absent | Gridory | `gdy-table-wrap` |
 | `data-scrolled-start` | present / absent | Gridory | `gdy-table-wrap` |
-| `data-selected` | present / absent | Gridory, Radix or react-day-picker | `gdy-calendar-day`, `gdy-option-item`, `gdy-table-row` |
+| `data-selected` | present / absent | Gridory | `gdy-calendar-day`, `gdy-option-item`, `gdy-table-row` |
 | `data-selected-single` | present / absent | Gridory | `gdy-calendar-day-button` |
-| `data-side` | `"bottom"`, `"left"`, `"right"`, `"top"` | Gridory, Radix or react-day-picker | `gdy-menu-content`, `gdy-popover-content`, `gdy-select-content` |
+| `data-side` | `"bottom"`, `"left"`, `"right"`, `"top"` | Gridory or Radix | `gdy-menu-content`, `gdy-popover-content`, `gdy-select-content` |
 | `data-size` | `"default"`, `"icon"`, `"icon-lg"`, `"icon-sm"`, `"icon-xs"`, `"lg"`, `"sm"`, `"xs"` | Gridory | `gdy-button` |
 | `data-slot-id` | the slot `id` | Gridory | no default rule |
-| `data-state` | `"active"`, `"checked"`, `"closed"`, `"collapsed"`, `"expanded"`, `"indeterminate"`, `"on"`, `"open"` | Gridory, Radix or react-day-picker | `gdy-ai-sidebar`, `gdy-md-image-tab`, `gdy-md-picker-tab`, `gdy-md-tool`, `gdy-menu-content`, `gdy-menu-sub-trigger`, `gdy-popover-content`, `gdy-select-content`, `gdy-select-item`, `gdy-select-trigger`, `gdy-sidebar`, `gdy-sidebar-drawer`, `gdy-sidebar-overlay`, `gdy-table-expanded-panel`, `gdy-table-select`, `gdy-toggle-item` |
+| `data-state` | `"active"`, `"checked"`, `"closed"`, `"collapsed"`, `"expanded"`, `"indeterminate"`, `"on"`, `"open"` | Gridory or Radix | `gdy-ai-sidebar`, `gdy-md-image-tab`, `gdy-md-picker-tab`, `gdy-md-tool`, `gdy-menu-content`, `gdy-menu-sub-trigger`, `gdy-popover-content`, `gdy-select-content`, `gdy-select-item`, `gdy-select-trigger`, `gdy-sidebar`, `gdy-sidebar-drawer`, `gdy-sidebar-overlay`, `gdy-table-expanded-panel`, `gdy-table-select`, `gdy-toggle-item` |
 | `data-status` | `"met"`, `"pending"`, `"unmet"` | Gridory | `gdy-auth-rule` |
 | `data-streaming` | present / absent | Gridory | no default rule |
 | `data-thinking` | present / absent | Gridory | no default rule |
-| `data-today` | present / absent | Radix or react-day-picker | `gdy-calendar-day` |
+| `data-today` | present / absent | Gridory | `gdy-calendar-day` |
 | `data-toolbar-placement` | present / absent | Gridory | no default rule |
 | `data-variant` | `"default"`, `"destructive"`, `"error"`, `"ghost"`, `"important"`, `"link"`, `"outline"`, `"secondary"`, `"success"`, `"warning"` | Gridory | `gdy-button`, `gdy-md-alert`, `gdy-menu-item` |
 | `data-view` | `"split"` | Gridory | `gdy-md-panels` |
