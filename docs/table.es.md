@@ -742,6 +742,9 @@ Antes, una columna de casillas era un `cell` más tu propio estado, y el clic en
 + <DataTable columns={columns} data={invoices} getRowId={(row) => row.id} rowSelection={{ onChange: setSelectedIds }} />
 ```
 
+La casilla se descarga solo en las tablas con `rowSelection`, justo después del primer render. Hasta
+entonces cada celda muestra el mismo marcado, que ya marca y desmarca, así que nada se mueve ni espera.
+
 ### Filas expandibles
 
 `renderExpandedRow` agrega una columna con un botón de expandir y, debajo de cada fila abierta, un detalle de
@@ -1108,6 +1111,10 @@ Antes, el "?" tenía que vivir dentro de `header`, que solo acepta texto, así q
 - .my-table th:nth-child(4) .gdy-table-head-label::after { content: " ⓘ"; }
 + { id: "amount", header: "Monto", accessor: (row) => row.amount, headerTooltip: "Suma de los contratos vigentes" }
 ```
+
+El tooltip se descarga solo en las tablas con algún `headerTooltip`, justo después del primer render. Hasta
+entonces el "?" es el mismo botón, y tocarlo abre el tooltip apenas llega. Los tests que lo abren ya lo
+esperan: `await screen.findByRole("tooltip")`.
 
 ### Layout y scroll
 

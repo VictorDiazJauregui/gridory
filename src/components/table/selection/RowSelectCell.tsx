@@ -3,7 +3,7 @@ import { readInternalColumnMeta } from "../model/internal-column-meta";
 import { PrintValue } from "../body/PrintValue";
 import type { DataTableLabels } from "../types";
 import type { RowSelectionModel } from "./use-row-selection";
-import { SelectCheckbox } from "./SelectCheckbox";
+import { DeferredSelectCheckbox as SelectCheckbox } from "./DeferredSelectCheckbox";
 
 export interface SelectCellSettings<TData> {
   selection: RowSelectionModel<TData>;

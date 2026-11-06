@@ -1,26 +1,19 @@
 import { useRef, useState, type MouseEvent } from "react";
 import { CircleHelp } from "lucide-react";
-import { Tooltip, VisuallyHidden } from "radix-ui";
+import { useFocusOnMount } from "../../shared/deferred/use-placeholder-focus";
+import { Tooltip } from "radix-ui";
 
-interface TableHeaderHelpProps {
+export interface TableHeaderHelpProps {
   text: string;
   label: string;
+  initiallyOpen?: boolean;
+  initiallyFocused?: boolean;
 }
-
-interface HelpDescriptionProps {
-  text: string;
-  descriptionId: string;
-}
-
-/** The help text for screen readers, linked from the header trigger with aria-describedby. */
-export const TableHeaderHelpDescription = ({ text, descriptionId }: HelpDescriptionProps) => (
-  <VisuallyHidden.Root id={descriptionId}>{text}</VisuallyHidden.Root>
-);
 
 // Radix opens a tooltip on hover and focus only, and closes it on click. A click or tap toggles it here, judged
 // by its state when the press began: on a phone the focus arrives after the finger lifts and opens it first.
-const useClickToggledOpen = () => {
-  const [open, setOpen] = useState(false);
+const useClickToggledOpen = (initiallyOpen = false) => {
+  const [open, setOpen] = useState(initiallyOpen);
   const openOnPressRef = useRef<boolean | null>(null);
   const rememberOpenOnPress = () => {
     openOnPressRef.current = open;
@@ -42,20 +35,34 @@ const HelpTooltipContent = ({ text }: { text: string }) => (
   </Tooltip.Portal>
 );
 
-export const TableHeaderHelp = ({ text, label }: TableHeaderHelpProps) => {
-  const { open, setOpen, rememberOpenOnPress, toggleOnClick } = useClickToggledOpen();
+interface HelpTriggerProps {
+  label: string;
+  initiallyFocused?: boolean;
+  toggle: Pick<ReturnType<typeof useClickToggledOpen>, "rememberOpenOnPress" | "toggleOnClick">;
+}
+
+const HelpTrigger = ({ label, initiallyFocused, toggle }: HelpTriggerProps) => {
+  const triggerRef = useFocusOnMount<HTMLButtonElement>(initiallyFocused);
+  return (
+    <Tooltip.Trigger
+      ref={triggerRef}
+      type="button"
+      className="gdy-table-head-help"
+      aria-label={label}
+      onPointerDown={toggle.rememberOpenOnPress}
+      onClick={toggle.toggleOnClick}
+    >
+      <CircleHelp size={14} aria-hidden="true" />
+    </Tooltip.Trigger>
+  );
+};
+
+export const TableHeaderHelp = ({ text, label, initiallyOpen, initiallyFocused }: TableHeaderHelpProps) => {
+  const { open, setOpen, ...toggle } = useClickToggledOpen(initiallyOpen);
   return (
     <Tooltip.Provider delayDuration={200}>
       <Tooltip.Root open={open} onOpenChange={setOpen}>
-        <Tooltip.Trigger
-          type="button"
-          className="gdy-table-head-help"
-          aria-label={label}
-          onPointerDown={rememberOpenOnPress}
-          onClick={toggleOnClick}
-        >
-          <CircleHelp size={14} aria-hidden="true" />
-        </Tooltip.Trigger>
+        <HelpTrigger label={label} initiallyFocused={initiallyFocused} toggle={toggle} />
         <HelpTooltipContent text={text} />
       </Tooltip.Root>
     </Tooltip.Provider>
