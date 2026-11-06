@@ -119,6 +119,16 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-kanban-min-h-sm` | utilidad | — |
 | `gdy-kanban-tag` | con estilos | — |
 
+### Vista de tarjetas
+
+| Clase | Tipo | Selectores de estado |
+|---|---|---|
+| `gdy-card-grid` | con estilos | — |
+| `gdy-card-grid-card` | con estilos | `[data-clickable]` |
+| `gdy-card-grid-list` | con estilos | — |
+| `gdy-card-grid-loading` | con estilos | — |
+| `gdy-card-grid-skeleton` | solo gancho | — |
+
 ### Asistente de IA
 
 | Clase | Tipo | Selectores de estado |
@@ -684,7 +694,7 @@ ponen Radix o react-day-picker siguen a esas librerías.
 | `data-alignment` | `"center"`, `"right"` | Gridory | `gdy-md-table-preview` |
 | `data-animated` | `"true"` | Gridory | `gdy-segmented`, `gdy-sidebar` |
 | `data-checked` | presente / ausente | Gridory | `gdy-option-check` |
-| `data-clickable` | presente / ausente | Gridory | `gdy-table-row` |
+| `data-clickable` | presente / ausente | Gridory | `gdy-card-grid-card`, `gdy-table-row` |
 | `data-collapsed` | presente / ausente | Gridory | `gdy-kanban-column` |
 | `data-column-id` | el `id` de la columna | Gridory | `gdy-table-cell`, `gdy-table-head-cell`, `gdy-table-skeleton` |
 | `data-column-value` | presente / ausente | Gridory | sin regla por defecto |
@@ -855,6 +865,10 @@ cualquier ancestro cambia solo esa parte. Los `--gdy-select-*` también reflejan
 | `--gdy-calendar-range-bg` | `var(--gdy-muted)` | ui |
 | `--gdy-calendar-selected-bg` | `var(--gdy-primary)` | ui |
 | `--gdy-calendar-selected-fg` | `var(--gdy-primary-foreground)` | ui |
+| `--gdy-card-grid-focus-ring` | `var(--gdy-ring)` | card-grid |
+| `--gdy-card-grid-gap` | `12px` | card-grid |
+| `--gdy-card-grid-min` | `260px` | card-grid |
+| `--gdy-card-grid-padding` | `12px` | card-grid |
 | `--gdy-country-flag-outline` | `var(--gdy-border)` | shared |
 | `--gdy-country-flag-radius` | `2px` | shared |
 | `--gdy-country-flag-width` | `20px` | shared |

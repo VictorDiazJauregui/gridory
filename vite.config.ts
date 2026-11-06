@@ -91,6 +91,7 @@ export default defineConfig({
         index: path.resolve(rootDir, "src/index.ts"),
         table: path.resolve(rootDir, "src/table.ts"),
         kanban: path.resolve(rootDir, "src/kanban.ts"),
+        "card-grid": path.resolve(rootDir, "src/card-grid.ts"),
         ai: path.resolve(rootDir, "src/ai.ts"),
         auth: path.resolve(rootDir, "src/auth.ts"),
         "segmented-control": path.resolve(rootDir, "src/segmented-control.ts"),

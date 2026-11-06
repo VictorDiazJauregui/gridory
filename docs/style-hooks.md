@@ -119,6 +119,16 @@ The state selectors column lists the attributes the stylesheets combine with eac
 | `gdy-kanban-min-h-sm` | utility | — |
 | `gdy-kanban-tag` | styled | — |
 
+### Card grid
+
+| Class | Kind | State selectors |
+|---|---|---|
+| `gdy-card-grid` | styled | — |
+| `gdy-card-grid-card` | styled | `[data-clickable]` |
+| `gdy-card-grid-list` | styled | — |
+| `gdy-card-grid-loading` | styled | — |
+| `gdy-card-grid-skeleton` | hook only | — |
+
 ### AI assistant
 
 | Class | Kind | State selectors |
@@ -684,7 +694,7 @@ Radix or react-day-picker follow those libraries.
 | `data-alignment` | `"center"`, `"right"` | Gridory | `gdy-md-table-preview` |
 | `data-animated` | `"true"` | Gridory | `gdy-segmented`, `gdy-sidebar` |
 | `data-checked` | present / absent | Gridory | `gdy-option-check` |
-| `data-clickable` | present / absent | Gridory | `gdy-table-row` |
+| `data-clickable` | present / absent | Gridory | `gdy-card-grid-card`, `gdy-table-row` |
 | `data-collapsed` | present / absent | Gridory | `gdy-kanban-column` |
 | `data-column-id` | the column `id` | Gridory | `gdy-table-cell`, `gdy-table-head-cell`, `gdy-table-skeleton` |
 | `data-column-value` | present / absent | Gridory | no default rule |
@@ -855,6 +865,10 @@ any ancestor overrides that part only. `--gdy-select-*` also mirror the `selectT
 | `--gdy-calendar-range-bg` | `var(--gdy-muted)` | ui |
 | `--gdy-calendar-selected-bg` | `var(--gdy-primary)` | ui |
 | `--gdy-calendar-selected-fg` | `var(--gdy-primary-foreground)` | ui |
+| `--gdy-card-grid-focus-ring` | `var(--gdy-ring)` | card-grid |
+| `--gdy-card-grid-gap` | `12px` | card-grid |
+| `--gdy-card-grid-min` | `260px` | card-grid |
+| `--gdy-card-grid-padding` | `12px` | card-grid |
 | `--gdy-country-flag-outline` | `var(--gdy-border)` | shared |
 | `--gdy-country-flag-radius` | `2px` | shared |
 | `--gdy-country-flag-width` | `20px` | shared |

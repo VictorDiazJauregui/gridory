@@ -38,6 +38,15 @@ export type {
   KanbanSortingState,
 } from "./kanban";
 
+export { CardGrid } from "./card-grid";
+export type {
+  CardClickEvent,
+  CardGridClassNames,
+  CardGridFeatures,
+  CardGridLabels,
+  CardGridProps,
+} from "./card-grid";
+
 export type {
   AiButtonConfig,
   ArchivedViewConfig,

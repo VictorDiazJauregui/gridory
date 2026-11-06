@@ -9,6 +9,7 @@ export const BASE_STYLESHEET = { fileName: "base.css", source: "src/styles/index
 export const MODULE_NAMES = [
   "ai",
   "auth",
+  "card-grid",
   "country-select",
   "table",
   "kanban",

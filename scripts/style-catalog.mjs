@@ -50,6 +50,7 @@ const IGNORED_ATTRIBUTES = new Set([
 const GROUPS = [
   { id: "table", match: /^gdy-table(?:-|$)/ },
   { id: "kanban", match: /^gdy-kanban(?:-|$)/ },
+  { id: "card-grid", match: /^gdy-card-grid(?:-|$)/ },
   { id: "ai", match: /^gdy-ai(?:-|$)/ },
   { id: "auth", match: /^gdy-auth(?:-|$)/ },
   { id: "segmented-control", match: /^gdy-segmented(?:-|$)/ },
@@ -216,6 +217,7 @@ const TEXT = {
     groups: {
       table: "Table",
       kanban: "Kanban",
+      "card-grid": "Card grid",
       ai: "AI assistant",
       auth: "Auth forms",
       "segmented-control": "Segmented control",
@@ -286,6 +288,7 @@ const TEXT = {
     groups: {
       table: "Tabla",
       kanban: "Kanban",
+      "card-grid": "Vista de tarjetas",
       ai: "Asistente de IA",
       auth: "Formularios de autenticación",
       "segmented-control": "Control segmentado",
