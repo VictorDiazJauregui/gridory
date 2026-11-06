@@ -698,21 +698,23 @@ El preset no añade rutas en `content`; las pone tu propia configuración.
 apuntan a sus variables, y Gridory lee esas mismas variables por el puente de tokens. Usa el preset con
 prefijo solo si quieres pintar algo específicamente con los tokens de Gridory.
 
-### Preset por defecto (obsoleto)
+### Export por defecto
 
-El export por defecto asocia las claves al estilo de shadcn (`bg-primary`, `bg-card`,
-`text-muted-foreground`, `border-border`, `outline-ring`, `rounded-lg`…) a los mismos tokens. En un
-proyecto que define esas claves gana el proyecto y el preset aporta poco; en las que no define, mezcla
-dos paletas. Sigue funcionando igual en la 1.x y **se quita en la 2.0.0**: empieza directamente con
-`createGridoryPreset()` para no tener que migrar dos veces.
+Desde la 2.0.0, el export por defecto es `createGridoryPreset()` con el prefijo `"gdy"`, así que estas dos
+configuraciones son iguales:
 
 ```js
-import gridoryPreset from "gridory/tailwind-preset"; // obsoleto
+import gridoryPreset, { createGridoryPreset } from "gridory/tailwind-preset";
 
-export default { presets: [gridoryPreset] };
+export default { presets: [gridoryPreset] }; // igual que presets: [createGridoryPreset()]
 ```
 
-Tailwind 4 (`@theme`) no está cubierto por ninguno de los dos presets.
+Hasta la 1.x, el export por defecto agregaba las utilidades sin prefijo al estilo de shadcn (`bg-primary`,
+`text-muted-foreground`, `rounded-lg`…). Si tu markup todavía las usa, consulta la
+[guía de migración a la 2.0](migration-2.0.es.md#preset-de-tailwind): Tailwind no avisa de una clase que
+ya no genera, simplemente deja de pintarla.
+
+Tailwind 4 (`@theme`) no está cubierto por el preset.
 
 ## Auditoría de estilos
 
