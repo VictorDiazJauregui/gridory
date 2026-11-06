@@ -63,10 +63,10 @@ export const SidebarFrame = ({ config, record }: SidebarFrameProps) => {
   };
   const style = { "--gdy-sidebar-height": FRAME_HEIGHT, ...config.tokens } as CSSProperties;
   return (
-    <div role="group" aria-label={config.name} className="relative overflow-hidden rounded-md border" style={{ height: FRAME_HEIGHT, ...style }}>
+    <div role="group" aria-label={config.name} className="relative overflow-hidden rounded-gdy-md border" style={{ height: FRAME_HEIGHT, ...style }}>
       <SidebarLayout expandOnHover={config.expandOnHover} onPinnedChange={(pinned) => record("onPinnedChange", { sidebar: config.name, pinned })}>
         <FrameSidebar config={config} activeId={activeId} onSelect={select} />
-        <div className="p-4 text-xs text-muted-foreground">Contenido de la página: el menú no la hace scrollear.</div>
+        <div className="p-4 text-xs text-gdy-muted-foreground">Contenido de la página: el menú no la hace scrollear.</div>
       </SidebarLayout>
     </div>
   );

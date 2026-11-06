@@ -16,9 +16,9 @@ const SECTION_DEMOS: Record<string, SectionDemo> = {
 };
 
 const SidebarDemoHeader = () => (
-  <div className="rounded-lg border bg-card p-4">
+  <div className="rounded-gdy-lg border bg-gdy-card p-4">
     <h2 className="text-lg font-semibold">Menú lateral</h2>
-    <p className="mt-2 text-xs text-muted-foreground">
+    <p className="mt-2 text-xs text-gdy-muted-foreground">
       Cada ejemplo vive en un marco de 480 px, para probar el scroll interno sin depender de la ventana.
     </p>
   </div>

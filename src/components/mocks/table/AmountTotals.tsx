@@ -11,7 +11,7 @@ export const AmountTotals = ({ totals }: AmountTotalsProps) => {
   const translate = useDemoText();
   return (
     <span
-      className="inline-flex h-8 items-center gap-1.5 rounded-md border px-2.5 text-xs tabular-nums"
+      className="inline-flex h-8 items-center gap-1.5 rounded-gdy-md border px-2.5 text-xs tabular-nums"
       aria-label={translate("Total de las filas filtradas")}
     >
       <Sigma size={14} />

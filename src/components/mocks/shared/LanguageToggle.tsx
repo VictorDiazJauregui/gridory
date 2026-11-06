@@ -10,7 +10,7 @@ export const LanguageToggle = () => {
       aria-pressed={language === "en"}
       aria-label={language === "es" ? "Switch the demo to English" : "Cambiar la demo a español"}
       onClick={() => setDemoLanguage(next)}
-      className="inline-flex h-8 items-center gap-1.5 rounded-md border px-2.5 text-xs text-muted-foreground aria-pressed:bg-muted aria-pressed:text-foreground"
+      className="inline-flex h-8 items-center gap-1.5 rounded-gdy-md border px-2.5 text-xs text-gdy-muted-foreground aria-pressed:bg-gdy-muted aria-pressed:text-gdy-foreground"
     >
       <Languages size={14} />
       {language === "es" ? "ES" : "EN"}

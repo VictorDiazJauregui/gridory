@@ -1,5 +1,5 @@
 export const AiDemoHint = () => (
-  <p className="mt-2 text-sm text-muted-foreground">
+  <p className="mt-2 text-sm text-gdy-muted-foreground">
     Prueba mensajes como:{" "}
     <span className="font-medium">
       “Crea una empresa llamada Boreal en Chile con estado Pendiente”

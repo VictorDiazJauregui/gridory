@@ -9,11 +9,11 @@ interface AuthDemoToggleProps<TValue extends string> {
 
 const optionClassName = (active: boolean) =>
   `rounded px-3 py-1 text-xs font-medium ${
-    active ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+    active ? "bg-gdy-primary text-gdy-primary-foreground" : "text-gdy-muted-foreground hover:text-gdy-foreground"
   }`;
 
 export const AuthDemoToggle = <TValue extends string>({ label, options, value, onChange }: AuthDemoToggleProps<TValue>) => (
-  <div role="group" aria-label={label} className="inline-flex rounded-md border bg-muted p-1">
+  <div role="group" aria-label={label} className="inline-flex rounded-gdy-md border bg-gdy-muted p-1">
     {options.map((option) => (
       <button
         key={option.value}
