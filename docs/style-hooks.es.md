@@ -479,17 +479,9 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-menu-sub-content` | con estilos | — |
 | `gdy-menu-sub-trigger` | con estilos | `[data-state="open"]` |
 | `gdy-popover-content` | con estilos | `[data-side="bottom"]`, `[data-side="left"]`, `[data-side="right"]`, `[data-side="top"]`, `[data-state="closed"]`, `[data-state="open"]` |
-| `gdy-select-content` | con estilos | `[data-side="bottom"]`, `[data-side="left"]`, `[data-side="right"]`, `[data-side="top"]`, `[data-state="open"]` |
+| `gdy-select` | con estilos | — |
 | `gdy-select-icon` | con estilos | — |
-| `gdy-select-item` | con estilos | `[data-disabled]`, `[data-highlighted]`, `[data-state="checked"]` |
-| `gdy-select-item-check` | con estilos | — |
-| `gdy-select-item-indicator` | con estilos | — |
-| `gdy-select-item-text` | solo gancho | — |
-| `gdy-select-scroll-button` | con estilos | — |
-| `gdy-select-scroll-icon` | con estilos | — |
-| `gdy-select-trigger` | con estilos | `[aria-invalid="true"]`, `[data-placeholder]`, `[data-state="open"]` |
-| `gdy-select-value` | solo gancho | — |
-| `gdy-select-viewport` | con estilos | — |
+| `gdy-select-trigger` | con estilos | `[aria-invalid="true"]`, `[data-placeholder]` |
 | `gdy-toggle-group` | con estilos | — |
 | `gdy-toggle-item` | con estilos | `[data-state="on"]` |
 | `gdy-toggle-item-label` | solo gancho | — |
@@ -615,6 +607,7 @@ hay que escribir para pisarlas; los motivos están en [Temas y estilos](theming.
 | `.gdy-table-menu-holder[data-align="end"]` | 0-2-0 |
 | `.gdy-table-cell-content[data-overflow="wrap"]` | 0-2-0 |
 | `.gdy-table-cell-content[data-overflow="visible"]` | 0-2-0 |
+| `.gdy-table-inline-select-wrap > .gdy-select` | 0-2-0 |
 | `.gdy-select-trigger.gdy-table-inline-select` | 0-2-0 |
 | `.gdy-table-actions-cell[data-align="left"]` | 0-2-0 |
 | `.gdy-table-actions-cell[data-align="center"]` | 0-2-0 |
@@ -700,7 +693,7 @@ pone Radix siguen a esa librería.
 | `data-compact` | `"true"` | Gridory | `gdy-sidebar-logo` |
 | `data-day` | la fecha del día | Gridory | sin regla por defecto |
 | `data-diagram-state` | `"error"`, `"loading"`, `"ready"` | Gridory | `gdy-md-diagram` |
-| `data-disabled` | presente / ausente | Gridory o Radix | `gdy-auth-google-slot`, `gdy-calendar-day`, `gdy-menu-item`, `gdy-select-item` |
+| `data-disabled` | presente / ausente | Gridory o Radix | `gdy-auth-google-slot`, `gdy-calendar-day`, `gdy-menu-item` |
 | `data-draggable` | presente / ausente | Gridory | `gdy-kanban-card` |
 | `data-dragging` | presente / ausente | Gridory | `gdy-kanban-card` |
 | `data-drop-disabled` | presente / ausente | Gridory | `gdy-kanban-column` |
@@ -716,7 +709,6 @@ pone Radix siguen a esa librería.
 | `data-help-placement` | `"edge"` | Gridory | `gdy-table-head-inner` |
 | `data-hidden` | presente / ausente | Gridory | `gdy-calendar-day` |
 | `data-hidden-by` | `"priority"` | Gridory | `gdy-table-cell`, `gdy-table-foot-cell`, `gdy-table-head-cell` |
-| `data-highlighted` | presente / ausente | Radix | `gdy-select-item` |
 | `data-hover-expand` | `"false"`, `"true"` | Gridory | `gdy-sidebar` |
 | `data-href` | presente / ausente | Gridory | sin regla por defecto |
 | `data-invalid` | presente / ausente | Gridory | `gdy-phone-input` |
@@ -753,10 +745,10 @@ pone Radix siguen a esa librería.
 | `data-scrolled-start` | presente / ausente | Gridory | `gdy-table-wrap` |
 | `data-selected` | presente / ausente | Gridory | `gdy-calendar-day`, `gdy-option-item`, `gdy-table-row` |
 | `data-selected-single` | presente / ausente | Gridory | `gdy-calendar-day-button` |
-| `data-side` | `"bottom"`, `"left"`, `"right"`, `"top"` | Gridory o Radix | `gdy-menu-content`, `gdy-popover-content`, `gdy-select-content` |
+| `data-side` | `"bottom"`, `"left"`, `"right"`, `"top"` | Gridory o Radix | `gdy-menu-content`, `gdy-popover-content` |
 | `data-size` | `"default"`, `"icon"`, `"icon-lg"`, `"icon-sm"`, `"icon-xs"`, `"lg"`, `"sm"`, `"xs"` | Gridory | `gdy-button` |
 | `data-slot-id` | el `id` del slot | Gridory | sin regla por defecto |
-| `data-state` | `"active"`, `"checked"`, `"closed"`, `"collapsed"`, `"expanded"`, `"indeterminate"`, `"on"`, `"open"` | Gridory o Radix | `gdy-ai-sidebar`, `gdy-md-image-tab`, `gdy-md-picker-tab`, `gdy-md-tool`, `gdy-menu-content`, `gdy-menu-sub-trigger`, `gdy-popover-content`, `gdy-select-content`, `gdy-select-item`, `gdy-select-trigger`, `gdy-sidebar`, `gdy-sidebar-drawer`, `gdy-sidebar-overlay`, `gdy-table-expanded-panel`, `gdy-table-select`, `gdy-toggle-item` |
+| `data-state` | `"active"`, `"checked"`, `"closed"`, `"collapsed"`, `"expanded"`, `"indeterminate"`, `"on"`, `"open"` | Gridory o Radix | `gdy-ai-sidebar`, `gdy-md-image-tab`, `gdy-md-picker-tab`, `gdy-md-tool`, `gdy-menu-content`, `gdy-menu-sub-trigger`, `gdy-popover-content`, `gdy-sidebar`, `gdy-sidebar-drawer`, `gdy-sidebar-overlay`, `gdy-table-expanded-panel`, `gdy-table-select`, `gdy-toggle-item` |
 | `data-status` | `"met"`, `"pending"`, `"unmet"` | Gridory | `gdy-auth-rule` |
 | `data-streaming` | presente / ausente | Gridory | sin regla por defecto |
 | `data-thinking` | presente / ausente | Gridory | sin regla por defecto |
@@ -1080,12 +1072,6 @@ cualquier ancestro cambia solo esa parte. Los `--gdy-select-*` también reflejan
 | `--gdy-segmented-radius` | `9px` | segmented-control |
 | `--gdy-select-bg` | `var(--gdy-background)` | ui |
 | `--gdy-select-border` | `var(--gdy-border)` | ui |
-| `--gdy-select-content-bg` | `var(--gdy-popover)` | ui |
-| `--gdy-select-content-text` | `var(--gdy-popover-foreground)` | ui |
-| `--gdy-select-item-active-bg` | `transparent` | ui |
-| `--gdy-select-item-hover-bg` | `var(--gdy-accent)` | ui |
-| `--gdy-select-item-hover-text` | `var(--gdy-accent-foreground)` | ui |
-| `--gdy-select-item-text` | `inherit` | ui |
 | `--gdy-select-radius` | `calc(var(--gdy-radius) - 2px)` | ui |
 | `--gdy-select-text` | `var(--gdy-foreground)` | ui |
 | `--gdy-select-trigger-hover-bg` | `var(--gdy-muted)` | ui |

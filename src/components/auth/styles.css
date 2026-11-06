@@ -173,10 +173,14 @@
 .gdy-select-trigger.gdy-auth-select {
   inline-size: 100%;
   block-size: var(--gdy-auth-input-height, 40px);
-  padding-inline: 12px;
+  padding-inline: 12px 32px;
   border-color: var(--gdy-auth-input-border, var(--gdy-input));
   border-radius: var(--gdy-auth-input-radius, var(--gdy-radius));
   background-color: var(--gdy-auth-input-bg, var(--gdy-background));
+}
+
+.gdy-select-trigger.gdy-auth-select + .gdy-select-icon {
+  inset-inline-end: 13px;
 }
 
 .gdy-select-trigger.gdy-auth-select:focus-visible {
