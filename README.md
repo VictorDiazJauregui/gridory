@@ -24,6 +24,10 @@ before your own CSS. Tailwind is not required.
 import "gridory/styles.css";
 ```
 
+To load only the modules you use, import `gridory/base.css` and then their sheets, such as
+`gridory/table.css`, instead of `styles.css` (see
+[Per-module stylesheets](docs/theming.md#per-module-stylesheets)).
+
 The built-in UI texts are in Spanish. Every one of them can be replaced through props.
 
 The bundled TypeScript declarations compile with `skipLibCheck: false` and

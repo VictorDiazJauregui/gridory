@@ -31,6 +31,9 @@ The `AI*` types used on this page are exported too. The assistant is only availa
 `gridory/ai`: the root `gridory` entry leaves it out, so an app without the assistant does not need
 `openai`. Import `gridory/styles.css` once, before any override (see [theming.md](theming.md)).
 
+To load only this module's styles, import `gridory/base.css` and then `gridory/ai.css`
+instead (see [Per-module stylesheets](theming.md#per-module-stylesheets)).
+
 ## How it works
 
 The panel calls your endpoint directly from the browser through the `openai` SDK (the optional peer

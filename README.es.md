@@ -25,6 +25,10 @@ sola vez y antes de tu propio CSS. No necesitas Tailwind.
 import "gridory/styles.css";
 ```
 
+Para cargar solo los módulos que usas, importa `gridory/base.css` y después sus hojas, como
+`gridory/table.css`, en lugar de `styles.css` (ver
+[Hojas por módulo](docs/theming.es.md#hojas-por-módulo)).
+
 Los textos de la interfaz vienen en español, y puedes reemplazar cualquiera de ellos con props.
 
 Las declaraciones de TypeScript incluidas compilan con `skipLibCheck: false` y

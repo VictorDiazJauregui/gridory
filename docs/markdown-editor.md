@@ -39,6 +39,9 @@ root `gridory` entry re-exports the same names. Two optional entries add drawing
 `gridory/markdown-editor/mermaid` and `gridory/markdown-editor/katex` (see
 [Diagrams and formulas](#diagrams-and-formulas)).
 
+To load only this module's styles, import `gridory/base.css` and then `gridory/markdown-editor.css`
+instead (see [Per-module stylesheets](theming.md#per-module-stylesheets)).
+
 ## Quick example
 
 ```tsx
