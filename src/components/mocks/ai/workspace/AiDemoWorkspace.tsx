@@ -12,7 +12,7 @@ interface AiDemoWorkspaceProps {
 
 export const AiDemoWorkspace = ({ view, aiRows }: AiDemoWorkspaceProps) => (
   <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_320px]">
-    <div className="rounded-lg border bg-card p-3">
+    <div className="rounded-gdy-lg border bg-gdy-card p-3">
       {view === "table" ? (
         <AiDemoTable rows={aiRows.rows} setRows={aiRows.setRows} />
       ) : (

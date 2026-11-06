@@ -18,7 +18,7 @@ export const ControlledPhoneExample = ({ record }: RecordingExampleProps) => {
   return (
     <ControlExample title={TITLE}>
       <PhoneInput required value={phone} onValueChange={changePhone} />
-      <p className="text-xs text-muted-foreground">Valor actual: {describePhone(phone)}</p>
+      <p className="text-xs text-gdy-muted-foreground">Valor actual: {describePhone(phone)}</p>
     </ControlExample>
   );
 };

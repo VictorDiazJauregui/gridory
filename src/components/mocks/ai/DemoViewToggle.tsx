@@ -13,12 +13,12 @@ const VIEW_OPTIONS: { value: DemoView; label: string }[] = [
 const resolveButtonClassName = (active: boolean) =>
   `rounded px-3 py-1 text-xs font-medium ${
     active
-      ? "bg-primary text-primary-foreground"
-      : "text-muted-foreground hover:text-foreground"
+      ? "bg-gdy-primary text-gdy-primary-foreground"
+      : "text-gdy-muted-foreground hover:text-gdy-foreground"
   }`;
 
 export const DemoViewToggle = ({ view, onChange }: DemoViewToggleProps) => (
-  <div className="inline-flex rounded-md border bg-muted p-1">
+  <div className="inline-flex rounded-gdy-md border bg-gdy-muted p-1">
     {VIEW_OPTIONS.map((option) => (
       <button
         key={option.value}

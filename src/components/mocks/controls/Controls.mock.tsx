@@ -21,9 +21,9 @@ const SECTION_DEMOS: Partial<Record<string, SectionDemo>> = {
 };
 
 const ControlsHeader = () => (
-  <div className="rounded-lg border bg-card p-4">
+  <div className="rounded-gdy-lg border bg-gdy-card p-4">
     <h2 className="text-lg font-semibold">Controles</h2>
-    <p className="mt-2 text-xs text-muted-foreground">
+    <p className="mt-2 text-xs text-gdy-muted-foreground">
       Cada control se exporta por separado; aquí conviven para probarlos juntos, en claro y en oscuro.
     </p>
   </div>

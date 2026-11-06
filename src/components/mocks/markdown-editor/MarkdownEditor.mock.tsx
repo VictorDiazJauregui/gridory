@@ -33,9 +33,9 @@ const SECTION_DEMOS: Partial<Record<string, SectionDemo>> = {
 };
 
 const MarkdownEditorDemoHeader = () => (
-  <div className="rounded-lg border bg-card p-4">
+  <div className="rounded-gdy-lg border bg-gdy-card p-4">
     <h2 className="text-lg font-semibold">Editor Markdown</h2>
-    <p className="mt-2 text-xs text-muted-foreground">
+    <p className="mt-2 text-xs text-gdy-muted-foreground">
       Markdown estándar a la izquierda y su HTML sanitizado a la derecha.
     </p>
   </div>

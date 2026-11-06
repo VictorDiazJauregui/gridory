@@ -18,10 +18,6 @@ export interface GridoryPresetOptions {
  */
 export declare const createGridoryPreset: (options?: GridoryPresetOptions) => Config;
 
-/**
- * The shadcn-style preset (`bg-primary`, `rounded-lg`).
- *
- * @deprecated Use `createGridoryPreset()` (prefixed utilities). This preset is removed in 2.0.0.
- */
+/** The preset with the default `"gdy"` prefix: `bg-gdy-primary`, `rounded-gdy-lg`. Same as `createGridoryPreset()`. */
 declare const gridoryPreset: Config;
 export default gridoryPreset;

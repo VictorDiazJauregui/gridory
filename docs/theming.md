@@ -689,21 +689,23 @@ paths; your own config provides them.
 point at its variables, and Gridory reads the same variables through the token bridge. Use the
 prefixed preset only if you want to paint something with Gridory's tokens specifically.
 
-### Default preset (deprecated)
+### Default export
 
-The default export maps the shadcn-style keys (`bg-primary`, `bg-card`, `text-muted-foreground`,
-`border-border`, `outline-ring`, `rounded-lg`…) to the same tokens. In a project that defines those
-keys, the project wins and the preset adds little; in the keys it does not define, it mixes two
-palettes. It keeps working unchanged in 1.x and **is removed in 2.0.0**: start with
-`createGridoryPreset()` so you do not have to migrate twice.
+Since 2.0.0 the default export is `createGridoryPreset()` with the `"gdy"` prefix, so these two configs
+are the same:
 
 ```js
-import gridoryPreset from "gridory/tailwind-preset"; // deprecated
+import gridoryPreset, { createGridoryPreset } from "gridory/tailwind-preset";
 
-export default { presets: [gridoryPreset] };
+export default { presets: [gridoryPreset] }; // same as presets: [createGridoryPreset()]
 ```
 
-Tailwind 4 (`@theme`) is not covered by either preset.
+Up to 1.x the default export added the unprefixed shadcn-style utilities (`bg-primary`,
+`text-muted-foreground`, `rounded-lg`…). If your markup still uses them, see the
+[2.0 migration guide](migration-2.0.md#tailwind-preset): Tailwind does not warn about a class it no
+longer generates, it just stops painting it.
+
+Tailwind 4 (`@theme`) is not covered by the preset.
 
 ## Style audit
 

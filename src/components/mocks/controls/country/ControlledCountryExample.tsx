@@ -16,7 +16,7 @@ export const ControlledCountryExample = ({ record }: RecordingExampleProps) => {
   return (
     <ControlExample title={TITLE}>
       <CountrySelect required value={country} onValueChange={changeCountry} />
-      <p className="text-xs text-muted-foreground">Valor actual: {country ?? "ninguno"}</p>
+      <p className="text-xs text-gdy-muted-foreground">Valor actual: {country ?? "ninguno"}</p>
     </ControlExample>
   );
 };

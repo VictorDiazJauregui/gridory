@@ -15,7 +15,7 @@ export const AiDemoHeader = ({
   onViewChange,
   onOpenAi,
 }: AiDemoHeaderProps) => (
-  <div className="rounded-lg border bg-card p-4">
+  <div className="rounded-gdy-lg border bg-gdy-card p-4">
     <div className="flex flex-wrap items-center gap-2">
       <h2 className="text-lg font-semibold">
         Mock AI Assistant (Tabla + Kanban)

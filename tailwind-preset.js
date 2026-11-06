@@ -1,7 +1,7 @@
 /**
  * Map the `--gdy-*` tokens of `gridory/styles.css` to Tailwind keys, so your markup (a column `cell`, a
- * `renderCard` output) uses the library's colors and radii. `createGridoryPreset({ prefix })` (recommended) adds
- * prefixed utilities that never collide with your keys; the shadcn-style default export is deprecated.
+ * `renderCard` output) uses the library's colors and radii. Every utility is prefixed (`bg-gdy-primary`), so none
+ * collides with your keys; `createGridoryPreset({ prefix })` picks another prefix.
  */
 
 /**
@@ -86,20 +86,8 @@ export const createGridoryPreset = ({ prefix = "gdy" } = {}) => {
 };
 
 /**
- * The shadcn-style preset (`bg-primary`, `border-border`, `rounded-lg`…). Where a project defines those keys
- * itself (shadcn) it wins and the preset adds little; in the keys it does not define, it mixes two palettes.
+ * The preset with the default `"gdy"` prefix: `bg-gdy-primary`, `rounded-gdy-lg`, `bg-gdy-primary/10`.
  *
- * @deprecated Use `createGridoryPreset()` (prefixed utilities). This preset is removed in 2.0.0.
  * @type {import('tailwindcss').Config}
  */
-export default {
-  content: [],
-  theme: {
-    extend: {
-      borderColor: pickTokens(["border"]),
-      outlineColor: pickTokens(["ring"]),
-      colors: buildColors(),
-      borderRadius: { ...RADII },
-    },
-  },
-};
+export default createGridoryPreset();

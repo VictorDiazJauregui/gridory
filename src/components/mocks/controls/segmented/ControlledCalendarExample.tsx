@@ -19,7 +19,7 @@ export const ControlledCalendarExample = ({ record }: RecordingExampleProps) => 
   return (
     <ControlExample title={TITLE}>
       <SegmentedControl options={CALENDAR_VIEW_OPTIONS} value={view} onValueChange={changeView} aria-label="Vista del calendario" />
-      <p className="text-xs text-muted-foreground">Valor actual: {findCalendarViewLabel(view)}</p>
+      <p className="text-xs text-gdy-muted-foreground">Valor actual: {findCalendarViewLabel(view)}</p>
     </ControlExample>
   );
 };

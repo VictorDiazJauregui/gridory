@@ -15,12 +15,12 @@ export const ColumnWidthsControls = ({ savedCount, onReset }: ColumnWidthsContro
         type="button"
         onClick={onReset}
         disabled={savedCount === 0}
-        className="inline-flex h-8 items-center gap-1.5 rounded-md border px-2.5 text-xs text-muted-foreground disabled:opacity-50"
+        className="inline-flex h-8 items-center gap-1.5 rounded-gdy-md border px-2.5 text-xs text-gdy-muted-foreground disabled:opacity-50"
       >
         <MoveHorizontal size={14} />
         {translate("Restablecer anchos")}
       </button>
-      <span className="text-xs text-muted-foreground" aria-live="polite">
+      <span className="text-xs text-gdy-muted-foreground" aria-live="polite">
         {`${translate("Anchos guardados")}: ${savedCount}`}
       </span>
     </span>

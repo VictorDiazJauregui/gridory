@@ -9,7 +9,7 @@ interface ExampleProps {
 
 const TitledFrame = ({ config, record }: ExampleProps & { config: SidebarFrameConfig }) => (
   <div className="min-w-0 space-y-2">
-    <h4 className="text-xs font-medium text-muted-foreground">{config.name}</h4>
+    <h4 className="text-xs font-medium text-gdy-muted-foreground">{config.name}</h4>
     <SidebarFrame config={config} record={record} />
   </div>
 );
