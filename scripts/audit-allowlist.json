@@ -12,6 +12,7 @@
     "gdy-kanban-min-h-lg"
   ],
   "hookOnly": [
+    "gdy-date-load-error",
     "gdy-table-head",
     "gdy-table-head-sort-icon",
     "gdy-table-body",

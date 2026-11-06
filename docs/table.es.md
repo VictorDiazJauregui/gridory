@@ -163,6 +163,8 @@ las columnas de texto y número, y un filtro de fechas con los operadores mayor 
 para `type: "date"`. El botón del encabezado lleva `data-filtered` mientras hay un filtro activo, y la
 toolbar muestra un botón para limpiar filtros. Los menús de filtro, los inputs de fecha y las opciones
 del calendario se comparten con el kanban y están documentados en [toolbar.es.md](toolbar.es.md).
+El calendario se descarga la primera vez que se abre un menú de fecha
+([toolbar.es.md](toolbar.es.md#cuándo-se-descarga-el-calendario)).
 
 ### Agrupado
 
@@ -1216,6 +1218,8 @@ Claves comunes a la tabla y al kanban (`DataViewLabels`):
 | `dateApply` | `"Aplicar"` | Aplica el filtro de fecha | — |
 | `pickDate` | `"Seleccionar fecha"` | Nombre accesible del botón del calendario (una fecha) | — |
 | `pickRange` | `"Seleccionar rango"` | Nombre accesible del botón del calendario (rango) | — |
+| `dateLoadError` | `"No se pudo cargar el calendario. Si sigue sin aparecer, recarga la página."` | Aviso del filtro de fecha cuando no se pudo descargar el calendario | — |
+| `dateLoadRetry` | `"Reintentar"` | Botón que vuelve a descargar el calendario | — |
 | `labeledValue(label, value)` | `` `${label}: ${value}` `` | Une un prefijo y su valor: "Agrupar por: Ninguno", "Mostrar: Activos", los selectores propios y la etiqueta de la card | — |
 
 Claves propias de la tabla (`DataTableLabels`):

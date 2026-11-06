@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { expect, test } from "vitest";
 import { KanbanBoard } from "../components/kanban";
 import { KANBAN_BOARD_LABELS } from "../components/kanban/labels";
@@ -6,6 +6,9 @@ import type { KanbanBoardLabels } from "../components/kanban/types";
 import { DataTable } from "../components/table";
 import { DATA_TABLE_LABELS } from "../components/table/labels";
 import type { DataTableLabels } from "../components/table/types";
+import { warmDatePickersBeforeAll } from "./warm-date-pickers";
+
+warmDatePickersBeforeAll();
 
 // Every label becomes a marker and every consumer text starts with "§": once the menus are open,
 // any other visible text came from neither, so it was written in the code.
@@ -76,18 +79,21 @@ const collectTexts = () => {
 
 const expectOnlyLabelsAndData = () => expect(collectTexts().filter((text) => !IS_ALLOWED.test(text))).toEqual([]);
 
-const openDateMenu = (header: string, between: string) => {
+// The date inputs download when the menu opens: waiting for them keeps their texts in the check.
+const openDateMenu = async (header: string, operator: string) => {
   fireEvent.click(screen.getByRole("button", { name: header }));
-  fireEvent.click(within(document.querySelector(".gdy-panel") as HTMLElement).getByText(between));
+  const panel = document.querySelector(".gdy-panel") as HTMLElement;
+  fireEvent.click(within(panel).getByText(operator));
+  await waitFor(() => expect(panel.querySelector("input.gdy-date-input")).not.toBeNull());
 };
 
-test("every visible text of the table comes from labels or from the consumer", () => {
+test("every visible text of the table comes from labels or from the consumer", async () => {
   const labels = toMarkers<DataTableLabels>(DATA_TABLE_LABELS);
   render(<DataTable {...VIEW_PROPS} columns={COLUMNS} getRowId={(row) => row.id} groupableColumnIds={["status"]} labels={labels} />);
   expectOnlyLabelsAndData();
   fireEvent.click(screen.getByRole("button", { name: "§Estado" }));
   expectOnlyLabelsAndData();
-  openDateMenu("§Alta", "⟦operatorBetween⟧");
+  await openDateMenu("§Alta", "⟦operatorBetween⟧");
   expectOnlyLabelsAndData();
   fireEvent.keyDown(screen.getAllByRole("button", { name: "⟦rowActionsTrigger⟧" })[0], { key: "Enter" });
   expectOnlyLabelsAndData();
@@ -98,7 +104,7 @@ test("every visible text of the empty table comes from labels", () => {
   expectOnlyLabelsAndData();
 });
 
-test("every visible text of the kanban comes from labels or from the consumer", () => {
+test("every visible text of the kanban comes from labels or from the consumer", async () => {
   const labels = toMarkers<KanbanBoardLabels>(KANBAN_BOARD_LABELS);
   const group = {
     id: "status",
@@ -113,7 +119,7 @@ test("every visible text of the kanban comes from labels or from the consumer", 
   expectOnlyLabelsAndData();
   fireEvent.click(screen.getByRole("button", { name: "§Estado" }));
   expectOnlyLabelsAndData();
-  openDateMenu("§Alta", "⟦operatorAfter⟧");
+  await openDateMenu("§Alta", "⟦operatorAfter⟧");
   expectOnlyLabelsAndData();
   fireEvent.keyDown(screen.getAllByRole("button", { name: "⟦rowActionsTrigger⟧" })[0], { key: "Enter" });
   expectOnlyLabelsAndData();

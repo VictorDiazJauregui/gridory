@@ -501,6 +501,7 @@ The state selectors column lists the attributes the stylesheets combine with eac
 | `gdy-country-flag` | styled | — |
 | `gdy-date-input` | styled | — |
 | `gdy-date-input-with-icon` | styled | — |
+| `gdy-date-load-error` | hook only | — |
 | `gdy-date-picker-icon` | hook only | — |
 | `gdy-date-picker-input` | styled | — |
 | `gdy-date-picker-trigger` | styled | — |
