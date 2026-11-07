@@ -9,7 +9,7 @@ import type { AuthDemoState } from "./use-auth-demo";
 const EVENT_LOG_DESCRIPTION = "El formulario no llama a ningún backend: emite eventos.";
 
 const AuthDemoHeader = ({ demo }: { demo: AuthDemoState }) => (
-  <div className="rounded-lg border bg-card p-4">
+  <div className="rounded-gdy-lg border bg-gdy-card p-4">
     <div className="flex flex-wrap items-center gap-2">
       <h2 className="text-lg font-semibold">Formularios de autenticación</h2>
       <div className="ml-auto flex flex-wrap items-center gap-2">
@@ -17,14 +17,14 @@ const AuthDemoHeader = ({ demo }: { demo: AuthDemoState }) => (
         <AuthDemoToggle label="Ejemplo" options={EXAMPLE_OPTIONS} value={demo.example} onChange={demo.setExample} />
       </div>
     </div>
-    <p className="mt-2 text-xs text-muted-foreground">
+    <p className="mt-2 text-xs text-gdy-muted-foreground">
       Prueba el email <code>{TAKEN_EMAIL}</code> para ver un error devuelto por el servidor.
     </p>
   </div>
 );
 
 const AuthDemoStage = ({ demo }: { demo: AuthDemoState }) => (
-  <div className="flex justify-center rounded-lg border border-dashed bg-muted/40 px-4 py-10">
+  <div className="flex justify-center rounded-gdy-lg border border-dashed bg-gdy-muted/40 px-4 py-10">
     {demo.form === "login" ? (
       <LoginForm key={`login-${demo.example}`} {...LOGIN_EXAMPLES[demo.example](demo)} />
     ) : (

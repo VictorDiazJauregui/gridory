@@ -2,7 +2,7 @@ import { ChevronsLeft, Ruler } from "lucide-react";
 import { useDemoText } from "../shared/demo-dictionary";
 
 const BUTTON_CLASS =
-  "inline-flex h-8 items-center gap-1.5 rounded-md border px-2.5 text-xs text-muted-foreground aria-pressed:bg-muted aria-pressed:text-foreground";
+  "inline-flex h-8 items-center gap-1.5 rounded-gdy-md border px-2.5 text-xs text-gdy-muted-foreground aria-pressed:bg-gdy-muted aria-pressed:text-gdy-foreground";
 
 export const FirstPageButton = ({ onClick }: { onClick: () => void }) => {
   const translate = useDemoText();

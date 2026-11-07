@@ -96,7 +96,7 @@ Each entry of `columns` is a `ColumnDefinition<TData>`.
 | `searchable` | `boolean` | Default `true`. Set `false` to exclude the column from the global search. |
 | `filterable` | `boolean` | Adds a filter menu to the header. Default `false`. |
 | `filterOptions` | `FilterOption[]` | Declared `{ value, label }` options for the filter menu. Without them the options are the distinct values found in `data`, sorted alphabetically. Also labels and orders the groups when grouping by this column. |
-| `width` | `number` | Column width in pixels. The grid uses `table-layout: fixed`. |
+| `width` | `number` | Column width in pixels. The grid uses `table-layout: fixed`. Without it the column shares the room left, down to `minWidth`. See [Narrow screens](#narrow-screens). |
 | `inlineEditOptions` | `FilterOption[]` | Together with `onInlineEdit`, renders the cell as a select with these options. |
 | `onInlineEdit` | `(row: TData, value: string) => void` | Fires with the chosen option value. |
 | `valueHighlights` | `Record<string, CellHighlight>` | `{ className?, style? }` keyed by cell value. `className` is added to the cell content; `style` is applied to the inline select trigger, so it only shows on inline-editable cells. |
@@ -113,7 +113,7 @@ Each entry of `columns` is a `ColumnDefinition<TData>`.
 | `headerContent` | `ReactNode` | Replaces the visible title; `header` stays the accessible name and the menus' text. Table only. |
 | `pin` | `"left" \| "right"` | Keeps the column at that edge while the rows scroll sideways. Needs `width`. See [Pinned columns](#pinned-columns). Table only. |
 | `resizable` | `boolean` | With `resizableColumns`, `false` leaves the column without resize handle. See [Resizable columns](#resizable-columns). Table only. |
-| `minWidth` | `number` | Narrowest width the user can resize the column to. Defaults to `64`. Table only. |
+| `minWidth` | `number` | Narrowest width the user can resize the column to (default `64`) and, without `width`, the narrowest it gets on a narrow screen (default `120`). Table only. |
 | `maxWidth` | `number` | Widest width the user can resize the column to. No limit by default. Table only. |
 
 Filter options are computed from every row in `data` (before search and filters), not only from the
@@ -730,8 +730,7 @@ Before, a checkbox column was a `cell` plus your own state, and the click on the
 + <DataTable columns={columns} data={invoices} getRowId={(row) => row.id} rowSelection={{ onChange: setSelectedIds }} />
 ```
 
-The checkbox component downloads only for tables with `rowSelection`, right after the first render. Until
-then each cell shows the same markup, and it already toggles, so nothing moves or waits.
+The checkbox is part of the table from the first render: it adds no download.
 
 ### Expandable rows
 
@@ -805,6 +804,32 @@ Before, a detail was a `cell` with its own state, and it could only live inside 
 - };
 - <DataTable columns={[nameColumn, ...columns.slice(1)]} data={companies} />
 + <DataTable columns={columns} data={companies} getRowId={(row) => row.id} renderExpandedRow={(row) => <Contacts company={row} />} />
+```
+
+### Narrow screens
+
+Columns with `width` keep it. The others share the room left, and none gets narrower than its `minWidth`
+(`120` by default); the actions column keeps 56px (96px with `rowActions.columnLabel`). When the container
+is narrower than all those widths, as on a phone, the rows scroll sideways inside it and the page does not.
+
+```tsx
+const columns: ColumnDefinition<Company>[] = [
+  { id: "name", header: "Company", accessor: (row) => row.name, width: 220 },
+  { id: "country", header: "Country", accessor: (row) => row.country }, // never under 120px
+  { id: "notes", header: "Notes", accessor: (row) => row.notes, minWidth: 200 }, // never under 200px
+];
+```
+
+To show fewer columns instead of scrolling, mark them with `priority` or `hideable` and turn on
+`responsiveColumns` (see [Column visibility](#column-visibility)); then the table hides columns and does not
+apply these minimums. Columns resized by the user (`resizableColumns`) keep the widths they were given.
+
+To bring back the 1.x layout (every column without `width` shrinks with no floor, and the actions column
+shares the room left like them), override two rules after importing the stylesheet:
+
+```css
+.gdy-table-grid { min-width: 0; }
+.gdy-table-head-cell[data-column-id="_actions"] { width: auto; }
 ```
 
 ### Column visibility
@@ -1094,9 +1119,8 @@ Before, the "?" had to live inside `header`, which only takes text, so apps patc
 + { id: "amount", header: "Amount", accessor: (row) => row.amount, headerTooltip: "Sum of the contracts in force" }
 ```
 
-The tooltip downloads only for tables with a `headerTooltip`, right after the first render. Until then the
-"?" is the same button, and a press on it opens the tooltip as soon as it arrives. Tests that open it
-already wait for it: `await screen.findByRole("tooltip")`.
+The tooltip is part of the table from the first render: a press on the "?" opens it at once, so a test can
+read it with `screen.getByRole("tooltip")` right after the click.
 
 ### Layout and scrolling
 
@@ -1135,8 +1159,6 @@ filter calendar. The defaults are Spanish (a product decision); pass only the ke
 replace, the rest keep their default. Texts with values are functions.
 
 ```tsx
-import { enUS } from "date-fns/locale";
-
 <DataTable
   columns={columns}
   data={invoices}
@@ -1147,8 +1169,10 @@ import { enUS } from "date-fns/locale";
       total === 0 ? `0 ${itemsName}` : `Showing ${from}–${to} of ${total} ${itemsName}`,
     pageOf: (page, count) => `Page ${page} of ${count}`,
     itemsName: "invoices",
+    calendarPreviousMonth: "Previous month",
+    calendarNextMonth: "Next month",
   }}
-  calendarLocale={enUS}
+  calendarLocale="en-US"
 />;
 ```
 
@@ -1160,10 +1184,15 @@ import { enUS } from "date-fns/locale";
   the columns and menus each time.
 - **Contents are yours.** Column headers, cell values and your own toolbar controls are your texts:
   translate them in your app.
-- **`calendarLocale`** takes a `date-fns` locale and changes the month and weekday names, the first
-  day of the week and the month dropdown. Without it the calendar is Spanish. A locale from
-  `react-day-picker/locale` (`import { enUS } from "react-day-picker/locale"`) also translates the
-  calendar's accessible names ("previous month", "choose the year"), which otherwise stay in English.
+- **`calendarLocale`** takes a BCP 47 tag (`"en-US"`, `"pt-BR"`) and changes the month and weekday
+  names, the first day of the week and the month dropdown; the browser's `Intl` writes them, so every
+  language works without installing anything. Without it the calendar is Spanish. A `date-fns` locale
+  (`enUS` from `date-fns/locale`) still works: the calendar reads its `code` and its `weekStartsOn`.
+  The first day of the week comes from the browser (`Intl.Locale#getWeekInfo`); where it is missing
+  (Firefox) the week starts on Monday, so pass `{ code: "en-US", options: { weekStartsOn: 0 } }` if
+  your users expect Sunday everywhere.
+- **The calendar's accessible names** ("Mes anterior", "Elegir el año", "Hoy, …") are the
+  `calendar*` keys of `labels`, Spanish by default like every other text.
 - The date inputs show the `dateInputFormat` mask as placeholder (`"dd/mm/yyyy"`); set the mask your
   users expect.
 
@@ -1211,6 +1240,12 @@ Keys shared with the kanban (`DataViewLabels`):
 | `pickRange` | `"Seleccionar rango"` | Accessible name of the calendar button (range) | — |
 | `dateLoadError` | `"No se pudo cargar el calendario. Si sigue sin aparecer, recarga la página."` | Shown in the date filter when its calendar could not be downloaded | — |
 | `dateLoadRetry` | `"Reintentar"` | Button that downloads the calendar again | — |
+| `calendarNavigation` | `"Navegación del calendario"` | Accessible name of the calendar's navigation landmark | — |
+| `calendarPreviousMonth` | `"Mes anterior"` | Accessible name of the calendar's previous month button | — |
+| `calendarNextMonth` | `"Mes siguiente"` | Accessible name of the calendar's next month button | — |
+| `calendarChooseMonth` | `"Elegir el mes"` | Accessible name of the calendar's month dropdown | — |
+| `calendarChooseYear` | `"Elegir el año"` | Accessible name of the calendar's year dropdown | — |
+| `calendarToday` | `"Hoy"` | Prefix of today's accessible name in the calendar ("Hoy, viernes, 6 de noviembre de 2026") | — |
 | `labeledValue(label, value)` | `` `${label}: ${value}` `` | Joins a prefix and its value: "Agrupar por: Ninguno", "Mostrar: Activos", the header selectors and the kanban card tag | — |
 
 Table keys (`DataTableLabels`):

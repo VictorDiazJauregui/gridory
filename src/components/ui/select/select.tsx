@@ -1,9 +1,8 @@
-import * as React from "react";
+import type * as React from "react";
+import { ChevronDownIcon } from "lucide-react";
 
-import type { SelectTheme } from "../../shared/select-theme";
-import { Select } from "./select-primitives";
-import { SimpleSelectContent } from "./simple-select-content";
-import { SimpleSelectTrigger } from "./simple-select-trigger";
+import { cn } from "../../../lib/cn";
+import { selectThemeToVars, type SelectTheme } from "../../shared/select-theme";
 
 export interface SimpleSelectOption {
   value: string;
@@ -11,7 +10,7 @@ export interface SimpleSelectOption {
 }
 
 export type SelectTriggerAttributes = Pick<
-  React.ComponentProps<"button">,
+  React.ComponentProps<"select">,
   "id" | "aria-invalid" | "aria-required" | "aria-describedby"
 >;
 
@@ -28,25 +27,37 @@ export interface SimpleSelectProps {
   theme?: SelectTheme;
 }
 
-const SimpleSelect = ({
-  options,
-  value,
-  onValueChange,
-  disabled,
-  theme,
-  ...triggerProps
-}: SimpleSelectProps) => {
+type SelectOptionListProps = Pick<SimpleSelectProps, "options" | "placeholder"> & { hasValue: boolean };
+
+// The placeholder is a hidden option so the closed box can show it without the list offering it.
+const SelectOptionList = ({ options, placeholder, hasValue }: SelectOptionListProps) => (
+  <>
+    {!hasValue && <option value="" disabled hidden>{placeholder}</option>}
+    {options.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+  </>
+);
+
+// The browser's own select: its list is the system one (a sheet or a wheel on phones), so Gridory styles only
+// the closed box, and the icon sits over it because a select cannot hold children of its own.
+const SimpleSelect = ({ options, value, onValueChange, placeholder, theme, ...trigger }: SimpleSelectProps) => {
   const hasValue = options.some((option) => option.value === value);
   return (
-    <Select
-      value={hasValue ? value : ""}
-      onValueChange={onValueChange}
-      disabled={disabled}
-    >
-      <SimpleSelectTrigger theme={theme} {...triggerProps} />
-      <SimpleSelectContent options={options} theme={theme} />
-    </Select>
+    <span className="gdy-select">
+      <select
+        {...trigger.triggerAttributes}
+        aria-label={trigger.ariaLabel}
+        disabled={trigger.disabled}
+        value={hasValue ? value : ""}
+        data-placeholder={hasValue ? undefined : ""}
+        className={cn("gdy-select-trigger", theme?.triggerClassName, trigger.triggerClassName)}
+        style={{ ...selectThemeToVars(theme), ...trigger.triggerStyle }}
+        onChange={(event) => onValueChange(event.target.value)}
+      >
+        <SelectOptionList options={options} placeholder={placeholder} hasValue={hasValue} />
+      </select>
+      <ChevronDownIcon className="gdy-select-icon" aria-hidden="true" />
+    </span>
   );
-}
+};
 
 export { SimpleSelect };

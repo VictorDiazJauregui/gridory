@@ -8,15 +8,15 @@ const EDITOR_STYLE = { "--gdy-md-editor-height": "16rem" } as CSSProperties;
 
 const Example = ({ title, children }: { title: string; children: ReactNode }) => (
   <div className="space-y-2">
-    <h4 className="text-xs font-medium text-muted-foreground">{title}</h4>
+    <h4 className="text-xs font-medium text-gdy-muted-foreground">{title}</h4>
     {children}
   </div>
 );
 
 const FreeToolbarExample = () => (
   <MarkdownEditorProvider defaultValue={SAMPLE} tools={DEMO_TOOLBAR_ITEMS}>
-    <div className="overflow-hidden rounded-lg border">
-      <div className="flex items-center gap-3 border-b bg-muted px-3 py-2">
+    <div className="overflow-hidden rounded-gdy-lg border">
+      <div className="flex items-center gap-3 border-b bg-gdy-muted px-3 py-2">
         <span className="text-sm font-semibold">Nota del cliente</span>
         <MarkdownToolbar className="flex-1" />
       </div>

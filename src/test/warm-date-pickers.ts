@@ -1,6 +1,6 @@
 import { beforeAll } from "vitest";
 
-// The first import of the calendar compiles react-day-picker and date-fns in the test runner, which can outlast a
+// The first import of the calendar compiles it and its Radix popover in the test runner, which can outlast a
 // findBy* under a full run: files that wait for the date inputs pay that cost up front.
 export const warmDatePickersBeforeAll = () =>
   beforeAll(async () => {

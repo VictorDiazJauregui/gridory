@@ -43,7 +43,7 @@ const untitledCard = (container: HTMLElement) =>
 test("a full English labels object translates the board texts", () => {
   const container = renderEnglishBoard();
   expect(screen.getByPlaceholderText("Search cards...")).toBeInTheDocument();
-  expect(screen.getByRole("combobox", { name: "Group by" })).toHaveTextContent("Group by: Estado");
+  expect(screen.getByRole("combobox", { name: "Group by" })).toHaveDisplayValue("Group by: Estado");
   expect(container.querySelector(".gdy-kanban-empty-col")).toHaveTextContent("No cards");
   expect(container.querySelector(".gdy-kanban-column-title[title='No value']")).toBeInTheDocument();
 });
@@ -80,6 +80,8 @@ test("a full English labels object translates the kanban filter menus and the ca
   const calendar = document.querySelector(".gdy-calendar-root") as HTMLElement;
   const weekdays = [...calendar.querySelectorAll(".gdy-calendar-weekday")].map((day) => day.textContent);
   expect(weekdays).toEqual(["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]);
+  expect(within(calendar).getByRole("button", { name: "Previous month" })).toBeInTheDocument();
+  expect(within(calendar).getByRole("combobox", { name: "Choose the year" })).toBeInTheDocument();
 });
 
 test("the card actions use the labels and the row action labels win over them", () => {
@@ -92,5 +94,5 @@ test("the card actions use the labels and the row action labels win over them", 
 test("the older single-text props win over their labels key", () => {
   renderEnglishBoard({ searchPlaceholder: "Find a deal", groupSelectorLabel: "Columns" });
   expect(screen.getByPlaceholderText("Find a deal")).toBeInTheDocument();
-  expect(screen.getByRole("combobox", { name: "Columns" })).toHaveTextContent("Columns: Estado");
+  expect(screen.getByRole("combobox", { name: "Columns" })).toHaveDisplayValue("Columns: Estado");
 });

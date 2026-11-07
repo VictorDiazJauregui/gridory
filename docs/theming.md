@@ -72,8 +72,9 @@ import "./app.css";
 
 The light theme is the default. The dark theme applies under any element with the `dark` class or
 the `data-theme="dark"` attribute, as in `<html class="dark">`. Put the switch on `<html>`. Menus,
-selects, popovers and the date picker calendar render in portals directly under `<body>`, so a
-class on an inner wrapper does not reach them. If your app already toggles `.dark` on `<html>`
+popovers and the date picker calendar render in portals directly under `<body>`, so a class on an
+inner wrapper does not reach them. A select is the browser's own: its open list follows the theme
+through `color-scheme`. If your app already toggles `.dark` on `<html>`
 (the shadcn/ui convention), there is nothing to add.
 
 Gridory does not read `prefers-color-scheme`. Set the class yourself, from a user setting or from
@@ -161,7 +162,7 @@ These tokens have no shadcn counterpart:
 | `--gdy-link` | `oklch(0.546 0.245 262.881)` | `oklch(0.707 0.165 254.624)` | link buttons in the filter panels |
 | `--gdy-overlay` | `rgb(0 0 0 / 0.3)` | `rgb(0 0 0 / 0.6)` | backdrop behind the assistant on small screens |
 | `--gdy-shadow-sm` | `0 1px 2px rgb(0 0 0 / 0.12)` | `0 1px 2px rgb(0 0 0 / 0.5)` | active view switch button, toggle item and segmented control indicator |
-| `--gdy-shadow-md` | `0 8px 24px rgb(0 0 0 / 0.12)` | `0 8px 24px rgb(0 0 0 / 0.6)` | filter panels, menus, selects, popovers |
+| `--gdy-shadow-md` | `0 8px 24px rgb(0 0 0 / 0.12)` | `0 8px 24px rgb(0 0 0 / 0.6)` | filter panels, menus, popovers |
 | `--gdy-shadow-lg` | `0 25px 50px -12px rgb(0 0 0 / 0.25)` | `0 25px 50px -12px rgb(0 0 0 / 0.6)` | assistant panel |
 | `--gdy-font-mono` | `ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace` | same as light | `code`, `kbd`, `samp` and `pre` inside the scope |
 | `--gdy-google-blue` / `-green` / `-yellow` / `-red` | `#4285f4` / `#34a853` / `#fbbc05` / `#ea4335` | same as light | Google logo in the auth forms. Google's brand guidelines forbid recoloring it: leave them as they are |
@@ -171,9 +172,9 @@ These tokens have no shadcn counterpart:
 Component tokens are never declared by the library. Its rules read them with a fallback to a base
 token, as in `background: var(--gdy-table-head-bg, var(--gdy-muted))`. Because nothing declares
 them, an override on any ancestor applies: `:root` for the whole app, `.dark` for the dark theme,
-or a wrapper class for one screen. Menus, selects, popovers and the calendar render in portals
-under `<body>`, so declare the tokens that style them (`--gdy-menu-*`, `--gdy-select-*`,
-`--gdy-popover-*`, `--gdy-calendar-*`) on `:root` or `.dark`. The same goes for the country select
+or a wrapper class for one screen. Menus, popovers and the calendar render in portals under
+`<body>`, so declare the tokens that style them (`--gdy-menu-*`, `--gdy-popover-*`,
+`--gdy-calendar-*`) on `:root` or `.dark`. The same goes for the country select
 panel: `--gdy-country-select-panel-min-width`, `--gdy-country-select-option-*` and
 `--gdy-country-select-check-color`, and for the phone input panel: `--gdy-phone-input-panel-min-width`,
 `--gdy-phone-input-option-*` and `--gdy-phone-input-check-color`. The sidebar's mobile drawer and its
@@ -423,7 +424,7 @@ Every element the library renders carries a `gdy-*` class meant as a stable hook
 - `gdy-<module>-<part>` for a module's own parts: `gdy-table-head-cell`, `gdy-kanban-card`.
 - `gdy-<part>` for what the table and the kanban share: `gdy-card`, `gdy-toolbar`, `gdy-btn`,
   `gdy-input`, `gdy-panel`, `gdy-option-item`.
-- The primitives: `gdy-button`, `gdy-select-*` (`trigger`, `content`, `item`), `gdy-menu-*`
+- The primitives: `gdy-button`, `gdy-select` and `gdy-select-*` (`trigger`, `icon`), `gdy-menu-*`
   (`content`, `item`, `label`, `separator`), `gdy-popover-content`, `gdy-toggle-*` (`group`,
   `item`) and `gdy-calendar-*` (such as `gdy-calendar-day` and `gdy-calendar-day-button`).
 - `gdy-ai-<part>` for the assistant: `gdy-ai-button`, `gdy-ai-sidebar`, `gdy-ai-bubble`,
@@ -464,9 +465,9 @@ option and segmented control option icons), which arrive without a class.
 
 Some classes have no default rule, so you can target them without fighting a default:
 `gdy-table-head`, `gdy-table-body`, `gdy-table-group-row`, `gdy-table-empty-row`,
-`gdy-toolbar-create`, `gdy-select-value`, `gdy-ai-close`. The catalog marks them as "hook only".
+`gdy-toolbar-create`, `gdy-ai-close`. The catalog marks them as "hook only".
 The primitives also keep a `data-slot` attribute as a second hook (`data-slot="button"`,
-`"select-trigger"`, `"dropdown-menu-item"`, `"popover-content"`, `"calendar"` and others); the
+`"dropdown-menu-item"`, `"popover-content"`, `"calendar"` and others); the
 stylesheet has no rules on it.
 
 ```css
@@ -505,12 +506,11 @@ presence (`[data-dragging]`), not by value. The others take the values listed.
 | `data-print-mode` | `gdy-table` | Gridory | `"page"` or `"all"`: the `printMode` prop |
 | `aria-pressed="true"` | `gdy-view-switch-btn`, `gdy-link-btn` | Gridory | active view, active sort or operator in a filter panel |
 | `aria-expanded` | `gdy-table-group-toggle` | Gridory | `"false"` when the group is collapsed |
-| `data-state` | `gdy-menu-content`, `gdy-popover-content`, `gdy-select-*`, `gdy-toggle-item` | Radix | `"open"` or `"closed"` on menu, popover and select; `"checked"` on a select item; `"on"` on a toggle item |
-| `data-highlighted` | `gdy-select-item` | Radix | the item under the pointer or keyboard focus |
-| `data-disabled` | `gdy-menu-item`, `gdy-select-item`, `gdy-calendar-day` | Radix, react-day-picker | a disabled item or day |
-| `data-placeholder` | `gdy-select-trigger` | Radix | no value selected |
-| `data-side` | `gdy-menu-content`, `gdy-popover-content`, `gdy-select-content` | Radix | `"top"`, `"right"`, `"bottom"` or `"left"` of the anchor |
-| `data-today`, `data-outside`, `data-selected` | `gdy-calendar-day` | react-day-picker | today, a day of another month, a selected day |
+| `data-state` | `gdy-menu-content`, `gdy-popover-content`, `gdy-toggle-item` | Radix | `"open"` or `"closed"` on menu and popover; `"on"` on a toggle item |
+| `data-disabled` | `gdy-menu-item`, `gdy-calendar-day` | Radix | a disabled item or day |
+| `data-placeholder` | `gdy-select-trigger` | Gridory | no value selected: the box shows the placeholder |
+| `data-side` | `gdy-menu-content`, `gdy-popover-content` | Radix | `"top"`, `"right"`, `"bottom"` or `"left"` of the anchor |
+| `data-today`, `data-outside`, `data-selected` | `gdy-calendar-day` | Gridory | today, a day of another month, a selected day |
 | `data-range-start`, `data-range-middle`, `data-range-end` | `gdy-calendar-day`, `gdy-calendar-day-button` | Gridory | position inside a selected range |
 | `data-selected-single` | `gdy-calendar-day-button` | Gridory | a selected day outside a range |
 | `data-state` | `gdy-ai-sidebar` | Gridory | `"open"` or `"closed"` |
@@ -567,7 +567,7 @@ options are described in [toolbar.md](toolbar.md)):
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
-| `selectTheme` | `SelectTheme` | — | Colors, radius and class names for every select; colors and radius are set as `--gdy-select-*` tokens on the select itself |
+| `selectTheme` | `SelectTheme` | — | Colors, radius and class name for the closed box of every select; colors and radius are set as `--gdy-select-*` tokens on the select itself |
 | `thinScrollbars` | `boolean` | `true` | Adds `gdy-thin-scroll` to the root, so every `gdy-scroll` area gets a thin scrollbar |
 | `scrollbarColor` | `string` | — | Sets `--gdy-scrollbar-thumb` on the root; falls back to `--gdy-input` |
 | `optionHoverColor` | `string` | — | Sets `--gdy-option-hover-bg` on the root, the hover background of filter options |
@@ -617,11 +617,11 @@ cascade rules in [Overriding by class](#overriding-by-class).
 The open, close and slide animations live in `@media (prefers-reduced-motion: no-preference)`.
 With `prefers-reduced-motion: reduce` none of them runs.
 
-- Popover, menu and select content (the calendar popover included) fade in and grow from their
+- Popover and menu content (the calendar popover included) fade in and grow from their
   anchor when they open (`gdy-pop-in`, 150 ms). The Radix `data-side` attribute sets the
   direction: the surface starts 8px toward its anchor and moves into place.
-- Popover and menu content fade out when they close (`gdy-pop-out`, 100 ms). The select content
-  unmounts as soon as it closes, so it has no exit animation.
+- Popover and menu content fade out when they close (`gdy-pop-out`, 100 ms). A select opens the
+  browser's own list, which Gridory does not animate.
 - The assistant panel slides in from the right edge (a `transform` transition of 0.3 s).
 - The loading placeholders (`gdy-skeleton`) show a soft shine that sweeps the bar
   (`gdy-skeleton-shine`, 1.4 s, repeated). With reduced motion the bar stays still.
@@ -641,8 +641,7 @@ from your CSS (the same works for `.gdy-ai-thinking-icon`):
 
 ```css
 .gdy-menu-content[data-state],
-.gdy-popover-content[data-state],
-.gdy-select-content[data-state] {
+.gdy-popover-content[data-state] {
   animation: none;
 }
 
@@ -689,21 +688,23 @@ paths; your own config provides them.
 point at its variables, and Gridory reads the same variables through the token bridge. Use the
 prefixed preset only if you want to paint something with Gridory's tokens specifically.
 
-### Default preset (deprecated)
+### Default export
 
-The default export maps the shadcn-style keys (`bg-primary`, `bg-card`, `text-muted-foreground`,
-`border-border`, `outline-ring`, `rounded-lg`…) to the same tokens. In a project that defines those
-keys, the project wins and the preset adds little; in the keys it does not define, it mixes two
-palettes. It keeps working unchanged in 1.x and **is removed in 2.0.0**: start with
-`createGridoryPreset()` so you do not have to migrate twice.
+Since 2.0.0 the default export is `createGridoryPreset()` with the `"gdy"` prefix, so these two configs
+are the same:
 
 ```js
-import gridoryPreset from "gridory/tailwind-preset"; // deprecated
+import gridoryPreset, { createGridoryPreset } from "gridory/tailwind-preset";
 
-export default { presets: [gridoryPreset] };
+export default { presets: [gridoryPreset] }; // same as presets: [createGridoryPreset()]
 ```
 
-Tailwind 4 (`@theme`) is not covered by either preset.
+Up to 1.x the default export added the unprefixed shadcn-style utilities (`bg-primary`,
+`text-muted-foreground`, `rounded-lg`…). If your markup still uses them, see the
+[2.0 migration guide](migration-2.0.md#tailwind-preset): Tailwind does not warn about a class it no
+longer generates, it just stops painting it.
+
+Tailwind 4 (`@theme`) is not covered by the preset.
 
 ## Style audit
 

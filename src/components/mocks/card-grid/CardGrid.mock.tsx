@@ -31,7 +31,7 @@ export const CardGridMock = () => {
   const { view, common } = useCardGridDemo();
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-sm text-muted-foreground">{DEMO_DESCRIPTION}</p>
+      <p className="text-sm text-gdy-muted-foreground">{DEMO_DESCRIPTION}</p>
       {view === "table" && <DataTable {...common} columns={COLUMNS} getRowId={(row) => row.id} defaultPageSize={25} />}
       {view === "cards" && (
         <CardGrid {...common} columns={COLUMNS} getRowId={(row) => row.id} onRowClick={showRow} getRowHref={(row) => `#empresa-${row.id}`} />

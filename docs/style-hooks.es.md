@@ -44,7 +44,7 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-table-group-toggle` | con estilos | `[aria-expanded="false"]` |
 | `gdy-table-head` | solo gancho | — |
 | `gdy-table-head-arrow` | con estilos | — |
-| `gdy-table-head-cell` | con estilos | `[data-align="center"]`, `[data-align="right"]`, `[data-column-id="_expand"]`, `[data-column-id="_select"]`, `[data-hidden-by="priority"]`, `[data-pinned]` |
+| `gdy-table-head-cell` | con estilos | `[data-align="center"]`, `[data-align="right"]`, `[data-column-id="_actions"]`, `[data-column-id="_expand"]`, `[data-column-id="_select"]`, `[data-hidden-by="priority"]`, `[data-pinned]` |
 | `gdy-table-head-filter-icon` | con estilos | — |
 | `gdy-table-head-help` | con estilos | — |
 | `gdy-table-head-inner` | con estilos | `[data-help-placement="edge"]`, `[data-help-placement]` |
@@ -456,7 +456,6 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-calendar-dropdown` | con estilos | — |
 | `gdy-calendar-dropdown-root` | con estilos | — |
 | `gdy-calendar-dropdowns` | con estilos | — |
-| `gdy-calendar-footer` | solo gancho | — |
 | `gdy-calendar-month` | con estilos | — |
 | `gdy-calendar-month-caption` | con estilos | — |
 | `gdy-calendar-month-grid` | con estilos | — |
@@ -466,8 +465,6 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-calendar-popover` | con estilos | — |
 | `gdy-calendar-root` | con estilos | — |
 | `gdy-calendar-week` | con estilos | — |
-| `gdy-calendar-week-number` | solo gancho | — |
-| `gdy-calendar-week-number-header` | solo gancho | — |
 | `gdy-calendar-weekday` | con estilos | — |
 | `gdy-calendar-weekdays` | con estilos | — |
 | `gdy-calendar-weeks` | solo gancho | — |
@@ -482,17 +479,9 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-menu-sub-content` | con estilos | — |
 | `gdy-menu-sub-trigger` | con estilos | `[data-state="open"]` |
 | `gdy-popover-content` | con estilos | `[data-side="bottom"]`, `[data-side="left"]`, `[data-side="right"]`, `[data-side="top"]`, `[data-state="closed"]`, `[data-state="open"]` |
-| `gdy-select-content` | con estilos | `[data-side="bottom"]`, `[data-side="left"]`, `[data-side="right"]`, `[data-side="top"]`, `[data-state="open"]` |
+| `gdy-select` | con estilos | — |
 | `gdy-select-icon` | con estilos | — |
-| `gdy-select-item` | con estilos | `[data-disabled]`, `[data-highlighted]`, `[data-state="checked"]` |
-| `gdy-select-item-check` | con estilos | — |
-| `gdy-select-item-indicator` | con estilos | — |
-| `gdy-select-item-text` | solo gancho | — |
-| `gdy-select-scroll-button` | con estilos | — |
-| `gdy-select-scroll-icon` | con estilos | — |
-| `gdy-select-trigger` | con estilos | `[aria-invalid="true"]`, `[data-placeholder]`, `[data-state="open"]` |
-| `gdy-select-value` | solo gancho | — |
-| `gdy-select-viewport` | con estilos | — |
+| `gdy-select-trigger` | con estilos | `[aria-invalid="true"]`, `[data-placeholder]` |
 | `gdy-toggle-group` | con estilos | — |
 | `gdy-toggle-item` | con estilos | `[data-state="on"]` |
 | `gdy-toggle-item-label` | solo gancho | — |
@@ -613,9 +602,12 @@ hay que escribir para pisarlas; los motivos están en [Temas y estilos](theming.
 | `.gdy-table-foot-cell[data-align="right"]` | 0-2-0 |
 | `.gdy-table-head-trigger[data-align="center"]` | 0-2-0 |
 | `.gdy-table-head-trigger[data-align="right"]` | 0-2-0 |
+| `.gdy-table-head-cell[data-column-id="_actions"]` | 0-2-0 |
+| `.gdy-table-head-cell[data-column-id="_actions"]:where(:has(> .gdy-table-actions-head-label))` | 0-2-0 |
 | `.gdy-table-menu-holder[data-align="end"]` | 0-2-0 |
 | `.gdy-table-cell-content[data-overflow="wrap"]` | 0-2-0 |
 | `.gdy-table-cell-content[data-overflow="visible"]` | 0-2-0 |
+| `.gdy-table-inline-select-wrap > .gdy-select` | 0-2-0 |
 | `.gdy-select-trigger.gdy-table-inline-select` | 0-2-0 |
 | `.gdy-table-actions-cell[data-align="left"]` | 0-2-0 |
 | `.gdy-table-actions-cell[data-align="center"]` | 0-2-0 |
@@ -677,20 +669,20 @@ hay que escribir para pisarlas; los motivos están en [Temas y estilos](theming.
 ## Atributos de estado
 
 Los atributos booleanos están presentes o ausentes; el resto toma los valores listados. Los que
-ponen Radix o react-day-picker siguen a esas librerías.
+pone Radix siguen a esa librería.
 
 | Atributo | Valores | Lo pone | Se usa con |
 |---|---|---|---|
 | `aria-checked` | `"false"`, `"true"` | Gridory | `gdy-segmented-item` |
 | `aria-current` | `"location"`, `"page"` | Gridory | `gdy-md-outline-link`, `gdy-sidebar-item` |
-| `aria-disabled` | `"true"` | Radix o react-day-picker | `gdy-calendar-button-next`, `gdy-calendar-button-previous`, `gdy-listbox-option` |
+| `aria-disabled` | `"true"` | Gridory | `gdy-calendar-button-next`, `gdy-calendar-button-previous`, `gdy-listbox-option` |
 | `aria-expanded` | `"false"`, `"true"` | Gridory | `gdy-button`, `gdy-country-select-trigger`, `gdy-phone-input-prefix`, `gdy-table-expand-toggle`, `gdy-table-group-toggle` |
 | `aria-invalid` | `"true"` | Gridory | `gdy-auth-input`, `gdy-country-select-trigger`, `gdy-select-trigger` |
 | `aria-pressed` | `"true"` | Gridory | `gdy-link-btn`, `gdy-md-tool`, `gdy-md-view-option`, `gdy-view-switch-btn` |
 | `aria-selected` | `"true"` | Gridory | `gdy-listbox-option` |
 | `data-action-type` | `"create-card"`, `"create-row"`, `"custom"`, `"move-card"`, `"update-row"` | Gridory | sin regla por defecto |
 | `data-active` | presente / ausente | Gridory | `gdy-listbox-option` |
-| `data-align` | `"center"`, `"end"`, `"left"`, `"right"` | Gridory, Radix o react-day-picker | `gdy-kanban-filter-menu-holder`, `gdy-table-actions-cell`, `gdy-table-cell`, `gdy-table-foot-cell`, `gdy-table-head-cell`, `gdy-table-head-trigger`, `gdy-table-menu-holder` |
+| `data-align` | `"center"`, `"end"`, `"left"`, `"right"` | Gridory o Radix | `gdy-kanban-filter-menu-holder`, `gdy-table-actions-cell`, `gdy-table-cell`, `gdy-table-foot-cell`, `gdy-table-head-cell`, `gdy-table-head-trigger`, `gdy-table-menu-holder` |
 | `data-alignment` | `"center"`, `"right"` | Gridory | `gdy-md-table-preview` |
 | `data-animated` | `"true"` | Gridory | `gdy-segmented`, `gdy-sidebar` |
 | `data-checked` | presente / ausente | Gridory | `gdy-option-check` |
@@ -701,7 +693,7 @@ ponen Radix o react-day-picker siguen a esas librerías.
 | `data-compact` | `"true"` | Gridory | `gdy-sidebar-logo` |
 | `data-day` | la fecha del día | Gridory | sin regla por defecto |
 | `data-diagram-state` | `"error"`, `"loading"`, `"ready"` | Gridory | `gdy-md-diagram` |
-| `data-disabled` | presente / ausente | Gridory, Radix o react-day-picker | `gdy-auth-google-slot`, `gdy-calendar-day`, `gdy-menu-item`, `gdy-select-item` |
+| `data-disabled` | presente / ausente | Gridory o Radix | `gdy-auth-google-slot`, `gdy-calendar-day`, `gdy-menu-item` |
 | `data-draggable` | presente / ausente | Gridory | `gdy-kanban-card` |
 | `data-dragging` | presente / ausente | Gridory | `gdy-kanban-card` |
 | `data-drop-disabled` | presente / ausente | Gridory | `gdy-kanban-column` |
@@ -709,14 +701,14 @@ ponen Radix o react-day-picker siguen a esas librerías.
 | `data-empty` | presente / ausente | Gridory | `gdy-ai-body` |
 | `data-expanded` | presente / ausente | Gridory | sin regla por defecto |
 | `data-filtered` | presente / ausente | Gridory | `gdy-kanban-filter-trigger` |
+| `data-focused` | presente / ausente | Gridory | sin regla por defecto |
 | `data-form` | `"login"`, `"signup"` | Gridory | sin regla por defecto |
 | `data-fullscreen` | presente / ausente | Gridory | `gdy-md-editor` |
 | `data-has-pinned` | presente / ausente | Gridory | `gdy-table-wrap` |
 | `data-header` | presente / ausente | Gridory | `gdy-md-table-preview-cell` |
 | `data-help-placement` | `"edge"` | Gridory | `gdy-table-head-inner` |
-| `data-hidden` | presente / ausente | Radix o react-day-picker | `gdy-calendar-day` |
+| `data-hidden` | presente / ausente | Gridory | `gdy-calendar-day` |
 | `data-hidden-by` | `"priority"` | Gridory | `gdy-table-cell`, `gdy-table-foot-cell`, `gdy-table-head-cell` |
-| `data-highlighted` | presente / ausente | Radix o react-day-picker | `gdy-select-item` |
 | `data-hover-expand` | `"false"`, `"true"` | Gridory | `gdy-sidebar` |
 | `data-href` | presente / ausente | Gridory | sin regla por defecto |
 | `data-invalid` | presente / ausente | Gridory | `gdy-phone-input` |
@@ -730,14 +722,17 @@ ponen Radix o react-day-picker siguen a esas librerías.
 | `data-measure-overflow` | presente / ausente | Gridory | sin regla por defecto |
 | `data-menu` | presente / ausente | Gridory | `gdy-md-tool` |
 | `data-mobile` | `"true"` | Gridory | `gdy-sidebar-layout` |
+| `data-mode` | `single` o `range` | Gridory | sin regla por defecto |
+| `data-month` | el mes (`yyyy-mm`) de un día de otro mes | Gridory | sin regla por defecto |
 | `data-multiple` | presente / ausente | Gridory | `gdy-country-select` |
-| `data-outside` | presente / ausente | Radix o react-day-picker | `gdy-calendar-day` |
+| `data-multiple-months` | presente / ausente | Gridory | sin regla por defecto |
+| `data-outside` | presente / ausente | Gridory | `gdy-calendar-day` |
 | `data-overflow` | `"visible"`, `"wrap"` | Gridory | `gdy-table-cell-content` |
 | `data-pending` | presente / ausente | Gridory | `gdy-kanban-card` |
 | `data-pinned` | `"false"`, `"true"` | Gridory | `gdy-sidebar`, `gdy-table-cell`, `gdy-table-foot-cell`, `gdy-table-head-cell` |
 | `data-pinned-edge` | presente / ausente | Gridory | sin regla por defecto |
 | `data-pinning-suspended` | presente / ausente | Gridory | `gdy-table-wrap` |
-| `data-placeholder` | presente / ausente | Gridory, Radix o react-day-picker | `gdy-country-select-value`, `gdy-phone-input-dial-code`, `gdy-select-trigger` |
+| `data-placeholder` | presente / ausente | Gridory o Radix | `gdy-country-select-value`, `gdy-phone-input-dial-code`, `gdy-select-trigger` |
 | `data-print-mode` | presente / ausente | Gridory | `gdy-table` |
 | `data-range-end` | presente / ausente | Gridory | `gdy-calendar-day`, `gdy-calendar-day-button` |
 | `data-range-middle` | presente / ausente | Gridory | `gdy-calendar-day`, `gdy-calendar-day-button` |
@@ -748,16 +743,16 @@ ponen Radix o react-day-picker siguen a esas librerías.
 | `data-row-id` | el id de la fila (`getRowId`) | Gridory | sin regla por defecto |
 | `data-scrolled-end` | presente / ausente | Gridory | `gdy-table-wrap` |
 | `data-scrolled-start` | presente / ausente | Gridory | `gdy-table-wrap` |
-| `data-selected` | presente / ausente | Gridory, Radix o react-day-picker | `gdy-calendar-day`, `gdy-option-item`, `gdy-table-row` |
+| `data-selected` | presente / ausente | Gridory | `gdy-calendar-day`, `gdy-option-item`, `gdy-table-row` |
 | `data-selected-single` | presente / ausente | Gridory | `gdy-calendar-day-button` |
-| `data-side` | `"bottom"`, `"left"`, `"right"`, `"top"` | Radix o react-day-picker | `gdy-menu-content`, `gdy-popover-content`, `gdy-select-content` |
+| `data-side` | `"bottom"`, `"left"`, `"right"`, `"top"` | Gridory o Radix | `gdy-menu-content`, `gdy-popover-content` |
 | `data-size` | `"default"`, `"icon"`, `"icon-lg"`, `"icon-sm"`, `"icon-xs"`, `"lg"`, `"sm"`, `"xs"` | Gridory | `gdy-button` |
 | `data-slot-id` | el `id` del slot | Gridory | sin regla por defecto |
-| `data-state` | `"active"`, `"checked"`, `"closed"`, `"collapsed"`, `"expanded"`, `"indeterminate"`, `"on"`, `"open"` | Gridory, Radix o react-day-picker | `gdy-ai-sidebar`, `gdy-md-image-tab`, `gdy-md-picker-tab`, `gdy-md-tool`, `gdy-menu-content`, `gdy-menu-sub-trigger`, `gdy-popover-content`, `gdy-select-content`, `gdy-select-item`, `gdy-select-trigger`, `gdy-sidebar`, `gdy-sidebar-drawer`, `gdy-sidebar-overlay`, `gdy-table-expanded-panel`, `gdy-table-select`, `gdy-toggle-item` |
+| `data-state` | `"active"`, `"checked"`, `"closed"`, `"collapsed"`, `"expanded"`, `"indeterminate"`, `"on"`, `"open"` | Gridory o Radix | `gdy-ai-sidebar`, `gdy-md-image-tab`, `gdy-md-picker-tab`, `gdy-md-tool`, `gdy-menu-content`, `gdy-menu-sub-trigger`, `gdy-popover-content`, `gdy-sidebar`, `gdy-sidebar-drawer`, `gdy-sidebar-overlay`, `gdy-table-expanded-panel`, `gdy-table-select`, `gdy-toggle-item` |
 | `data-status` | `"met"`, `"pending"`, `"unmet"` | Gridory | `gdy-auth-rule` |
 | `data-streaming` | presente / ausente | Gridory | sin regla por defecto |
 | `data-thinking` | presente / ausente | Gridory | sin regla por defecto |
-| `data-today` | presente / ausente | Radix o react-day-picker | `gdy-calendar-day` |
+| `data-today` | presente / ausente | Gridory | `gdy-calendar-day` |
 | `data-toolbar-placement` | presente / ausente | Gridory | sin regla por defecto |
 | `data-variant` | `"default"`, `"destructive"`, `"error"`, `"ghost"`, `"important"`, `"link"`, `"outline"`, `"secondary"`, `"success"`, `"warning"` | Gridory | `gdy-button`, `gdy-md-alert`, `gdy-menu-item` |
 | `data-view` | `"split"` | Gridory | `gdy-md-panels` |
@@ -1077,12 +1072,6 @@ cualquier ancestro cambia solo esa parte. Los `--gdy-select-*` también reflejan
 | `--gdy-segmented-radius` | `9px` | segmented-control |
 | `--gdy-select-bg` | `var(--gdy-background)` | ui |
 | `--gdy-select-border` | `var(--gdy-border)` | ui |
-| `--gdy-select-content-bg` | `var(--gdy-popover)` | ui |
-| `--gdy-select-content-text` | `var(--gdy-popover-foreground)` | ui |
-| `--gdy-select-item-active-bg` | `transparent` | ui |
-| `--gdy-select-item-hover-bg` | `var(--gdy-accent)` | ui |
-| `--gdy-select-item-hover-text` | `var(--gdy-accent-foreground)` | ui |
-| `--gdy-select-item-text` | `inherit` | ui |
 | `--gdy-select-radius` | `calc(var(--gdy-radius) - 2px)` | ui |
 | `--gdy-select-text` | `var(--gdy-foreground)` | ui |
 | `--gdy-select-trigger-hover-bg` | `var(--gdy-muted)` | ui |
@@ -1135,6 +1124,7 @@ cualquier ancestro cambia solo esa parte. Los `--gdy-select-*` también reflejan
 | `--gdy-table-head-bg` | `var(--gdy-muted)` | table |
 | `--gdy-table-head-fg` | `var(--gdy-muted-foreground)` | table |
 | `--gdy-table-head-help-fg` | `var(--gdy-muted-foreground)` | table |
+| `--gdy-table-min-width` | `0px` | table |
 | `--gdy-table-open-menu-z` | `4` | table |
 | `--gdy-table-pin-offset` | `0px` | table |
 | `--gdy-table-pinned-bg` | `var(--gdy-card)` | table |

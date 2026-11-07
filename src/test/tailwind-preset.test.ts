@@ -8,11 +8,19 @@ const PRESET_1_0_1 = JSON.parse(readFileSync(path.resolve("src/test/baselines/ta
 
 const extendOf = (prefix?: string) => createGridoryPreset(prefix === undefined ? undefined : { prefix }).theme?.extend ?? {};
 
-test("the default export is the 1.0.1 preset, value by value", () => {
-  expect(serializePreset(gridoryPreset)).toEqual(PRESET_1_0_1);
+test("the default export is createGridoryPreset(), value by value", () => {
+  expect(serializePreset(gridoryPreset)).toEqual(serializePreset(createGridoryPreset()));
 });
 
-test("createGridoryPreset puts every color and radius of the default under the gdy prefix", () => {
+test("the default export defines no unprefixed color or radius", () => {
+  const extend = gridoryPreset.theme?.extend as Record<string, Record<string, unknown>>;
+  expect(Object.keys(extend.colors)).toEqual(["gdy"]);
+  expect(Object.keys(extend.borderColor)).toEqual(["gdy"]);
+  expect(Object.keys(extend.outlineColor)).toEqual(["gdy"]);
+  expect(Object.keys(extend.borderRadius)).toEqual(["gdy-lg", "gdy-md", "gdy-sm"]);
+});
+
+test("createGridoryPreset keeps every color and radius of the 1.0.1 preset under the gdy prefix", () => {
   const extend = serializePreset(extendOf()) as Record<string, Record<string, unknown>>;
   const legacy = PRESET_1_0_1.theme.extend;
   expect(extend.colors).toEqual({ gdy: legacy.colors });

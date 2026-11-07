@@ -14,7 +14,7 @@ const PageOptions = ({ url, onChange }: { url: string; onChange: (url: string) =
   DEMO_PAGES.map((page) => (
     <label key={page.url} className="flex items-center gap-2 text-sm">
       <input type="radio" name="demo-page" checked={url === page.url} onChange={() => onChange(page.url)} />
-      {page.label} <span className="text-xs text-muted-foreground">{page.url}</span>
+      {page.label} <span className="text-xs text-gdy-muted-foreground">{page.url}</span>
     </label>
   ));
 

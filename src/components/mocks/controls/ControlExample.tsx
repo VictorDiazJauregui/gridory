@@ -8,8 +8,8 @@ interface ControlExampleProps {
 }
 
 export const ControlExample = ({ title, titleId, children }: ControlExampleProps) => (
-  <div className="min-w-0 rounded-md border p-4">
-    <h4 id={titleId} className="text-xs font-medium text-muted-foreground">{title}</h4>
+  <div className="min-w-0 rounded-gdy-md border p-4">
+    <h4 id={titleId} className="text-xs font-medium text-gdy-muted-foreground">{title}</h4>
     <div className="mt-3 flex flex-wrap items-center gap-3">{children}</div>
   </div>
 );

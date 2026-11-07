@@ -77,8 +77,9 @@ import "./app.css";
 
 El tema claro es el predeterminado. El oscuro se aplica bajo cualquier elemento con la clase `dark` o el
 atributo `data-theme="dark"`, como en `<html class="dark">`. Pon esa marca en `<html>`. Los menús, los
-selects, los popovers y el calendario del selector de fechas se renderizan en portales justo debajo de
-`<body>`, así que una clase puesta en un contenedor interior no les llega. Si tu app ya alterna `.dark` en
+popovers y el calendario del selector de fechas se renderizan en portales justo debajo de `<body>`, así
+que una clase puesta en un contenedor interior no les llega. Un select es el del navegador: su lista
+abierta sigue el tema mediante `color-scheme`. Si tu app ya alterna `.dark` en
 `<html>` (la convención de shadcn/ui), no tienes que añadir nada.
 
 Gridory no lee `prefers-color-scheme`. Pon la clase tú mismo, a partir de un ajuste del usuario o de la
@@ -167,7 +168,7 @@ Estos tokens no tienen equivalente en shadcn:
 | `--gdy-link` | `oklch(0.546 0.245 262.881)` | `oklch(0.707 0.165 254.624)` | botones de enlace de los paneles de filtro |
 | `--gdy-overlay` | `rgb(0 0 0 / 0.3)` | `rgb(0 0 0 / 0.6)` | fondo detrás del asistente en pantallas pequeñas |
 | `--gdy-shadow-sm` | `0 1px 2px rgb(0 0 0 / 0.12)` | `0 1px 2px rgb(0 0 0 / 0.5)` | botón activo del selector de vista, ítem de toggle e indicador del control segmentado |
-| `--gdy-shadow-md` | `0 8px 24px rgb(0 0 0 / 0.12)` | `0 8px 24px rgb(0 0 0 / 0.6)` | paneles de filtro, menús, selects y popovers |
+| `--gdy-shadow-md` | `0 8px 24px rgb(0 0 0 / 0.12)` | `0 8px 24px rgb(0 0 0 / 0.6)` | paneles de filtro, menús y popovers |
 | `--gdy-shadow-lg` | `0 25px 50px -12px rgb(0 0 0 / 0.25)` | `0 25px 50px -12px rgb(0 0 0 / 0.6)` | panel del asistente |
 | `--gdy-font-mono` | `ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace` | igual que en claro | `code`, `kbd`, `samp` y `pre` dentro del ámbito |
 | `--gdy-google-blue` / `-green` / `-yellow` / `-red` | `#4285f4` / `#34a853` / `#fbbc05` / `#ea4335` | igual que en claro | Logo de Google en los formularios de autenticación. Las guías de marca de Google prohíben recolorearlo: déjalos como están |
@@ -177,9 +178,9 @@ Estos tokens no tienen equivalente en shadcn:
 La librería nunca declara los tokens de componente. Sus reglas los leen con un fallback a un token base, como
 en `background: var(--gdy-table-head-bg, var(--gdy-muted))`. Como nada los declara, puedes definirlos en
 cualquier ancestro: `:root` para toda la app, `.dark` para el tema oscuro o una clase contenedora para una sola
-pantalla. Los menús, los selects, los popovers y el calendario se renderizan en portales bajo `<body>`, así
-que declara los tokens que les dan estilo (`--gdy-menu-*`, `--gdy-select-*`, `--gdy-popover-*`,
-`--gdy-calendar-*`) en `:root` o en `.dark`. Lo mismo vale para el panel del selector de país:
+pantalla. Los menús, los popovers y el calendario se renderizan en portales bajo `<body>`, así que declara los
+tokens que les dan estilo (`--gdy-menu-*`, `--gdy-popover-*`, `--gdy-calendar-*`) en `:root` o en
+`.dark`. Lo mismo vale para el panel del selector de país:
 `--gdy-country-select-panel-min-width`, `--gdy-country-select-option-*` y
 `--gdy-country-select-check-color`, y para el panel del teléfono: `--gdy-phone-input-panel-min-width`,
 `--gdy-phone-input-option-*` y `--gdy-phone-input-check-color`. El cajón móvil del menú lateral y sus
@@ -429,7 +430,7 @@ Cada elemento que renderiza la librería lleva una clase `gdy-*` pensada como ga
 - `gdy-<module>-<part>` para las piezas propias de un módulo: `gdy-table-head-cell`, `gdy-kanban-card`.
 - `gdy-<part>` para lo que comparten la tabla y el kanban: `gdy-card`, `gdy-toolbar`, `gdy-btn`,
   `gdy-input`, `gdy-panel`, `gdy-option-item`.
-- Los primitivos: `gdy-button`, `gdy-select-*` (`trigger`, `content`, `item`), `gdy-menu-*`
+- Los primitivos: `gdy-button`, `gdy-select` y `gdy-select-*` (`trigger`, `icon`), `gdy-menu-*`
   (`content`, `item`, `label`, `separator`), `gdy-popover-content`, `gdy-toggle-*` (`group`,
   `item`) y `gdy-calendar-*` (por ejemplo `gdy-calendar-day` y `gdy-calendar-day-button`).
 - `gdy-ai-<part>` para el asistente: `gdy-ai-button`, `gdy-ai-sidebar`, `gdy-ai-bubble`,
@@ -470,9 +471,9 @@ añade una segunda clase. Los únicos selectores de etiqueta dan tamaño a los i
 
 Algunas clases no tienen regla por defecto, así que puedes apuntarles sin pelearte con un estilo previo:
 `gdy-table-head`, `gdy-table-body`, `gdy-table-group-row`, `gdy-table-empty-row`,
-`gdy-toolbar-create`, `gdy-select-value`, `gdy-ai-close`. El catálogo las marca como "solo gancho".
+`gdy-toolbar-create`, `gdy-ai-close`. El catálogo las marca como "solo gancho".
 Los primitivos también conservan un atributo `data-slot` como segundo gancho (`data-slot="button"`,
-`"select-trigger"`, `"dropdown-menu-item"`, `"popover-content"`, `"calendar"` y otros); la hoja de estilos
+`"dropdown-menu-item"`, `"popover-content"`, `"calendar"` y otros); la hoja de estilos
 no tiene reglas sobre él.
 
 ```css
@@ -511,12 +512,11 @@ por su presencia (`[data-dragging]`), no por su valor. El resto toma los valores
 | `data-print-mode` | `gdy-table` | Gridory | `"page"` o `"all"`: la prop `printMode` |
 | `aria-pressed="true"` | `gdy-view-switch-btn`, `gdy-link-btn` | Gridory | vista activa, orden activo u operador activo en un panel de filtro |
 | `aria-expanded` | `gdy-table-group-toggle` | Gridory | `"false"` cuando el grupo está plegado |
-| `data-state` | `gdy-menu-content`, `gdy-popover-content`, `gdy-select-*`, `gdy-toggle-item` | Radix | `"open"` o `"closed"` en menú, popover y select; `"checked"` en un ítem de select; `"on"` en un ítem de toggle |
-| `data-highlighted` | `gdy-select-item` | Radix | el ítem bajo el puntero o con el foco del teclado |
-| `data-disabled` | `gdy-menu-item`, `gdy-select-item`, `gdy-calendar-day` | Radix, react-day-picker | un ítem o un día deshabilitado |
-| `data-placeholder` | `gdy-select-trigger` | Radix | no hay ningún valor seleccionado |
-| `data-side` | `gdy-menu-content`, `gdy-popover-content`, `gdy-select-content` | Radix | `"top"`, `"right"`, `"bottom"` o `"left"` respecto al ancla |
-| `data-today`, `data-outside`, `data-selected` | `gdy-calendar-day` | react-day-picker | hoy, un día de otro mes, un día seleccionado |
+| `data-state` | `gdy-menu-content`, `gdy-popover-content`, `gdy-toggle-item` | Radix | `"open"` o `"closed"` en menú y popover; `"on"` en un ítem de toggle |
+| `data-disabled` | `gdy-menu-item`, `gdy-calendar-day` | Radix | un ítem o un día deshabilitado |
+| `data-placeholder` | `gdy-select-trigger` | Gridory | no hay ningún valor seleccionado: la caja muestra el placeholder |
+| `data-side` | `gdy-menu-content`, `gdy-popover-content` | Radix | `"top"`, `"right"`, `"bottom"` o `"left"` respecto al ancla |
+| `data-today`, `data-outside`, `data-selected` | `gdy-calendar-day` | Gridory | hoy, un día de otro mes, un día seleccionado |
 | `data-range-start`, `data-range-middle`, `data-range-end` | `gdy-calendar-day`, `gdy-calendar-day-button` | Gridory | posición dentro de un rango seleccionado |
 | `data-selected-single` | `gdy-calendar-day-button` | Gridory | un día seleccionado fuera de un rango |
 | `data-state` | `gdy-ai-sidebar` | Gridory | `"open"` o `"closed"` |
@@ -573,7 +573,7 @@ opciones del select se describen en [toolbar.es.md](toolbar.es.md)):
 
 | Prop | Tipo | Por defecto | Descripción |
 |---|---|---|---|
-| `selectTheme` | `SelectTheme` | — | Colores, radio y nombres de clase para todos los selects; los colores y el radio se aplican como tokens `--gdy-select-*` sobre el propio select |
+| `selectTheme` | `SelectTheme` | — | Colores, radio y nombre de clase para la caja cerrada de todos los selects; los colores y el radio se aplican como tokens `--gdy-select-*` sobre el propio select |
 | `thinScrollbars` | `boolean` | `true` | Añade `gdy-thin-scroll` a la raíz, así que cada zona `gdy-scroll` recibe una barra de scroll fina |
 | `scrollbarColor` | `string` | — | Define `--gdy-scrollbar-thumb` en la raíz; si falta, se usa `--gdy-input` |
 | `optionHoverColor` | `string` | — | Define `--gdy-option-hover-bg` en la raíz, el fondo en hover de las opciones de filtro |
@@ -624,11 +624,11 @@ reglas de la cascada que se explican en [Sobrescribir por clase](#sobrescribir-p
 Las animaciones de apertura, cierre y deslizamiento viven en `@media (prefers-reduced-motion: no-preference)`.
 Con `prefers-reduced-motion: reduce` no se ejecuta ninguna.
 
-- El contenido de popovers, menús y selects (incluido el popover del calendario) aparece con un fundido y
+- El contenido de popovers y menús (incluido el popover del calendario) aparece con un fundido y
   crece desde su ancla al abrirse (`gdy-pop-in`, 150 ms). El atributo `data-side` de Radix fija la
   dirección: la superficie parte 8px desplazada hacia su ancla y se mueve hasta su sitio.
-- El contenido de popovers y menús se desvanece al cerrarse (`gdy-pop-out`, 100 ms). El contenido del
-  select se desmonta en cuanto se cierra, así que no tiene animación de salida.
+- El contenido de popovers y menús se desvanece al cerrarse (`gdy-pop-out`, 100 ms). Un select abre la
+  lista del navegador, que Gridory no anima.
 - El panel del asistente entra deslizándose desde el borde derecho (una transición de `transform` de 0.3 s).
 - Los fantasmas de carga (`gdy-skeleton`) muestran un brillo suave que recorre la barra
   (`gdy-skeleton-shine`, 1.4 s, en bucle). Con movimiento reducido la barra queda quieta.
@@ -650,8 +650,7 @@ mismo vale para `.gdy-ai-thinking-icon`):
 
 ```css
 .gdy-menu-content[data-state],
-.gdy-popover-content[data-state],
-.gdy-select-content[data-state] {
+.gdy-popover-content[data-state] {
   animation: none;
 }
 
@@ -698,21 +697,23 @@ El preset no añade rutas en `content`; las pone tu propia configuración.
 apuntan a sus variables, y Gridory lee esas mismas variables por el puente de tokens. Usa el preset con
 prefijo solo si quieres pintar algo específicamente con los tokens de Gridory.
 
-### Preset por defecto (obsoleto)
+### Export por defecto
 
-El export por defecto asocia las claves al estilo de shadcn (`bg-primary`, `bg-card`,
-`text-muted-foreground`, `border-border`, `outline-ring`, `rounded-lg`…) a los mismos tokens. En un
-proyecto que define esas claves gana el proyecto y el preset aporta poco; en las que no define, mezcla
-dos paletas. Sigue funcionando igual en la 1.x y **se quita en la 2.0.0**: empieza directamente con
-`createGridoryPreset()` para no tener que migrar dos veces.
+Desde la 2.0.0, el export por defecto es `createGridoryPreset()` con el prefijo `"gdy"`, así que estas dos
+configuraciones son iguales:
 
 ```js
-import gridoryPreset from "gridory/tailwind-preset"; // obsoleto
+import gridoryPreset, { createGridoryPreset } from "gridory/tailwind-preset";
 
-export default { presets: [gridoryPreset] };
+export default { presets: [gridoryPreset] }; // igual que presets: [createGridoryPreset()]
 ```
 
-Tailwind 4 (`@theme`) no está cubierto por ninguno de los dos presets.
+Hasta la 1.x, el export por defecto agregaba las utilidades sin prefijo al estilo de shadcn (`bg-primary`,
+`text-muted-foreground`, `rounded-lg`…). Si tu markup todavía las usa, consulta la
+[guía de migración a la 2.0](migration-2.0.es.md#preset-de-tailwind): Tailwind no avisa de una clase que
+ya no genera, simplemente deja de pintarla.
+
+Tailwind 4 (`@theme`) no está cubierto por el preset.
 
 ## Auditoría de estilos
 

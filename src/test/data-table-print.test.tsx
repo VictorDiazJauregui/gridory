@@ -1,4 +1,5 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
 import { DataTable, type DataTableProps } from "../components/table";
 import { BASELINE_COLUMNS, BASELINE_ROW_ACTIONS, BASELINE_ROWS, type BaselineRow } from "./baseline-fixture";
@@ -76,10 +77,9 @@ test('"all" renders every filtered row while printing and goes back to the page 
   expect(onVisibleRowsChange).not.toHaveBeenCalled();
 });
 
-test('"all" prints every group expanded and keeps the collapsed ones for the screen', () => {
+test('"all" prints every group expanded and keeps the collapsed ones for the screen', async () => {
   const { container } = renderTable({ printMode: "all", groupableColumnIds: ["status"] });
-  fireEvent.click(screen.getByRole("combobox", { name: "Agrupar por" }));
-  fireEvent.click(screen.getByRole("option", { name: "Agrupar por: Estado" }));
+  await userEvent.selectOptions(screen.getByRole("combobox", { name: "Agrupar por" }), "Agrupar por: Estado");
   fireEvent.click(screen.getByRole("button", { name: /Activa/ }));
   expect(dataRowNames(container)).toEqual(["Pack Norte"]);
   printMedia.setPrinting(true);

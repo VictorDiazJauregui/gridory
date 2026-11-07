@@ -12,7 +12,7 @@ export const EmptyWithCreate = ({ onCreate }: EmptyWithCreateProps) => {
     <div className="flex flex-col items-center gap-2">
       <SearchX size={20} aria-hidden="true" />
       <span>{translate("Ninguna empresa coincide con la búsqueda.")}</span>
-      <button type="button" className="inline-flex items-center gap-1 rounded-md border px-2.5 py-1 text-xs font-medium hover:bg-muted" onClick={onCreate}>
+      <button type="button" className="inline-flex items-center gap-1 rounded-gdy-md border px-2.5 py-1 text-xs font-medium hover:bg-gdy-muted" onClick={onCreate}>
         <Plus size={14} aria-hidden="true" />
         {translate("Crear empresa")}
       </button>

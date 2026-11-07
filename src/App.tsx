@@ -7,7 +7,7 @@ const App = () => {
   const { selectedModuleId, selectedModule, setRoute } = useDemoRoute();
   const { pinned, setPinned } = useDemoPinned();
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-gdy-background text-gdy-foreground">
       <SidebarLayout pinned={pinned} onPinnedChange={setPinned}>
         <DemoMenu selectedModuleId={selectedModuleId} onSelect={setRoute} />
         <main className="p-4">{selectedModule.content}</main>

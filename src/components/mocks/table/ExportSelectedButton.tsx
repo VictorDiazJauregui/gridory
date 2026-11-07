@@ -13,7 +13,7 @@ export const ExportSelectedButton = ({ selectedIds }: ExportSelectedButtonProps)
       type="button"
       disabled={selectedIds.length === 0}
       onClick={() => window.alert(`${translate("Exportar")}: ${selectedIds.join(", ")}`)}
-      className="inline-flex h-8 items-center gap-1.5 rounded-md border px-2.5 text-xs text-muted-foreground disabled:opacity-50"
+      className="inline-flex h-8 items-center gap-1.5 rounded-gdy-md border px-2.5 text-xs text-gdy-muted-foreground disabled:opacity-50"
     >
       <Download size={14} />
       {`${translate("Exportar")} (${selectedIds.length})`}

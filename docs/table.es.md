@@ -97,7 +97,7 @@ Cada entrada de `columns` es un `ColumnDefinition<TData>`.
 | `searchable` | `boolean` | Por defecto `true`. Ponlo en `false` para excluir la columna de la búsqueda global. |
 | `filterable` | `boolean` | Añade un menú de filtro al encabezado. Por defecto `false`. |
 | `filterOptions` | `FilterOption[]` | Opciones `{ value, label }` declaradas para el menú de filtro. Sin ellas, las opciones son los valores distintos que aparecen en `data`, en orden alfabético. También dan etiqueta y orden a los grupos al agrupar por esta columna. |
-| `width` | `number` | Ancho de la columna en píxeles. La tabla usa `table-layout: fixed`. |
+| `width` | `number` | Ancho de la columna en píxeles. La tabla usa `table-layout: fixed`. Sin él, la columna comparte el lugar que queda, hasta su `minWidth`. Ver [Pantallas angostas](#pantallas-angostas). |
 | `inlineEditOptions` | `FilterOption[]` | Junto con `onInlineEdit`, renderiza la celda como un select con estas opciones. |
 | `onInlineEdit` | `(row: TData, value: string) => void` | Se dispara con el valor de la opción elegida. |
 | `valueHighlights` | `Record<string, CellHighlight>` | `{ className?, style? }` indexado por valor de celda. `className` se añade al contenido de la celda; `style` se aplica al botón que abre el select en línea, así que solo se ve en celdas editables en línea. |
@@ -114,7 +114,7 @@ Cada entrada de `columns` es un `ColumnDefinition<TData>`.
 | `headerContent` | `ReactNode` | Reemplaza el título visible; `header` sigue siendo el nombre accesible y el texto de los menús. Solo la tabla. |
 | `pin` | `"left" \| "right"` | Deja la columna en ese borde mientras las filas se desplazan de costado. Requiere `width`. Ver [Columnas fijas](#columnas-fijas). Solo la tabla. |
 | `resizable` | `boolean` | Con `resizableColumns`, `false` deja la columna sin manija. Ver [Columnas redimensionables](#columnas-redimensionables). Solo la tabla. |
-| `minWidth` | `number` | Ancho más angosto al que el usuario puede llevar la columna. Por defecto `64`. Solo la tabla. |
+| `minWidth` | `number` | Ancho más angosto al que el usuario puede llevar la columna (por defecto `64`) y, sin `width`, el más angosto que toma en una pantalla angosta (por defecto `120`). Solo la tabla. |
 | `maxWidth` | `number` | Ancho más ancho al que el usuario puede llevar la columna. Sin límite por defecto. Solo la tabla. |
 
 Las opciones de filtro se calculan con todas las filas de `data` (antes de la búsqueda y los filtros), no
@@ -742,8 +742,7 @@ Antes, una columna de casillas era un `cell` más tu propio estado, y el clic en
 + <DataTable columns={columns} data={invoices} getRowId={(row) => row.id} rowSelection={{ onChange: setSelectedIds }} />
 ```
 
-La casilla se descarga solo en las tablas con `rowSelection`, justo después del primer render. Hasta
-entonces cada celda muestra el mismo marcado, que ya marca y desmarca, así que nada se mueve ni espera.
+La casilla es parte de la tabla desde el primer render: no suma ninguna descarga.
 
 ### Filas expandibles
 
@@ -818,6 +817,34 @@ Antes, un detalle era una `cell` con su propio estado, y solo podía vivir dentr
 - };
 - <DataTable columns={[nameColumn, ...columns.slice(1)]} data={companies} />
 + <DataTable columns={columns} data={companies} getRowId={(row) => row.id} renderExpandedRow={(row) => <Contacts company={row} />} />
+```
+
+### Pantallas angostas
+
+Las columnas con `width` lo conservan. Las demás comparten el lugar que queda, y ninguna baja de su `minWidth`
+(`120` por defecto); la columna de acciones conserva 56 px (96 px con `rowActions.columnLabel`). Cuando el
+contenedor es más angosto que todos esos anchos, como en un celular, las filas se desplazan de costado dentro
+de él y la página no.
+
+```tsx
+const columns: ColumnDefinition<Company>[] = [
+  { id: "name", header: "Empresa", accessor: (row) => row.name, width: 220 },
+  { id: "country", header: "País", accessor: (row) => row.country }, // nunca menos de 120 px
+  { id: "notes", header: "Notas", accessor: (row) => row.notes, minWidth: 200 }, // nunca menos de 200 px
+];
+```
+
+Para mostrar menos columnas en lugar de desplazarse, márcalas con `priority` o `hideable` y activa
+`responsiveColumns` (ver [Visibilidad de columnas](#visibilidad-de-columnas)); así la tabla oculta columnas y
+no aplica estos mínimos. Las columnas que el usuario redimensiona (`resizableColumns`) conservan el ancho que
+les dio.
+
+Para volver a la disposición de la 1.x (las columnas sin `width` se achican sin piso y la columna de acciones
+comparte el lugar que queda como ellas), redefine dos reglas después de importar la hoja de estilos:
+
+```css
+.gdy-table-grid { min-width: 0; }
+.gdy-table-head-cell[data-column-id="_actions"] { width: auto; }
 ```
 
 ### Visibilidad de columnas
@@ -1112,9 +1139,8 @@ Antes, el "?" tenía que vivir dentro de `header`, que solo acepta texto, así q
 + { id: "amount", header: "Monto", accessor: (row) => row.amount, headerTooltip: "Suma de los contratos vigentes" }
 ```
 
-El tooltip se descarga solo en las tablas con algún `headerTooltip`, justo después del primer render. Hasta
-entonces el "?" es el mismo botón, y tocarlo abre el tooltip apenas llega. Los tests que lo abren ya lo
-esperan: `await screen.findByRole("tooltip")`.
+El tooltip es parte de la tabla desde el primer render: tocar el "?" lo abre en el acto, así que un test puede
+leerlo con `screen.getByRole("tooltip")` justo después del clic.
 
 ### Layout y scroll
 
@@ -1154,8 +1180,6 @@ calendario de los filtros. Los defaults están en español (decisión de product
 que quieras cambiar y el resto queda igual. Los textos con valores son funciones.
 
 ```tsx
-import { enUS } from "date-fns/locale";
-
 <DataTable
   columns={columns}
   data={invoices}
@@ -1166,8 +1190,10 @@ import { enUS } from "date-fns/locale";
       total === 0 ? `0 ${itemsName}` : `Showing ${from}–${to} of ${total} ${itemsName}`,
     pageOf: (page, count) => `Page ${page} of ${count}`,
     itemsName: "invoices",
+    calendarPreviousMonth: "Previous month",
+    calendarNextMonth: "Next month",
   }}
-  calendarLocale={enUS}
+  calendarLocale="en-US"
 />;
 ```
 
@@ -1179,10 +1205,15 @@ import { enUS } from "date-fns/locale";
   rearma las columnas y los menús cada vez.
 - **Los contenidos son tuyos.** Los títulos de columna, los valores de las celdas y tus propios
   controles de la barra son textos de tu app: traducilos ahí.
-- **`calendarLocale`** recibe un locale de `date-fns` y cambia los nombres de meses y días, el primer
-  día de la semana y el desplegable de meses. Sin la prop, el calendario queda en español. Un locale de
-  `react-day-picker/locale` (`import { enUS } from "react-day-picker/locale"`) traduce además los
-  nombres accesibles del calendario ("mes anterior", "elegir el año"), que si no quedan en inglés.
+- **`calendarLocale`** recibe una etiqueta BCP 47 (`"en-US"`, `"pt-BR"`) y cambia los nombres de
+  meses y días, el primer día de la semana y el desplegable de meses; los escribe el `Intl` del
+  navegador, así que cualquier idioma funciona sin instalar nada. Sin la prop, el calendario queda en
+  español. Un locale de `date-fns` (`enUS` de `date-fns/locale`) sigue sirviendo: el calendario lee su
+  `code` y su `weekStartsOn`. El primer día de la semana lo da el navegador (`Intl.Locale#getWeekInfo`);
+  donde no existe (Firefox) la semana empieza el lunes, así que pasa
+  `{ code: "en-US", options: { weekStartsOn: 0 } }` si tus usuarios esperan el domingo en todos lados.
+- **Los nombres accesibles del calendario** ("Mes anterior", "Elegir el año", "Hoy, …") son las claves
+  `calendar*` de `labels`, en español por defecto como el resto de los textos.
 - Los campos de fecha muestran como placeholder la máscara de `dateInputFormat` (`"dd/mm/yyyy"`);
   elegí la que esperan tus usuarios.
 
@@ -1230,6 +1261,12 @@ Claves comunes a la tabla y al kanban (`DataViewLabels`):
 | `pickRange` | `"Seleccionar rango"` | Nombre accesible del botón del calendario (rango) | — |
 | `dateLoadError` | `"No se pudo cargar el calendario. Si sigue sin aparecer, recarga la página."` | Aviso del filtro de fecha cuando no se pudo descargar el calendario | — |
 | `dateLoadRetry` | `"Reintentar"` | Botón que vuelve a descargar el calendario | — |
+| `calendarNavigation` | `"Navegación del calendario"` | Nombre accesible de la navegación del calendario | — |
+| `calendarPreviousMonth` | `"Mes anterior"` | Nombre accesible del botón de mes anterior del calendario | — |
+| `calendarNextMonth` | `"Mes siguiente"` | Nombre accesible del botón de mes siguiente del calendario | — |
+| `calendarChooseMonth` | `"Elegir el mes"` | Nombre accesible del desplegable de meses del calendario | — |
+| `calendarChooseYear` | `"Elegir el año"` | Nombre accesible del desplegable de años del calendario | — |
+| `calendarToday` | `"Hoy"` | Prefijo del nombre accesible del día de hoy ("Hoy, viernes, 6 de noviembre de 2026") | — |
 | `labeledValue(label, value)` | `` `${label}: ${value}` `` | Une un prefijo y su valor: "Agrupar por: Ninguno", "Mostrar: Activos", los selectores propios y la etiqueta de la card | — |
 
 Claves propias de la tabla (`DataTableLabels`):

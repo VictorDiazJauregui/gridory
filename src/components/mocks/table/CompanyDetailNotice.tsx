@@ -12,11 +12,11 @@ export const CompanyDetailNotice = ({ detailId, onClose }: CompanyDetailNoticePr
   const translate = useDemoText();
   if (!company) return null;
   return (
-    <div role="status" className="mb-3 flex items-center justify-between rounded-md border px-3 py-2 text-sm">
+    <div role="status" className="mb-3 flex items-center justify-between rounded-gdy-md border px-3 py-2 text-sm">
       <span>
         {translate("Detalle de")} <strong>{company.name}</strong> ({company.country})
       </span>
-      <button type="button" className="rounded p-1 hover:bg-muted" aria-label={translate("Cerrar el detalle")} onClick={onClose}>
+      <button type="button" className="rounded p-1 hover:bg-gdy-muted" aria-label={translate("Cerrar el detalle")} onClick={onClose}>
         <X size={14} />
       </button>
     </div>

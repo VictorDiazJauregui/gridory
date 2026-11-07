@@ -1,6 +1,5 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import { enUS } from "date-fns/locale";
-import { es as dayPickerSpanish } from "react-day-picker/locale";
 import { expect, test } from "vitest";
 import { buildCompanyColumns } from "../components/mocks/company/company-columns";
 import { MOCK_COMPANY_ROWS, type MockCompanyRow } from "../components/mocks/company/company-rows";
@@ -59,8 +58,8 @@ const openRangeCalendar = async (container: HTMLElement, labels: { between: stri
 test("a full English labels object translates the toolbar", () => {
   renderEnglishTable({ createLabel: undefined });
   expect(screen.getByPlaceholderText("Search...")).toBeInTheDocument();
-  expect(screen.getByRole("combobox", { name: "Show" })).toHaveTextContent("Show: All");
-  expect(screen.getByRole("combobox", { name: "Group by" })).toHaveTextContent("Group by: None");
+  expect(screen.getByRole("combobox", { name: "Show" })).toHaveDisplayValue("Show: All");
+  expect(screen.getByRole("combobox", { name: "Group by" })).toHaveDisplayValue("Group by: None");
   expect(screen.getByRole("button", { name: "Table" })).toBeInTheDocument();
   expect(screen.getByRole("button", { name: "Board" })).toBeInTheDocument();
   expect(screen.getByRole("button", { name: "New" })).toBeInTheDocument();
@@ -118,12 +117,33 @@ test("without calendarLocale the calendar stays in Spanish", async () => {
   expect(weekdays.slice(0, 7)).toEqual(["lu", "ma", "mi", "ju", "vi", "sá", "do"]);
 });
 
-test("a react-day-picker locale also translates the calendar's accessible names", async () => {
-  const calendar = await openRangeCalendar(renderTable({ calendarLocale: dayPickerSpanish }), {
-    between: "Entre (rango)",
-    pickRange: "Seleccionar rango",
+test("the calendar's accessible names are in Spanish by default", async () => {
+  const calendar = await openRangeCalendar(renderTable(), { between: "Entre (rango)", pickRange: "Seleccionar rango" });
+  expect(within(calendar).getByRole("navigation", { name: "Navegación del calendario" })).toBeInTheDocument();
+  expect(within(calendar).getByRole("button", { name: "Mes anterior" })).toBeInTheDocument();
+  expect(within(calendar).getByRole("button", { name: "Mes siguiente" })).toBeInTheDocument();
+  expect(within(calendar).getAllByRole("combobox", { name: "Elegir el mes" })).toHaveLength(2);
+  expect(within(calendar).getAllByRole("combobox", { name: "Elegir el año" })).toHaveLength(2);
+  expect(within(calendar).getByRole("button", { name: /^Hoy, / })).toBeInTheDocument();
+});
+
+test("the calendar labels translate the calendar's accessible names", async () => {
+  const calendar = await openRangeCalendar(renderEnglishTable(), { between: "Between (range)", pickRange: "Pick a range" });
+  expect(within(calendar).getByRole("navigation", { name: "Calendar navigation" })).toBeInTheDocument();
+  expect(within(calendar).getByRole("button", { name: "Previous month" })).toBeInTheDocument();
+  expect(within(calendar).getByRole("button", { name: "Next month" })).toBeInTheDocument();
+  expect(within(calendar).getAllByRole("combobox", { name: "Choose the month" })).toHaveLength(2);
+  expect(within(calendar).getAllByRole("combobox", { name: "Choose the year" })).toHaveLength(2);
+  expect(within(calendar).getByRole("button", { name: /^Today, / })).toBeInTheDocument();
+});
+
+test("a BCP 47 tag sets the calendar language", async () => {
+  const calendar = await openRangeCalendar(renderEnglishTable({ calendarLocale: "en-US" }), {
+    between: "Between (range)",
+    pickRange: "Pick a range",
   });
-  expect(within(calendar).getByRole("button", { name: "Ir al mes anterior" })).toBeInTheDocument();
+  const weekdays = [...calendar.querySelectorAll(".gdy-calendar-weekday")].map((day) => day.textContent);
+  expect(weekdays.slice(0, 7)).toEqual(["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]);
 });
 
 test("a full English labels object translates the row actions and the inline select", () => {
@@ -157,7 +177,7 @@ test("the older single-text props win over their labels key", () => {
   expect(screen.getByRole("button", { name: "New company" })).toBeInTheDocument();
   expect(screen.getByText("Nothing here")).toBeInTheDocument();
   expect(container.querySelector(".gdy-table-pagination-left")).toHaveTextContent("0 companies");
-  expect(screen.getByRole("combobox", { name: "Group" })).toHaveTextContent("Group: Flat");
+  expect(screen.getByRole("combobox", { name: "Group" })).toHaveDisplayValue("Group: Flat");
 });
 
 test("the row action labels and the archived view labels win over their labels keys", () => {
@@ -165,13 +185,13 @@ test("the row action labels and the archived view labels win over their labels k
     rowActions: { ...TABLE_ROW_ACTIONS, editLabel: "Modify", triggerLabel: "More" },
     archivedView: { defaultValue: "all", label: "View", optionLabels: { all: "Everything" } },
   });
-  expect(screen.getByRole("combobox", { name: "View" })).toHaveTextContent("View: Everything");
+  expect(screen.getByRole("combobox", { name: "View" })).toHaveDisplayValue("View: Everything");
   fireEvent.keyDown(screen.getAllByRole("button", { name: "More" })[0], { key: "Enter" });
   expect(screen.getByRole("menuitem", { name: "Modify" })).toBeInTheDocument();
 });
 
 test("labeledValue joins the selector prefixes and their options", () => {
   renderTable({ labels: { labeledValue: (label, value) => `${label} · ${value}` } });
-  expect(screen.getByRole("combobox", { name: "Agrupar por" })).toHaveTextContent("Agrupar por · Ninguno");
-  expect(screen.getByRole("combobox", { name: "Mostrar" })).toHaveTextContent("Mostrar · Todos");
+  expect(screen.getByRole("combobox", { name: "Agrupar por" })).toHaveDisplayValue("Agrupar por · Ninguno");
+  expect(screen.getByRole("combobox", { name: "Mostrar" })).toHaveDisplayValue("Mostrar · Todos");
 });

@@ -4,7 +4,6 @@ import { expect, test, vi } from "vitest";
 import { DataTable, type DataTableProps, type ManualPaginationState } from "../components/table";
 import { buildCompanyColumns } from "../components/mocks/company/company-columns";
 import { MOCK_COMPANY_ROWS, type MockCompanyRow } from "../components/mocks/company/company-rows";
-import { getOptionByName } from "./option-queries";
 
 type TableProps = Partial<DataTableProps<MockCompanyRow>>;
 
@@ -99,13 +98,12 @@ test("a page size set from outside reports the first page when the page is contr
 test("a controlled page size missing from the options is listed in the select", () => {
   render(tableElement({ pageSize: 13, pageSizeOptions: [10, 25] }));
   const select = screen.getByRole("combobox", { name: "Elementos por página" });
-  expect(select).toHaveTextContent("13");
-  fireEvent.click(select);
-  expect(getOptionByName("13")).toBeInTheDocument();
+  expect(select).toHaveDisplayValue("13");
+  expect(within(select).getByRole("option", { name: "13" })).toBeInTheDocument();
 });
 
 test("an uncontrolled default size missing from the options is not added", () => {
   render(tableElement({ defaultPageSize: 13, pageSizeOptions: [10, 25] }));
-  fireEvent.click(screen.getByRole("combobox", { name: "Elementos por página" }));
-  expect(screen.queryAllByRole("option").map((option) => option.textContent)).toEqual(["10", "25"]);
+  const select = screen.getByRole("combobox", { name: "Elementos por página" });
+  expect(within(select).queryAllByRole("option").map((option) => option.textContent)).toEqual(["10", "25"]);
 });

@@ -175,16 +175,16 @@ fecha activo.
 - `calendarMonthYearDropdown` (por defecto `true`) muestra desplegables de mes y año en la cabecera del
   calendario; con `false`, el mes aparece como texto fijo. Los años van de `calendarFromYear` (por
   defecto, el año actual menos 100) a `calendarToYear` (por defecto, el año actual más 10).
-- El calendario usa el locale español (nombres de meses y de días, semanas que empiezan el lunes),
-  salvo que `calendarLocale` indique otro locale de `date-fns`. Un locale de `react-day-picker/locale`
-  traduce además los nombres accesibles del calendario.
+- El calendario está en español (nombres de meses y de días, semanas que empiezan el lunes), salvo que
+  `calendarLocale` indique otro idioma, como etiqueta BCP 47 (`"en-US"`) o como locale de `date-fns`.
+  Sus nombres accesibles ("Mes anterior", "Elegir el año"…) son las claves `calendar*` de `labels`.
 - Todos los textos de la barra y de los menús ("Limpiar filtros", "Ordenar", "Aplicar"…) se reemplazan
   con `labels`: ver [table.es.md](table.es.md#textos-e-idioma) y
   [kanban.es.md](kanban.es.md#textos-e-idioma).
 
 #### Cuándo se descarga el calendario
 
-Los inputs de fecha y el calendario (`react-day-picker` y `date-fns`) no viajan con la página: se
+Los inputs de fecha y el calendario no viajan con la página: se
 descargan la primera vez que se abre un menú de fecha, y los menús siguientes los reutilizan. Hasta que
 llegan, la sección `"Fechas"` muestra cajas vacías del mismo tamaño y lleva `aria-busy` y `data-loading`,
 así el menú no cambia de tamaño. Si la descarga falla dos veces seguidas (por ejemplo, la app se volvió a
@@ -458,10 +458,11 @@ repetido, o un id integrado, también lanza `DuplicateRowActionError`. El códig
 
 `selectTheme` da estilo a todos los selects del componente: los de la toolbar (vista de archivados,
 selector de agrupado, selectores del encabezado) y, en la tabla, los de edición en línea y de tamaño de
-página. Cada clave de color y `radius` se escribe como una variable CSS `--gdy-select-*` inline en el
-botón del select y en su desplegable, así que gana sobre el mismo token de tu hoja de estilos (consulta
-[SelectTheme](#selecttheme)). `triggerClassName`, `contentClassName` e `itemClassName` añaden clases al
-botón, al desplegable y a cada opción.
+página. Cada uno es el `<select>` del navegador: Gridory da estilo a la caja cerrada, y la lista abierta
+es la del sistema (una hoja o una rueda en el celular), que toma sus colores de la caja y sigue el tema
+oscuro. Cada clave de color y `radius` se escribe como una variable CSS `--gdy-select-*` inline en el
+select, así que gana sobre el mismo token de tu hoja de estilos (consulta [SelectTheme](#selecttheme)).
+`triggerClassName` añade una clase al select.
 
 `thinScrollbars` (por defecto `true`) añade la clase `gdy-thin-scroll` a la raíz, que afina las barras
 de scroll de todas las áreas de scroll internas (el viewport de las filas o del tablero, las listas de
@@ -503,7 +504,7 @@ Todos los tipos de esta sección se exportan desde `gridory`, `gridory/table` y 
 | `calendarMonthYearDropdown` | `boolean` | `true` | Desplegables de mes y año en la cabecera del calendario. |
 | `calendarFromYear` | `number` | año actual menos 100 | Primer año del desplegable de años. |
 | `calendarToYear` | `number` | año actual más 10 | Último año del desplegable de años. |
-| `calendarLocale` | `Locale` (`date-fns`) | español (`es`) | Idioma del calendario de los filtros. |
+| `calendarLocale` | `string \| { code?: string; options?: { weekStartsOn?: number } }` | español (`"es"`) | Idioma del calendario de los filtros: una etiqueta BCP 47 o un locale de `date-fns`. |
 
 ### ToolbarLayout
 
@@ -651,13 +652,11 @@ Todos los tipos de esta sección se exportan desde `gridory`, `gridory/table` y 
 | `border` | `string` | `--gdy-select-border` |
 | `text` | `string` | `--gdy-select-text` |
 | `radius` | `string \| number` | `--gdy-select-radius` (los números, en píxeles) |
-| `contentBackground` | `string` | `--gdy-select-content-bg` |
-| `optionText` | `string` | `--gdy-select-item-text` |
-| `optionHoverBackground` | `string` | `--gdy-select-item-hover-bg` |
-| `optionActiveBackground` | `string` | `--gdy-select-item-active-bg` |
-| `triggerClassName` | `string` | Clase en el botón de cada select. |
-| `contentClassName` | `string` | Clase en cada desplegable. |
-| `itemClassName` | `string` | Clase en cada opción. |
+| `triggerClassName` | `string` | Clase en cada select. |
+
+Todas las claves dan estilo solo a la caja cerrada. Las claves 1.x de la lista abierta (`contentBackground`,
+`optionText`, `optionHoverBackground`, `optionActiveBackground`, `contentClassName`, `itemClassName`) se
+quitaron en la 2.0: consulta [migration-2.0.es.md](migration-2.0.es.md#selects).
 
 ### DateFilterState
 

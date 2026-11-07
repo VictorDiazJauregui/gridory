@@ -2,7 +2,7 @@ import { useId, type ReactNode } from "react";
 import type { ColumnAlign, ColumnDefinition, HeaderTooltipPlacement } from "../types";
 import type { TableColumnProps } from "../model/use-table-core";
 import { TableColumnFilterMenu } from "./TableColumnFilterMenu";
-import { DeferredTableHeaderHelp } from "./DeferredTableHeaderHelp";
+import { TableHeaderHelp } from "./TableHeaderHelp";
 import { TableHeaderHelpDescription } from "./TableHeaderHelpDescription";
 import { TableHeaderTrigger } from "./TableHeaderTrigger";
 
@@ -29,7 +29,7 @@ interface HeaderWithHelpProps<TData> extends TableHeaderInnerProps<TData> {
 const HeaderInnerWithHelp = <TData,>({ column, model, align, tooltip, filterMenu }: HeaderWithHelpProps<TData>) => {
   const descriptionId = useId();
   const placement = resolveHelpPlacement(column, align);
-  const help = <DeferredTableHeaderHelp text={tooltip} label={model.settings.labels.columnHelp(column.header)} />;
+  const help = <TableHeaderHelp text={tooltip} label={model.settings.labels.columnHelp(column.header)} />;
   const helpFirst = isHelpFirst(placement, align);
   return (
     <div className="gdy-table-head-inner" data-help-placement={placement}>

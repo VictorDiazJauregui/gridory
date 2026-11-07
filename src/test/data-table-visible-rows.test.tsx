@@ -1,5 +1,6 @@
 import { StrictMode } from "react";
 import { fireEvent, render, screen, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { expect, test, vi } from "vitest";
 import { DataTable, type DataTableProps, type VisibleRowsState } from "../components/table";
 import { buildVisibleRowsState, isSameVisibleRows } from "../components/table/model/visible-rows";
@@ -64,10 +65,9 @@ test("pageRows is the current page and filteredRows keeps every row", () => {
   expect(lastState(listener).totalRows).toBe(3);
 });
 
-test("with groups the rows come in screen order, collapsed groups included", () => {
+test("with groups the rows come in screen order, collapsed groups included", async () => {
   const { listener, container } = renderTable({ groupableColumnIds: ["status"] });
-  fireEvent.click(screen.getByRole("combobox", { name: "Agrupar por" }));
-  fireEvent.click(screen.getByRole("option", { name: "Agrupar por: Estado" }));
+  await userEvent.selectOptions(screen.getByRole("combobox", { name: "Agrupar por" }), "Agrupar por: Estado");
   const grouped = ["Frío Delta", "Cold South", "Pack Norte"];
   expect(names(lastState(listener).pageRows)).toEqual(grouped);
   fireEvent.click(container.querySelector(".gdy-table-group-toggle") as Element);

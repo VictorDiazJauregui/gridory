@@ -28,6 +28,8 @@ To load only the modules you use, import `gridory/base.css` and then their sheet
 `gridory/table.css`, instead of `styles.css` (see
 [Per-module stylesheets](docs/theming.md#per-module-stylesheets)).
 
+Upgrading from 1.x? See the [2.0 migration guide](docs/migration-2.0.md).
+
 The built-in UI texts are in Spanish. Every one of them can be replaced through props.
 
 The bundled TypeScript declarations compile with `skipLibCheck: false` and
