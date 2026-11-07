@@ -1,6 +1,6 @@
 # Migrating to 2.0
 
-2.0.0 only breaks what this guide lists. Everything else (markup, classes, styles and events) is the same
+2.0.0 only changes what this guide lists. Everything else (markup, classes, styles and events) is the same
 as in 1.5.0. Each section says who is affected, what to change, and how to check that nothing was missed.
 
 ## Tailwind preset
@@ -80,6 +80,48 @@ and does not change). To keep the 1.x layout, add these two rules after the libr
 
 If your tests compare the table markup, the `table` element now carries its minimum width:
 `<table class="gdy-table-grid" style="--gdy-table-min-width: 476px;">`.
+
+## Header help and row checkbox
+
+**Who is affected:** apps whose tests or CSS look for the Radix wrapper of the header help tooltip
+(`[data-radix-popper-content-wrapper]`), its `--radix-popper-*` and `--radix-tooltip-*` variables or the attributes
+Radix wrote. Everyone else needs no change: the "?" and the row checkbox look the same, sit in the same place and
+answer the same keys.
+
+The header help tooltip is now Gridory's own, and it and the row checkbox come with the table from the first render
+instead of downloading after it. The checkbox markup does not change. The open tooltip does:
+
+```html
+<!-- 1.x -->
+<div data-radix-popper-content-wrapper style="position: fixed; transform: translate(…); z-index: 60; --radix-popper-…">
+  <div data-side="top" data-align="center" data-state="delayed-open" role="tooltip" id="radix-…"
+    class="gdy-scope gdy-table-head-tooltip" style="--radix-tooltip-…">Revenue of the last year</div>
+</div>
+<!-- 2.0 -->
+<div role="tooltip" class="gdy-scope gdy-table-head-tooltip" data-side="top" style="position: fixed; top: …; left: …">
+  Revenue of the last year
+</div>
+```
+
+- The tooltip keeps `role="tooltip"`, the class `gdy-table-head-tooltip` and `data-side` (`top`, or `bottom` when it
+  does not fit above), and loses `data-align`, `data-state` and its `id`.
+- The "?" (`gdy-table-head-help`) keeps `data-state` (ending in `open` while the tooltip shows), and no longer takes
+  `aria-describedby` or `data-radix-popper-*` while open. Screen readers still hear the text: the column header
+  links it with `aria-describedby`, as in 1.5.0.
+- A test can read the tooltip with `getByRole("tooltip")` right after the click; `findByRole` keeps working.
+
+```css
+/* 1.x */
+[data-radix-popper-content-wrapper]:has(.gdy-table-head-tooltip) { z-index: 100 !important; }
+/* 2.0: the tooltip is rendered in <body>, so set the token where it inherits */
+:root { --gdy-table-tooltip-z: 100; }
+```
+
+To find what is left, search your sources:
+
+```bash
+grep -rnE "data-radix-popper-content-wrapper|--radix-(popper|tooltip)-|gdy-table-head-tooltip\[data-(state|align)" src
+```
 
 ## Calendar
 
