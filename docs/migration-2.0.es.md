@@ -1,6 +1,6 @@
 # Migrar a la 2.0
 
-La 2.0.0 solo rompe lo que lista esta guía. Todo lo demás (marcado, clases, estilos y eventos) es igual que
+La 2.0.0 solo cambia lo que lista esta guía. Todo lo demás (marcado, clases, estilos y eventos) es igual que
 en la 1.5.0. Cada sección dice a quién afecta, qué cambiar y cómo comprobar que no quedó nada.
 
 ## Preset de Tailwind
@@ -55,12 +55,12 @@ no tiene que cambiar; lo que cambia es cómo se ve la tabla:
 - **La columna de acciones conserva 56 px** (96 px con `rowActions.columnLabel`) en lugar de repartirse el lugar
   que queda con las columnas sin `width`. En una pantalla ancha se angosta y esas columnas se ensanchan.
 - **Una columna sin `width` nunca baja de su `minWidth`** (`120` por defecto). En un celular, donde la 1.x
-  apretaba esas columnas a unos 25 px y su contenido desaparecía, ahora las filas se desplazan de costado dentro
+  apretaba esas columnas a unos 25 px y su contenido desaparecía, ahora las filas se desplazan en horizontal dentro
   de la tabla, y la página no.
 
 ```tsx
 // 1.x, iPhone: País, Estado, Ingresos y Alta medían 25 px cada una
-// 2.0, iPhone: 120 px cada una, y las filas se desplazan de costado
+// 2.0, iPhone: 120 px cada una, y las filas se desplazan en horizontal
 const columns = [
   { id: "name", header: "Empresa", accessor: (row) => row.name, width: 220 },
   { id: "country", header: "País", accessor: (row) => row.country },
@@ -81,6 +81,49 @@ la librería:
 
 Si tus tests comparan el marcado de la tabla, el elemento `table` ahora lleva su ancho mínimo:
 `<table class="gdy-table-grid" style="--gdy-table-min-width: 476px;">`.
+
+## Ayuda del encabezado y casilla
+
+**A quién afecta:** a las apps cuyos tests o CSS buscan la envoltura de Radix del tooltip de ayuda del encabezado
+(`[data-radix-popper-content-wrapper]`), sus variables `--radix-popper-*` y `--radix-tooltip-*` o los atributos que
+escribía Radix. Las demás no cambian nada: el "?" y la casilla de las filas se ven igual, están en el mismo lugar y
+responden a las mismas teclas.
+
+El tooltip de ayuda del encabezado ahora es propio de Gridory, y él y la casilla de las filas vienen con la tabla
+desde el primer render en lugar de descargarse después. El marcado de la casilla no cambia. El del tooltip abierto,
+sí:
+
+```html
+<!-- 1.x -->
+<div data-radix-popper-content-wrapper style="position: fixed; transform: translate(…); z-index: 60; --radix-popper-…">
+  <div data-side="top" data-align="center" data-state="delayed-open" role="tooltip" id="radix-…"
+    class="gdy-scope gdy-table-head-tooltip" style="--radix-tooltip-…">Ingresos del último año</div>
+</div>
+<!-- 2.0 -->
+<div role="tooltip" class="gdy-scope gdy-table-head-tooltip" data-side="top" style="position: fixed; top: …; left: …">
+  Ingresos del último año
+</div>
+```
+
+- El tooltip conserva `role="tooltip"`, la clase `gdy-table-head-tooltip` y `data-side` (`top`, o `bottom` cuando no
+  entra arriba), y pierde `data-align`, `data-state` y su `id`.
+- El "?" (`gdy-table-head-help`) conserva `data-state` (termina en `open` mientras se ve el tooltip), y ya no lleva
+  `aria-describedby` ni `data-radix-popper-*` mientras está abierto. Los lectores de pantalla siguen oyendo el
+  texto: el encabezado de la columna lo enlaza con `aria-describedby`, como en la 1.5.0.
+- Un test puede leer el tooltip con `getByRole("tooltip")` justo después del clic; `findByRole` sigue sirviendo.
+
+```css
+/* 1.x */
+[data-radix-popper-content-wrapper]:has(.gdy-table-head-tooltip) { z-index: 100 !important; }
+/* 2.0: el tooltip se dibuja dentro de <body>, así que el token va donde se hereda */
+:root { --gdy-table-tooltip-z: 100; }
+```
+
+Para encontrar lo que quede, busca en tus fuentes:
+
+```bash
+grep -rnE "data-radix-popper-content-wrapper|--radix-(popper|tooltip)-|gdy-table-head-tooltip\[data-(state|align)" src
+```
 
 ## Calendario
 
@@ -151,7 +194,7 @@ npm ls date-fns react-day-picker
 ## Selects
 
 **A quién afecta:** a las apps que pasan las claves de opciones de `selectTheme`, dan estilo a la lista abierta
-de un select desde su CSS o prueban los selects de la tabla, el kanban, la grilla de tarjetas o `SignUpForm`
+de un select desde su CSS o prueban los selects de la tabla, el kanban, la vista de tarjetas o `SignUpForm`
 abriendo la lista. La caja cerrada se ve igual que en la 1.5.0: mismo tamaño, colores, ícono y placeholder, y
 `valueHighlights` sigue pintando toda la caja del select de edición en línea.
 
