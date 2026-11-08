@@ -183,7 +183,8 @@ el tablero vuelve al primer grupo sin llamar a `onGroupChange`.
 Cada columna tiene una cabecera con su título (recortado con puntos suspensivos y con el texto
 completo en el atributo `title`) y el número de tarjetas que muestra. El tablero hace scroll
 horizontal, y el cuerpo de cada columna hace scroll vertical a partir de `columnBodyMaxHeight` píxeles
-(por defecto `480`).
+(por defecto `480`). Para ocupar la altura del padre o cambiar el ancho de las columnas, ver
+[Tamaño de las columnas](#tamaño-de-las-columnas).
 
 ### Drag and drop
 
@@ -488,6 +489,54 @@ const visibleDeals = useMemo(() => limitPerStage(deals, shown, PAGE), [deals, sh
     ) : null
   }
 />;
+```
+
+### Tamaño de las columnas
+
+Las tres están apagadas por defecto: sin ellas el tablero es el de la 2.0.0, con columnas de 320px y el
+tope de `columnBodyMaxHeight`.
+
+```ts
+fillHeight?: boolean;   // default false
+columnWidth?: number;   // px; por defecto 320 (de la hoja de estilos)
+fillWidth?: boolean;    // default false
+```
+
+- `fillHeight` ocupa la altura del padre, como en la tabla: la raíz, la tarjeta y el viewport del tablero
+  pasan a ser una columna flex, y el cuerpo de cada columna se estira hasta abajo y hace scroll propio.
+  La página no crece y el tablero sigue haciendo scroll horizontal cuando las columnas no entran. **El
+  padre tiene que tener una altura acotada** (`height`, o un hijo flex con `min-height: 0`). Mientras
+  está activa, `columnBodyMaxHeight` y la altura mínima de `boardMinHeightClassName` dejan de aplicar,
+  como la altura mínima de la tabla con su `fillHeight`.
+- `columnWidth` fija el ancho de cada columna abierta. Se escribe en la raíz como el token
+  `--gdy-kanban-column-width`, así que la prop gana al mismo token declarado en `:root` o en un ancestro,
+  y un token puesto en una columna gana a la prop (ver [Una columna distinta del resto](#una-columna-distinta-del-resto)).
+- `fillWidth` reparte el ancho del tablero en partes iguales entre las columnas abiertas, sin bajar de
+  `columnWidth` (o 320px): en una pantalla ancha no queda una franja vacía a la derecha, y cuando las
+  columnas no entran el tablero hace scroll horizontal, como sin ella.
+- Las columnas colapsadas siguen siendo una franja en todos los modos y no entran en el reparto; con
+  `fillHeight` la franja tiene el alto del tablero. Las columnas que se muestran mientras `loading` toman
+  el mismo ancho y alto, así nada salta cuando llegan los datos.
+- En un celular entra una columna de 320px y el tablero hace scroll horizontal, como sin las props. Un
+  `columnWidth` más ancho que la pantalla no se achica.
+
+```tsx
+<div style={{ height: "calc(100vh - 120px)" }}>
+  <KanbanBoard {...boardProps} fillHeight fillWidth />
+</div>
+```
+
+Antes, el mismo diseño pedía reglas sobre clases internas y un `!important` contra el tope en línea del
+cuerpo, que cualquier versión siguiente podía romper:
+
+```css
+/* Antes: el tablero parchado desde afuera */
+.my-board .gdy-kanban-column {
+  flex: 1 1 320px;
+}
+.my-board .gdy-kanban-column-body {
+  max-height: none !important;
+}
 ```
 
 ### Clic en la tarjeta
@@ -807,6 +856,7 @@ ancestro del tablero:
 | `--gdy-kanban-drop-disabled-outline` | `--gdy-destructive` | Contorno discontinuo de una columna que `canDrop` rechaza. |
 | `--gdy-kanban-drop-disabled-bg` | Un tinte de `--gdy-destructive` | Fondo de una columna que `canDrop` rechaza. |
 | `--gdy-kanban-column-collapsed-width` | `44px` | Ancho de una columna colapsada. |
+| `--gdy-kanban-column-width` | `320px` | Ancho de una columna abierta; con `fillWidth`, su mínimo. `columnWidth` lo escribe en la raíz. |
 
 `boardWrapClassName` agrega tus propias clases al viewport. `boardMinHeightClassName` (por defecto
 `"gdy-kanban-min-h-md"`) fija su altura mínima con una de las utilidades incluidas,
@@ -885,6 +935,15 @@ Para pintar una columna, se cambia su token según su valor, sin tocar ninguna r
 }
 ```
 
+El ancho funciona igual: `--gdy-kanban-column-width` en una columna gana a `columnWidth`, y con
+`fillWidth` es el mínimo de esa columna (ver [Tamaño de las columnas](#tamaño-de-las-columnas)):
+
+```css
+.gdy-kanban-column[data-column-value="won"] {
+  --gdy-kanban-column-width: 420px;
+}
+```
+
 Antes, la única forma era la posición de la columna, que se rompe en cuanto cambia el orden de las
 columnas o el grupo activo:
 
@@ -938,7 +997,10 @@ Props propias de `KanbanBoardProps<TData>`, en el orden del código fuente.
 | `getColumnClassName` | `(value: string) => string \| undefined` | — | Clase extra para una columna. Ver [Una columna distinta del resto](#una-columna-distinta-del-resto). |
 | `getColumnAttributes` | `(value: string) => KanbanColumnAttributes` | — | Atributos `data-*` y `aria-*` extra para una columna. |
 | `boardMinHeightClassName` | `string` | `"gdy-kanban-min-h-md"` | Clase de altura mínima del viewport del tablero. |
-| `columnBodyMaxHeight` | `number` | `480` | Altura máxima en píxeles del cuerpo de cada columna antes de hacer scroll. |
+| `columnBodyMaxHeight` | `number` | `480` | Altura máxima en píxeles del cuerpo de cada columna antes de hacer scroll. No aplica con `fillHeight`. |
+| `fillHeight` | `boolean` | `false` | Ocupa la altura del padre; el cuerpo de cada columna hace scroll propio. Ver [Tamaño de las columnas](#tamaño-de-las-columnas). |
+| `columnWidth` | `number` | — (320px) | Ancho en píxeles de cada columna abierta; con `fillWidth`, el mínimo. |
+| `fillWidth` | `boolean` | `false` | Reparte el ancho del tablero entre las columnas abiertas, sin bajar de `columnWidth`. |
 
 `KanbanBoardProps` también acepta todas las props de `DataViewProps` (`searchPlaceholder`,
 `createLabel`, `onCreate`, `emptyMessage`, `loading`, `loadingRowCount`, `renderLoading`, `rowActions`,
