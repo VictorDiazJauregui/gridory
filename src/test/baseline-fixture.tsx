@@ -88,6 +88,8 @@ const numberReactIdsInOrder = (html: string) => {
 
 // Added on purpose: data-column-id, data-row-id and the table's ⋯ aria-label (1.1.0), the arrows' aria-label
 // (1.2.0) and each kanban column's data-column-value (1.3.0). Anything else must stay byte for byte.
+export const normalizeIconsAndReactIds = (html: string) => keepOnlyGridoryIconClasses(numberReactIdsInOrder(html));
+
 export const normalizeBaselineHtml = (html: string) =>
   keepOnlyGridoryIconClasses(numberReactIdsInOrder(html))
     .replace(ADDED_ATTRIBUTES, "")
