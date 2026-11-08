@@ -4,6 +4,7 @@ import { buildLoadingRootAttributes } from "../shared/loading/loading-state";
 import { resolveRootStyle } from "../shared/root-style";
 import { useResolvedLabels } from "../shared/labels/use-resolved-labels";
 import { applyBoardDefaults, assertGroupConfiguration, type KanbanBoardView } from "./board-view";
+import { resolveBoardSizeClassNames, resolveColumnWidthStyle } from "./board-size";
 import { KanbanBoardBody } from "./board/KanbanBoardBody";
 import { KanbanMoveAnnouncer } from "./board/KanbanMoveAnnouncer";
 import { KANBAN_BOARD_LABELS } from "./labels";
@@ -13,7 +14,13 @@ import type { KanbanBoardProps } from "./types";
 import { useKanbanBoardState } from "./model/use-kanban-board-state";
 
 const resolveRootClassName = <TData,>(view: KanbanBoardView<TData>) =>
-  cn("gdy-kanban", view.thinScrollbars && "gdy-thin-scroll", view.className, view.classNames?.root);
+  cn(
+    "gdy-kanban",
+    view.thinScrollbars && "gdy-thin-scroll",
+    ...resolveBoardSizeClassNames(view),
+    view.className,
+    view.classNames?.root,
+  );
 
 export const KanbanBoard = <TData,>(props: KanbanBoardProps<TData>) => {
   assertGroupConfiguration(props.groups, props.defaultGroupId);
@@ -22,7 +29,7 @@ export const KanbanBoard = <TData,>(props: KanbanBoardProps<TData>) => {
   return (
     <div
       className={resolveRootClassName(view)}
-      style={resolveRootStyle(view)}
+      style={{ ...resolveRootStyle(view), ...resolveColumnWidthStyle(view) }}
       {...buildLoadingRootAttributes(view.loading)}
     >
       <div className="gdy-scope gdy-card">

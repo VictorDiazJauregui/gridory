@@ -88,9 +88,10 @@
   min-height: 100%;
 }
 
+/* --gdy-kanban-column-width: set by columnWidth on the root, or by the app on any ancestor or on one column. */
 .gdy-kanban-column {
-  width: 320px;
-  min-width: 320px;
+  width: var(--gdy-kanban-column-width, 320px);
+  min-width: var(--gdy-kanban-column-width, 320px);
   border: 1px solid var(--gdy-kanban-column-border, var(--gdy-border));
   border-radius: 10px;
   background: var(--gdy-kanban-column-bg, var(--gdy-muted));
@@ -189,6 +190,46 @@
   flex-direction: column;
   gap: 8px;
   overflow-y: auto;
+}
+
+/* fillWidth: the open columns share the board equally from a zero basis; the token stays their minimum, so when
+   they do not fit they overflow and the viewport scrolls horizontally. Collapsed strips keep their own width. */
+.gdy-kanban-fill-width .gdy-kanban-column:not([data-collapsed]) {
+  flex: 1 1 0;
+}
+
+/* fillHeight, as .gdy-table-fill: a flex column chain from the root to each column body, which takes the rest of
+   its column and scrolls; min-height: 0 on every link lets the chain shrink to the parent's bounded height. */
+.gdy-kanban-fill {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.gdy-kanban-fill > .gdy-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.gdy-kanban-fill .gdy-kanban-board-wrap {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.gdy-kanban-fill .gdy-kanban-board {
+  flex: 1;
+  min-height: 0;
+  align-items: stretch;
+}
+
+.gdy-kanban-fill .gdy-kanban-column-body {
+  flex: 1;
+  min-height: 0;
 }
 
 .gdy-kanban-column[data-drop-target] {

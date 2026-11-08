@@ -181,7 +181,8 @@ selected id, the board falls back to the first group without calling `onGroupCha
 
 Each column has a header with its label (truncated with an ellipsis, full text in the `title`
 attribute) and the number of cards it shows. The board scrolls horizontally, and each column body
-scrolls vertically past `columnBodyMaxHeight` pixels (default `480`).
+scrolls vertically past `columnBodyMaxHeight` pixels (default `480`). To fill the parent's height or
+change the width of the columns, see [Column size](#column-size).
 
 ### Drag and drop
 
@@ -475,6 +476,55 @@ const visibleDeals = useMemo(() => limitPerStage(deals, shown, PAGE), [deals, sh
     ) : null
   }
 />;
+```
+
+### Column size
+
+All three are off by default: without them the board is the one of 2.0.0, with 320px columns and a
+`columnBodyMaxHeight` cap.
+
+```ts
+fillHeight?: boolean;   // default false
+columnWidth?: number;   // px; default 320 (from the stylesheet)
+fillWidth?: boolean;    // default false
+```
+
+- `fillHeight` fills the parent's height, like the table's: the root, the card and the board viewport
+  become a flex column, and each column body stretches to the bottom and scrolls on its own. The page
+  does not grow and the board keeps scrolling sideways when the columns do not fit. **The parent must
+  have a bounded height** (`height`, or a flex item with `min-height: 0`). While it is on,
+  `columnBodyMaxHeight` and the minimum height of `boardMinHeightClassName` stop applying, as the
+  table's minimum height does with its `fillHeight`.
+- `columnWidth` sets the width of every open column. It is written on the root as the
+  `--gdy-kanban-column-width` token, so the prop wins over the same token declared on `:root` or on an
+  ancestor, and a token set on one column wins over the prop (see
+  [One column apart from the rest](#one-column-apart-from-the-rest)).
+- `fillWidth` shares the board's width equally among the open columns, never below `columnWidth` (or
+  320px): there is no empty strip at the right on a wide screen, and when the columns do not fit the
+  board scrolls sideways, as without it.
+- Collapsed columns keep their strip in every mode and take no part in the share; with `fillHeight` the
+  strip is as tall as the board. The columns shown while `loading` take the same width and height, so
+  nothing jumps when the data arrives.
+- On a phone one 320px column fits and the board scrolls sideways, as without the props. A
+  `columnWidth` wider than the screen is not narrowed.
+
+```tsx
+<div style={{ height: "calc(100vh - 120px)" }}>
+  <KanbanBoard {...boardProps} fillHeight fillWidth />
+</div>
+```
+
+Before, the same layout needed rules on internal classes and an `!important` against the body's inline
+cap, which any later version could break:
+
+```css
+/* Before: patching the board from outside */
+.my-board .gdy-kanban-column {
+  flex: 1 1 320px;
+}
+.my-board .gdy-kanban-column-body {
+  max-height: none !important;
+}
 ```
 
 ### Card click
@@ -784,6 +834,7 @@ declaring them on `:root`, on your dark theme scope or on any ancestor of the bo
 | `--gdy-kanban-drop-disabled-outline` | `--gdy-destructive` | Dashed outline of a column `canDrop` rejects. |
 | `--gdy-kanban-drop-disabled-bg` | A tint of `--gdy-destructive` | Background of a column `canDrop` rejects. |
 | `--gdy-kanban-column-collapsed-width` | `44px` | Width of a collapsed column. |
+| `--gdy-kanban-column-width` | `320px` | Width of an open column; with `fillWidth`, its minimum. `columnWidth` sets it on the root. |
 
 `boardWrapClassName` appends your own classes to the viewport. `boardMinHeightClassName` (default
 `"gdy-kanban-min-h-md"`) sets its minimum height with one of the built-in utilities,
@@ -861,6 +912,15 @@ To paint one column, set its token from its value; no rule of the board changes:
 }
 ```
 
+The width works the same way: `--gdy-kanban-column-width` on one column wins over `columnWidth`, and
+with `fillWidth` it is that column's minimum (see [Column size](#column-size)):
+
+```css
+.gdy-kanban-column[data-column-value="won"] {
+  --gdy-kanban-column-width: 420px;
+}
+```
+
 Before, the only way was the column's position, which breaks as soon as the order of the columns or
 the active group changes:
 
@@ -914,7 +974,10 @@ Own props of `KanbanBoardProps<TData>`, in source order.
 | `getColumnClassName` | `(value: string) => string \| undefined` | — | Extra class for one column. See [One column apart from the rest](#one-column-apart-from-the-rest). |
 | `getColumnAttributes` | `(value: string) => KanbanColumnAttributes` | — | Extra `data-*` and `aria-*` attributes for one column. |
 | `boardMinHeightClassName` | `string` | `"gdy-kanban-min-h-md"` | Minimum height class of the board viewport. |
-| `columnBodyMaxHeight` | `number` | `480` | Maximum height in pixels of each column body before it scrolls. |
+| `columnBodyMaxHeight` | `number` | `480` | Maximum height in pixels of each column body before it scrolls. Ignored with `fillHeight`. |
+| `fillHeight` | `boolean` | `false` | Fills the parent's height; each column body scrolls on its own. See [Column size](#column-size). |
+| `columnWidth` | `number` | — (320px) | Width in pixels of every open column; with `fillWidth`, the minimum. |
+| `fillWidth` | `boolean` | `false` | Shares the board's width among the open columns, never below `columnWidth`. |
 
 `KanbanBoardProps` also accepts every `DataViewProps` prop (`searchPlaceholder`, `createLabel`,
 `onCreate`, `emptyMessage`, `loading`, `loadingRowCount`, `renderLoading`, `rowActions`, `archivedView`,
