@@ -106,6 +106,8 @@ The state selectors column lists the attributes the stylesheets combine with eac
 | `gdy-kanban-column-title` | styled | — |
 | `gdy-kanban-column-toggle` | styled | — |
 | `gdy-kanban-empty-col` | styled | — |
+| `gdy-kanban-fill` | styled | — |
+| `gdy-kanban-fill-width` | styled | — |
 | `gdy-kanban-filter-arrow` | hook only | — |
 | `gdy-kanban-filter-icon` | hook only | — |
 | `gdy-kanban-filter-item` | styled | — |
@@ -901,6 +903,7 @@ any ancestor overrides that part only. `--gdy-select-*` also mirror the `selectT
 | `--gdy-kanban-column-bg` | `var(--gdy-muted)` | kanban |
 | `--gdy-kanban-column-border` | `var(--gdy-border)` | kanban |
 | `--gdy-kanban-column-collapsed-width` | `44px` | kanban |
+| `--gdy-kanban-column-width` | `320px` | kanban |
 | `--gdy-kanban-drop-bg` | `color-mix(in oklab, var(--gdy-foreground) 6%, var(--gdy-muted))` | kanban |
 | `--gdy-kanban-drop-disabled-bg` | `color-mix(in oklab, var(--gdy-destructive) 6%, var(--gdy-muted))` | kanban |
 | `--gdy-kanban-drop-disabled-outline` | `var(--gdy-destructive)` | kanban |

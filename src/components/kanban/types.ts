@@ -281,7 +281,24 @@ export interface KanbanBoardProps<TData> extends DataViewProps<TData>, DataViewS
   getColumnAttributes?: (value: string) => KanbanColumnAttributes;
   boardWrapClassName?: string;
   boardMinHeightClassName?: string;
+  /** Ignored while `fillHeight` is on: the column bodies then reach the bottom of the board. */
   columnBodyMaxHeight?: number;
+  /**
+   * Fills the parent's height, like the table's `fillHeight`: each column body stretches to the bottom and scrolls
+   * on its own. Requires a height-constrained parent; `columnBodyMaxHeight` and `boardMinHeightClassName` stop
+   * applying. Defaults to `false`.
+   */
+  fillHeight?: boolean;
+  /**
+   * Width in px of every open column (default 320, from the stylesheet), written as `--gdy-kanban-column-width` on
+   * the root. With `fillWidth` it is the minimum width.
+   */
+  columnWidth?: number;
+  /**
+   * Shares the board's width equally among the open columns, never below `columnWidth` (or 320px); when they do not
+   * fit, the board scrolls horizontally. Collapsed columns keep their strip. Defaults to `false`.
+   */
+  fillWidth?: boolean;
 }
 
 export type KanbanFiltersState = Record<string, string[]>;

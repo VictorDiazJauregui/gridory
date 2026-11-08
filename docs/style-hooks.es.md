@@ -106,6 +106,8 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 | `gdy-kanban-column-title` | con estilos | — |
 | `gdy-kanban-column-toggle` | con estilos | — |
 | `gdy-kanban-empty-col` | con estilos | — |
+| `gdy-kanban-fill` | con estilos | — |
+| `gdy-kanban-fill-width` | con estilos | — |
 | `gdy-kanban-filter-arrow` | solo gancho | — |
 | `gdy-kanban-filter-icon` | solo gancho | — |
 | `gdy-kanban-filter-item` | con estilos | — |
@@ -901,6 +903,7 @@ cualquier ancestro cambia solo esa parte. Los `--gdy-select-*` también reflejan
 | `--gdy-kanban-column-bg` | `var(--gdy-muted)` | kanban |
 | `--gdy-kanban-column-border` | `var(--gdy-border)` | kanban |
 | `--gdy-kanban-column-collapsed-width` | `44px` | kanban |
+| `--gdy-kanban-column-width` | `320px` | kanban |
 | `--gdy-kanban-drop-bg` | `color-mix(in oklab, var(--gdy-foreground) 6%, var(--gdy-muted))` | kanban |
 | `--gdy-kanban-drop-disabled-bg` | `color-mix(in oklab, var(--gdy-destructive) 6%, var(--gdy-muted))` | kanban |
 | `--gdy-kanban-drop-disabled-outline` | `var(--gdy-destructive)` | kanban |
