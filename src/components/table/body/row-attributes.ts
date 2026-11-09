@@ -7,7 +7,7 @@ import type { DataTableProps } from "../types";
 
 export type TableRowConfig<TData> = Pick<
   DataTableProps<TData>,
-  "onRowClick" | "getRowClassName" | "getRowAttributes" | "getRowHref" | "focusableRows" | "classNames"
+  "onRowClick" | "getRowClassName" | "getRowAttributes" | "getRowHref" | "focusableRows" | "ignoreTextSelectionClick" | "classNames"
 > & {
   ignoredColumnIds: ReadonlySet<string>;
   selection: RowSelectionModel<TData> | null;

@@ -245,6 +245,11 @@ export interface DataTableProps<TData> extends DataViewProps<TData> {
    * it is `false`. Rows with neither `onRowClick` nor `getRowHref` are never focusable.
    */
   focusableRows?: boolean;
+  /**
+   * A click that ends selecting text inside the row neither calls `onRowClick` nor follows `getRowHref`.
+   * Defaults to `false`; opening the link in a new tab, Enter and the first click of a double click still fire.
+   */
+  ignoreTextSelectionClick?: boolean;
   /** Extra class(es) for a row, after `gdy-table-row`. Called once per row and render: keep it cheap. */
   getRowClassName?: (row: TData) => string | undefined;
   /**

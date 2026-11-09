@@ -563,6 +563,7 @@ la fila: un clic de mouse, o una tecla cuando la fila es enfocable (ver abajo), 
 | Ctrl/Cmd + clic, clic con la rueda | Abre el enlace en otra pestaña (`noopener`) | Igual |
 | Enter (fila enfocada) | Igual que un clic | Igual que un clic |
 | Ctrl/Cmd + Enter | Abre el enlace en otra pestaña | Igual |
+| Clic que termina de seleccionar texto en la fila, con `ignoreTextSelectionClick` | Nada: el texto queda seleccionado | Igual |
 
 Los destinos `javascript:`, `data:` y `vbscript:` se ignoran: la fila se comporta como si no tuviera
 enlace. Devuelve `undefined` en las filas que no deben enlazar.
@@ -573,11 +574,26 @@ usa `onRowClick` conserva el comportamiento de la 1.0.1. Las filas con `getRowHr
 que pases `focusableRows={false}`: un enlace al que no se llega con el teclado no sirve. Las filas sin
 `onRowClick` ni `getRowHref` nunca son enfocables.
 
+**Seleccionar texto.** Por defecto cualquier clic dispara la fila, también el que termina de arrastrar
+sobre su texto para copiarlo. `ignoreTextSelectionClick` hace que la fila ignore ese clic, así el texto
+queda seleccionado; con solo `getRowHref`, la fila tampoco navega. Un clic simple se sigue disparando,
+porque apretar el botón borra la selección anterior, y solo cuenta una selección dentro de esa fila: un
+texto seleccionado en otra parte de la página nunca la bloquea. Abrir el enlace en otra pestaña (Ctrl/Cmd
++ clic, rueda) y Enter no cambian. Dos límites: el primer clic de un doble clic sobre una palabra dispara
+la fila antes de que la palabra quede seleccionada, y un clic justo sobre el texto recién seleccionado
+primero lo deselecciona; el clic siguiente la dispara.
+
+```tsx
+<DataTable columns={columns} data={quotes} onRowClick={openQuote} ignoreTextSelectionClick />
+```
+
 **Qué no dispara la fila.** El menú de acciones de fila y el select en línea, nunca. Una columna con
 `ignoreRowClick: true` tampoco, con ningún gesto: úsala para columnas de selects, enlaces o texto para
 copiar. Tus propios botones y enlaces en otras columnas siguen llegando a `onRowClick` con un clic
 simple, como en la 1.0.1; los gestos que abren el enlace de la fila (Ctrl/Cmd + clic, rueda, Enter) los
-saltean y se los dejan al navegador.
+saltean y se los dejan al navegador. `ignoreRowClick` e `ignoreTextSelectionClick` son distintas: la
+primera apaga una columna entera, para todos los gestos; la segunda no apaga nada, solo ignora el clic que
+termina una selección de texto, así la fila se sigue abriendo desde cualquier columna, también la del texto.
 
 ```tsx
 const navigate = useNavigate();
@@ -1553,6 +1569,7 @@ Props propias de `DataTableProps<TData>`, en el orden del código fuente.
 | `onRowClick` | `(row: TData, event: RowClickEvent) => void` | — | Callback del clic en fila; marca las filas con `data-clickable`. |
 | `getRowHref` | `(row: TData) => string \| undefined` | — | Convierte la fila en un enlace (`data-href`). |
 | `focusableRows` | `boolean` | `false` (`true` con `getRowHref`) | Las filas reciben el foco con Tab y se disparan con Enter. |
+| `ignoreTextSelectionClick` | `boolean` | `false` | Un clic que termina de seleccionar texto dentro de una fila no la dispara. |
 | `getRowClassName` | `(row: TData) => string \| undefined` | — | Clases extra para una fila, después de `gdy-table-row`. |
 | `getRowAttributes` | `(row: TData) => RowAttributes` | — | Atributos `data-*` y `aria-*` extra para una fila. |
 | `label` | `string` | `"elementos"` | Sustantivo que usa el resumen de paginación. |

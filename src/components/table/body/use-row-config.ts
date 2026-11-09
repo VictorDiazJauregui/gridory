@@ -29,7 +29,8 @@ const useIgnoredColumnIds = <TData,>({ settings, selection, expansion }: TableMo
 // Built once per render of the body, not per row: the ignored ids only change with the columns.
 export const useRowConfig = <TData,>(model: TableModel<TData>): TableRowConfig<TData> => {
   const { settings, selection, expansion, hiddenByPriority, pinnedColumns } = model;
-  const { onRowClick, getRowClassName, getRowAttributes, getRowHref, focusableRows, classNames } = settings;
+  const { onRowClick, getRowClassName, getRowAttributes, getRowHref, focusableRows, ignoreTextSelectionClick, classNames } =
+    settings;
   const ignoredColumnIds = useIgnoredColumnIds(model);
   return {
     onRowClick,
@@ -37,6 +38,7 @@ export const useRowConfig = <TData,>(model: TableModel<TData>): TableRowConfig<T
     getRowAttributes,
     getRowHref,
     focusableRows,
+    ignoreTextSelectionClick,
     classNames,
     ignoredColumnIds,
     selection,
