@@ -132,6 +132,9 @@ orden o vista de archivados vuelve a la primera página.
   Ctrl/Cmd + Enter lo abren en otra pestaña; un clic simple o Enter llaman a `onRowClick`, o navegan al
   enlace si no hay `onRowClick`. Los destinos `javascript:`, `data:` y `vbscript:` se ignoran.
 - Una tarjeta con `onRowClick` o con enlace lleva `data-clickable` y toma el foco con Tab.
+- `ignoreTextSelectionClick` hace que la tarjeta ignore el clic que termina de arrastrar sobre su texto,
+  así el texto queda seleccionado para copiarlo. Por defecto es `false`. Mismas reglas y límites que la
+  tabla: ver [Clic en fila y filas como enlace](table.es.md#clic-en-fila-y-filas-como-enlace).
 
 ### Tarjetas personalizadas
 
@@ -247,6 +250,7 @@ Props propias de `CardGridProps<TData>`, en el orden del código.
 | `renderCard` | `(row: TData) => ReactNode` | — | Contenido propio de cada tarjeta. |
 | `onRowClick` | `(row: TData, event: CardClickEvent) => void` | — | Clic en una tarjeta, o Enter con foco. |
 | `getRowHref` | `(row: TData) => string \| undefined` | — | Convierte una tarjeta en enlace. |
+| `ignoreTextSelectionClick` | `boolean` | `false` | Un clic que termina de seleccionar texto dentro de una tarjeta no la dispara. |
 | `pageSizeOptions` | `number[]` | `[15, 25, 50, 100]` | Opciones del selector de tamaño de página. |
 | `defaultPageSize` | `number` | `25` | Tamaño de página inicial. |
 | `pageIndex` | `number` | — | Página controlada (desde 0). |
