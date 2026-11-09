@@ -62,6 +62,7 @@ const ENGLISH_DEMO_TEXTS: Record<string, string> = {
   Página: "Page",
   Filtradas: "Filtered",
   "Ocultar Notas": "Hide Notes",
+  "Seleccionar texto no abre": "Selecting text does not open",
   "Columnas ocultas": "Hidden columns",
   "Restablecer anchos": "Reset widths",
   "Anchos guardados": "Saved widths",
