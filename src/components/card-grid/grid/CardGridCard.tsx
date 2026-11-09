@@ -11,7 +11,8 @@ interface CardGridCardProps<TData> {
 }
 
 export const CardGridCard = <TData,>({ row, rowId, settings }: CardGridCardProps<TData>) => {
-  const navigation = { row, href: resolveSafeRowHref(settings.getRowHref?.(row)), onRowClick: settings.onRowClick };
+  const { getRowHref, onRowClick, ignoreTextSelectionClick } = settings;
+  const navigation = { row, href: resolveSafeRowHref(getRowHref?.(row)), onRowClick, ignoreTextSelectionClick };
   return (
     <li
       className={cn("gdy-kanban-card gdy-card-grid-card", settings.classNames?.card)}

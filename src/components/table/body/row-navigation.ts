@@ -1,4 +1,5 @@
 import type { KeyboardEvent, MouseEvent } from "react";
+import { hasTextSelectionWithin } from "../../shared/text-selection";
 import type { RowClickEvent } from "../types";
 import { navigateTo, openInNewTab } from "./browser-navigation";
 import type { TableRowConfig } from "./row-attributes";
@@ -40,7 +41,11 @@ const isFromIgnoredColumn = (event: RowClickEvent, ignoredColumnIds: ReadonlySet
   return columnId ? ignoredColumnIds.has(columnId) : false;
 };
 
-const wantsNewTab = (event: RowClickEvent) => event.ctrlKey || event.metaKey;
+type ModifierKeys = Pick<RowClickEvent, "ctrlKey" | "metaKey">;
+
+const wantsNewTab = (event: ModifierKeys) => event.ctrlKey || event.metaKey;
+
+export const opensInNewTab = (href: string | undefined, event: ModifierKeys) => Boolean(href) && wantsNewTab(event);
 
 // Browsers drop whitespace and control characters inside a scheme ("java\nscript:").
 export const resolveSafeRowHref = (href: string | undefined) => {
@@ -72,8 +77,14 @@ const isSkipped = <TData,>(navigation: RowNavigation<TData>, event: RowClickEven
   return isNewGesture && isFromInteractiveElement(event);
 };
 
+const endsTextSelection = <TData,>({ href, config }: RowNavigation<TData>, event: MouseEvent<HTMLTableRowElement>) => {
+  if (!config.ignoreTextSelectionClick || opensInNewTab(href, event)) return false;
+  return hasTextSelectionWithin(event.currentTarget);
+};
+
 const handleClick = <TData,>(navigation: RowNavigation<TData>) => (event: MouseEvent<HTMLTableRowElement>) => {
   if (isSkipped(navigation, event, followsHref(navigation, event))) return;
+  if (endsTextSelection(navigation, event)) return;
   runRowAction(navigation, event);
 };
 

@@ -553,6 +553,7 @@ around a `<tr>`). The row carries `data-href` and:
 | Ctrl/Cmd + click, middle click | Opens the link in a new tab (`noopener`) | Same |
 | Enter (focused row) | Same as a click | Same as a click |
 | Ctrl/Cmd + Enter | Opens the link in a new tab | Same |
+| Click that ends selecting text in the row, with `ignoreTextSelectionClick` | Nothing: the text stays selected | Same |
 
 `javascript:`, `data:` and `vbscript:` destinations are ignored: the row behaves as if it had no
 link. Return `undefined` for rows that should not link.
@@ -563,11 +564,25 @@ uses `onRowClick` keeps the 1.0.1 behavior. Rows with `getRowHref` are focusable
 `focusableRows={false}`: a link you cannot reach with the keyboard is no link. Rows with neither
 `onRowClick` nor `getRowHref` are never focusable.
 
+**Selecting text.** By default any click fires the row, also the one that ends dragging over its text to
+copy it. `ignoreTextSelectionClick` makes the row skip that click, so the text stays selected; with
+`getRowHref` alone, the row does not navigate either. A plain click still fires, because pressing the
+button clears an earlier selection, and only a selection inside that row counts: text selected elsewhere
+on the page never blocks it. Opening the link in a new tab (Ctrl/Cmd + click, middle click) and Enter do
+not change. Two limits: the first click of a double click on a word fires the row before the word is
+selected, and a click right on the text just selected first clears it; the next click fires.
+
+```tsx
+<DataTable columns={columns} data={quotes} onRowClick={openQuote} ignoreTextSelectionClick />
+```
+
 **What does not fire the row.** The row actions menu and the inline select never do. A column with
 `ignoreRowClick: true` never does, with any gesture: use it for columns of selects, links or text
 meant to be copied. Your own buttons and links in other columns still reach `onRowClick` with a
 plain click, as in 1.0.1; the gestures that open the row link (Ctrl/Cmd + click, middle click, Enter)
-skip them and leave them to the browser.
+skip them and leave them to the browser. `ignoreRowClick` and `ignoreTextSelectionClick` differ:
+the first turns a whole column off, for every gesture; the second turns nothing off, it only skips the
+click that ends a text selection, so the row still opens from any column, the one with the text included.
 
 ```tsx
 const navigate = useNavigate();
@@ -1529,6 +1544,7 @@ Own props of `DataTableProps<TData>`, in source order.
 | `onRowClick` | `(row: TData, event: RowClickEvent) => void` | — | Row click handler; marks rows with `data-clickable`. |
 | `getRowHref` | `(row: TData) => string \| undefined` | — | Turns the row into a link (`data-href`). |
 | `focusableRows` | `boolean` | `false` (`true` with `getRowHref`) | Rows take the focus with Tab and fire with Enter. |
+| `ignoreTextSelectionClick` | `boolean` | `false` | A click that ends selecting text inside a row does not fire it. |
 | `getRowClassName` | `(row: TData) => string \| undefined` | — | Extra class(es) for a row, after `gdy-table-row`. |
 | `getRowAttributes` | `(row: TData) => RowAttributes` | — | Extra `data-*` and `aria-*` attributes for a row. |
 | `label` | `string` | `"elementos"` | Noun used by the pagination summary. |

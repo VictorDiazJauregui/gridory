@@ -131,6 +131,9 @@ filter, sort or archived-view change goes back to the first page.
   Ctrl/Cmd + Enter open it in a new tab; a plain click or Enter call `onRowClick`, or navigate to it when
   there is no `onRowClick`. `javascript:`, `data:` and `vbscript:` destinations are ignored.
 - A card with `onRowClick` or a link carries `data-clickable` and takes the focus with Tab.
+- `ignoreTextSelectionClick` makes the card skip the click that ends dragging over its text, so the text
+  stays selected to copy it. Defaults to `false`. Same rules and limits as the table: see
+  [Row click and row links](table.md#row-click-and-row-links).
 
 ### Custom cards
 
@@ -245,6 +248,7 @@ Own props of `CardGridProps<TData>`, in source order.
 | `renderCard` | `(row: TData) => ReactNode` | — | Own content of each card. |
 | `onRowClick` | `(row: TData, event: CardClickEvent) => void` | — | Card clicked, or Enter on a focused card. |
 | `getRowHref` | `(row: TData) => string \| undefined` | — | Turns a card into a link. |
+| `ignoreTextSelectionClick` | `boolean` | `false` | A click that ends selecting text inside a card does not fire it. |
 | `pageSizeOptions` | `number[]` | `[15, 25, 50, 100]` | Options of the page size select. |
 | `defaultPageSize` | `number` | `25` | First page size. |
 | `pageIndex` | `number` | — | Controlled page (0-based). |

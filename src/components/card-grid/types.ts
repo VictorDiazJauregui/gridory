@@ -88,6 +88,11 @@ export interface CardGridProps<TData> extends Omit<DataViewProps<TData>, "viewSw
    * new tab; a plain click or Enter call `onRowClick`, or navigate when there is none. Unsafe schemes are ignored.
    */
   getRowHref?: (row: TData) => string | undefined;
+  /**
+   * A click that ends selecting text inside the card neither calls `onRowClick` nor follows `getRowHref`.
+   * Defaults to `false`; opening the link in a new tab, Enter and the first click of a double click still fire.
+   */
+  ignoreTextSelectionClick?: boolean;
   /** Defaults to `[15, 25, 50, 100]`. */
   pageSizeOptions?: number[];
   /** Defaults to `25`. */
