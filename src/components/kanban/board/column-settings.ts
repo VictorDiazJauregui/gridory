@@ -36,7 +36,8 @@ export interface KanbanColumnSettings<TData> extends ColumnActions<TData> {
   renderColumnHeaderExtra?: KanbanBoardProps<TData>["renderColumnHeaderExtra"];
   renderColumnFooter?: KanbanBoardProps<TData>["renderColumnFooter"];
   collapse: ColumnCollapse;
-  columnBodyMaxHeight: number;
+  /** Undefined while `fillHeight` is on: the body then takes the rest of the column. */
+  columnBodyMaxHeight?: number;
   cardSettings: KanbanCardSettings<TData>;
   classNames?: KanbanBoardClassNames;
   columnHooks: ColumnHookSettings;
@@ -85,7 +86,7 @@ export const buildColumnSettings = <TData>(
   renderColumnHeaderExtra: view.renderColumnHeaderExtra,
   renderColumnFooter: view.renderColumnFooter,
   collapse: state.collapse,
-  columnBodyMaxHeight: view.columnBodyMaxHeight,
+  columnBodyMaxHeight: view.fillHeight ? undefined : view.columnBodyMaxHeight,
   cardSettings: buildCardSettings(state, view),
   classNames: view.classNames,
   columnHooks: view,

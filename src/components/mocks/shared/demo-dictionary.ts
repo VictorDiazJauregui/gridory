@@ -3,6 +3,11 @@ import { getDemoLanguage, useDemoLanguage, type DemoLanguage } from "./demo-lang
 // The demo app's own texts in English. Company and country names are proper nouns and stay as they are.
 const ENGLISH_DEMO_TEXTS: Record<string, string> = {
   Empresa: "Company",
+  "Tamaño de las columnas": "Column size",
+  "Alto completo": "Full height",
+  "Ancho de columna": "Column width",
+  "Por defecto (320 px)": "Default (320 px)",
+  "Ancho automático": "Automatic width",
   Marca: "Brand",
   País: "Country",
   Estado: "Status",

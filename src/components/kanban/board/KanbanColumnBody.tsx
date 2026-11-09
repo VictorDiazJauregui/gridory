@@ -18,10 +18,12 @@ const renderColumnCards = <TData,>(props: KanbanColumnProps<TData>) =>
     );
   });
 
+const resolveBodyStyle = (maxHeight?: number) => (maxHeight === undefined ? undefined : { maxHeight: `${maxHeight}px` });
+
 export const KanbanColumnBody = <TData,>(props: KanbanColumnProps<TData>) => (
   <div
     className={cn("gdy-kanban-column-body gdy-scroll", props.classNames?.columnBody)}
-    style={{ maxHeight: `${props.columnBodyMaxHeight}px` }}
+    style={resolveBodyStyle(props.columnBodyMaxHeight)}
   >
     {props.cards.length === 0 ? (
       <div className="gdy-kanban-empty-col">{props.cardSettings.labels.emptyColumn}</div>
