@@ -1,6 +1,7 @@
 import type { KeyboardEvent, MouseEvent } from "react";
 import { navigateTo, openInNewTab } from "../../table/body/browser-navigation";
-import { isFromInteractiveElement } from "../../table/body/row-navigation";
+import { isFromInteractiveElement, opensInNewTab } from "../../table/body/row-navigation";
+import { hasTextSelectionWithin } from "../../shared/text-selection";
 import type { CardClickEvent } from "../types";
 
 const MIDDLE_BUTTON = 1;
@@ -10,6 +11,7 @@ export interface CardNavigation<TData> {
   /** Already checked with `resolveSafeRowHref`. */
   href?: string;
   onRowClick?: (row: TData, event: CardClickEvent) => void;
+  ignoreTextSelectionClick?: boolean;
 }
 
 const wantsNewTab = (event: CardClickEvent) => event.ctrlKey || event.metaKey;
@@ -22,9 +24,14 @@ const runCardAction = <TData>({ row, href, onRowClick }: CardNavigation<TData>, 
   if (href) navigateTo(href);
 };
 
+const endsTextSelection = <TData>({ href, ignoreTextSelectionClick }: CardNavigation<TData>, event: MouseEvent<HTMLElement>) => {
+  if (!ignoreTextSelectionClick || opensInNewTab(href, event)) return false;
+  return hasTextSelectionWithin(event.currentTarget);
+};
+
 // Unlike the table, which keeps its 1.0.1 plain click, a card never fires from a control inside it.
 const handleClick = <TData>(navigation: CardNavigation<TData>) => (event: MouseEvent<HTMLElement>) => {
-  if (isFromInteractiveElement(event)) return;
+  if (isFromInteractiveElement(event) || endsTextSelection(navigation, event)) return;
   runCardAction(navigation, event);
 };
 
