@@ -88,6 +88,7 @@ you use it.
 | `SegmentedControl`: a single choice between a few options. | `gridory/segmented-control` | [Segmented control](docs/segmented-control.md) |
 | `CountrySelect`: one or several countries, with search and flags. | `gridory/country-select` | [Country select](docs/country-select.md) |
 | `PhoneInput`: a phone number with its dial code. | `gridory/phone-input` | [Phone input](docs/phone-input.md) |
+| `CountryFlag`, `getCountryName`, `getDialCode`, `findCountryByDialCode`: the country catalog, without the selects. | `gridory/countries` | [Countries](docs/countries.md) |
 
 ### Navigation
 

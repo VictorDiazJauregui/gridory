@@ -11,7 +11,12 @@ country's ISO code and the number, and your app decides what to do with them.
 - [Quick example](#quick-example)
 - [Value and dial code](#value-and-dial-code)
 - [Allowed characters](#allowed-characters)
+- [Maximum length](#maximum-length)
+- [Pasting an international number](#pasting-an-international-number)
+- [Input and output examples](#input-and-output-examples)
 - [Label, required and errors](#label-required-and-errors)
+- [id and name](#id-and-name)
+- [Disabled](#disabled)
 - [Inside the auth forms](#inside-the-auth-forms)
 - [Keyboard and accessibility](#keyboard-and-accessibility)
 - [Styling](#styling)
@@ -64,13 +69,82 @@ start, so "51" never finds Portugal (+351). On reopening, the chosen country is 
 ## Allowed characters
 
 The number is an `<input type="tel">` with `inputMode="tel"` and `autoComplete="tel-national"`: the
-country goes in the prefix, so the browser suggests the national number. It keeps only digits,
-spaces, hyphens and `+`. Letters, with or without accents, other symbols and emoji are dropped as
-they are typed and when text is pasted: pasting `abc 999-111` leaves ` 999-111`. A change made only
-of dropped characters emits nothing.
+country goes in the prefix, so the browser suggests the national number. `numberCharacters` decides
+which characters it keeps:
 
-The field does not validate the length or the format of a number, which change from country to
-country: that check belongs to your app.
+| `numberCharacters` | Keeps | `98a7-65 4/3` becomes |
+|---|---|---|
+| `"phone"` (default, the 2.2.0 rule) | digits, spaces, hyphens and `+` | `987-65 43` |
+| `"digits"` | digits only | `9876543` |
+
+Letters, with or without accents, other symbols and emoji are dropped as they are typed and when text
+is pasted: pasting `abc 999-111` leaves ` 999-111`. A change made only of dropped characters emits
+nothing.
+
+The rule applies to what is **typed or pasted**. The initial value (`value` or `defaultValue`) is shown
+as given, even when it breaks the rule, so you see what your database holds. Mind that the rule
+filters the whole value on every change: editing an old `987654321 / 912345678` with `"digits"` joins
+both numbers. Clean dirty legacy data before you show it.
+
+The field does not validate the number format of each country: that check belongs to your app.
+
+## Maximum length
+
+`maxNumberLength` limits the length of the number, counted **after** the character rule (with
+`"digits"`, digits). Without it there is no limit. It must be a whole number from 1; any other value
+throws `InvalidMaxNumberLengthError` on render.
+
+- Typing past the maximum does nothing.
+- Pasting something longer cuts it to the maximum.
+- Deleting always works, even when an old value is already longer than the maximum; adding to such a
+  value does not.
+
+```tsx
+<PhoneInput numberCharacters="digits" maxNumberLength={9} />
+```
+
+## Pasting an international number
+
+With `splitPastedDialCode`, pasting a number that starts with `+` and a known dial code over the
+**whole** field (empty or fully selected) splits it: the country goes to the prefix and the local
+number to the box, in a single `onValueChange`. It is off by default: without the prop, pasting works
+as in 2.2.0.
+
+- The longest known dial code after the `+` wins: `+598 99…` is Uruguay, not `+59`.
+- A chosen country that has that dial code stays: with Canada chosen, pasting `+1 …` keeps Canada.
+  Otherwise the dial code's representative is chosen (see
+  [countries.md](countries.md#shared-dial-codes)): `+1` is the United States.
+- The local number goes through the character rule and the maximum length, and loses its leading
+  spaces and hyphens.
+- Nothing is split when the dial code is unknown (`+999`), when it does not start with `+` (`0051…`),
+  or when the paste lands in the middle of a typed number: those are plain pastes.
+- Area codes are not read: a Dominican `+1 809…` picks the United States unless a `+1` country was
+  chosen.
+
+```tsx
+<PhoneInput numberCharacters="digits" splitPastedDialCode />
+```
+
+## Input and output examples
+
+| # | Props | Action | Country before | Emitted value |
+|---|---|---|---|---|
+| E-1 | none (2.2.0) | pastes `+51 987 654 321` | — | `{ country: null, number: "+51 987 654 321" }` |
+| E-2 | none | types `98a7-65 4/3` | PE | `"987-65 43"` |
+| E-3 | `digits` | types `98a7-65 4/3` | PE | `"9876543"` |
+| E-4 | `digits` | pastes `+51 987 654 321` | PE | `"51987654321"` (the dial code stays in the number) |
+| E-5 | `splitPastedDialCode` | pastes `+51 987 654 321` | — | `{ country: "PE", number: "987 654 321" }` |
+| E-6 | `digits` + split | pastes `+51 987 654 321` | — | `{ country: "PE", number: "987654321" }` |
+| E-7 | `digits` + split | pastes `+1 (416) 555-0100` | CA | `{ country: "CA", number: "4165550100" }` |
+| E-8 | `digits` + split | pastes `+1 416 555 0100` | PE | `{ country: "US", number: "4165550100" }` |
+| E-9 | `digits` + split | pastes `+999 123` (unknown code) | PE | not split: `"999123"` |
+| E-10 | `digits` + split | pastes `+51 987` inside typed text | PE | plain paste, filtered |
+| E-11 | `digits`, max 9 | pastes `987 654 321 000` | PE | `"987654321"` |
+| E-12 | `digits` + split, max 9 | pastes `+51 987 654 321 000` | — | `{ country: "PE", number: "987654321" }` |
+| E-13 | `digits`, max 9 | initial value `987654321 / 912345678` | PE | shown as given; emits nothing |
+| E-14 | `digits`, max 9 | E-13, then types `0` at the end | PE | refused; emits nothing |
+| E-15 | `digits`, max 9 | E-13, then deletes the last character | PE | `"98765432191234567"` |
+| E-16 | split | pastes `0051 987…` | — | not split: only `+` counts |
 
 ## Label, required and errors
 
@@ -87,6 +161,31 @@ wrong and passes `error`.
 
 ```tsx
 <PhoneInput labelPosition="start" required error={isInvalid ? "Ingresa un teléfono válido" : undefined} />
+```
+
+## id and name
+
+`id` and `name` go to the number's `<input>`. Without them the id is generated and the number has no
+name, as in 2.2.0.
+
+- `id`: a `<label htmlFor>` of your app focuses the number, and the field's own label points at the
+  same id. It moves the focus to the first error: `document.getElementById(id)?.focus()`.
+- `name`: the number travels in the native form submit and in `FormData`, and `form.elements[name]`
+  finds it. The country does not travel: it is in `onValueChange`.
+
+```tsx
+<PhoneInput id="whatsapp" name="whatsapp" label="WhatsApp" />
+```
+
+## Disabled
+
+`disabled` disables the prefix and the number with the native attribute: they do not open, take no
+typing and leave the Tab order. An open list closes, and it stays closed when the field is enabled
+again. The box carries `data-disabled` and takes its look from the
+`--gdy-phone-input-disabled-opacity` and `--gdy-phone-input-disabled-bg` tokens.
+
+```tsx
+<PhoneInput disabled={isSaving} value={phone} onValueChange={setPhone} />
 ```
 
 ## Inside the auth forms
@@ -137,6 +236,7 @@ flags, `gdy-country-flag`; and the list, `gdy-listbox-*`.
 | Element | State attribute | Values |
 |---|---|---|
 | `gdy-phone-input` | `data-invalid` | present with an error |
+| `gdy-phone-input` | `data-disabled` | present with `disabled` |
 | `gdy-phone-input-prefix` | `aria-expanded` | `"true"` while the list is open |
 | `gdy-phone-input-dial-code` | `data-placeholder` | present while no country is chosen |
 
@@ -150,6 +250,8 @@ flags, `gdy-country-flag`; and the list, `gdy-listbox-*`.
 | `--gdy-phone-input-bg` / `--gdy-phone-input-color` | `--gdy-background` / `--gdy-foreground` | Box background and text. |
 | `--gdy-phone-input-focus-ring` | `--gdy-ring` | Border and inset ring on focus. |
 | `--gdy-phone-input-error-color` | `--gdy-destructive` | Border with an error. |
+| `--gdy-phone-input-disabled-opacity` | `0.5` | Opacity of the disabled box. |
+| `--gdy-phone-input-disabled-bg` | `--gdy-muted` | Background of the disabled box. |
 | `--gdy-phone-input-placeholder-color` | `--gdy-muted-foreground` | "País", the arrow and the number placeholder. |
 | `--gdy-phone-input-prefix-focus-color` | `--gdy-ring` | Prefix text while it has the keyboard focus. |
 | `--gdy-phone-input-panel-min-width` | `280px` | Smallest list width; it is never narrower than the field. |
@@ -185,6 +287,12 @@ The label is the `label` prop, "Teléfono" by default.
 | `defaultValue` | `PhoneInputValue` | — | Initial value, uncontrolled. |
 | `defaultCountry` | `CountryCode` | none | Country of an uncontrolled field without `defaultValue`. |
 | `onValueChange` | `(value: PhoneInputValue) => void` | — | The country or the number changed. |
+| `id` | `string` | generated | Id of the number. |
+| `name` | `string` | — | Form name of the number. |
+| `disabled` | `boolean` | `false` | Disables the prefix and the number. |
+| `numberCharacters` | `"phone" \| "digits"` | `"phone"` | Characters the number keeps. |
+| `maxNumberLength` | `number` | no limit | Longest number, after the character rule. |
+| `splitPastedDialCode` | `boolean` | `false` | Splits the dial code off a pasted international number. |
 | `label` | `ReactNode` | `"Teléfono"` | Visible label. |
 | `aria-label` / `aria-labelledby` | `string` | — | Name without a visible label. Each excludes the others. |
 | `labelPosition` | `"top" \| "start"` | `"top"` | Label above or beside the field. |
@@ -204,6 +312,7 @@ The label is the `label` prop, "Teléfono" by default.
 ### Types
 
 - `PhoneInputValue`: `{ country: CountryCode | null; number: string }`.
+- `PhoneNumberCharacters`: `"phone" | "digits"`.
 - `PhoneInputProps`: `PhoneInputNaming` combined with `PhoneInputSettings` and `labelPosition`,
   `required` and `error`.
 - `PhoneInputSettings`: the value, prefix, list and styling props.
@@ -217,3 +326,7 @@ The label is the `label` prop, "Teléfono" by default.
 
 - `DEFAULT_PHONE_INPUT_TEXTS`: the default texts.
 - `DEFAULT_PHONE_INPUT_LABEL`: `"Teléfono"`.
+
+### Errors
+
+- `InvalidMaxNumberLengthError`: `maxNumberLength` is not a whole number from 1.

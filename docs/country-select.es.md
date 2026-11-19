@@ -12,6 +12,9 @@ negocio: emite el código ISO y tu app decide qué hacer con él.
 - [Selección simple](#selección-simple)
 - [Selección múltiple](#selección-múltiple)
 - [Obligatorio y errores](#obligatorio-y-errores)
+- [Opción "no aplica"](#opción-no-aplica)
+- [id y name](#id-y-name)
+- [Deshabilitado](#deshabilitado)
 - [Ancho y contenedores angostos](#ancho-y-contenedores-angostos)
 - [Banderas y nombres de países](#banderas-y-nombres-de-países)
 - [Eventos](#eventos)
@@ -170,6 +173,105 @@ Cualquiera de los dos errores va debajo del campo, y el combobox recibe `aria-in
 `aria-describedby` que apunta a él, así el lector de pantalla lo lee cuando el foco vuelve al campo.
 El texto del error no es una región viva: un error que aparece sin mover el foco no se anuncia solo.
 
+## Opción "no aplica"
+
+Hay formularios donde "ningún país" es una respuesta válida, distinta de "todavía no elegí".
+`notApplicableOption` suma esa respuesta como **primera opción** de la lista. Está apagada por
+defecto y solo existe en la selección simple: en la múltiple, "ningún país" ya es `[]` (el tipo no
+deja combinar `multiple` con `notApplicableOption`).
+
+```tsx
+import { COUNTRY_NOT_APPLICABLE, CountrySelect, type CountryCode, type CountryNotApplicable } from "gridory/country-select";
+
+const [country, setCountry] = useState<CountryCode | CountryNotApplicable | null>(null);
+
+<CountrySelect required notApplicableOption value={country} onValueChange={setCountry} />
+```
+
+| Respuesta | Valor emitido |
+|---|---|
+| Todavía no eligió | `null` |
+| Eligió un país | su código, `"PE"` |
+| Eligió "no aplica" | `COUNTRY_NOT_APPLICABLE` (`"not-applicable"`), o tu `notApplicableValue` |
+
+- **Lista.** Va primero, sin bandera. La búsqueda la encuentra por su texto ("no a" la muestra) y la
+  deja afuera cuando se busca un país ("peru").
+- **Campo.** Muestra su texto como un valor, sin bandera y sin el estilo de placeholder: es una
+  respuesta, no un hueco.
+- **`required`.** "No aplica" cuenta como respuesta: no hay error. Vacío sigue siendo error.
+- **"×".** Sin `required`, la "×" vuelve a `null`.
+
+### Cambiar el texto
+
+El texto por defecto es "No aplica". Se cambia con `texts.notApplicable`, y ese único texto se usa en
+la lista, en el campo y en la búsqueda. Cambiar el texto **no** cambia el valor.
+
+```tsx
+<CountrySelect notApplicableOption texts={{ notApplicable: "No figura" }} />
+<CountrySelect notApplicableOption texts={{ notApplicable: "No corresponde" }} />
+```
+
+### Cambiar el valor
+
+`notApplicableValue` cambia el valor que se emite y que se reconoce en `value` y `defaultValue`, así a
+tus filtros y a lo que guardas les llega tu valor sin traducirlo. El tipo del valor se toma de él.
+Sirve cualquier texto, también `""`, que es distinto de `null`. Lo único que no sirve es un código de
+país: no se podría distinguir de ese país, así que lanza `InvalidNotApplicableValueError`. Ojo:
+`"NA"` es Namibia.
+
+```tsx
+const [country, setCountry] = useState<CountryCode | "" | null>(null);
+
+<CountrySelect notApplicableOption notApplicableValue="" value={country} onValueChange={setCountry} />
+```
+
+### Validar con zod
+
+```ts
+import { z } from "zod";
+import { COUNTRY_NOT_APPLICABLE, isCountryCode } from "gridory/country-select";
+
+const countryAnswer = z
+  .string()
+  .nullable()
+  .refine((value) => value !== null, "Elige un país o indica que no aplica")
+  .refine((value) => value === null || value === COUNTRY_NOT_APPLICABLE || isCountryCode(value), "País inválido");
+```
+
+Con un `notApplicableValue` propio, compara contra tu valor en lugar de `COUNTRY_NOT_APPLICABLE`.
+
+### Fuera del selector
+
+En una tabla, un filtro o un resumen, el texto lo pone tu app: compara el valor guardado contra tu
+valor de "no aplica" y muestra el texto que quieras; si es un país, usa `getCountryName` de
+[gridory/countries](countries.es.md).
+
+## id y name
+
+`id` y `name` van al combobox (un `<button>`). Sin ellos, el id se genera y el combobox no tiene
+nombre, como en la 2.2.0.
+
+- `id`: el label propio del campo apunta a ese id, y un `<label htmlFor>` de tu app lo nombra y lo
+  activa. Sirve para llevar el foco al primer error: `document.getElementById(id)?.focus()`.
+- `name`: el combobox se encuentra con `form.querySelector('[name=…]')` o `form.elements[name]`. Un
+  botón no viaja en `FormData` ni en el envío nativo: el valor está en `onValueChange`.
+
+```tsx
+<CountrySelect id="country" name="country" required />
+```
+
+## Deshabilitado
+
+`disabled` deshabilita el combobox, la "×" y las "×" de los chips con el atributo nativo: no se
+abre, no se quita nada y sale del orden de Tab. Si la lista estaba abierta, se cierra, y al volver a
+habilitar el control sigue cerrada. Mientras está deshabilitado no muestra su propio error: no se
+puede tocar. La caja lleva `data-disabled` y toma el aspecto de los tokens
+`--gdy-country-select-disabled-opacity` y `--gdy-country-select-disabled-bg`.
+
+```tsx
+<CountrySelect disabled={isSaving} value={country} onValueChange={setCountry} />
+```
+
 ## Ancho y contenedores angostos
 
 El campo mide 240 px de ancho por defecto. `width` lo cambia: un número se toma en píxeles y un
@@ -210,7 +312,8 @@ const resolveOwnFlagUrl: FlagUrlResolver = (code, width) =>
 export const HostedFlagsCountry = () => <CountrySelect flagUrl={resolveOwnFlagUrl} />;
 ```
 
-`showFlags={false}` las quita de todas partes.
+`showFlags={false}` las quita de todas partes. Para mostrar banderas y nombres fuera del selector,
+en una tabla por ejemplo, usa [gridory/countries](countries.es.md): no carga el selector.
 
 **Nombres de países.** `locale` fija el idioma de los nombres, que salen de `Intl.DisplayNames`, y
 su orden alfabético. Por defecto es `"es"`. Los textos de la interfaz van aparte: se cambian con
@@ -331,6 +434,7 @@ el "*" y el error son `gdy-field-label`, `gdy-field-required` y `gdy-field-error
 | Elemento | Atributo de estado | Valores |
 |---|---|---|
 | `gdy-country-select` | `data-multiple` | Presente en la selección múltiple: el combobox cubre la caja por detrás de los chips |
+| `gdy-country-select` | `data-disabled` | Presente con `disabled` |
 | `gdy-country-select-trigger` | `aria-expanded` | `"true"` mientras la lista está abierta (la flecha gira), `"false"` si no |
 | `gdy-country-select-trigger` | `aria-invalid` | `"true"` con un error (borde rojo); ausente si no |
 | `gdy-country-select-value` | `data-placeholder` | Presente mientras no hay nada elegido |
@@ -365,6 +469,8 @@ que los tokens del panel y de sus opciones (`--gdy-country-select-panel-min-widt
 | `--gdy-country-select-hover-bg` | `--gdy-foreground` al 4% (`color-mix`) | Fondo sutil del campo con el mouse encima. |
 | `--gdy-country-select-focus-ring` | `--gdy-ring` | Anillo de foco interior. |
 | `--gdy-country-select-error-color` | `--gdy-destructive` | Borde con error. |
+| `--gdy-country-select-disabled-opacity` | `0.5` | Opacidad de la caja deshabilitada. |
+| `--gdy-country-select-disabled-bg` | `--gdy-muted` | Fondo de la caja deshabilitada. |
 | `--gdy-country-select-option-hover-bg` | `--gdy-listbox-option-hover-bg`, después `--gdy-option-hover-bg` y después `--gdy-accent` | Opción activa de la lista. |
 | `--gdy-country-select-option-hover-color` | `--gdy-listbox-option-hover-text` y después `--gdy-accent-foreground` | Texto de la opción activa. |
 | `--gdy-country-select-option-selected-bg` | `--gdy-listbox-option-selected-bg` y después `transparent` | Opción elegida. |
@@ -420,6 +526,7 @@ las claves que no pases conservan su valor por defecto. Los valores por defecto 
 | `maxReached` | `"Alcanzaste el máximo permitido ({max})"` | Aviso mientras se está en el máximo. `{max}` es `maxSelected`. |
 | `belowMinimum` | `"Selecciona al menos {min} países"` | Error por debajo del mínimo. `{min}` es `minSelected`. |
 | `required` | `"Selecciona un país"` | Error de un control `required` que quedó vacío. |
+| `notApplicable` | `"No aplica"` | La respuesta "no aplica": en la lista, en el campo y en la búsqueda. |
 
 El label "País" no es un texto: es la prop `label`, exportada como `DEFAULT_COUNTRY_SELECT_LABEL`.
 El juego completo en inglés, para el ejemplo de
@@ -441,6 +548,7 @@ const ENGLISH_COUNTRY_SELECT_TEXTS: CountrySelectTexts = {
   maxReached: "You reached the maximum of {max} countries",
   belowMinimum: "Select at least {min} countries",
   required: "Select a country",
+  notApplicable: "Not applicable",
 };
 ```
 
@@ -452,10 +560,15 @@ const ENGLISH_COUNTRY_SELECT_TEXTS: CountrySelectTexts = {
 | `value` | `CountryCode \| null`; `CountryCode[]` con `multiple` | — | Valor elegido, controlado. |
 | `defaultValue` | `CountryCode \| null`; `CountryCode[]` con `multiple` | — | Valor inicial, no controlado. |
 | `onValueChange` | `(value: CountryCode \| null) => void`; `(value: CountryCode[]) => void` con `multiple` | — | Cambió el valor. |
+| `notApplicableOption` | `boolean` | `false` | Solo en simple. Suma "no aplica" como primera opción. |
+| `notApplicableValue` | `string` | `COUNTRY_NOT_APPLICABLE` | Solo con `notApplicableOption`. Valor de "no aplica"; un código de país lanza. |
 | `minSelected` | `number` | `1` | Solo con `multiple`. Selección válida más chica. |
 | `maxSelected` | `number` | sin tope | Solo con `multiple`. Selección más grande; al llegar, el resto de las opciones se deshabilita. |
 | `required` | `boolean` | `false` | Suma el "*" y `aria-required`, quita la "×" y hace que una selección vacía sea error al cerrarse la lista. |
 | `error` | `ReactNode` | — | Tu error, debajo del campo. Siempre gana al propio del control. |
+| `id` | `string` | generado | Id del combobox. |
+| `name` | `string` | — | Nombre del combobox, para encontrarlo en el formulario. |
+| `disabled` | `boolean` | `false` | Deshabilita el combobox y sus botones. |
 | `label` | `ReactNode` | `"País"` | Label visible que nombra al campo. |
 | `aria-label` | `string` | — | Nombra el campo sin label visible. Excluye `label` y `aria-labelledby`. |
 | `aria-labelledby` | `string` | — | Id del elemento que nombra al campo. Excluye `label` y `aria-label`. |
@@ -471,8 +584,12 @@ const ENGLISH_COUNTRY_SELECT_TEXTS: CountrySelectTexts = {
 
 ### Tipos
 
-- `CountrySelectProps`: las props de arriba, como `CountrySelectNaming` combinado con
-  `SingleCountrySelectProps | MultipleCountrySelectProps`.
+- `CountrySelectProps<TNotApplicable = CountryNotApplicable>`: las props de arriba, como
+  `CountrySelectNaming` combinado con `SingleCountrySelectProps | NotApplicableCountrySelectProps |
+  MultipleCountrySelectProps`.
+- `NotApplicableCountrySelectProps<TNotApplicable>`: `notApplicableOption: true`, con `value`,
+  `defaultValue` y `onValueChange` sobre `CountryCode | TNotApplicable | null`.
+- `CountryNotApplicable`: `"not-applicable"`.
 - `SingleCountrySelectProps`: `multiple?: false`, con `value`, `defaultValue` y `onValueChange`
   sobre `CountryCode | null`.
 - `MultipleCountrySelectProps`: `multiple: true`, `minSelected`, `maxSelected`, y `value`,
@@ -482,7 +599,8 @@ const ENGLISH_COUNTRY_SELECT_TEXTS: CountrySelectTexts = {
 - `CountryCode`: la unión de los 249 códigos oficiales ISO 3166-1 alfa-2, en mayúsculas (`"PE"`,
   `"UY"`). Kosovo (`XK`) es un código asignado por usuarios y no está incluido.
 - `FlagUrlResolver`: `(code: CountryCode, width: number) => string`.
-- `CountrySelectTexts`: las claves de [Textos](#textos), cada una un `string`.
+- `CountrySelectTexts`: las claves de [Textos](#textos), cada una un `string` (`notApplicable` es
+  opcional, así un objeto completo escrito para la 2.2.0 sigue compilando).
 - `CountrySelectClassNames`: `{ root?; trigger?; value?; clear?; chips?; chip?; panel? }`, cada uno
   un `string`.
 
@@ -492,9 +610,12 @@ const ENGLISH_COUNTRY_SELECT_TEXTS: CountrySelectTexts = {
   códigos, tal como está escrito.
 - `DEFAULT_COUNTRY_SELECT_TEXTS`: los textos por defecto.
 - `DEFAULT_COUNTRY_SELECT_LABEL`: `"País"`.
+- `COUNTRY_NOT_APPLICABLE`: `"not-applicable"`, el valor de "no aplica" por defecto.
 
 ### Errores
 
 - `InvalidSelectionRangeError`: se lanza al renderizar cuando `minSelected` es mayor que
   `maxSelected`. Su `name` es `"InvalidSelectionRangeError"` y su mensaje incluye los dos valores.
   Extiende `Error`, así que un error boundary lo atrapa.
+- `InvalidNotApplicableValueError`: se lanza al renderizar cuando `notApplicableValue` es un código de
+  país.

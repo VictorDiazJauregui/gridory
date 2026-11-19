@@ -11,7 +11,12 @@ emite el código ISO del país y el número, y tu app decide qué hacer con ello
 - [Ejemplo rápido](#ejemplo-rápido)
 - [Valor y prefijo](#valor-y-prefijo)
 - [Caracteres admitidos](#caracteres-admitidos)
+- [Largo máximo](#largo-máximo)
+- [Pegar un número internacional](#pegar-un-número-internacional)
+- [Ejemplos de entrada y salida](#ejemplos-de-entrada-y-salida)
 - [Label, obligatorio y errores](#label-obligatorio-y-errores)
+- [id y name](#id-y-name)
+- [Deshabilitado](#deshabilitado)
 - [Dentro de los formularios de auth](#dentro-de-los-formularios-de-auth)
 - [Teclado y accesibilidad](#teclado-y-accesibilidad)
 - [Estilos](#estilos)
@@ -65,13 +70,80 @@ y a la vista.
 ## Caracteres admitidos
 
 El número es un `<input type="tel">` con `inputMode="tel"` y `autoComplete="tel-national"`: el país va
-en el prefijo, así que el navegador sugiere el número nacional. Solo guarda dígitos, espacios,
-guiones y `+`. Las letras, con o sin tilde, los demás símbolos y los emoji se descartan al escribir y
-al pegar: pegar `abc 999-111` deja ` 999-111`. Un cambio hecho solo de caracteres descartados no emite
-nada.
+en el prefijo, así que el navegador sugiere el número nacional. Qué caracteres guarda lo decide
+`numberCharacters`:
 
-El campo no valida el largo ni el formato del número, que cambian de un país a otro: ese control es
-de tu app.
+| `numberCharacters` | Guarda | `98a7-65 4/3` queda |
+|---|---|---|
+| `"phone"` (por defecto, la regla de la 2.2.0) | dígitos, espacios, guiones y `+` | `987-65 43` |
+| `"digits"` | solo dígitos | `9876543` |
+
+Las letras, con o sin tilde, los demás símbolos y los emoji se descartan al escribir y al pegar: pegar
+`abc 999-111` deja ` 999-111`. Un cambio hecho solo de caracteres descartados no emite nada.
+
+La regla se aplica a lo que **se escribe o se pega**. El valor inicial (`value` o `defaultValue`) se
+muestra tal cual, aunque no la cumpla: así ves lo que trae tu base de datos. Ojo: la regla filtra el
+valor entero en cada cambio, así que al editar un valor viejo como `987654321 / 912345678` con
+`"digits"`, los dos números quedan juntos. Si tus datos viejos tienen basura, límpialos antes de
+mostrarlos.
+
+El campo no valida el formato del número por país: ese control es de tu app.
+
+## Largo máximo
+
+`maxNumberLength` limita el largo del número, contado **después** de la regla de caracteres (con
+`"digits"`, son dígitos). Sin la prop no hay límite. Tiene que ser un entero desde 1; cualquier otro
+valor lanza `InvalidMaxNumberLengthError` al renderizar.
+
+- Escribir más allá del máximo no hace nada.
+- Pegar algo más largo lo recorta al máximo.
+- Borrar siempre se puede, aunque el valor viejo ya supere el máximo; agregar a un valor que ya lo
+  supera, no.
+
+```tsx
+<PhoneInput numberCharacters="digits" maxNumberLength={9} />
+```
+
+## Pegar un número internacional
+
+Con `splitPastedDialCode`, pegar un número que empieza con `+` y un prefijo conocido sobre **todo** el
+campo (vacío o con todo seleccionado) separa el prefijo: el país va al selector y el número local a la
+caja, en un solo `onValueChange`. Está apagado por defecto: sin la prop, pegar funciona como en la 2.2.0.
+
+- Se busca el prefijo conocido más largo después del `+`: `+598 99…` es Uruguay, no `+59`.
+- Si el país elegido ya tiene ese prefijo, se queda: con Canadá elegido, pegar `+1 …` sigue en
+  Canadá. Si no, se elige el país representativo del prefijo (ver
+  [countries.es.md](countries.es.md#prefijos-compartidos)): `+1` es EE. UU.
+- Al número local se le aplican la regla de caracteres y el largo máximo, y se le quitan los espacios
+  y guiones del principio.
+- No se separa nada si el prefijo no existe (`+999`), si no empieza con `+` (`0051…`), o si el pegado
+  va en medio de un número ya escrito: en esos casos es un pegado normal.
+- No se leen códigos de área: un `+1 809…` dominicano elige EE. UU. si no había un país `+1` elegido.
+
+```tsx
+<PhoneInput numberCharacters="digits" splitPastedDialCode />
+```
+
+## Ejemplos de entrada y salida
+
+| # | Props | Acción | País antes | Valor emitido |
+|---|---|---|---|---|
+| E-1 | ninguna (2.2.0) | pega `+51 987 654 321` | — | `{ country: null, number: "+51 987 654 321" }` |
+| E-2 | ninguna | escribe `98a7-65 4/3` | PE | `"987-65 43"` |
+| E-3 | `digits` | escribe `98a7-65 4/3` | PE | `"9876543"` |
+| E-4 | `digits` | pega `+51 987 654 321` | PE | `"51987654321"` (el prefijo queda pegado al número) |
+| E-5 | `splitPastedDialCode` | pega `+51 987 654 321` | — | `{ country: "PE", number: "987 654 321" }` |
+| E-6 | `digits` + split | pega `+51 987 654 321` | — | `{ country: "PE", number: "987654321" }` |
+| E-7 | `digits` + split | pega `+1 (416) 555-0100` | CA | `{ country: "CA", number: "4165550100" }` |
+| E-8 | `digits` + split | pega `+1 416 555 0100` | PE | `{ country: "US", number: "4165550100" }` |
+| E-9 | `digits` + split | pega `+999 123` (prefijo desconocido) | PE | sin separar: `"999123"` |
+| E-10 | `digits` + split | pega `+51 987` en medio de lo escrito | PE | pegado normal, filtrado |
+| E-11 | `digits`, máximo 9 | pega `987 654 321 000` | PE | `"987654321"` |
+| E-12 | `digits` + split, máximo 9 | pega `+51 987 654 321 000` | — | `{ country: "PE", number: "987654321" }` |
+| E-13 | `digits`, máximo 9 | valor inicial `987654321 / 912345678` | PE | se ve tal cual; no emite |
+| E-14 | `digits`, máximo 9 | E-13 y escribe `0` al final | PE | se rechaza; no emite |
+| E-15 | `digits`, máximo 9 | E-13 y borra el último carácter | PE | `"98765432191234567"` |
+| E-16 | split | pega `0051 987…` | — | sin separar: solo cuenta el `+` |
 
 ## Label, obligatorio y errores
 
@@ -88,6 +160,31 @@ El campo nunca muestra un error propio: `required` lo marca, y tu app decide cu�
 
 ```tsx
 <PhoneInput labelPosition="start" required error={isInvalid ? "Ingresa un teléfono válido" : undefined} />
+```
+
+## id y name
+
+`id` y `name` van al `<input>` del número. Sin ellos, el id se genera y el número no tiene nombre,
+como en la 2.2.0.
+
+- `id`: un `<label htmlFor>` de tu app enfoca el número, y el label propio del campo apunta a ese mismo
+  id. Sirve para llevar el foco al primer error: `document.getElementById(id)?.focus()`.
+- `name`: el número viaja en el envío nativo del formulario y en `FormData`, y se encuentra con
+  `form.elements[name]`. El país no viaja: está en `onValueChange`.
+
+```tsx
+<PhoneInput id="whatsapp" name="whatsapp" label="WhatsApp" />
+```
+
+## Deshabilitado
+
+`disabled` deshabilita el prefijo y el número con el atributo nativo: no se abren, no se escribe en
+ellos y salen del orden de Tab. Si la lista estaba abierta, se cierra, y al volver a habilitar el campo
+sigue cerrada. La caja lleva `data-disabled` y toma el aspecto de los tokens
+`--gdy-phone-input-disabled-opacity` y `--gdy-phone-input-disabled-bg`.
+
+```tsx
+<PhoneInput disabled={isSaving} value={phone} onValueChange={setPhone} />
 ```
 
 ## Dentro de los formularios de auth
@@ -138,6 +235,7 @@ el "*" y el error son `gdy-field-label`, `gdy-field-required` y `gdy-field-error
 | Elemento | Atributo de estado | Valores |
 |---|---|---|
 | `gdy-phone-input` | `data-invalid` | presente con un error |
+| `gdy-phone-input` | `data-disabled` | presente con `disabled` |
 | `gdy-phone-input-prefix` | `aria-expanded` | `"true"` mientras la lista está abierta |
 | `gdy-phone-input-dial-code` | `data-placeholder` | presente mientras no hay país elegido |
 
@@ -151,6 +249,8 @@ el "*" y el error son `gdy-field-label`, `gdy-field-required` y `gdy-field-error
 | `--gdy-phone-input-bg` / `--gdy-phone-input-color` | `--gdy-background` / `--gdy-foreground` | Fondo y texto de la caja. |
 | `--gdy-phone-input-focus-ring` | `--gdy-ring` | Borde y anillo interior con foco. |
 | `--gdy-phone-input-error-color` | `--gdy-destructive` | Borde con error. |
+| `--gdy-phone-input-disabled-opacity` | `0.5` | Opacidad de la caja deshabilitada. |
+| `--gdy-phone-input-disabled-bg` | `--gdy-muted` | Fondo de la caja deshabilitada. |
 | `--gdy-phone-input-placeholder-color` | `--gdy-muted-foreground` | "País", la flecha y el placeholder del número. |
 | `--gdy-phone-input-prefix-focus-color` | `--gdy-ring` | Texto del prefijo con el foco del teclado. |
 | `--gdy-phone-input-panel-min-width` | `280px` | Ancho mínimo de la lista; nunca es más angosta que el campo. |
@@ -186,6 +286,12 @@ El label es la prop `label`, "Teléfono" por defecto.
 | `defaultValue` | `PhoneInputValue` | — | Valor inicial, no controlado. |
 | `defaultCountry` | `CountryCode` | ninguno | País de un campo no controlado sin `defaultValue`. |
 | `onValueChange` | `(value: PhoneInputValue) => void` | — | Cambió el país o el número. |
+| `id` | `string` | generado | Id del número. |
+| `name` | `string` | — | Nombre del número en el formulario. |
+| `disabled` | `boolean` | `false` | Deshabilita el prefijo y el número. |
+| `numberCharacters` | `"phone" \| "digits"` | `"phone"` | Caracteres que guarda el número. |
+| `maxNumberLength` | `number` | sin límite | Largo máximo del número, después de la regla. |
+| `splitPastedDialCode` | `boolean` | `false` | Separa el prefijo de un número internacional pegado. |
 | `label` | `ReactNode` | `"Teléfono"` | Label visible. |
 | `aria-label` / `aria-labelledby` | `string` | — | Nombre sin label visible. Cada uno excluye a los otros. |
 | `labelPosition` | `"top" \| "start"` | `"top"` | Label arriba o al costado. |
@@ -205,6 +311,7 @@ El label es la prop `label`, "Teléfono" por defecto.
 ### Tipos
 
 - `PhoneInputValue`: `{ country: CountryCode | null; number: string }`.
+- `PhoneNumberCharacters`: `"phone" | "digits"`.
 - `PhoneInputProps`: `PhoneInputNaming` combinado con `PhoneInputSettings` y `labelPosition`,
   `required` y `error`.
 - `PhoneInputSettings`: las props de valor, prefijo, lista y estilo.
@@ -218,3 +325,7 @@ El label es la prop `label`, "Teléfono" por defecto.
 
 - `DEFAULT_PHONE_INPUT_TEXTS`: los textos por defecto.
 - `DEFAULT_PHONE_INPUT_LABEL`: `"Teléfono"`.
+
+### Errores
+
+- `InvalidMaxNumberLengthError`: `maxNumberLength` no es un entero desde 1.
