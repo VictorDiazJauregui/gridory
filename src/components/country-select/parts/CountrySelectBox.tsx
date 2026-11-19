@@ -19,14 +19,14 @@ interface BoxPartProps {
 
 const SelectionControls = ({ view }: BoxPartProps) => {
   const { resolvedProps, selectedCountries, texts } = view;
-  if (selectedCountries.length === 0) return null;
+  if (selectedCountries.length === 0 && !view.notApplicableChosen) return null;
   if (view.multiple) {
     return (
-      <CountryChips countries={selectedCountries} flagSettings={view.flagSettings} texts={texts} onRemove={view.removeCountry} classNames={resolvedProps.classNames} />
+      <CountryChips countries={selectedCountries} flagSettings={view.flagSettings} texts={texts} disabled={resolvedProps.disabled} onRemove={view.removeCountry} classNames={resolvedProps.classNames} />
     );
   }
   if (resolvedProps.required) return null;
-  return <CountrySelectClear label={texts.clearSelection} className={resolvedProps.classNames?.clear} onClear={view.clearSelection} />;
+  return <CountrySelectClear label={texts.clearSelection} className={resolvedProps.classNames?.clear} disabled={resolvedProps.disabled} onClear={view.clearSelection} />;
 };
 
 // The whole box anchors the panel, which measures against the full field. The buttons are siblings of the
@@ -39,6 +39,7 @@ export const CountrySelectBox = ({ view, control }: CountrySelectBoxProps) => {
         <div
           className={cn("gdy-scope gdy-country-select", resolvedProps.className, resolvedProps.classNames?.root)}
           data-multiple={view.multiple || undefined}
+          data-disabled={resolvedProps.disabled ? "" : undefined}
         >
           <CountrySelectTrigger view={view} control={control} />
           <SelectionControls view={view} />

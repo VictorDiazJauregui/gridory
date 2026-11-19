@@ -89,6 +89,7 @@ si lo usas.
 | `SegmentedControl`: una elección única entre pocas opciones. | `gridory/segmented-control` | [Control segmentado](docs/segmented-control.es.md) |
 | `CountrySelect`: uno o varios países, con búsqueda y banderas. | `gridory/country-select` | [Selector de país](docs/country-select.es.md) |
 | `PhoneInput`: un teléfono con su prefijo internacional. | `gridory/phone-input` | [Teléfono con prefijo](docs/phone-input.es.md) |
+| `CountryFlag`, `getCountryName`, `getDialCode`, `findCountryByDialCode`: el catálogo de países, sin los selectores. | `gridory/countries` | [Países](docs/countries.es.md) |
 
 ### Navegación
 

@@ -1,6 +1,6 @@
 {
   "name": "gridory",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "React + TypeScript components for data-heavy apps. They emit events; your app keeps the data.",
   "keywords": [
     "react",
@@ -77,6 +77,10 @@
     "./phone-input": {
       "types": "./dist/types/phone-input.d.ts",
       "import": "./dist/phone-input.js"
+    },
+    "./countries": {
+      "types": "./dist/types/countries.d.ts",
+      "import": "./dist/countries.js"
     },
     "./sidebar": {
       "types": "./dist/types/sidebar.d.ts",

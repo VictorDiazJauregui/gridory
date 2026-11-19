@@ -1,6 +1,6 @@
 import { ChevronDown } from "lucide-react";
 import { cn } from "../../../lib/cn";
-import { CountryFlag } from "../../shared/countries/CountryFlag";
+import { OptionalCountryFlag } from "../../shared/countries/OptionalCountryFlag";
 import { FloatingPanelTrigger } from "../../shared/floating-panel/FloatingPanel";
 import type { PhoneInputView } from "../model/use-phone-input";
 
@@ -26,9 +26,9 @@ export const PhoneInputPrefix = ({ view }: PhoneInputPrefixProps) => {
         role="combobox"
         className={cn("gdy-phone-input-prefix", view.resolvedSettings.classNames?.prefix)}
         aria-label={resolvePrefixName(view)}
-        title={selectedCountry?.name}
+        title={selectedCountry?.name} disabled={view.resolvedSettings.disabled}
       >
-        {selectedCountry ? <CountryFlag code={selectedCountry.code} settings={view.flagSettings} /> : null}
+        {selectedCountry ? <OptionalCountryFlag code={selectedCountry.code} settings={view.flagSettings} /> : null}
         <span className="gdy-phone-input-dial-code" data-placeholder={selectedCountry ? undefined : ""}>
           {selectedCountry?.dialCode ?? texts.countryPlaceholder}
         </span>

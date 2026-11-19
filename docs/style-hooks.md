@@ -255,7 +255,7 @@ The state selectors column lists the attributes the stylesheets combine with eac
 
 | Class | Kind | State selectors |
 |---|---|---|
-| `gdy-country-select` | styled | `[data-multiple]` |
+| `gdy-country-select` | styled | `[data-disabled]`, `[data-multiple]` |
 | `gdy-country-select-chevron` | styled | — |
 | `gdy-country-select-chip` | styled | — |
 | `gdy-country-select-chip-label` | styled | — |
@@ -274,7 +274,7 @@ The state selectors column lists the attributes the stylesheets combine with eac
 
 | Class | Kind | State selectors |
 |---|---|---|
-| `gdy-phone-input` | styled | `[data-invalid]` |
+| `gdy-phone-input` | styled | `[data-disabled]`, `[data-invalid]` |
 | `gdy-phone-input-chevron` | styled | — |
 | `gdy-phone-input-dial-code` | styled | `[data-placeholder]` |
 | `gdy-phone-input-frame` | styled | — |
@@ -695,7 +695,7 @@ Radix follow that library.
 | `data-compact` | `"true"` | Gridory | `gdy-sidebar-logo` |
 | `data-day` | the date of the day | Gridory | no default rule |
 | `data-diagram-state` | `"error"`, `"loading"`, `"ready"` | Gridory | `gdy-md-diagram` |
-| `data-disabled` | present / absent | Gridory or Radix | `gdy-auth-google-slot`, `gdy-calendar-day`, `gdy-menu-item` |
+| `data-disabled` | present / absent | Gridory or Radix | `gdy-auth-google-slot`, `gdy-calendar-day`, `gdy-country-select`, `gdy-menu-item`, `gdy-phone-input` |
 | `data-draggable` | present / absent | Gridory | `gdy-kanban-card` |
 | `data-dragging` | present / absent | Gridory | `gdy-kanban-card` |
 | `data-drop-disabled` | present / absent | Gridory | `gdy-kanban-column` |
@@ -876,6 +876,8 @@ any ancestor overrides that part only. `--gdy-select-*` also mirror the `selectT
 | `--gdy-country-select-chip-color` | `var(--gdy-foreground)` | country-select |
 | `--gdy-country-select-chip-max-width` | `8rem` | country-select |
 | `--gdy-country-select-color` | `var(--gdy-foreground)` | country-select |
+| `--gdy-country-select-disabled-bg` | `var(--gdy-muted)` | country-select |
+| `--gdy-country-select-disabled-opacity` | `0.5` | country-select |
 | `--gdy-country-select-error-color` | `var(--gdy-destructive)` | country-select |
 | `--gdy-country-select-focus-ring` | `var(--gdy-ring)` | country-select |
 | `--gdy-country-select-height` | `var(--gdy-field-control-height, 40px)` | country-select |
@@ -1040,6 +1042,8 @@ any ancestor overrides that part only. `--gdy-select-*` also mirror the `selectT
 | `--gdy-phone-input-border` | `var(--gdy-input)` | phone-input |
 | `--gdy-phone-input-check-color` | `var(--gdy-listbox-check-color, var(--gdy-primary))` | phone-input |
 | `--gdy-phone-input-color` | `var(--gdy-foreground)` | phone-input |
+| `--gdy-phone-input-disabled-bg` | `var(--gdy-muted)` | phone-input |
+| `--gdy-phone-input-disabled-opacity` | `0.5` | phone-input |
 | `--gdy-phone-input-error-color` | `var(--gdy-destructive)` | phone-input |
 | `--gdy-phone-input-focus-ring` | `var(--gdy-ring)` | phone-input |
 | `--gdy-phone-input-gap` | `8px` | phone-input |

@@ -4,7 +4,7 @@ import { isCountryCode } from "./country-codes";
 import type { CountryFlagSettings } from "./country-flag-url";
 import type { Country } from "./country-list";
 import { matchesCountryQuery } from "./country-search";
-import { CountryFlag } from "./CountryFlag";
+import { OptionalCountryFlag } from "./OptionalCountryFlag";
 import { DIAL_CODE_BY_COUNTRY } from "./dial-codes";
 
 export type CountryWithDialCode = Country & { dialCode: string };
@@ -17,7 +17,7 @@ export const toCountryOption = (
 ): ListboxOption => ({
   value: country.code,
   label: country.name,
-  leading: createElement(CountryFlag, { code: country.code, settings: flagSettings }),
+  leading: createElement(OptionalCountryFlag, { code: country.code, settings: flagSettings }),
 });
 
 export const toDialCodeOption = (

@@ -7,11 +7,12 @@ export interface CountrySelectResolvedDefaults {
   locale: string;
   showFlags: boolean;
   thinScrollbars: boolean;
+  disabled: boolean;
 }
 
 // Typed wider than the literal constants, so a resolved `required` reads as a
 // boolean and not as the `false` of the default.
-export const applyCountrySelectDefaults = (props: CountrySelectProps) =>
-  applyPropDefaults<CountrySelectProps, CountrySelectResolvedDefaults>(COUNTRY_SELECT_DEFAULTS, props);
+export const applyCountrySelectDefaults = (props: CountrySelectProps<string>) =>
+  applyPropDefaults<CountrySelectProps<string>, CountrySelectResolvedDefaults>(COUNTRY_SELECT_DEFAULTS, props);
 
 export type ResolvedCountrySelectProps = ReturnType<typeof applyCountrySelectDefaults>;

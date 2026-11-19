@@ -33,6 +33,8 @@ export interface FieldControlAttributes {
 }
 
 export type FieldProps = FieldNaming & {
+  /** Id of the control. Generated when left out; the label and the error ids are always generated. */
+  id?: string;
   labelPosition?: FieldLabelPosition;
   required?: boolean;
   error?: ReactNode;
