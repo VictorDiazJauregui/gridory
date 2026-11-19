@@ -26,6 +26,19 @@
   line-height: 1.25rem;
 }
 
+/* The state lives on the box, which draws the field; its buttons are disabled natively. */
+.gdy-country-select[data-disabled] {
+  background-color: var(--gdy-country-select-disabled-bg, var(--gdy-muted));
+  opacity: var(--gdy-country-select-disabled-opacity, 0.5);
+  cursor: not-allowed;
+}
+
+.gdy-country-select-trigger:disabled,
+.gdy-country-select-clear:disabled,
+.gdy-country-select-chip-remove:disabled {
+  cursor: not-allowed;
+}
+
 .gdy-country-select-trigger {
   display: flex;
   flex: 1 1 auto;

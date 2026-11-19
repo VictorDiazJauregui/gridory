@@ -41,6 +41,18 @@
   box-shadow: inset 0 0 0 1px var(--gdy-phone-input-error-color, var(--gdy-destructive));
 }
 
+/* The state lives on the box, which draws the field; the prefix and the number are disabled natively. */
+.gdy-phone-input[data-disabled] {
+  background-color: var(--gdy-phone-input-disabled-bg, var(--gdy-muted));
+  opacity: var(--gdy-phone-input-disabled-opacity, 0.5);
+  cursor: not-allowed;
+}
+
+.gdy-phone-input-prefix:disabled,
+.gdy-phone-input-number:disabled {
+  cursor: not-allowed;
+}
+
 /* No border and no background of its own: the space and the chevron are the
    only separation from the number, in both themes. */
 .gdy-phone-input-prefix {
