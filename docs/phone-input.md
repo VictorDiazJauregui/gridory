@@ -17,6 +17,7 @@ country's ISO code and the number, and your app decides what to do with them.
 - [Label, required and errors](#label-required-and-errors)
 - [id and name](#id-and-name)
 - [Disabled](#disabled)
+- [Inside a modal](#inside-a-modal)
 - [Inside the auth forms](#inside-the-auth-forms)
 - [Keyboard and accessibility](#keyboard-and-accessibility)
 - [Styling](#styling)
@@ -187,6 +188,15 @@ again. The box carries `data-disabled` and takes its look from the
 ```tsx
 <PhoneInput disabled={isSaving} value={phone} onValueChange={setPhone} />
 ```
+
+## Inside a modal
+
+The list scrolls with the mouse wheel and with a finger inside any modal that locks the page scroll:
+Radix `Dialog`, `AlertDialog` and `Sheet` (shadcn's included), or `react-remove-scroll`. Nothing to
+set up. Those locks cancel the wheel and touch moves that start outside the dialog, and the panel
+renders in a portal under `<body>`, so it keeps its own: the wheel and touch moves that start over the
+open panel stop there and do not reach `document`. A `wheel` or `touchmove` listener on `document`,
+or a React `onWheel`/`onTouchMove` on an ancestor, does not receive them.
 
 ## Inside the auth forms
 

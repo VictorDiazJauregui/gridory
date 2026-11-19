@@ -15,6 +15,7 @@ business state: it emits the ISO code and your app decides what to do with it.
 - ["Not applicable" option](#not-applicable-option)
 - [id and name](#id-and-name)
 - [Disabled](#disabled)
+- [Inside a modal](#inside-a-modal)
 - [Width and narrow containers](#width-and-narrow-containers)
 - [Flags and country names](#flags-and-country-names)
 - [Events](#events)
@@ -272,6 +273,15 @@ carries `data-disabled` and takes its look from the `--gdy-country-select-disabl
 ```tsx
 <CountrySelect disabled={isSaving} value={country} onValueChange={setCountry} />
 ```
+
+## Inside a modal
+
+The list scrolls with the mouse wheel and with a finger inside any modal that locks the page scroll:
+Radix `Dialog`, `AlertDialog` and `Sheet` (shadcn's included), or `react-remove-scroll`. Nothing to
+set up. Those locks cancel the wheel and touch moves that start outside the dialog, and the panel
+renders in a portal under `<body>`, so it keeps its own: the wheel and touch moves that start over the
+open panel stop there and do not reach `document`. A `wheel` or `touchmove` listener on `document`,
+or a React `onWheel`/`onTouchMove` on an ancestor, does not receive them.
 
 ## Width and narrow containers
 

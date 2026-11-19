@@ -12,7 +12,6 @@ import { MissingFloatingPanelError } from "../components/shared/floating-panel/f
 import { expectRenderError } from "./expect-render-error";
 
 interface PanelHarnessProps {
-  portalContainer?: HTMLElement | null;
   accessibleName?: AccessibleName;
 }
 
@@ -34,7 +33,7 @@ const NAMING_CASES: NamingCase[] = [
   },
 ];
 
-const PanelHarness = ({ portalContainer, accessibleName = PANEL_LABEL }: PanelHarnessProps) => {
+const PanelHarness = ({ accessibleName = PANEL_LABEL }: PanelHarnessProps) => {
   const [open, setOpen] = useState(false);
   return (
     <>
@@ -43,21 +42,11 @@ const PanelHarness = ({ portalContainer, accessibleName = PANEL_LABEL }: PanelHa
         <FloatingPanelTrigger>
           <button type="button">País</button>
         </FloatingPanelTrigger>
-        <FloatingPanelContent {...accessibleName} portalContainer={portalContainer}>
+        <FloatingPanelContent {...accessibleName}>
           <input aria-label="Buscar país" />
         </FloatingPanelContent>
       </FloatingPanel>
       <button type="button">Afuera</button>
-    </>
-  );
-};
-
-const PortalHostHarness = () => {
-  const [host, setHost] = useState<HTMLElement | null>(null);
-  return (
-    <>
-      <div data-testid="portal-host" ref={setHost} />
-      <PanelHarness portalContainer={host} />
     </>
   );
 };
@@ -106,12 +95,6 @@ test("a click outside closes the panel and leaves the focus where the click land
   await user.click(screen.getByRole("button", { name: "Afuera" }));
   await expectPanelClosed();
   expect(screen.getByRole("button", { name: "Afuera" })).toHaveFocus();
-});
-
-test("portalContainer mounts the panel inside the given element", async () => {
-  render(<PortalHostHarness />);
-  const { panel } = await openPanel();
-  expect(screen.getByTestId("portal-host")).toContainElement(panel);
 });
 
 test("the panel root carries the scope and thin-scroll classes", async () => {

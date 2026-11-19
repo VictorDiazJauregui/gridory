@@ -6,6 +6,7 @@ import type { AccessibleName } from "../accessible-name";
 import { closeOnTab } from "./close-on-tab";
 import { FloatingPanelCloseContext, useCloseFloatingPanel } from "./floating-panel-context";
 import { FLOATING_PANEL_PLACEMENT } from "./floating-panel-placement";
+import { useContainedScrollGestures } from "./use-contained-scroll-gestures";
 
 interface FloatingPanelProps {
   open: boolean;
@@ -19,7 +20,6 @@ interface FloatingPanelSlotProps {
 
 type FloatingPanelContentProps = AccessibleName & {
   children: ReactNode;
-  portalContainer?: HTMLElement | null;
   className?: string;
   style?: CSSProperties;
 };
@@ -40,17 +40,14 @@ export const FloatingPanelTrigger = ({ children }: FloatingPanelSlotProps) => (
   <PopoverTrigger asChild>{children}</PopoverTrigger>
 );
 
-export const FloatingPanelContent = ({
-  portalContainer,
-  className,
-  ...contentProps
-}: FloatingPanelContentProps) => {
+export const FloatingPanelContent = ({ className, ...contentProps }: FloatingPanelContentProps) => {
   const closePanel = useCloseFloatingPanel();
+  const containScrollGestures = useContainedScrollGestures();
   return (
     <PopoverContent
       {...FLOATING_PANEL_PLACEMENT}
       {...contentProps}
-      container={portalContainer}
+      ref={containScrollGestures}
       className={cn("gdy-floating-panel gdy-thin-scroll", className)}
       onKeyDown={(event) => closeOnTab(event, closePanel)}
     />
