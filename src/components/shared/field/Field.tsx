@@ -8,7 +8,7 @@ import { hasVisibleContent } from "./visible-content";
 
 export const Field = (props: FieldProps) => {
   const { labelPosition = "top", required = false, error, className, children } = props;
-  const ids = useFieldIds();
+  const ids = useFieldIds(props.id);
   assertFieldHasAccessibleName(props);
   const hasError = hasVisibleContent(error);
   const control = buildFieldControlAttributes({ ids, naming: props, required, hasError });

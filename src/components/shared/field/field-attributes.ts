@@ -15,9 +15,9 @@ interface FieldControlState {
   hasError: boolean;
 }
 
-export const useFieldIds = (): FieldIds => {
+export const useFieldIds = (controlId?: string): FieldIds => {
   const fieldId = useId();
-  return { control: `${fieldId}-control`, label: `${fieldId}-label`, error: `${fieldId}-error` };
+  return { control: controlId ?? `${fieldId}-control`, label: `${fieldId}-label`, error: `${fieldId}-error` };
 };
 
 export const buildFieldControlAttributes = ({
