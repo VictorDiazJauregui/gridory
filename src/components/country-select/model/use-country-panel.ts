@@ -1,9 +1,10 @@
 import { useState } from "react";
+import { usePanelOpen } from "../../shared/floating-panel/use-panel-open";
 
 // The control counts as touched once the list first closes, or once a chip is removed with the list closed:
 // its own error waits until then, so it never shows while the person is still choosing.
-export const useCountryPanel = () => {
-  const [open, setOpen] = useState(false);
+export const useCountryPanel = (disabled: boolean) => {
+  const { open, setOpen } = usePanelOpen(disabled);
   const [touched, setTouched] = useState(false);
   const changeOpen = (nextOpen: boolean) => {
     setOpen(nextOpen);

@@ -5,7 +5,7 @@ import { assertValidSelectionRange, type SelectionRange } from "./selection-rang
 const SINGLE_SELECTION_RANGE: SelectionRange = { minSelected: 1, maxSelected: 1 };
 
 /** Throws InvalidSelectionRangeError when the minimum exceeds the maximum. */
-export const resolveSelectionRange = (props: CountrySelectProps): SelectionRange => {
+export const resolveSelectionRange = (props: CountrySelectProps<string>): SelectionRange => {
   if (!props.multiple) return SINGLE_SELECTION_RANGE;
   const range = {
     minSelected: props.minSelected ?? COUNTRY_SELECT_DEFAULTS.minSelected,

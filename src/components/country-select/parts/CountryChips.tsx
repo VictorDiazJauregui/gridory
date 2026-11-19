@@ -12,6 +12,7 @@ interface CountryChipsProps {
   countries: readonly Country[];
   flagSettings: CountryFlagSettings;
   texts: Pick<CountrySelectTexts, "removeCountry" | "moreCountries">;
+  disabled: boolean;
   onRemove: (code: CountryCode, removeButton: HTMLElement) => void;
   classNames?: Pick<CountrySelectClassNames, "chips" | "chip">;
 }
@@ -33,7 +34,7 @@ const MoreCountriesBadge = ({ hiddenCount, labelTemplate }: MoreCountriesBadgePr
   </li>
 );
 
-export const CountryChips = ({ countries, flagSettings, texts, onRemove, classNames }: CountryChipsProps) => {
+export const CountryChips = ({ countries, flagSettings, texts, disabled, onRemove, classNames }: CountryChipsProps) => {
   const listRef = useRef<HTMLUListElement>(null);
   const visibleCount = useVisibleChipCount(listRef, countries.map((country) => country.code));
   return (
@@ -44,7 +45,7 @@ export const CountryChips = ({ countries, flagSettings, texts, onRemove, classNa
           country={country}
           flagSettings={flagSettings}
           removeLabel={fillTextTemplate(texts.removeCountry, { country: country.name })}
-          hidden={index >= visibleCount}
+          hidden={index >= visibleCount} disabled={disabled}
           onRemove={onRemove}
           className={classNames?.chip}
         />

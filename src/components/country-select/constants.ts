@@ -2,7 +2,8 @@ import type { CountrySelectTexts } from "./types";
 
 export const DEFAULT_COUNTRY_SELECT_LABEL = "País";
 
-export const DEFAULT_COUNTRY_SELECT_TEXTS: CountrySelectTexts = {
+// Required: a key added in a minor version is optional in CountrySelectTexts, so full texts objects still compile.
+export const DEFAULT_COUNTRY_SELECT_TEXTS: Required<CountrySelectTexts> = {
   placeholder: "Selecciona un país",
   multiplePlaceholder: "Selecciona países",
   searchLabel: "Buscar país",
@@ -15,6 +16,7 @@ export const DEFAULT_COUNTRY_SELECT_TEXTS: CountrySelectTexts = {
   maxReached: "Alcanzaste el máximo permitido ({max})",
   belowMinimum: "Selecciona al menos {min} países",
   required: "Selecciona un país",
+  notApplicable: "No aplica",
 };
 
 export const COUNTRY_SELECT_DEFAULTS = {
@@ -23,4 +25,5 @@ export const COUNTRY_SELECT_DEFAULTS = {
   showFlags: true,
   thinScrollbars: true,
   minSelected: 1,
+  disabled: false,
 } as const;

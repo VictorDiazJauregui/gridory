@@ -10,8 +10,10 @@ interface CountrySelectTriggerProps {
 }
 
 // Full names on hover: the single value truncates and the chips let the pointer through to the combobox.
-const resolveTitle = ({ selectedCountries }: CountrySelectView): string | undefined =>
-  selectedCountries.map((country) => country.name).join(", ") || undefined;
+const resolveTitle = ({ selectedCountries, notApplicableChosen, texts }: CountrySelectView): string | undefined => {
+  if (notApplicableChosen) return texts.notApplicable;
+  return selectedCountries.map((country) => country.name).join(", ") || undefined;
+};
 
 // A button with role combobox: aria-required is not valid on a plain button. Radix adds aria-expanded,
 // aria-controls and aria-haspopup="dialog", which is what opens: a dialog with the search box and the list.
@@ -22,6 +24,8 @@ export const CountrySelectTrigger = ({ view, control }: CountrySelectTriggerProp
       role="combobox"
       className={cn("gdy-country-select-trigger", view.resolvedProps.classNames?.trigger)}
       title={resolveTitle(view)}
+      name={view.resolvedProps.name}
+      disabled={view.resolvedProps.disabled}
       {...control}
     >
       <CountrySelectTriggerContent view={view} />
