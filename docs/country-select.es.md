@@ -15,6 +15,7 @@ negocio: emite el código ISO y tu app decide qué hacer con él.
 - [Opción "no aplica"](#opción-no-aplica)
 - [id y name](#id-y-name)
 - [Deshabilitado](#deshabilitado)
+- [Dentro de un modal](#dentro-de-un-modal)
 - [Ancho y contenedores angostos](#ancho-y-contenedores-angostos)
 - [Banderas y nombres de países](#banderas-y-nombres-de-países)
 - [Eventos](#eventos)
@@ -271,6 +272,16 @@ puede tocar. La caja lleva `data-disabled` y toma el aspecto de los tokens
 ```tsx
 <CountrySelect disabled={isSaving} value={country} onValueChange={setCountry} />
 ```
+
+## Dentro de un modal
+
+La lista se desplaza con la rueda del mouse y con el dedo dentro de cualquier modal que bloquee el
+desplazamiento de la página: `Dialog`, `AlertDialog` y `Sheet` de Radix (incluidos los de shadcn), o
+`react-remove-scroll`. No hay que configurar nada. Esos bloqueos cancelan la rueda y los arrastres
+táctiles que nacen fuera de la ventana, y el panel se renderiza en un portal bajo `<body>`, así que se
+queda con los suyos: la rueda y los arrastres que nacen sobre el panel abierto se detienen ahí y no
+llegan a `document`. Un listener de `wheel` o `touchmove` en `document`, o un `onWheel`/`onTouchMove`
+de React en un ancestro, no los recibe.
 
 ## Ancho y contenedores angostos
 
