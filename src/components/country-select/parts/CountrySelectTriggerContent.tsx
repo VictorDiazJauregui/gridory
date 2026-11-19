@@ -1,4 +1,4 @@
-import { CountryFlag } from "../../shared/countries/CountryFlag";
+import { OptionalCountryFlag } from "../../shared/countries/OptionalCountryFlag";
 import { fillTextTemplate } from "../model/fill-text-template";
 import type { CountrySelectView } from "../model/use-country-select";
 import { CountrySelectValue } from "./CountrySelectValue";
@@ -7,11 +7,15 @@ interface TriggerContentProps {
   view: CountrySelectView;
 }
 
+// "No aplica" is an answer, not a gap: it reads as a value, without a flag.
 const SingleTriggerContent = ({ view }: TriggerContentProps) => {
   const country = view.selectedCountries.at(0);
+  if (view.notApplicableChosen) {
+    return <CountrySelectValue text={view.texts.notApplicable} isPlaceholder={false} className={view.resolvedProps.classNames?.value} />;
+  }
   return (
     <>
-      {country ? <CountryFlag code={country.code} settings={view.flagSettings} /> : null}
+      {country ? <OptionalCountryFlag code={country.code} settings={view.flagSettings} /> : null}
       <CountrySelectValue
         text={country?.name ?? view.texts.placeholder}
         isPlaceholder={!country}

@@ -2,6 +2,8 @@ import type { ReactNode } from "react";
 import { DemoEventLog } from "../shared/DemoEventLog";
 import { useDemoEventLog } from "../shared/use-demo-event-log";
 import type { RecordDemoEvent } from "../shared/use-demo-event-log";
+import { ControlsDialogExample } from "./ControlsDialogExample";
+import { ControlsFormSection } from "./form/ControlsFormSection";
 import { ControlsScrollArea } from "./ControlsScrollArea";
 import { ControlsSection } from "./ControlsSection";
 import { CONTROLS_SECTIONS, EVENT_LOG_DESCRIPTION } from "./controls-sections";
@@ -29,6 +31,18 @@ const ControlsHeader = () => (
   </div>
 );
 
+// The scroll area and the modal can clip or trap a panel; the form puts the controls to work together.
+const ControlsContainers = ({ record }: { record: RecordDemoEvent }) => (
+  <>
+    <ControlsScrollArea>
+      <ScrollAreaCountryExample record={record} />
+      <ScrollAreaPhoneExample record={record} />
+    </ControlsScrollArea>
+    <ControlsDialogExample record={record} />
+    <ControlsFormSection record={record} />
+  </>
+);
+
 export const ControlsMock = () => {
   const { events, record } = useDemoEventLog();
   return (
@@ -40,10 +54,7 @@ export const ControlsMock = () => {
             {SECTION_DEMOS[section.id]?.(record)}
           </ControlsSection>
         ))}
-        <ControlsScrollArea>
-          <ScrollAreaCountryExample record={record} />
-          <ScrollAreaPhoneExample record={record} />
-        </ControlsScrollArea>
+        <ControlsContainers record={record} />
       </div>
       <DemoEventLog events={events} description={EVENT_LOG_DESCRIPTION} />
     </div>

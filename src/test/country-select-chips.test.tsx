@@ -22,6 +22,7 @@ const buildChips = (countries: readonly Country[], onRemove: () => void) => (
     countries={countries}
     flagSettings={TEST_FLAG_SETTINGS}
     texts={DEFAULT_COUNTRY_SELECT_TEXTS}
+    disabled={false}
     onRemove={onRemove}
     classNames={{ chips: "app-chips", chip: "app-chip" }}
   />

@@ -1,8 +1,8 @@
 import { cn } from "../../../lib/cn";
 import type { AccessibleName } from "../../shared/accessible-name";
-import { matchesCountryOption } from "../../shared/countries/country-listbox-options";
 import { FloatingPanelContent } from "../../shared/floating-panel/FloatingPanel";
 import { Listbox } from "../../shared/listbox/Listbox";
+import { listSelectedOptionValues, matchesCountryOrNotApplicable } from "../model/not-applicable-option";
 import type { CountrySelectView } from "../model/use-country-select";
 import { SelectionLimitStatus } from "./SelectionLimitStatus";
 
@@ -20,10 +20,10 @@ export const CountrySelectPanel = ({ view, labelling }: CountrySelectPanelProps)
       <Listbox
         {...labelling}
         options={view.listOptions}
-        selectedValues={view.selectedCodes}
+        selectedValues={listSelectedOptionValues(view.selectedCodes, view.notApplicableChosen)}
         multiple={view.multiple}
         onSelect={view.pickCountry}
-        matchesQuery={matchesCountryOption}
+        matchesQuery={matchesCountryOrNotApplicable}
         texts={{ searchLabel: texts.searchLabel, searchPlaceholder: texts.searchPlaceholder, noResults: texts.noResults }}
         thinScrollbars={resolvedProps.thinScrollbars}
         scrollbarColor={resolvedProps.scrollbarColor}

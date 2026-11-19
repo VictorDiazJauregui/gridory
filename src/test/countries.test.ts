@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { createElement } from "react";
 import { expect, test } from "vitest";
 import { COUNTRY_CODES, isCountryCode } from "../components/shared/countries/country-codes";
-import { CountryFlag } from "../components/shared/countries/CountryFlag";
+import { OptionalCountryFlag } from "../components/shared/countries/OptionalCountryFlag";
 import {
   DEFAULT_COUNTRY_FLAG_SETTINGS,
   resolveFlagcdnUrl,
@@ -109,7 +109,7 @@ test("the list is localized and kept per locale", () => {
 
 test("the default flag comes from flagcdn at 1x and 2x", () => {
   expect(resolveFlagcdnUrl("PE", 20)).toBe("https://flagcdn.com/w20/pe.png");
-  const { container } = render(createElement(CountryFlag, { code: "PE" }));
+  const { container } = render(createElement(OptionalCountryFlag, { code: "PE" }));
   const flag = container.querySelector("img.gdy-country-flag");
   expect(flag).toHaveAttribute("src", "https://flagcdn.com/w20/pe.png");
   expect(flag).toHaveAttribute("srcset", "https://flagcdn.com/w40/pe.png 2x");
@@ -119,7 +119,7 @@ test("the default flag comes from flagcdn at 1x and 2x", () => {
 
 test("a custom resolver replaces the flag URL and a label names the flag", () => {
   const settings = { ...DEFAULT_COUNTRY_FLAG_SETTINGS, resolveUrl: resolveTestFlagUrl };
-  render(createElement(CountryFlag, { code: "CA", settings, label: "Canadá" }));
+  render(createElement(OptionalCountryFlag, { code: "CA", settings, label: "Canadá" }));
   const flag = screen.getByRole("img", { name: "Canadá" });
   expect(flag).toHaveAttribute("src", "/flags/CA-20.svg");
   expect(flag).toHaveAttribute("srcset", "/flags/CA-40.svg 2x");
@@ -127,7 +127,7 @@ test("a custom resolver replaces the flag URL and a label names the flag", () =>
 
 test("a hidden flag renders nothing", () => {
   const settings = { ...DEFAULT_COUNTRY_FLAG_SETTINGS, visible: false };
-  const { container } = render(createElement(CountryFlag, { code: "PE", settings }));
+  const { container } = render(createElement(OptionalCountryFlag, { code: "PE", settings }));
   expect(container).toBeEmptyDOMElement();
 });
 

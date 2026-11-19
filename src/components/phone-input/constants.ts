@@ -16,6 +16,7 @@ export const PHONE_INPUT_DEFAULTS = {
   locale: "es",
   showFlags: true,
   thinScrollbars: true,
+  disabled: false,
 } as const;
 
 export const EMPTY_PHONE_VALUE: PhoneInputValue = { country: null, number: "" };

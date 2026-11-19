@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { isCountryCode } from "../../shared/countries/country-codes";
+import { usePanelOpen } from "../../shared/floating-panel/use-panel-open";
 import type { PhoneInputSettings } from "../types";
 import { applyPhoneInputDefaults, resolvePhoneInputTexts } from "./phone-input-defaults";
 import { useDialCodeCatalog } from "./use-dial-code-catalog";
@@ -9,7 +9,7 @@ import { usePhoneValue } from "./use-phone-value";
 // (Radix does it); choosing the one already chosen only closes.
 export const usePhoneInput = (settings: PhoneInputSettings) => {
   const resolvedSettings = applyPhoneInputDefaults(settings);
-  const [open, setOpen] = useState(false);
+  const { open, setOpen } = usePanelOpen(resolvedSettings.disabled);
   const phone = usePhoneValue(settings);
   const catalog = useDialCodeCatalog(resolvedSettings);
   const pickCountry = (code: string) => {

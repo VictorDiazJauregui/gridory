@@ -112,3 +112,34 @@ test("choosing a country records onValueChange with the example and the value", 
   expect(within(getEventLog()).getByText(/"control": "Por defecto"/)).toBeInTheDocument();
   expect(within(getEventLog()).getByText(/"value": "PE"/)).toBeInTheDocument();
 });
+
+test("the form example focuses its first error by id, then by name, and disables both controls while saving", async () => {
+  const user = userEvent.setup();
+  render(<ControlsMock />);
+  const form = screen.getByRole("form", { name: "Alta de cuenta" });
+  await user.click(within(form).getByRole("button", { name: "Ir al primer error" }));
+  expect(within(form).getByRole("combobox", { name: "País de residencia" })).toHaveFocus();
+  await user.click(within(form).getByRole("combobox", { name: "País de residencia" }));
+  await user.click(getOptionByName("No aplica"));
+  await user.click(within(form).getByRole("button", { name: "Ir al primer error" }));
+  expect(within(form).getByRole("textbox", { name: "WhatsApp" })).toHaveFocus();
+  await user.click(within(form).getByRole("button", { name: "Simular guardado" }));
+  expect(within(form).getByRole("combobox", { name: "País de residencia" })).toBeDisabled();
+  expect(within(form).getByRole("textbox", { name: "WhatsApp" })).toBeDisabled();
+});
+
+test("the shared dial codes table shows the 14 representatives from gridory/countries", () => {
+  render(<ControlsMock />);
+  const table = screen.getByRole("table");
+  expect(within(table).getAllByRole("row")).toHaveLength(15);
+  expect(within(table).getByRole("row", { name: /\+1 Estados Unidos/ })).toBeInTheDocument();
+});
+
+test("the modal example opens a dialog with the country and the phone", async () => {
+  const user = userEvent.setup();
+  render(<ControlsMock />);
+  await user.click(screen.getByRole("button", { name: "Abrir el modal" }));
+  const dialog = await screen.findByRole("dialog", { name: "Datos de contacto" });
+  expect(within(dialog).getByRole("combobox", { name: "País" })).toBeInTheDocument();
+  expect(within(dialog).getByRole("textbox", { name: "Teléfono" })).toBeInTheDocument();
+});

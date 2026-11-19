@@ -18,6 +18,7 @@
     "src/segmented-control.ts",
     "src/country-select.ts",
     "src/phone-input.ts",
+    "src/countries.ts",
     "src/sidebar.ts",
     "src/markdown-editor.ts",
     "src/markdown-editor-mermaid.ts",

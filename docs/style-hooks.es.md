@@ -255,7 +255,7 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 
 | Clase | Tipo | Selectores de estado |
 |---|---|---|
-| `gdy-country-select` | con estilos | `[data-multiple]` |
+| `gdy-country-select` | con estilos | `[data-disabled]`, `[data-multiple]` |
 | `gdy-country-select-chevron` | con estilos | — |
 | `gdy-country-select-chip` | con estilos | — |
 | `gdy-country-select-chip-label` | con estilos | — |
@@ -274,7 +274,7 @@ columna de selectores de estado lista los atributos con los que las hojas combin
 
 | Clase | Tipo | Selectores de estado |
 |---|---|---|
-| `gdy-phone-input` | con estilos | `[data-invalid]` |
+| `gdy-phone-input` | con estilos | `[data-disabled]`, `[data-invalid]` |
 | `gdy-phone-input-chevron` | con estilos | — |
 | `gdy-phone-input-dial-code` | con estilos | `[data-placeholder]` |
 | `gdy-phone-input-frame` | con estilos | — |
@@ -695,7 +695,7 @@ pone Radix siguen a esa librería.
 | `data-compact` | `"true"` | Gridory | `gdy-sidebar-logo` |
 | `data-day` | la fecha del día | Gridory | sin regla por defecto |
 | `data-diagram-state` | `"error"`, `"loading"`, `"ready"` | Gridory | `gdy-md-diagram` |
-| `data-disabled` | presente / ausente | Gridory o Radix | `gdy-auth-google-slot`, `gdy-calendar-day`, `gdy-menu-item` |
+| `data-disabled` | presente / ausente | Gridory o Radix | `gdy-auth-google-slot`, `gdy-calendar-day`, `gdy-country-select`, `gdy-menu-item`, `gdy-phone-input` |
 | `data-draggable` | presente / ausente | Gridory | `gdy-kanban-card` |
 | `data-dragging` | presente / ausente | Gridory | `gdy-kanban-card` |
 | `data-drop-disabled` | presente / ausente | Gridory | `gdy-kanban-column` |
@@ -876,6 +876,8 @@ cualquier ancestro cambia solo esa parte. Los `--gdy-select-*` también reflejan
 | `--gdy-country-select-chip-color` | `var(--gdy-foreground)` | country-select |
 | `--gdy-country-select-chip-max-width` | `8rem` | country-select |
 | `--gdy-country-select-color` | `var(--gdy-foreground)` | country-select |
+| `--gdy-country-select-disabled-bg` | `var(--gdy-muted)` | country-select |
+| `--gdy-country-select-disabled-opacity` | `0.5` | country-select |
 | `--gdy-country-select-error-color` | `var(--gdy-destructive)` | country-select |
 | `--gdy-country-select-focus-ring` | `var(--gdy-ring)` | country-select |
 | `--gdy-country-select-height` | `var(--gdy-field-control-height, 40px)` | country-select |
@@ -1040,6 +1042,8 @@ cualquier ancestro cambia solo esa parte. Los `--gdy-select-*` también reflejan
 | `--gdy-phone-input-border` | `var(--gdy-input)` | phone-input |
 | `--gdy-phone-input-check-color` | `var(--gdy-listbox-check-color, var(--gdy-primary))` | phone-input |
 | `--gdy-phone-input-color` | `var(--gdy-foreground)` | phone-input |
+| `--gdy-phone-input-disabled-bg` | `var(--gdy-muted)` | phone-input |
+| `--gdy-phone-input-disabled-opacity` | `0.5` | phone-input |
 | `--gdy-phone-input-error-color` | `var(--gdy-destructive)` | phone-input |
 | `--gdy-phone-input-focus-ring` | `var(--gdy-ring)` | phone-input |
 | `--gdy-phone-input-gap` | `8px` | phone-input |

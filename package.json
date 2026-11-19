@@ -78,6 +78,10 @@
       "types": "./dist/types/phone-input.d.ts",
       "import": "./dist/phone-input.js"
     },
+    "./countries": {
+      "types": "./dist/types/countries.d.ts",
+      "import": "./dist/countries.js"
+    },
     "./sidebar": {
       "types": "./dist/types/sidebar.d.ts",
       "import": "./dist/sidebar.js"
