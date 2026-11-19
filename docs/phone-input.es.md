@@ -17,6 +17,7 @@ emite el código ISO del país y el número, y tu app decide qué hacer con ello
 - [Label, obligatorio y errores](#label-obligatorio-y-errores)
 - [id y name](#id-y-name)
 - [Deshabilitado](#deshabilitado)
+- [Dentro de un modal](#dentro-de-un-modal)
 - [Dentro de los formularios de auth](#dentro-de-los-formularios-de-auth)
 - [Teclado y accesibilidad](#teclado-y-accesibilidad)
 - [Estilos](#estilos)
@@ -186,6 +187,16 @@ sigue cerrada. La caja lleva `data-disabled` y toma el aspecto de los tokens
 ```tsx
 <PhoneInput disabled={isSaving} value={phone} onValueChange={setPhone} />
 ```
+
+## Dentro de un modal
+
+La lista se desplaza con la rueda del mouse y con el dedo dentro de cualquier modal que bloquee el
+desplazamiento de la página: `Dialog`, `AlertDialog` y `Sheet` de Radix (incluidos los de shadcn), o
+`react-remove-scroll`. No hay que configurar nada. Esos bloqueos cancelan la rueda y los arrastres
+táctiles que nacen fuera de la ventana, y el panel se renderiza en un portal bajo `<body>`, así que se
+queda con los suyos: la rueda y los arrastres que nacen sobre el panel abierto se detienen ahí y no
+llegan a `document`. Un listener de `wheel` o `touchmove` en `document`, o un `onWheel`/`onTouchMove`
+de React en un ancestro, no los recibe.
 
 ## Dentro de los formularios de auth
 
