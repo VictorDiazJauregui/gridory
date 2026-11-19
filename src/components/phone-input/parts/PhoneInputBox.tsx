@@ -21,6 +21,7 @@ export const PhoneInputBox = ({ view, control, onBlur }: PhoneInputBoxProps) => 
         <div
           className={cn("gdy-scope gdy-phone-input", resolvedSettings.className, resolvedSettings.classNames?.root)}
           data-invalid={control["aria-invalid"] ? "" : undefined}
+          data-disabled={resolvedSettings.disabled ? "" : undefined}
         >
           <PhoneInputPrefix view={view} />
           <PhoneNumberInput view={view} control={control} onBlur={onBlur} />

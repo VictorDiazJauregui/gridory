@@ -6,6 +6,7 @@ export interface PhoneInputResolvedDefaults {
   locale: string;
   showFlags: boolean;
   thinScrollbars: boolean;
+  disabled: boolean;
 }
 
 // Typed wider than the literal constants, so a resolved flag reads as a boolean.
