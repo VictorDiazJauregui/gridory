@@ -97,6 +97,7 @@ export default defineConfig({
         "segmented-control": path.resolve(rootDir, "src/segmented-control.ts"),
         "country-select": path.resolve(rootDir, "src/country-select.ts"),
         "phone-input": path.resolve(rootDir, "src/phone-input.ts"),
+        countries: path.resolve(rootDir, "src/countries.ts"),
         sidebar: path.resolve(rootDir, "src/sidebar.ts"),
         "markdown-editor": path.resolve(rootDir, "src/markdown-editor.ts"),
         "markdown-editor-mermaid": path.resolve(rootDir, "src/markdown-editor-mermaid.ts"),
