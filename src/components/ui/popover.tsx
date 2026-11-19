@@ -3,10 +3,6 @@ import { Popover as PopoverPrimitive } from "radix-ui";
 
 import { cn } from "../../lib/cn";
 
-type PopoverContentProps = React.ComponentProps<typeof PopoverPrimitive.Content> & {
-  container?: HTMLElement | null;
-};
-
 const Popover = ({
   ...props
 }: React.ComponentProps<typeof PopoverPrimitive.Root>) => {
@@ -23,24 +19,21 @@ const PopoverAnchor = (props: React.ComponentProps<typeof PopoverPrimitive.Ancho
   <PopoverPrimitive.Anchor data-slot="popover-anchor" {...props} />
 );
 
-const PopoverContent = ({
-  className,
-  align = "center",
-  sideOffset = 4,
-  container,
-  ...props
-}: PopoverContentProps) => {
-  return (
-    <PopoverPrimitive.Portal container={container}>
-      <PopoverPrimitive.Content
-        data-slot="popover-content"
-        align={align}
-        sideOffset={sideOffset}
-        className={cn("gdy-scope gdy-popover-content", className)}
-        {...props}
-      />
-    </PopoverPrimitive.Portal>
-  );
-}
+const PopoverContent = React.forwardRef<
+  React.ComponentRef<typeof PopoverPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>
+>(({ className, align = "center", sideOffset = 4, ...props }, ref) => (
+  <PopoverPrimitive.Portal>
+    <PopoverPrimitive.Content
+      ref={ref}
+      data-slot="popover-content"
+      align={align}
+      sideOffset={sideOffset}
+      className={cn("gdy-scope gdy-popover-content", className)}
+      {...props}
+    />
+  </PopoverPrimitive.Portal>
+));
+PopoverContent.displayName = "PopoverContent";
 
 export { Popover, PopoverAnchor, PopoverContent, PopoverTrigger };
